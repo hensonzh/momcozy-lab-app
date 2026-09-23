@@ -12,7 +12,6 @@ import 'package:momcozy_flutter_app/features/notifications/presentation/notifica
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 
-import '../support/fake_agent_voice.dart';
 import '../support/fixture_api_transport.dart';
 import '../support/mom_inventory_transport.dart';
 import '../support/momcozy_test_fonts.dart';
@@ -48,7 +47,7 @@ void main() {
         MomCozyApiRuntime newRuntime() => MomCozyApiRuntime(
           jsonTransport: transport,
           multipartTransport: FixtureApiMultipartTransport({}),
-          agentVoicePlaybackPlayer: ImmediateAgentVoicePlaybackPlayer(),
+
           session: session,
           now: () => inventoryMomNow,
           timezoneProvider: () async => 'Asia/Shanghai',
@@ -105,20 +104,6 @@ void main() {
           contains('/v1/agent/threads/$_first/history'),
         );
 
-        await tester.longPress(find.text('History for $_first'));
-        await tester.pumpAndSettle();
-        expect(
-          find.byKey(const ValueKey('agent-message-copy')),
-          findsOneWidget,
-        );
-        final handled = await tester.binding.handlePopRoute();
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        expect(handled, isTrue);
-        expect(find.byKey(const ValueKey('agent-message-copy')), findsNothing);
-        expect(router.state.uri.queryParameters['conversationId'], _first);
-        expect(find.text('History for $_first'), findsOneWidget);
-
         final context = tester.element(find.byType(Scaffold).first);
         await tester.runAsync(
           () => precacheImage(
@@ -134,22 +119,12 @@ void main() {
           ),
         );
 
-        expect(find.byTooltip('打开会话历史'), findsOneWidget);
-        await tester.tap(find.byTooltip('打开会话历史'));
-        await tester.pumpAndSettle();
+        expect(find.byTooltip('打开会话历史'), findsNothing);
         expect(
-          find.byKey(const ValueKey('agent-conversation-$_first')),
-          findsOneWidget,
+          find.byKey(const ValueKey('agent-new-session-button')),
+          findsNothing,
         );
-        expect(
-          find.byKey(const ValueKey('agent-conversation-$_second')),
-          findsOneWidget,
-        );
-        expect(transport.getPaths, contains('/v1/agent/threads'));
-        await tester.tap(
-          find.byKey(const ValueKey('agent-conversation-close-button')),
-        );
-        await tester.pumpAndSettle();
+        expect(transport.getPaths, isNot(contains('/v1/agent/threads')));
         final inventoryOutput =
             Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
         if (inventoryOutput != null) {
@@ -165,10 +140,10 @@ void main() {
               'previous_source': null,
               'route': router.state.uri.toString(),
               'trigger':
-                  'Notification list → Service update 1 → target history loads → message menu → system Back dismisses menu',
+                  'Notification list → Service update 1 → target transcript loads without history-management controls',
               'root_entry': 'Authenticated notification list',
               'evidence':
-                  'Actual default MomCozyFlutterApp/createMomCozyRouter; isolated HTTP and native channels; global history capability remains disabled; target conversation enables repository and history drawer',
+                  'Actual default MomCozyFlutterApp/createMomCozyRouter; isolated HTTP and native channels; target transcript loads; session list and history drawer are removed',
               'test': 'test/app/notification_conversation_route_test.dart',
             }),
           );
@@ -203,6 +178,9 @@ void main() {
         // private in-memory interaction state from the previous login.
         await tester.tap(find.text('More'));
         await tester.pumpAndSettle();
+        // Simulate the cleared persistent session on logout; the new runtime
+        // must also discard the previous runtime's in-memory per-thread cache.
+        FlutterSecureStorage.setMockInitialValues({});
         runtime.replaceRuntime(newRuntime());
         await tester.pumpAndSettle();
         router.go('/?conversationId=$_first');

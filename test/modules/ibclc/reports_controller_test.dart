@@ -84,7 +84,7 @@ void main() {
       final snapshot = readReportSnapshot(workbenchFixture('report'));
       expect(snapshot.report!.content!.emotionalState, isEmpty);
       expect(snapshot.report!.dialogues, hasLength(1));
-      expect(snapshot.report!.sources, hasLength(5));
+      expect(snapshot.report!.sources, hasLength(4));
       expect(snapshot.report!.reviewable, isTrue);
     },
   );

@@ -218,7 +218,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.byTooltip('更多宝宝体检选项'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('修改'));
+        await tester.tap(find.text('编辑'));
         await tester.pumpAndSettle();
         if (scale == 1) {
           await expectLater(
@@ -298,11 +298,11 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('schedule-save')));
       await tester.pumpAndSettle();
-      expect(find.text('重试确认保存'), findsOneWidget);
+      expect(find.text('重试保存'), findsOneWidget);
       expect(tester.takeException(), isNull);
-      await tester.ensureVisible(find.text('重试确认保存'));
+      await tester.ensureVisible(find.text('重试保存'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('重试确认保存'));
+      await tester.tap(find.text('重试保存'));
       await tester.pumpAndSettle();
       expect(repo.values, hasLength(1));
       expect(tester.takeException(), isNull);
@@ -322,16 +322,16 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(TextField), findsNWidgets(2));
     expect(find.text('宝宝体检'), findsOneWidget);
-    expect(find.text('重试确认保存'), findsOneWidget);
+    expect(find.text('重试保存'), findsOneWidget);
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile(
-        '../../goldens/design_system/schedule-save-uncertain-390.png',
+        '../../goldens/design_system/schedule-save-failure-390.png',
       ),
     );
     expect(
       tester.widget<TextField>(find.byType(TextField).first).enabled,
-      isFalse,
+      isTrue,
     );
     await tester.tap(find.byType(FilledButton).last);
     await tester.pumpAndSettle();
@@ -341,6 +341,34 @@ void main() {
     expect(find.byType(TextField), findsNothing);
     await tester.pumpWidget(const SizedBox());
   });
+  testWidgets(
+    'edited retry recovers the original creation then updates without duplicates',
+    (tester) async {
+      final repo = MemoryScheduleRepository()..failCreate = true;
+      await mountSchedule(tester, repo);
+      await tester.tap(find.byTooltip('添加日程'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-title')),
+        '原始日程',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('schedule-save')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('schedule-title')),
+        '调整后的日程',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('schedule-save')));
+      await tester.pumpAndSettle();
+      expect(repo.values, hasLength(1));
+      expect(repo.values.single.title, '调整后的日程');
+      expect(repo.keys, hasLength(2));
+      expect(repo.keys.toSet(), hasLength(1));
+      expect(find.byTooltip('关闭日程'), findsNothing);
+    },
+  );
   testWidgets('pending personal save locks edits and close then creates once', (
     tester,
   ) async {

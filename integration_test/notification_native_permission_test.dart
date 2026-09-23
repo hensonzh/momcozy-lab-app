@@ -17,7 +17,6 @@ import 'package:momcozy_flutter_app/features/notifications/presentation/notifica
 import 'package:momcozy_flutter_app/features/notifications/presentation/notification_coordinator.dart';
 import '../test/support/fixture_api_transport.dart';
 import '../test/support/notification_fakes.dart';
-import '../test/support/fake_agent_voice.dart';
 
 // Run with scripts/capture-native-notification-permissions.py. The host only
 // responds to actual Android dialogs; business writes remain in this transport.
@@ -50,7 +49,7 @@ void main() {
         MomCozyApiRuntime(
           jsonTransport: transport,
           multipartTransport: FixtureApiMultipartTransport({}),
-          agentVoicePlaybackPlayer: const ImmediateAgentVoicePlaybackPlayer(),
+
           session: session,
           supportsSessionAutoRefresh: false,
           now: () => DateTime.utc(2026, 9, 14, 8),

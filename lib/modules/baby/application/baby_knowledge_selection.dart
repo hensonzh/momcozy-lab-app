@@ -43,7 +43,7 @@ BabyKnowledgeTopic selectBabyKnowledge({
   if (timed.isNotEmpty) {
     return switch (timed.first) {
       BabyFeedingRecord() => BabyKnowledgeTopic.feeding,
-      BabySleepRecord() => BabyKnowledgeTopic.sleep,
+      BabySleepRecord() => BabyKnowledgeTopic.feedingCues,
       BabyDiaperRecord() => BabyKnowledgeTopic.diaper,
     };
   }
@@ -58,14 +58,19 @@ BabyKnowledgeTopic selectBabyKnowledge({
           .toList()
         ..sort((a, b) => a.recordKind.index.compareTo(b.recordKind.index));
   if (dated.isNotEmpty) {
-    return dated.first is BabyGrowthRecord
-        ? BabyKnowledgeTopic.growth
-        : BabyKnowledgeTopic.development;
+    return switch (dated.first) {
+      BabyGrowthRecord() => BabyKnowledgeTopic.growth,
+      BabyDailyStatusRecord(:final wetCount, :final stoolCount) =>
+        wetCount != null || stoolCount != null
+            ? BabyKnowledgeTopic.diaper
+            : BabyKnowledgeTopic.feedingCues,
+      _ => BabyKnowledgeTopic.feedingCues,
+    };
   }
   const fallback = [
     BabyKnowledgeTopic.feedingCues,
-    BabyKnowledgeTopic.sleep,
-    BabyKnowledgeTopic.development,
+    BabyKnowledgeTopic.feeding,
+    BabyKnowledgeTopic.diaper,
   ];
   final seed = '$babyId-${LocalDate.fromDateTime(release)}'.runes.fold<int>(
     0,

@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:momcozy_flutter_app/domain/baby/baby_record.dart';
 import 'package:momcozy_flutter_app/domain/shared/product_failure.dart';
-import 'package:momcozy_flutter_app/modules/baby/application/baby_home_controller.dart';
-import 'package:momcozy_flutter_app/modules/baby/presentation/baby_saved_feedback.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import 'package:momcozy_flutter_app/shared/widgets/product_feedback.dart';
 
@@ -17,7 +14,7 @@ void main() {
   testWidgets(
     'Android shared feedback at 1x and 2x',
     (tester) async {
-      var retries = 0, undos = 0, dismissals = 0;
+      var retries = 0;
       for (final scale in [1.0, 2.0]) {
         final body = ValueNotifier<Widget>(
           const ProductLoadingView(label: '正在载入记录'),
@@ -74,47 +71,6 @@ void main() {
         );
         await tester.pumpAndSettle();
         await _capture(binding, 'native-feedback-empty-${scale.toInt()}x');
-        final feedback = BabySavedFeedback([
-          BabyFeedingRecord(
-            id: 'fixture-record',
-            babyId: 'fixture-baby',
-            version: 1,
-            occurredAt: DateTime.utc(2026, 9, 12),
-            method: BabyFeedingMethod.expressedMilk,
-            volumeMl: 60,
-          ),
-        ], allowUndo: true);
-        Widget saved() => ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            BabySavedFeedbackView(
-              feedback: feedback,
-              onUndo: () {
-                undos++;
-                feedback.undone = true;
-                body.value = saved();
-              },
-              onDismiss: () {
-                dismissals++;
-                body.value = const SizedBox();
-              },
-              onHistory: () {},
-            ),
-          ],
-        );
-        body.value = saved();
-        await tester.pumpAndSettle();
-        await _capture(binding, 'native-feedback-saved-${scale.toInt()}x');
-        await tester.tap(find.text('撤销'));
-        await tester.pumpAndSettle();
-        expect(undos, scale.toInt());
-        expect(find.text('撤销'), findsNothing);
-        expect(find.text('已撤销这次记录。'), findsOneWidget);
-        await _capture(binding, 'native-feedback-undone-${scale.toInt()}x');
-        await tester.tap(find.byTooltip('关闭保存提示'));
-        await tester.pumpAndSettle();
-        expect(dismissals, scale.toInt());
-        expect(find.byType(BabySavedFeedbackView), findsNothing);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());
         body.dispose();

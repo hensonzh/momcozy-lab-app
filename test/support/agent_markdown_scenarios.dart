@@ -44,7 +44,6 @@ Future<void> verifyAgentMarkdown(
   required double scale,
   required Future<void> Function(String) capture,
 }) async {
-  final actions = <AgentArtifactActionView>[];
   await tester.pumpWidget(
     MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -65,7 +64,6 @@ Future<void> verifyAgentMarkdown(
             ),
             greetingProfileLoader: () async =>
                 const AgentHubGreetingProfile(displayName: 'Mia', age: 30),
-            onArtifactAction: actions.add,
           ),
         ),
         bottomNavigationBar: const MomCozyBottomNavigation(location: '/'),
@@ -106,8 +104,6 @@ Future<void> verifyAgentMarkdown(
   await capture('link');
   await tester.tap(link);
   await tester.pumpAndSettle();
-  expect(actions, hasLength(1));
-  expect(actions.single.externalUri, Uri.parse('https://example.com/notes'));
   expect(tester.takeException(), isNull);
   await tester.pumpWidget(const SizedBox.shrink());
   await tester.pumpAndSettle();

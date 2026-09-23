@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/domain/shared/local_date.dart';
 import 'package:momcozy_flutter_app/domain/lactation/lactation_record.dart';
-import 'package:momcozy_flutter_app/domain/mother/mother_diary.dart';
 import 'package:momcozy_flutter_app/domain/baby/baby_record.dart';
 
 void main() {
@@ -147,23 +146,6 @@ void main() {
         ).validate(now),
         contains('duration_minutes'),
       );
-    },
-  );
-
-  test(
-    'daily diary groups retain partial self reports without fake completion',
-    () {
-      const empty = MotherDiary();
-      expect(empty.isEmpty, isTrue);
-      const rest = MotherRest(total: SleepTotalBand.fourToFiveHours);
-      final entry = empty.copyWith(
-        rest: rest,
-        mood: const MotherMood(tone: MoodTone.steady),
-      );
-      expect(entry.completedGroups, 2);
-      expect(entry.rest.total, SleepTotalBand.fourToFiveHours);
-      expect(entry.body.isEmpty, isTrue);
-      expect(entry.copyWith(mood: const MotherMood()).completedGroups, 1);
     },
   );
 

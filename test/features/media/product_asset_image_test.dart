@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
@@ -124,35 +123,6 @@ void main() {
     );
     expect(image.image, isA<ResizeImage>());
     expect((image.image as ResizeImage).width, 720);
-    expect(
-      connector.uris.single,
-      Uri.parse(
-        'https://api.example.test/v1/assets/asset-image?variant=display',
-      ),
-    );
-  });
-
-  testWidgets('agent markdown cards request the display image variant', (
-    tester,
-  ) async {
-    final connector = _FakeProductAssetConnector([
-      _response(statusCode: 200, body: _onePixelPng),
-    ]);
-    final repository = ProductAssetRepository(
-      baseUri: Uri.parse('https://api.example.test'),
-      connector: connector,
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentMarkdownText(
-          '![Air1 guide](/v1/assets/asset-image?kind=image)',
-          productAssetRepository: repository,
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
     expect(
       connector.uris.single,
       Uri.parse(

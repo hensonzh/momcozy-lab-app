@@ -2,9 +2,6 @@ package com.momcozymai.momcozy_flutter_app
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.media.AudioFormat
-import android.media.AudioManager
-import android.media.AudioTrack
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
@@ -19,10 +16,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.Looper
-import android.os.SystemClock
 import android.provider.Settings
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.android.FlutterActivity
@@ -35,7 +28,6 @@ import java.util.UUID
 class MainActivity : FlutterActivity() {
     private lateinit var mmcBleChannel: MethodChannel
     private lateinit var pumpNotificationChannel: MethodChannel
-    private lateinit var voicePcmPlayerChannel: MethodChannel
     private lateinit var pumpAgentUploadHandler: PumpAgentUploadChannelHandler
     private lateinit var pumpAgentBackgroundRunner: PumpAgentBackgroundRunner
     private lateinit var motionPosePlugin: MotionPosePlugin
@@ -49,13 +41,6 @@ class MainActivity : FlutterActivity() {
     private val notifyKeys = mutableSetOf<String>()
     private var pendingBlePermissionResult: MethodChannel.Result? = null
     private var pendingNotificationPermissionResult: MethodChannel.Result? = null
-    private val voiceMainHandler = Handler(Looper.getMainLooper())
-    private val voiceAudioThread = HandlerThread(VOICE_PCM_THREAD_NAME).apply { start() }
-    private val voiceAudioHandler = Handler(voiceAudioThread.looper)
-    private var voiceAudioTrack: AudioTrack? = null
-    private var voiceAudioTrackSampleRate = 24000
-    private var voiceAudioTrackChannels = 1
-    private var voiceAudioTrackWrittenFrames = 0L
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -70,11 +55,6 @@ class MainActivity : FlutterActivity() {
             PUMP_NOTIFICATION_CHANNEL
         )
         pumpNotificationChannel.setMethodCallHandler(::handlePumpNotificationCall)
-        voicePcmPlayerChannel = MethodChannel(
-            flutterEngine.dartExecutor.binaryMessenger,
-            VOICE_PCM_PLAYER_CHANNEL
-        )
-        voicePcmPlayerChannel.setMethodCallHandler(::handleVoicePcmPlayerCall)
         val pumpAgentUploadChannel = MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             PUMP_AGENT_UPLOAD_CHANNEL
@@ -142,38 +122,6 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun handleVoicePcmPlayerCall(call: MethodCall, result: MethodChannel.Result) {
-        when (call.method) {
-            "start" -> {
-                val args = call.argumentsMap()
-                val sampleRate = (args["sampleRate"] as? Number)?.toInt() ?: 24000
-                val channels = (args["channels"] as? Number)?.toInt() ?: 1
-                voiceAudioHandler.post {
-                    startVoicePcmPlayback(sampleRate, channels, result)
-                }
-            }
-            "write" -> {
-                val bytes = (call.argumentsMap()["bytes"] as? ByteArray)?.copyOf()
-                    ?: ByteArray(0)
-                voiceAudioHandler.post {
-                    writeVoicePcmChunk(bytes, result)
-                }
-            }
-            "finish" -> {
-                voiceAudioHandler.post {
-                    finishVoicePcmPlayback(result)
-                }
-            }
-            "stop" -> {
-                voiceAudioHandler.post {
-                    stopVoicePcmPlayback()
-                    replyVoiceSuccess(result)
-                }
-            }
-            else -> result.notImplemented()
-        }
-    }
-
     override fun onDestroy() {
         if (::pumpAgentBackgroundRunner.isInitialized) {
             pumpAgentBackgroundRunner.stop()
@@ -190,15 +138,8 @@ class MainActivity : FlutterActivity() {
             null
         )
         pendingNotificationPermissionResult = null
-        if (::voicePcmPlayerChannel.isInitialized) {
-            voicePcmPlayerChannel.setMethodCallHandler(null)
-        }
         if (::motionPosePlugin.isInitialized) {
             motionPosePlugin.dispose()
-        }
-        voiceAudioHandler.post {
-            stopVoicePcmPlayback()
-            voiceAudioThread.quitSafely()
         }
         stopBleScan()
         gatts.keys.toList().forEach(::closeGatt)
@@ -866,183 +807,6 @@ class MainActivity : FlutterActivity() {
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
     }
 
-    private fun startVoicePcmPlayback(
-        sampleRate: Int,
-        requestedChannels: Int,
-        result: MethodChannel.Result
-    ) {
-        val channels = if (requestedChannels == 2) 2 else 1
-        val channelConfig = if (channels == 2) {
-            AudioFormat.CHANNEL_OUT_STEREO
-        } else {
-            AudioFormat.CHANNEL_OUT_MONO
-        }
-        val minBuffer = AudioTrack.getMinBufferSize(
-            sampleRate,
-            channelConfig,
-            AudioFormat.ENCODING_PCM_16BIT
-        )
-        if (minBuffer <= 0) {
-            replyVoiceError(
-                result,
-                "voice_pcm_unavailable",
-                "Unable to initialize PCM audio output"
-            )
-            return
-        }
-        stopVoicePcmPlayback()
-        var track: AudioTrack? = null
-        try {
-            track = AudioTrack(
-                AudioManager.STREAM_MUSIC,
-                sampleRate,
-                channelConfig,
-                AudioFormat.ENCODING_PCM_16BIT,
-                minBuffer.coerceAtLeast(sampleRate),
-                AudioTrack.MODE_STREAM
-            )
-            if (track.state != AudioTrack.STATE_INITIALIZED) {
-                track.release()
-                replyVoiceError(
-                    result,
-                    "voice_pcm_unavailable",
-                    "Unable to initialize PCM audio output"
-                )
-                return
-            }
-            track.play()
-            voiceAudioTrackSampleRate = sampleRate
-            voiceAudioTrackChannels = channels
-            voiceAudioTrackWrittenFrames = 0L
-            voiceAudioTrack = track
-            replyVoiceSuccess(result)
-        } catch (error: RuntimeException) {
-            try {
-                track?.release()
-            } catch (_: RuntimeException) {
-            }
-            replyVoiceError(
-                result,
-                "voice_pcm_unavailable",
-                error.message ?: "Unable to initialize PCM audio output"
-            )
-        }
-    }
-
-    private fun writeVoicePcmChunk(bytes: ByteArray, result: MethodChannel.Result) {
-        val track = voiceAudioTrack
-        if (track == null) {
-            replyVoiceError(
-                result,
-                "voice_pcm_not_started",
-                "PCM audio output is not started"
-            )
-            return
-        }
-        if (bytes.isNotEmpty()) {
-            val writtenBytes = try {
-                var offset = 0
-                while (offset < bytes.size) {
-                    val count = track.write(bytes, offset, bytes.size - offset)
-                    if (count <= 0) {
-                        throw IllegalStateException("Unable to write PCM audio output: $count")
-                    }
-                    offset += count
-                }
-                offset
-            } catch (error: RuntimeException) {
-                replyVoiceError(
-                    result,
-                    "voice_pcm_write_failed",
-                    error.message ?: "Unable to write PCM audio output"
-                )
-                return
-            }
-            if (writtenBytes > 0) {
-                voiceAudioTrackWrittenFrames +=
-                    writtenBytes.toLong() / (2L * voiceAudioTrackChannels.coerceAtLeast(1))
-            }
-        }
-        replyVoiceSuccess(result)
-    }
-
-    private fun finishVoicePcmPlayback(result: MethodChannel.Result) {
-        val track = voiceAudioTrack
-        if (track == null) {
-            replyVoiceSuccess(result)
-            return
-        }
-        val targetFrames = voiceAudioTrackWrittenFrames
-        val sampleRate = voiceAudioTrackSampleRate.coerceAtLeast(1)
-        val startedAtMs = SystemClock.uptimeMillis()
-        val playedFrames = playbackHeadFrames(track)
-        val remainingFrames = (voiceAudioTrackWrittenFrames - playedFrames).coerceAtLeast(0L)
-        val expectedRemainingMs = (remainingFrames * 1000L) / sampleRate
-        val maxDrainMs = (expectedRemainingMs + VOICE_PCM_FINISH_DRAIN_SLACK_MS)
-            .coerceIn(VOICE_PCM_FINISH_MIN_DRAIN_MS, VOICE_PCM_FINISH_MAX_DRAIN_MS)
-        fun completeFinish() {
-            if (voiceAudioTrack === track) {
-                stopVoicePcmPlayback()
-            }
-            replyVoiceSuccess(result)
-        }
-
-        fun pollPlaybackTail() {
-            if (voiceAudioTrack !== track) {
-                replyVoiceSuccess(result)
-                return
-            }
-            val elapsedMs = SystemClock.uptimeMillis() - startedAtMs
-            val playedNow = playbackHeadFrames(track)
-            if (
-                targetFrames <= 0L ||
-                playedNow >= targetFrames ||
-                elapsedMs >= maxDrainMs ||
-                track.playState != AudioTrack.PLAYSTATE_PLAYING
-            ) {
-                completeFinish()
-                return
-            }
-            voiceAudioHandler.postDelayed(::pollPlaybackTail, VOICE_PCM_FINISH_POLL_MS)
-        }
-
-        voiceAudioHandler.postDelayed(::pollPlaybackTail, VOICE_PCM_FINISH_POLL_MS)
-    }
-
-    private fun playbackHeadFrames(track: AudioTrack): Long {
-        return track.playbackHeadPosition.toLong() and 0xffffffffL
-    }
-
-    private fun stopVoicePcmPlayback() {
-        val track = voiceAudioTrack ?: return
-        voiceAudioTrack = null
-        voiceAudioTrackWrittenFrames = 0L
-        try {
-            track.stop()
-        } catch (_: IllegalStateException) {
-        }
-        try {
-            track.release()
-        } catch (_: RuntimeException) {
-        }
-    }
-
-    private fun replyVoiceSuccess(result: MethodChannel.Result) {
-        voiceMainHandler.post {
-            result.success(null)
-        }
-    }
-
-    private fun replyVoiceError(
-        result: MethodChannel.Result,
-        code: String,
-        message: String
-    ) {
-        voiceMainHandler.post {
-            result.error(code, message, null)
-        }
-    }
-
     private fun MethodCall.argumentsMap(): Map<*, *> {
         return arguments as? Map<*, *> ?: emptyMap<String, Any?>()
     }
@@ -1086,13 +850,6 @@ class MainActivity : FlutterActivity() {
             "com.momcozymai.flutter/pump_session_notification"
         private const val PUMP_AGENT_UPLOAD_CHANNEL =
             "com.momcozymai.flutter/pump_agent_upload"
-        private const val VOICE_PCM_PLAYER_CHANNEL =
-            "com.momcozymai.flutter/voice_pcm_player"
-        private const val VOICE_PCM_THREAD_NAME = "MomCozyVoicePcm"
-        private const val VOICE_PCM_FINISH_POLL_MS = 40L
-        private const val VOICE_PCM_FINISH_MIN_DRAIN_MS = 160L
-        private const val VOICE_PCM_FINISH_DRAIN_SLACK_MS = 1200L
-        private const val VOICE_PCM_FINISH_MAX_DRAIN_MS = 30000L
         private const val INTEGRATION_TEST_INTENT_EXTRA =
             "momcozy.flutter.extra.INTEGRATION_TEST"
         private const val INTEGRATION_TEST_PLUGIN_CLASS =

@@ -13,6 +13,7 @@ class MomSettingsCard extends StatelessWidget {
     this.color = MomHomeTokens.surface,
     this.border = true,
     this.padding = const EdgeInsets.all(MomHomeTokens.inset),
+    this.spacing = MomHomeTokens.gap,
     this.borderInside = false,
     this.backgroundDecoration,
   });
@@ -21,6 +22,7 @@ class MomSettingsCard extends StatelessWidget {
   final Color color;
   final bool border;
   final EdgeInsetsGeometry padding;
+  final double spacing;
   final bool borderInside;
   final MomCardDecoration? backgroundDecoration;
 
@@ -34,7 +36,7 @@ class MomSettingsCard extends StatelessWidget {
       padding: padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: MomHomeTokens.gap,
+        spacing: spacing,
         children: children,
       ),
     ),
@@ -115,6 +117,7 @@ class MomSettingsFlowDialog extends StatelessWidget {
     this.maxHeight = 720,
     this.scrollController,
     this.showClose = true,
+    this.closeIcon,
   });
   final String title, closeLabel;
   final VoidCallback? onClose;
@@ -122,6 +125,7 @@ class MomSettingsFlowDialog extends StatelessWidget {
   final double maxHeight;
   final ScrollController? scrollController;
   final bool showClose;
+  final Widget? closeIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +166,13 @@ class MomSettingsFlowDialog extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.all(12),
                       color: MomHomeTokens.rose,
-                      icon: const Icon(Icons.close, size: 20),
+                      style: closeIcon == null
+                          ? null
+                          : IconButton.styleFrom(
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              minimumSize: const Size(44, 44),
+                            ),
+                      icon: closeIcon ?? const Icon(Icons.close, size: 20),
                     ),
                   ],
                 ],

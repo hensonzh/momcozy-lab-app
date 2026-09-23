@@ -1,0 +1,94 @@
+{
+  "source": "test/modules/baby/baby_home_state_capture_test.dart",
+  "capturedOn": "2026-09-21",
+  "states": [
+    {
+      "state": "baby.home.no-profile",
+      "reference": "references/figma-327-2470.png",
+      "actual": "actual-home-states/home-no-profile.png",
+      "status": "implemented",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "navigation image is blank in Flutter test raster; app/runtime asset path remains unchanged"
+    },
+    {
+      "state": "baby.home.loading",
+      "reference": "references/figma-327-1378.png",
+      "actual": "actual-home-states/home-loading.png",
+      "status": "visuallyVerified",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "same-size comparison; dotted loader and compact empty metric cards calibrated"
+    },
+    {
+      "state": "baby.home.empty",
+      "reference": "references/figma-327-1086.png",
+      "actual": "actual-home-states/home-empty.png",
+      "status": "visuallyVerified",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "same-size comparison; knowledge fixture pinned to Figma date"
+    },
+    {
+      "state": "baby.home.missing-profile",
+      "reference": "references/figma-327-1912.png",
+      "actual": "actual-home-states/home-missing-profile.png",
+      "status": "visuallyVerified",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "same-size comparison; profile-completion panel color and spacing calibrated"
+    },
+    {
+      "state": "baby.home.long-name",
+      "reference": "references/figma-327-2958.png",
+      "actual": "actual-home-states/home-long-name.png",
+      "status": "implemented",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "same-size capture generated; final truncation fixture rerun pending"
+    },
+    {
+      "state": "baby.home.error",
+      "reference": "references/figma-327-1632.png",
+      "actual": "actual-home-states/home-error.png",
+      "status": "visuallyVerified",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "same-size comparison; error card spacing and retry gaps calibrated"
+    },
+    {
+      "state": "baby.home.recent-mental",
+      "reference": "references/figma-327-2170.png",
+      "actual": "actual-home-states/home-recent-mental.png",
+      "status": "visuallyVerified",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "same-size comparison"
+    },
+    {
+      "state": "baby.home.growth-saved",
+      "reference": "references/figma-327-2632.png",
+      "actual": "actual-home-states/home-growth-saved.png",
+      "status": "visuallyVerified",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "same-size comparison; scroll offset calibrated"
+    },
+    {
+      "state": "baby.home.growth-weight",
+      "reference": "references/figma-623-2426.png",
+      "actual": "actual-home-states/home-growth-weight.png",
+      "status": "visuallyVerified",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "same-size comparison"
+    },
+    {
+      "state": "baby.home.growth-length",
+      "reference": "references/figma-327-3250.png",
+      "actual": "actual-home-states/home-growth-length.png",
+      "status": "visuallyVerified",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "same-size comparison"
+    },
+    {
+      "state": "baby.home.growth-head",
+      "reference": "references/figma-327-3282.png",
+      "actual": "actual-home-states/home-growth-head.png",
+      "status": "visuallyVerified",
+      "viewportPolicy": "logical pixels, dpr=1",
+      "review": "same-size comparison"
+    }
+  ]
+}

@@ -10,17 +10,12 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/card_export.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_conversation_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_file_cache.dart';
@@ -81,7 +76,6 @@ class MomCozyApiRuntime {
     PumpProtocolPlatform? pumpProtocolPlatform,
     PumpNativeRuntimeCoordinator Function(BlePlatform ble)?
     pumpNativeRuntimeCoordinatorFactory,
-    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
     MediaContentRepository? mediaContentRepository,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
@@ -119,8 +113,7 @@ class MomCozyApiRuntime {
        timezoneProvider = timezoneProvider ?? _deviceTimezone {
     _clientEventClient = clientEventClient;
     _multipartTransport = multipartTransport;
-    _agentVoicePlaybackPlayer = agentVoicePlaybackPlayer;
-    _hasInjectedAgentVoicePlaybackPlayer = agentVoicePlaybackPlayer != null;
+
     _productAssetRepository = productAssetRepository;
     _mediaContentRepository = mediaContentRepository;
     _hasInjectedProductAssetRepository = productAssetRepository != null;
@@ -138,7 +131,6 @@ class MomCozyApiRuntime {
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
-    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
     MediaContentRepository? mediaContentRepository,
     String? userId,
@@ -161,7 +153,6 @@ class MomCozyApiRuntime {
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
       observability: observability,
-      agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
       mediaContentRepository: mediaContentRepository,
     );
@@ -176,7 +167,6 @@ class MomCozyApiRuntime {
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
-    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
     MediaContentRepository? mediaContentRepository,
     VolumeUnitPreferenceStore? volumeUnitPreferenceStore,
@@ -282,7 +272,6 @@ class MomCozyApiRuntime {
       pumpProtocolPlatform: pumpProtocolPlatform,
       session: session,
       observability: runtimeObservability,
-      agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
       mediaContentRepository: mediaContentRepository,
       volumeUnitPreferenceStore: volumeUnitPreferenceStore,
@@ -315,7 +304,6 @@ class MomCozyApiRuntime {
     BlePlatform? blePlatform,
     PumpProtocolPlatform? pumpProtocolPlatform,
     MomCozyObservability? observability,
-    AgentVoicePlaybackPlayer? agentVoicePlaybackPlayer,
     ProductAssetRepository? productAssetRepository,
   }) async {
     final manager = MomCozySessionManager(
@@ -340,7 +328,6 @@ class MomCozyApiRuntime {
       blePlatform: blePlatform,
       pumpProtocolPlatform: pumpProtocolPlatform,
       observability: observability,
-      agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
       productAssetRepository: productAssetRepository,
     );
     try {
@@ -358,7 +345,6 @@ class MomCozyApiRuntime {
           blePlatform: blePlatform,
           pumpProtocolPlatform: pumpProtocolPlatform,
           observability: observability,
-          agentVoicePlaybackPlayer: agentVoicePlaybackPlayer,
           productAssetRepository: productAssetRepository,
         );
       }
@@ -385,8 +371,7 @@ class MomCozyApiRuntime {
   _pumpNativeRuntimeCoordinatorFactory;
   AgentStreamClientEventClient? _clientEventClient;
   ApiMultipartTransport? _multipartTransport;
-  AgentVoicePlaybackPlayer? _agentVoicePlaybackPlayer;
-  late final bool _hasInjectedAgentVoicePlaybackPlayer;
+
   AgentHubPlatformImagePicker? _agentHubPlatformImagePicker;
   AgentHubPlatformDocumentPicker? _agentHubPlatformDocumentPicker;
   ProductAssetRepository? _productAssetRepository;
@@ -470,10 +455,6 @@ class MomCozyApiRuntime {
     return AgentConversationApiRepository(transport: agentJsonTransport);
   }
 
-  SupportTicketApiRepository get supportTicketRepository {
-    return SupportTicketApiRepository(transport: jsonTransport);
-  }
-
   ScheduleRepository get scheduleRepository =>
       _scheduleRepository ??= ScheduleApiRepository(transport: jsonTransport);
 
@@ -540,22 +521,6 @@ class MomCozyApiRuntime {
       tokenProvider: () => currentSession.accessToken,
       onUnauthorized: agentStreamUnauthorizedHandler,
       persistentCache: ProductAssetFileCache(),
-    );
-  }
-
-  AgentVoiceApiRepository get agentVoiceRepository {
-    return AgentVoiceApiRepository(
-      baseUri: Uri.parse(_defaultApiBaseUrl),
-      token: session.accessToken,
-      tokenProvider: () => currentSession.accessToken,
-      onUnauthorized: agentStreamUnauthorizedHandler,
-      headers: const {'X-Momcozy-Client': 'flutter'},
-    );
-  }
-
-  AgentVoicePlaybackPlayer get agentVoicePlaybackPlayer {
-    return _agentVoicePlaybackPlayer ??= AgentVoiceApiPlaybackPlayer(
-      repository: agentVoiceRepository,
     );
   }
 
@@ -698,10 +663,7 @@ class MomCozyRuntimeController extends ChangeNotifier {
       );
       await manager.logout(session);
       if (runtime.supportsSessionAutoRefresh) {
-        await Future.wait([
-          ProductAssetFileCache().clear(),
-          const PlatformAgentCardExportService().clear(),
-        ]);
+        await Future.wait([ProductAssetFileCache().clear()]);
       }
     });
     // Possession of a refresh token can revoke its whole device session even
@@ -759,9 +721,6 @@ class MomCozyRuntimeController extends ChangeNotifier {
       return MomCozyApiRuntime.fromSession(
         session,
         observability: _runtime.observability,
-        agentVoicePlaybackPlayer: _runtime._hasInjectedAgentVoicePlaybackPlayer
-            ? _runtime._agentVoicePlaybackPlayer
-            : null,
         productAssetRepository: _runtime._hasInjectedProductAssetRepository
             ? _runtime._productAssetRepository
             : null,
@@ -773,9 +732,6 @@ class MomCozyRuntimeController extends ChangeNotifier {
     return MomCozyApiRuntime.fromSession(
       session,
       observability: _runtime.observability,
-      agentVoicePlaybackPlayer: _runtime._hasInjectedAgentVoicePlaybackPlayer
-          ? _runtime._agentVoicePlaybackPlayer
-          : null,
       productAssetRepository: _runtime._hasInjectedProductAssetRepository
           ? _runtime._productAssetRepository
           : null,

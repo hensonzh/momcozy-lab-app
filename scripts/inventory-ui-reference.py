@@ -88,10 +88,6 @@ common/navigation|五入口底部导航|UserShell|lib/app/mom_bottom_navigation.
 mom/home|Me 首页|HomePage|lib/modules/mom/presentation/mother_home_page.dart|/me|page
 mom/knowledge|每日知识详情|DailyKnowledgeModal|lib/shared/widgets/knowledge_banner.dart|/me|dialog
 mom/record-picker|记录入口选择|HomePage|lib/modules/mom/presentation/mother_home_page.dart|/me|dialog
-mom/diary-rest|昨夜休息|HomePage|lib/modules/mom/presentation/mother_diary_editor.dart|/me|dialog
-mom/diary-body|身体与精力|HomePage|lib/modules/mom/presentation/mother_diary_editor.dart|/me|dialog
-mom/diary-mood|今日心情|HomePage|lib/modules/mom/presentation/mother_diary_editor.dart|/me|dialog
-mom/diary-history|独立日记编辑页||lib/modules/mom/presentation/mother_diary_page.dart|/me/diary|page
 mom/lactation|今日泌乳与趋势|HomePage|lib/modules/mom/presentation/lactation_panel.dart|/me /me/lactation|sheet
 mom/lactation-edit|泌乳新增和编辑|HomePage|lib/modules/mom/presentation/lactation_panel.dart|/me /me/lactation|form
 mom/other-functions|其它功能禁用入口|HomePage|lib/modules/mom/presentation/mother_home_page.dart|/me|section
@@ -160,9 +156,6 @@ common/theme|全局 Theme / Design Tokens|DS:living-companionship|lib/shared/des
 images = {
 'common/navigation':'me-agent-style-sync/diary-followup/15-navigation-me.png',
 'mom/home':'me-agent-style-sync/diary-followup/01-me-home.png',
-'mom/diary-rest':'me-agent-style-sync/diary-followup/02-diary-rest.png',
-'mom/diary-body':'me-agent-style-sync/diary-followup/02-diary-comfort.png',
-'mom/diary-mood':'me-agent-style-sync/diary-followup/02-diary-mood.png',
 'mom/record-picker':'me-agent-style-sync/diary-followup/03-record-chooser.png',
 'mom/lactation':'me-agent-style-sync/diary-followup/05-milk-trend.png',
 'mom/lactation-edit':'me-agent-style-sync/diary-followup/04-milk-entry.png',
@@ -197,13 +190,16 @@ for step in ['load','profile','delivery','birth','avatar-choice','avatar-create'
 # Preserve every authored Me state; explicitly flag screenshots superseded by later style patches.
 manifest=json.loads((DESIGN/'me-ui-optimization/05-validation/manifest.json').read_text())
 for v in manifest['views']:
-    n=int(v['id']); group='mom' if n<20 or n in [31,38,43] else 'agent' if n==3 else 'services'
+    n=int(v['id'])
+    if 4 <= n <= 10:
+        continue  # Diary states were retired with the product capability.
+    group='mom' if n<20 or n in [31,38,43] else 'agent' if n==3 else 'services'
     if n==3: group='agent'
     comp='HomePage' if n<20 or n in [31,38,43,51,52] else 'ServicesPage' if n==20 else 'ServiceDetailPage' if n<=30 else 'AppointmentPage' if n<=38 else 'IntakePage' if n<=42 else 'DeviceCheckModal' if n<=46 else 'StartConsultModal' if n<=50 else 'VideoPage'
     if n==2: comp='DailyKnowledgeModal'
     if n==3: comp='AgentPage'
     if n in [51,52]: comp='AppointmentPage'
-    parent='mom/home' if n in [1,11,31,38,43] else 'mom/knowledge' if n==2 else 'agent/home' if n==3 else 'mom/diary-rest' if n<=11 else 'mom/lactation' if n<=19 else 'services/catalog' if n==20 else 'services/package' if n<=24 else 'services/purchase' if n<=30 else 'services/booking' if n<=37 else 'services/intake' if n<=42 else 'services/device-check' if n<=46 else 'services/preparation' if n<=50 else 'services/appointment' if n<=52 else 'services/room'
+    parent='mom/home' if n in [1,11,31,38,43] else 'mom/knowledge' if n==2 else 'agent/home' if n==3 else 'mom/lactation' if n<=19 else 'services/catalog' if n==20 else 'services/package' if n<=24 else 'services/purchase' if n<=30 else 'services/booking' if n<=37 else 'services/intake' if n<=42 else 'services/device-check' if n<=46 else 'services/preparation' if n<=50 else 'services/appointment' if n<=52 else 'services/room'
     canonical=next(e for e in entries if e['id']==parent)
     add(group+'/state-'+v['id'],v['name'],comp,canonical['implementation'],canonical['route'],'state',
         'me-ui-optimization/05-validation/'+v['file'],v['trigger'],
@@ -290,7 +286,6 @@ related = {
     'common/pdf': ['lib/features/media/presentation/pdf_document_toolbar.dart'],
     'common/loading': ['lib/shared/widgets/momcozy_components.dart'],
     'common/success': ['lib/modules/mom/presentation/lactation_panel.dart', 'lib/shared/design_system/momcozy_theme.dart'],
-    'common/confirm': ['lib/modules/mom/presentation/mother_diary_editor.dart'],
     'common/input': ['lib/shared/widgets/date_time_picker.dart', 'lib/shared/widgets/zoned_datetime_field.dart', 'lib/shared/design_system/momcozy_theme.dart'],
     'common/theme': ['lib/shared/design_system/momcozy_design_system.dart', 'lib/shared/design_system/momcozy_motion.dart', 'lib/shared/design_system/momcozy_text_roles.dart', 'lib/shared/widgets/momcozy_line_icon.dart', 'lib/shared/widgets/warm_editor_header.dart'],
     'services/purchase': ['lib/shared/widgets/product_flow_dialog.dart'],
@@ -302,7 +297,6 @@ related = {
     'services/summary': ['lib/modules/services/presentation/consultation_summary_content.dart'],
     'services/appointment': ['lib/modules/services/presentation/appointment_detail_card.dart', 'lib/modules/services/presentation/appointment_cancel_dialog.dart'],
     'mom/home': ['lib/modules/services/presentation/expert_support_section.dart', 'lib/modules/mom/presentation/mother_status_card.dart'],
-    'mom/diary-rest': ['lib/modules/mom/presentation/diary_fields.dart'],
     'mom/lactation': ['lib/modules/mom/presentation/lactation_page.dart', 'lib/modules/mom/presentation/lactation_chart.dart'],
     'baby/home': ['lib/modules/baby/presentation/baby_overview_cards.dart', 'lib/modules/baby/presentation/baby_saved_feedback.dart'],
     'baby/feeding-saved': ['lib/modules/baby/presentation/baby_saved_feedback.dart'],

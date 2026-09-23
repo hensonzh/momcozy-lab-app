@@ -1,106 +1,99 @@
-# Flutter Generated Client Compatibility
+# Flutter Product Backend API Compatibility
 
-Flutter app code treats the Product Backend and independent Agent Runtime
-OpenAPI contracts as separate sources of truth. The legacy raw response
-contracts are not compatibility targets.
+Flutter Product repositories treat `docs/openapi.generated.json` as the Product
+Backend source of truth. Agent conversation and streaming APIs are generated
+from the independently deployed Agent Runtime contract, not this repository.
 
-## Source Of Truth
+## Product Sources
 
-- Product Backend schema: `product.openapi.generated.json`
-- Agent Runtime schema: `agent-runtime.openapi.generated.json`
-- Handoff: `api-contract-handoff.md`
-- Smoke flows: `flutter-smoke-flows.json`
+- Schema: `docs/openapi.generated.json`
+- Handoff: `docs/api-contract-handoff.md`
+- Smoke flows: `docs/flutter-smoke-flows.json`
+
+Flutter must consume only operations marked `public_app_api`. It must not call
+`internal_service_api`, `admin_ops_api`, or `infra_probe_api` operations.
 
 ## Regeneration Rule
 
-Regenerate or validate Flutter API clients whenever a PR changes:
+Regenerate or validate the Product typed client whenever a change affects:
 
 - request or response schemas
 - path or method names
-- auth/session token contracts
-- error envelope shape
-- `Idempotency-Key` usage
-- agent event/action schemas
-- Agent Runtime pattern values
-- file upload multipart fields
-- voice/transcription endpoint contracts and `VOICE_PROVIDER` behavior
+- authentication or session tokens
+- the stable error envelope
+- `Idempotency-Key` behavior
+- file-upload multipart fields
+- voice or vision contracts
 
-The owning backend must export and compare its OpenAPI document before either
-snapshot is replaced. App CI validates the committed snapshots and their
-service boundary; it does not silently treat either backend's moving `main`
-branch as the client release contract.
+CI must fail when the committed Product Backend OpenAPI snapshot drifts from the
+application schema.
 
 ## Compatibility Policy
 
-Backward-compatible changes:
+Backward-compatible changes include adding optional fields with safe defaults
+and adding new endpoints. Adding enum values is compatible only when deployed
+clients already handle unknown values.
 
-- adding optional response fields
-- adding optional request fields with safe defaults
-- adding new endpoints
-- adding enum values only when clients already handle unknown values
-
-Breaking changes:
-
-- removing or renaming fields
-- changing field types
-- changing required fields
-- changing path/method names
-- moving tokens into URLs
-- changing the error envelope
-- changing agent event names or reducer keys
-- changing the accepted Agent Runtime pattern
-
-Breaking changes need a coordinated app release, compatibility window, or API
-versioning plan.
+Removing or renaming fields, changing types or requiredness, changing
+paths/methods, putting tokens in URLs, or changing the error envelope is
+breaking. Breaking changes require a coordinated app release, compatibility
+window, or API version.
 
 ## Mobile Client Requirements
 
-- Send user auth through `Authorization` headers.
-- Use `MOMCOZY_API_BASE_URL` for Product Backend APIs and
-  `MOMCOZY_AGENT_API_BASE_URL` for every `/v1/agent/*` request.
-- Send `runtime_pattern: proprietary_runtime` when creating an Agent Run.
+- Send user auth through `Authorization: Bearer`.
 - Never put access tokens, refresh tokens, or service keys in URLs.
 - Send refresh tokens only to `POST /v1/auth/refresh`.
-- Use `Idempotency-Key` for retryable writes.
-- Treat `request_id` from error envelopes as the support/debug ID.
-- Consume agent stream events as application events, not provider raw events.
-- Do not add an AG-UI compatibility adapter; legacy AG-UI event names are not
-  part of the production backend contract.
-- Treat transient `message.delta` events as provisional typing UI and replace
-  them with assistant `message.completed.payload.text`.
-- Treat `tool.completed.payload.output_summary` as the only UI-facing tool
-  result summary. Full canonical tool output is runtime/model state and is not
-  exposed to the mobile client.
-- Reconnect agent streams with `after_sequence`; do not replay by parsing text.
-- Persist a minimal, user-scoped Agent Hub snapshot for app restart recovery:
-  `thread_id`, `run_id`, `last_sequence`, rendered event/action state, draft
-  composer state, and the active request. This snapshot is only a UI recovery
-  aid; backend run/message/action ledgers remain authoritative.
-- Merge action events by `action_id`; render `preview_payload` from
-  `action.confirmation_required` and never expect `apply_payload` in streams.
-- After confirming or rejecting an action, continue following the same run with
-  `/v1/agent/runs/{run_id}/stream?after_sequence=<last_sequence>&follow=true`
-  so `action.applied`, `action.failed`, `action.rejected`, and final message
-  events replace local pending states.
-- Treat durable `diary.changed` as a privacy-safe diary invalidation signal;
-  deduplicate it by `event_id` and reload the authoritative daily diary.
-- Schedule reads use `GET /v1/schedule?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD&timezone=IANA`.
-  Personal entries are created, edited, and deleted through `/v1/schedule/personal`;
-  task feedback uses the published care-plan task endpoint. All writes remain
-  owner-scoped and use the returned timestamp/version for conflict handling.
-- Treat `voice_provider_disabled` as a stable unavailable-state response for
-  voice UI; do not fall back to legacy realtime voice endpoints.
+- Use `Idempotency-Key` for retryable Product writes and preserve it across
+  retries.
+- Treat `request_id` from the error envelope as the Product support/debug ID.
+- Never send `X-Service-Key` or call `/v1/internal/agent/*` from Flutter.
+- Keep the Product and Runtime base URLs and generated clients separate.
+- Keep Schedule state authoritative through `GET /v1/schedule` and refetch
+  after personal-entry or Care Plan task writes.
+- Personal schedule writes use `Idempotency-Key` on create and
+  `expected_updated_at` on update/delete. Care Plan task feedback uses the
+  publication id, stable task source key, and `expected_version`.
+- The legacy `/v1/plans` operations are deprecated and are
+  not valid Flutter client dependencies.
+- Treat `voice_provider_disabled` and `vision_provider_disabled` as stable
+  unavailable states. Do not fall back to retired endpoints.
+- Treat Product `file_id` as attachment identity. Signed object URLs are
+  temporary transport values and must not become cache keys or durable IDs.
+
+## Agent UI Boundary
+
+The Flutter Agent base URL points to the independently deployed Agent Runtime,
+not the Product Backend API. The Agent UI authenticates there with the same
+Product-issued access token. Product publishes the verification key through
+`GET /.well-known/jwks.json`, and the token includes the Runtime audience.
+
+Conversation threads, runs, stream replay, confirmation UI, reducer event names,
+and reconnect cursors are Runtime contracts. Their schemas, smoke fixtures, and
+compatibility policy must be sourced from the Runtime repository. Product
+OpenAPI intentionally exposes none of those routes.
+
+The default Cozymate entry discovers owned threads with `GET /v1/agent/threads`
+and reads one owner-scoped transcript page with
+`GET /v1/agent/threads/{thread_id}/history?limit=20`. Older pages use the
+exclusive `before_sequence` cursor. The client keeps messages chronological,
+deduplicates by durable message identity, and treats the Runtime ledger as
+authoritative. Local secure state is a recoverability cache for the rendered
+transcript, draft and attachment references, current run cursor, pagination
+cursor. On every entry the client refreshes the current thread, or discovers
+the latest owned thread when none is selected, and positions the transcript at
+the latest content. New replies do not force-scroll while the user is manually
+browsing older messages during the current visit.
 
 ## Release Checklist
 
-1. Export OpenAPI.
-2. Regenerate or validate the Flutter typed client.
-3. Run Flutter smoke flows against test.
-4. Verify no token appears in URLs or crash logs.
-5. Verify retryable writes preserve idempotency keys across app retries.
-6. Verify agent event reducers use stable IDs such as `run_id`, `event_id`,
-   `message_id`, `tool_call_id`, and `action_id`.
-7. Verify voice UI handles `voice_provider_disabled` without token URLs.
-8. Verify `waiting_for_confirmation` can recover after app restart and action
-   confirmation resumes the original run stream.
-9. Record backend schema version and Flutter build version in the release note.
+1. Export Product Backend OpenAPI.
+2. Regenerate or validate the Product typed client.
+3. Run `docs/flutter-smoke-flows.json` against test.
+4. Verify no credential appears in URLs or crash logs.
+5. Verify retryable Product writes preserve idempotency keys.
+6. Verify Flutter has no dependency on `/v1/internal/agent/*`.
+7. Validate the separately generated Runtime client against the deployed
+   Runtime contract.
+8. Record Product Backend schema, Runtime schema, and Flutter build versions in the
+   release note.

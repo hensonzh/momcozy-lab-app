@@ -131,6 +131,15 @@
         },
         {
           "method": "GET",
+          "path": "/v1/agent/threads/${thread_id}/history?limit=20",
+          "headers": ["${auth_header}"],
+          "assertions": [
+            "returns only the authenticated owner conversation",
+            "items are chronological and next_before_sequence pages backward"
+          ]
+        },
+        {
+          "method": "GET",
           "path": "/v1/agent/runs/${run_id}/events",
           "headers": ["${auth_header}"]
         },

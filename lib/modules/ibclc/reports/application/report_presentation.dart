@@ -17,7 +17,6 @@ const reportStateLabels = <CareReportState, String>{
 const reportSourceLabels = <CareReportSourceKind, String>{
   CareReportSourceKind.dialogue: '服务对话',
   CareReportSourceKind.intake: '咨询前资料',
-  CareReportSourceKind.motherDiary: '妈妈日记',
   CareReportSourceKind.lactation: '泌乳记录',
   CareReportSourceKind.carePlan: '已发布方案',
   CareReportSourceKind.babyRecord: '宝宝记录',

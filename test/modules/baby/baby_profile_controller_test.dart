@@ -10,7 +10,7 @@ class Profiles implements BabyProfileRepository {
   ProductFailure? nextFailure;
   @override
   Future<List<BabyProfile>> list() async => const [
-    BabyProfile(id: 'baby', name: '更新后的名字', version: 3),
+    BabyProfile(id: 'baby', name: '更新后的名字', sex: BabySex.female, version: 3),
   ];
   @override
   Future<BabyProfile> save(
@@ -36,7 +36,7 @@ class Profiles implements BabyProfileRepository {
 
 void main() {
   test(
-    'uncertain creation freezes the exact draft and retries with the same key',
+    'failed creation retains its draft and unchanged retries use the same key',
     () async {
       final repo = Profiles()
         ..nextFailure = const ProductFailure(ProductFailureKind.unavailable);
@@ -46,11 +46,11 @@ void main() {
         now: () => DateTime.utc(2026, 9, 8, 14, 30),
       );
       controller.setName('Luna');
+      controller.setSex(BabySex.female);
       controller.setBirthDate(LocalDate(2026, 9, 9));
       expect(await controller.save(), isNull);
       expect(controller.uncertain, isTrue);
-      controller.setName('Milo');
-      expect(controller.name, 'Luna');
+      expect(controller.editable, isTrue);
       final saved = await controller.save();
       expect(saved!.name, 'Luna');
       expect(repo.keys[0], repo.keys[1]);
@@ -67,7 +67,13 @@ void main() {
         repository: repo,
         timezone: 'UTC',
         now: () => DateTime.utc(2026, 9, 8),
-        initial: const BabyProfile(id: 'baby', name: '旧名字', version: 1),
+        initial: const BabyProfile(
+          id: 'baby',
+          name: '旧名字',
+          sex: BabySex.female,
+          version: 1,
+        ),
+        deliveryDate: LocalDate(2026, 8, 22),
       );
       controller.setName('本次修改');
       expect(await controller.save(), isNull);

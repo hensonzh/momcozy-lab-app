@@ -42,17 +42,35 @@ Future<void> verifyAgentConversation(
     ),
   );
   await tester.pumpAndSettle();
-  await tester.runAsync(
-    () => precacheImage(
-      const AssetImage(MomCozyAssets.agentAvatar),
-      tester.element(find.byType(Scaffold)),
-    ),
-  );
+  final imageContext = tester.element(find.byType(Scaffold));
+  final images = <ImageProvider>{
+    const AssetImage(MomCozyAssets.agentAvatar),
+    for (final image in tester.widgetList<Image>(find.byType(Image))) image.image,
+  };
+  await tester.runAsync(() async {
+    await Future.wait(images.map((image) => precacheImage(image, imageContext)));
+  });
   await tester.pumpAndSettle();
   expect(client.requests, isEmpty);
   await capture('home');
   final input = find.byKey(const ValueKey('agent-composer-input'));
   final retry = find.byKey(const ValueKey('agent-retry-button'));
+  final welcome = agentHubGreetingForProfile(
+    const AgentHubGreetingProfile(displayName: 'Mia', age: 30),
+  );
+  Future<void> captureConversation(String state) async {
+    final messages = tester
+        .widget<AgentHubHistorySliver>(find.byType(AgentHubHistorySliver))
+        .messages;
+    expect(messages.first.role, AgentHubHistoryRole.assistant);
+    expect(messages.first.content, welcome);
+    expect(messages.first.runState, isNull);
+    expect(messages.where((message) => message.content == welcome), hasLength(1));
+    expect(messages[1].role, AgentHubHistoryRole.user);
+    expect(messages[1].content, '这是一条仅用于本地视觉检查的消息。');
+    await capture(state);
+  }
+
   Future<void> frame() async {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
@@ -81,7 +99,7 @@ Future<void> verifyAgentConversation(
     findsOneWidget,
   );
   await showRetry();
-  await capture('disconnected-empty');
+  await captureConversation('disconnected-empty');
   await tester.tap(retry);
   await frame();
   expect(client.requests, hasLength(2));
@@ -91,12 +109,12 @@ Future<void> verifyAgentConversation(
   client.emit(1, 'run.started', 1, {});
   client.emit(1, 'message.delta', 2, {'text': '这是本地视觉测试回复，不包含健康判断。'});
   await frame();
-  await capture('streaming');
+  await captureConversation('streaming');
   client.emit(1, 'message.completed', 3, {'text': '这是本地视觉测试回复，不包含健康判断。'});
   client.emit(1, 'run.completed', 4, {});
   await tester.pumpAndSettle();
   expect(retry, findsNothing);
-  await capture('reply');
+  await captureConversation('reply');
   await send('再检查一次失败后的输入。');
   expect(client.requests, hasLength(3));
   client.emit(2, 'run.failed', 1, {
@@ -112,7 +130,7 @@ Future<void> verifyAgentConversation(
   expect(retry, findsNothing);
   expect(tester.widget<TextField>(input).enabled, isNot(false));
   expect(tester.widget<TextField>(input).controller!.text, '再检查一次失败后的输入。');
-  await capture('terminal-error');
+  await captureConversation('terminal-error');
   await send('继续检查断线恢复。');
   expect(client.requests, hasLength(4));
   expect(client.requests.last.runId, isNull);
@@ -144,7 +162,7 @@ Future<void> verifyAgentConversation(
   );
   expect(partial.style?.color, MomHomeTokens.ink);
   await showRetry();
-  await capture('disconnected-partial');
+  await captureConversation('disconnected-partial');
   await tester.tap(retry);
   await frame();
   expect(client.requests, hasLength(5));
@@ -157,7 +175,7 @@ Future<void> verifyAgentConversation(
   client.emit(4, 'run.completed', 4, {}, run: 3);
   await tester.pumpAndSettle();
   expect(retry, findsNothing);
-  await capture('resumed');
+  await captureConversation('resumed');
   expect(client.requests, hasLength(5));
   await tester.pumpWidget(const SizedBox());
   await tester.pumpAndSettle();

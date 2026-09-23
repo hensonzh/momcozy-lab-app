@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 class AgentHubInteractionSnapshot {
   const AgentHubInteractionSnapshot({
@@ -12,21 +11,20 @@ class AgentHubInteractionSnapshot {
     this.composerText = '',
     this.attachedImages = const <AgentStreamImageInput>[],
     this.attachedFiles = const <AgentStreamFileInput>[],
-    this.autoVoiceEnabled = true,
+    this.pendingAttachmentCleanupIds = const <String>[],
     this.activeRequest,
-    this.localActionStatuses = const <String, String>{},
-    this.formSubmissions = const <String, AgentArtifactFormSubmission>{},
+    this.nextBeforeSequence,
   });
 
+  final int? nextBeforeSequence;
   final AgentStreamRunState runState;
   final List<AgentHubHistorySnapshot> historyMessages;
   final String composerText;
   final List<AgentStreamImageInput> attachedImages;
   final List<AgentStreamFileInput> attachedFiles;
-  final bool autoVoiceEnabled;
+  final List<String> pendingAttachmentCleanupIds;
+
   final AgentStreamRequest? activeRequest;
-  final Map<String, String> localActionStatuses;
-  final Map<String, AgentArtifactFormSubmission> formSubmissions;
 
   bool get hasContent {
     return runState.events.isNotEmpty ||
@@ -38,10 +36,8 @@ class AgentHubInteractionSnapshot {
         composerText.trim().isNotEmpty ||
         attachedImages.isNotEmpty ||
         attachedFiles.isNotEmpty ||
-        activeRequest != null ||
-        localActionStatuses.isNotEmpty ||
-        formSubmissions.isNotEmpty ||
-        !autoVoiceEnabled;
+        pendingAttachmentCleanupIds.isNotEmpty ||
+        activeRequest != null;
   }
 
   bool get hasConversationHistory {
@@ -53,6 +49,7 @@ class AgentHubInteractionSnapshot {
 
   Map<String, Object?> toMap({bool includeImageData = true}) => {
     'runState': runState.toMap(),
+    if (nextBeforeSequence != null) 'nextBeforeSequence': nextBeforeSequence,
     if (historyMessages.any(
       (message) =>
           includeImageData ||
@@ -82,7 +79,8 @@ class AgentHubInteractionSnapshot {
       ),
     if (attachedFiles.isNotEmpty)
       'attachedFiles': attachedFiles.map(_fileToMap).toList(growable: false),
-    'autoVoiceEnabled': autoVoiceEnabled,
+    if (pendingAttachmentCleanupIds.isNotEmpty)
+      'pendingAttachmentCleanupIds': pendingAttachmentCleanupIds,
     if (activeRequest != null &&
         (includeImageData || activeRequest!.images.every(_hasFileReference)))
       'activeRequest': _requestToPersistenceMap(
@@ -90,13 +88,6 @@ class AgentHubInteractionSnapshot {
         historyMessages,
         includeImageData: includeImageData,
       ),
-    if (localActionStatuses.isNotEmpty)
-      'localActionStatuses': localActionStatuses,
-    if (formSubmissions.values.any((submission) => submission.isSubmitted))
-      'formSubmissions': {
-        for (final entry in formSubmissions.entries)
-          if (entry.value.isSubmitted) entry.key: entry.value.toMap(),
-      },
   };
 
   static AgentHubInteractionSnapshot fromMap(Map<String, Object?> map) {
@@ -111,10 +102,17 @@ class AgentHubInteractionSnapshot {
       composerText: _string(map['composerText']) ?? '',
       attachedImages: _imagesFromList(map['attachedImages']),
       attachedFiles: _filesFromList(map['attachedFiles']),
-      autoVoiceEnabled: map['autoVoiceEnabled'] != false,
+      pendingAttachmentCleanupIds:
+          (map['pendingAttachmentCleanupIds'] as List? ?? const [])
+              .whereType<String>()
+              .map((id) => id.trim())
+              .where((id) => id.isNotEmpty)
+              .toSet()
+              .toList(growable: false),
       activeRequest: activeRequest,
-      localActionStatuses: _stringMap(map['localActionStatuses']),
-      formSubmissions: _formSubmissionsFromMap(map['formSubmissions']),
+      nextBeforeSequence: map['nextBeforeSequence'] is int
+          ? map['nextBeforeSequence'] as int
+          : null,
     );
   }
 }
@@ -123,11 +121,17 @@ class AgentHubHistorySnapshot {
   const AgentHubHistorySnapshot({
     required this.role,
     required this.content,
+    this.id,
+    this.sequence,
+    this.createdAt,
     this.runState,
     this.images = const <AgentStreamImageInput>[],
     this.files = const <AgentStreamFileInput>[],
   });
 
+  final String? id;
+  final int? sequence;
+  final DateTime? createdAt;
   final String role;
   final String content;
   final AgentStreamRunState? runState;
@@ -136,6 +140,9 @@ class AgentHubHistorySnapshot {
 
   Map<String, Object?> toMap({bool includeImageData = true}) => {
     'role': role,
+    if (id != null) 'id': id,
+    if (sequence != null) 'sequence': sequence,
+    if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
     'content': content,
     if (runState != null) 'runState': runState!.toMap(),
     if (images.any((image) => includeImageData || _hasFileReference(image)))
@@ -158,6 +165,9 @@ class AgentHubHistorySnapshot {
     final runStateValue = map['runState'] ?? map['run_state'];
     return AgentHubHistorySnapshot(
       role: role,
+      id: _string(map['id']),
+      sequence: map['sequence'] is int ? map['sequence'] as int : null,
+      createdAt: DateTime.tryParse(_string(map['createdAt']) ?? ''),
       content: content,
       images: images,
       files: files,
@@ -251,38 +261,6 @@ List<AgentStreamFileInput> _filesFromList(Object? value) {
   return List<AgentStreamFileInput>.unmodifiable(
     value.map(_fileFromMap).whereType<AgentStreamFileInput>(),
   );
-}
-
-Map<String, String> _stringMap(Object? value) {
-  if (value is! Map) return const <String, String>{};
-  final result = <String, String>{};
-  for (final entry in value.entries) {
-    final key = entry.key;
-    final item = entry.value;
-    if (key is String && item is String && key.trim().isNotEmpty) {
-      result[key] = item;
-    }
-  }
-  return Map<String, String>.unmodifiable(result);
-}
-
-Map<String, AgentArtifactFormSubmission> _formSubmissionsFromMap(
-  Object? value,
-) {
-  if (value is! Map) {
-    return const <String, AgentArtifactFormSubmission>{};
-  }
-  final result = <String, AgentArtifactFormSubmission>{};
-  for (final entry in value.entries) {
-    final key = entry.key;
-    final submission = AgentArtifactFormSubmission.tryFromMap(entry.value);
-    if (key is String &&
-        key.trim().isNotEmpty &&
-        submission?.isSubmitted == true) {
-      result[key] = submission!;
-    }
-  }
-  return Map<String, AgentArtifactFormSubmission>.unmodifiable(result);
 }
 
 String? _string(Object? value) => value is String ? value : null;

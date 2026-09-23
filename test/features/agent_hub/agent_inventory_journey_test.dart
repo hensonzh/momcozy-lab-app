@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_message_menu.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
@@ -20,7 +19,6 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.d
 import '../../support/mom_inventory_transport.dart';
 import '../../support/agent_inventory_transport.dart';
 import '../../support/fixture_api_transport.dart';
-import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -77,7 +75,7 @@ void main() {
       MomCozyApiRuntime(
         jsonTransport: transport,
         multipartTransport: FixtureApiMultipartTransport({}),
-        agentVoicePlaybackPlayer: ImmediateAgentVoicePlaybackPlayer(),
+
         session: session,
         supportsSessionAutoRefresh: false,
         now: () => inventoryMomNow,
@@ -90,7 +88,7 @@ void main() {
       initialLocation: '/more',
       runtimeController: runtime,
       sessionStore: store,
-      agentHubBuilder: (context, uri, extra, voice) {
+      agentHubBuilder: (context, uri, extra) {
         final api = MomCozyRuntimeScope.of(context);
         return AgentHubPage(
           key: const ValueKey('inventory-agent-page'),
@@ -113,14 +111,11 @@ void main() {
               api.agentHubProfileRepository.fetchGreetingProfile,
           requestBuilder: (message) =>
               buildSessionAgentHubRequest(message, session: api.currentSession),
-          voicePlaybackCoordinator: voice,
-          voicePlaybackPlayer: api.agentVoicePlaybackPlayer,
+
           mediaRepository: api.mediaRepository,
           pickImage: api.agentHubImagePicker,
           pickDocument: api.agentHubDocumentPicker,
           onApplicationEvent: api.handleAgentApplicationEvent,
-          onArtifactAction: (action) =>
-              dispatchAgentArtifactAction(context, action),
         );
       },
     );
@@ -263,22 +258,7 @@ void main() {
     await frame(tester);
   }
 
-  Future<void> openMessageMenu(WidgetTester tester, Finder markdown) async {
-    final gesture = find
-        .descendant(
-          of: find.ancestor(
-            of: markdown,
-            matching: find.byType(AgentMessageMenu),
-          ),
-          matching: find.byType(GestureDetector),
-        )
-        .first;
-    await tester.ensureVisible(gesture);
-    await tester.longPress(gesture);
-    await frame(tester);
-  }
-
-  testWidgets('inventory agent default home controls and draft reset', (
+  testWidgets('inventory agent default home controls and draft retention', (
     tester,
   ) async {
     await mount(tester);
@@ -291,10 +271,12 @@ void main() {
       'home',
       'More → Cozymate; default history entry disabled',
     );
-    await tap(tester, find.byKey(const ValueKey('agent-auto-voice-button')));
-    await capture(tester, 'voice-off', 'Toggle automatic voice off');
-    await tap(tester, find.byKey(const ValueKey('agent-auto-voice-button')));
-    await capture(tester, 'voice-on', 'Toggle automatic voice on');
+    await tester.runAsync(
+      () => precacheImage(
+        const AssetImage('assets/images/cozymate_attachment_camera.png'),
+        tester.element(find.byType(AgentComposerBar)),
+      ),
+    );
     await tap(tester, find.byKey(const ValueKey('agent-attachment-button')));
     await capture(
       tester,
@@ -305,25 +287,9 @@ void main() {
     await frame(tester);
     await tester.enterText(input, 'Inventory draft not sent');
     await capture(tester, 'draft', 'Enter unsent composer draft');
-    await tap(tester, find.byTooltip('新建会话'));
-    expect(tester.widget<TextField>(input).controller!.text, isEmpty);
-    expect(transport.requests, isEmpty);
-    await capture(
-      tester,
-      'draft-reset',
-      'New conversation → unsent draft cleared without prompt',
-    );
-    await tester.longPress(find.byTooltip('新建会话'));
-    await capture(
-      tester,
-      'new-tooltip',
-      'Long press new conversation → tooltip',
-    );
   });
 
-  testWidgets('inventory agent real reply message copy and tab retention', (
-    tester,
-  ) async {
+  testWidgets('inventory agent real reply and tab retention', (tester) async {
     await mount(tester);
     const question = 'Local inventory message';
     const answer = '**Inventory reply**\n\nThis is isolated test content.';
@@ -338,42 +304,8 @@ void main() {
     transport.emit(0, 'message.delta', 2, {'text': '**Inventory reply**'});
     await frame(tester);
     await capture(tester, 'streaming', 'Receive SSE delta → live response');
-    expect(
-      tester
-          .widget<IconButton>(
-            find.byKey(const ValueKey('agent-new-session-button')),
-          )
-          .onPressed,
-      isNull,
-    );
     await finish(tester, 0, answer, first: 3);
     await capture(tester, 'reply', 'SSE completion → final Markdown response');
-    await tester.ensureVisible(find.text(question));
-    await tester.longPress(find.text(question));
-    await frame(tester);
-    await capture(
-      tester,
-      'user-menu',
-      'Long press submitted user message → copy menu',
-    );
-    await tap(tester, find.text('复制'));
-    expect((await Clipboard.getData('text/plain'))?.text, question);
-    await capture(tester, 'user-copied', 'Copy → clipboard and snackbar');
-    await tester.pump(const Duration(seconds: 5));
-    await openMessageMenu(tester, find.byType(AgentMarkdownText).last);
-    await capture(
-      tester,
-      'assistant-menu',
-      'Long press final answer → message menu',
-    );
-    await tap(tester, find.text('复制'));
-    expect((await Clipboard.getData('text/plain'))?.text, answer);
-    await capture(
-      tester,
-      'assistant-copied',
-      'Copy answer → raw Markdown retained in clipboard',
-    );
-    await tester.pump(const Duration(seconds: 5));
     await tap(tester, find.text('More'));
     await capture(
       tester,
@@ -387,13 +319,6 @@ void main() {
       tester,
       'tab-return',
       'Return to Cozymate → existing exchange retained',
-    );
-    await tap(tester, find.byTooltip('新建会话'));
-    expect(find.text(question), findsNothing);
-    await capture(
-      tester,
-      'new-conversation',
-      'New conversation → exchange cleared and greeting restored',
     );
   });
 
@@ -446,14 +371,8 @@ void main() {
         tester.widget<TextField>(input).controller!.text,
         'Next unsent draft',
       );
-      await openMessageMenu(tester, find.byType(AgentMarkdownText).last);
-      await capture(
-        tester,
-        'partial-menu',
-        'Long press disconnected answer → copy and retry menu',
-      );
       transport.failConnections = false;
-      await tap(tester, find.byKey(const ValueKey('agent-message-retry')));
+      await tap(tester, retry);
       final resumed = transport.requests.length - 1;
       expect(transport.requests.last.runId, 'inventory-run-$first');
       expect(transport.requests.last.afterSequence, 2);
@@ -518,65 +437,8 @@ void main() {
         '$tag-finished',
         'Cancellation status ${transport.cancelStatus} → local result',
       );
-      await tap(tester, find.byTooltip('新建会话'));
-      await capture(
-        tester,
-        '$tag-new',
-        'New conversation after local stop → greeting',
-      );
     });
   }
-
-  testWidgets(
-    'inventory agent message menu dismissal copy failure and recovery',
-    (tester) async {
-      await mount(tester);
-      await send(tester, 'Check local message actions');
-      await finish(tester, 0, 'A completed local response.');
-      await openMessageMenu(tester, find.byType(AgentMarkdownText).last);
-      // Actual shell route currently has no NavigatorState for this branch.
-      // Preserve the observed product failure instead of claiming back works.
-      expect(await tester.binding.handlePopRoute(), isFalse);
-      expect(tester.takeException(), isA<TypeError>());
-      expect(find.byKey(const ValueKey('agent-message-copy')), findsOneWidget);
-      await capture(
-        tester,
-        'menu-system-back-failed',
-        'System back → GoRouter null NavigatorState error; message menu remains',
-      );
-      await tester.tapAt(const Offset(20, 200));
-      await frame(tester);
-      expect(find.byKey(const ValueKey('agent-message-copy')), findsNothing);
-      await capture(
-        tester,
-        'menu-dismissed',
-        'Tap outside message menu → same conversation',
-      );
-      await openMessageMenu(tester, find.byType(AgentMarkdownText).last);
-      failClipboard = true;
-      await tap(tester, find.text('复制'));
-      expect(find.text('复制失败，请重试'), findsOneWidget);
-      await capture(
-        tester,
-        'copy-failed',
-        'Copy with unavailable platform clipboard → failure snackbar',
-      );
-      await tester.pump(const Duration(seconds: 5));
-      await frame(tester);
-      failClipboard = false;
-      await openMessageMenu(tester, find.byType(AgentMarkdownText).last);
-      await tap(tester, find.text('复制'));
-      expect(
-        (await Clipboard.getData('text/plain'))?.text,
-        'A completed local response.',
-      );
-      await capture(
-        tester,
-        'copy-recovered',
-        'Reopen message menu and copy → success snackbar',
-      );
-    },
-  );
 
   for (final width in [393.0, 320.0]) {
     testWidgets('inventory agent long response and manual follow-up $width', (
@@ -626,13 +488,6 @@ void main() {
         tester,
         'long-followup-completed',
         'Second response completes → two exchanges retained',
-      );
-      await tap(tester, find.byTooltip('新建会话'));
-      expect(find.text('Review entries'), findsNothing);
-      await capture(
-        tester,
-        'long-reset',
-        'New conversation after long exchange → fresh greeting',
       );
     });
   }

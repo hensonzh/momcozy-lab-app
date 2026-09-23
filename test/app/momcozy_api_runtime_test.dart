@@ -7,9 +7,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/voice_api.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
@@ -129,15 +127,6 @@ void main() {
     expect(runtime.mediaRepository, isA<MediaApiRepository>());
     expect(runtime.mediaContentRepository, isA<MediaContentRepository>());
     expect(runtime.productAssetRepository, isA<ProductAssetRepository>());
-    expect(runtime.agentVoiceRepository, isA<AgentVoiceApiRepository>());
-    expect(
-      runtime.agentVoicePlaybackPlayer,
-      isA<AgentVoiceApiPlaybackPlayer>(),
-    );
-    expect(
-      runtime.agentVoicePlaybackPlayer,
-      same(runtime.agentVoicePlaybackPlayer),
-    );
   });
 
   test('runtime exposes an injected multipart transport lazily', () async {
@@ -321,39 +310,6 @@ void main() {
     );
     controller.dispose();
   });
-
-  test(
-    'runtime controller does not carry an internal voice player to another user',
-    () {
-      final runtime = MomCozyApiRuntime.fromSession(
-        const MomCozySession(
-          status: MomCozySessionStatus.authenticated,
-          userId: 'first-user',
-          babyId: 'first-baby',
-          locale: 'zh-CN',
-          accessToken: 'first-access',
-        ),
-      );
-      final firstPlayer = runtime.agentVoicePlaybackPlayer;
-      final controller = MomCozyRuntimeController(runtime);
-
-      controller.replaceSession(
-        const MomCozySession(
-          status: MomCozySessionStatus.authenticated,
-          userId: 'second-user',
-          babyId: 'second-baby',
-          locale: 'zh-CN',
-          accessToken: 'second-access',
-        ),
-      );
-
-      expect(
-        controller.runtime.agentVoicePlaybackPlayer,
-        isNot(same(firstPlayer)),
-      );
-      controller.dispose();
-    },
-  );
 
   test('runtime controller keeps auto-refresh transports across sessions', () {
     final observability = MomCozyObservability();

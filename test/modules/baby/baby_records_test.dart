@@ -33,7 +33,9 @@ void main() {
           .toList();
       expect(
         records.map((r) => r.recordKind).toSet(),
-        BabyRecordKind.values.toSet(),
+        BabyRecordKind.values
+            .where((kind) => kind != BabyRecordKind.dailyStatus)
+            .toSet(),
       );
       final growth = records.whereType<BabyGrowthRecord>().single;
       expect(growth.recordedOn, LocalDate(2026, 9, 1));

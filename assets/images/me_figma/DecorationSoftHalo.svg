@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="249" height="222" viewBox="0 0 249 222" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse id="decoration/soft-halo" cx="124.5" cy="111" rx="124.5" ry="111" fill="url(#paint0_linear_0_6)"/>
+<defs>
+<linearGradient id="paint0_linear_0_6" x1="14.94" y1="37.74" x2="197.209" y2="191.067" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FAE3E8" stop-opacity="0.7"/>
+<stop offset="1" stop-color="#E0D9F7" stop-opacity="0.6"/>
+</linearGradient>
+</defs>
+</svg>

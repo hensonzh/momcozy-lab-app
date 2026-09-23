@@ -23,6 +23,58 @@ class AgentAttachmentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final largeText = MediaQuery.textScalerOf(context).scale(14) > 20;
+    if (largeText) return _buildLargeTextTile(context);
+
+    return SizedBox(
+      width: 64,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: ColoredBox(
+                  color: const Color(0xFFF5E7ED),
+                  child: SizedBox.square(dimension: 64, child: preview),
+                ),
+              ),
+              Positioned(
+                top: -1,
+                right: -1,
+                child: IconButton(
+                  key: removeButtonKey,
+                  onPressed: onRemove,
+                  tooltip: '$removeLabel $name',
+                  icon: const Icon(Icons.close_rounded, size: 18),
+                  color: MomHomeTokens.rose,
+                  style: IconButton.styleFrom(
+                    backgroundColor: MomHomeTokens.surface,
+                    minimumSize: const Size.square(24),
+                    maximumSize: const Size.square(24),
+                    fixedSize: const Size.square(24),
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLargeTextTile(BuildContext context) {
     final thumbnail = ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: ColoredBox(
@@ -53,25 +105,15 @@ class AgentAttachmentTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: MomHomeTokens.border),
       ),
-      child: largeText
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(children: [thumbnail, const Spacer(), remove]),
-                const SizedBox(height: 8),
-                metadata,
-              ],
-            )
-          : Row(
-              children: [
-                thumbnail,
-                const SizedBox(width: 10),
-                Expanded(child: metadata),
-                const SizedBox(width: 10),
-                remove,
-              ],
-            ),
+      child: Row(
+        children: [
+          thumbnail,
+          const SizedBox(width: 10),
+          Expanded(child: metadata),
+          const SizedBox(width: 10),
+          remove,
+        ],
+      ),
     );
   }
 }

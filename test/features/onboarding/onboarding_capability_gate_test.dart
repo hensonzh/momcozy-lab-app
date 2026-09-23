@@ -4,12 +4,11 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/config/momcozy_app_capabilities.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/modules/baby/presentation/baby_home_page.dart';
-import 'package:momcozy_flutter_app/modules/mom/presentation/mother_home_page.dart';
+import 'package:momcozy_flutter_app/modules/mom/presentation/me_home_page.dart';
 import 'package:momcozy_flutter_app/modules/schedule/presentation/schedule_page.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -32,7 +31,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(fixture.transport.getPaths, isNot(contains(onboardingMeEndpoint)));
-    expect(find.byType(MotherHomePage), findsOneWidget);
+    expect(find.byType(MeHomePage), findsOneWidget);
     expect(find.byKey(const ValueKey('bottom-nav-me')), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox.shrink());
@@ -142,7 +141,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(router.routeInformationProvider.value.uri.path, '/me');
-        expect(find.byType(MotherHomePage), findsOneWidget);
+        expect(find.byType(MeHomePage), findsOneWidget);
         expect(find.byType(MomCozyAuthPage), findsNothing);
 
         await tester.pumpWidget(const SizedBox.shrink());
@@ -182,7 +181,7 @@ void main() {
         );
         expect(
           initialLocation == '/me'
-              ? find.byType(MotherHomePage)
+              ? find.byType(MeHomePage)
               : initialLocation == '/baby'
               ? find.byType(BabyHomePage)
               : find.byType(SchedulePage),
@@ -197,12 +196,7 @@ void main() {
   }
 }
 
-Widget _agentHubBuilder(
-  BuildContext context,
-  Uri? uri,
-  Object? extra,
-  AgentVoicePlaybackCoordinator voicePlaybackCoordinator,
-) {
+Widget _agentHubBuilder(BuildContext context, Uri? uri, Object? extra) {
   return const SizedBox(key: ValueKey('test-agent-hub'));
 }
 

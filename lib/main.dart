@@ -6,7 +6,6 @@ import 'app/momcozy_api_runtime.dart';
 import 'core/config/momcozy_app_capabilities.dart';
 import 'core/network/test_certificate_trust.dart';
 import 'core/update/app_release_lifecycle.dart';
-import 'features/agent_hub/data/card_export.dart';
 import 'features/media/data/product_asset_file_cache.dart';
 
 Future<void> main() async {
@@ -35,8 +34,5 @@ String _releaseId(PackageInfo packageInfo) {
 }
 
 Future<void> _clearAccountFileCaches() async {
-  await Future.wait([
-    ProductAssetFileCache().clear(),
-    const PlatformAgentCardExportService().clear(),
-  ]);
+  await Future.wait([ProductAssetFileCache().clear()]);
 }

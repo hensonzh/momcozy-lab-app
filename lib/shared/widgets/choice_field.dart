@@ -123,7 +123,7 @@ class ChoiceField<T extends Enum> extends StatelessWidget {
         fontWeight: FontWeight.w600,
         color: style == ChoiceFieldStyle.chips
             ? MomCozyColors.foreground
-            : MomCozyColors.diaryInk,
+            : MomCozyColors.warmEditorInk,
       ),
     );
     if (hint == null) return label;
@@ -137,7 +137,7 @@ class ChoiceField<T extends Enum> extends StatelessWidget {
           style: const TextStyle(
             fontSize: 11,
             height: 1.8,
-            color: MomCozyColors.diaryMuted,
+            color: MomCozyColors.warmEditorMuted,
           ),
         ),
       ],
@@ -300,19 +300,19 @@ class ChoiceField<T extends Enum> extends StatelessWidget {
                         backgroundColor: selected.contains(entry.key)
                             ? segmented
                                   ? MomCozyColors.warmFormSelected
-                                  : MomCozyColors.diarySelection
+                                  : MomCozyColors.warmEditorSelection
                             : segmented
                             ? Colors.transparent
                             : MomCozyColors.warmFormField,
                         foregroundColor:
                             selected.contains(entry.key) && segmented
-                            ? MomCozyColors.diaryBright
-                            : MomCozyColors.diaryMuted,
+                            ? MomCozyColors.warmEditorBright
+                            : MomCozyColors.warmEditorMuted,
                         side: BorderSide(
                           color: segmented
                               ? Colors.transparent
                               : selected.contains(entry.key)
-                              ? MomCozyColors.diarySelectionBorder
+                              ? MomCozyColors.warmEditorSelectionBorder
                               : MomCozyColors.warmFormBorder,
                           width: selected.contains(entry.key) && !segmented
                               ? 2

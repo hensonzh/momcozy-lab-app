@@ -16,7 +16,6 @@ import '../../support/notification_fakes.dart';
 import 'package:momcozy_flutter_app/features/notifications/presentation/notification_coordinator.dart';
 import 'package:momcozy_flutter_app/features/notifications/presentation/notification_permission_controller.dart';
 import '../../support/fixture_api_transport.dart';
-import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -63,7 +62,7 @@ void main() {
       MomCozyApiRuntime(
         jsonTransport: transport,
         multipartTransport: FixtureApiMultipartTransport({}),
-        agentVoicePlaybackPlayer: ImmediateAgentVoicePlaybackPlayer(),
+
         session: session,
         supportsSessionAutoRefresh: false,
         now: () => inventoryMomNow,

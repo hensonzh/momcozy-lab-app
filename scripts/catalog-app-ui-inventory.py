@@ -63,10 +63,10 @@ def main():
     if re.fullmatch(re.sub(r':[A-Za-z]+','[^/]+',pattern),urlsplit(route).path):return (auth(r,m) if id=='auth-login' else id),'route'
   if 'MomCozyAuthPage' in types:return auth(r,m),'widget'
   # The most specific destination is selected before background/home widgets.
-  priority=['motion','not-found','intake','summary','consultation','appointment','booking','service-package','service-progress','service-renew','service-catalog','notification-settings','notifications','account','privacy','baby-records','mom-lactation','mom-diary','schedule','agent-home','baby-home','mom-home','more','media']
+  priority=['motion','not-found','intake','summary','consultation','appointment','booking','service-package','service-progress','service-renew','service-catalog','notification-settings','notifications','account','privacy','baby-records','mom-lactation','schedule','agent-home','baby-home','mom-home','more','media']
   for id in priority:
    if definitions[id]['widget'] in types:return id,'widget'
-  aliases={'AvatarTaskBanner':'avatar-create','AgentComposerBar':'agent-home','AgentSentFiles':'agent-home','AgentSentImages':'agent-home','AgentResultCard':'agent-home','AgentMessageMenu':'agent-home','ExpertServiceCard':'mom-home','MotherDiaryEditor':'mom-diary','RestFields':'mom-diary','BodyFields':'mom-diary','MoodFields':'mom-diary','LactationPanel':'mom-lactation','BabyProfileEditor':'baby-home','BabyRecordEditor':'baby-home','BabyGrowthCurve':'baby-home','AgentArtifactPanel':'agent-home','AgentArtifactFormDialog':'agent-home','_AgentConversationPanel':'agent-home','ServicePurchaseDialog':'service-package','AppointmentDetailCard':'appointment','ConsultationDeviceCheckDialog':'consultation','ProductAssetVideoPlayer':'media'}
+  aliases={'AvatarTaskBanner':'avatar-create','AgentComposerBar':'agent-home','AgentSentFiles':'agent-home','AgentSentImages':'agent-home','AgentResultCard':'agent-home','AgentMessageMenu':'agent-home','ExpertServiceCard':'mom-home','LactationPanel':'mom-lactation','BabyProfileEditor':'baby-home','BabyRecordEditor':'baby-home','BabyGrowthCurve':'baby-home','AgentArtifactPanel':'agent-home','AgentArtifactFormDialog':'agent-home','_AgentConversationPanel':'agent-home','ServicePurchaseDialog':'service-package','AppointmentDetailCard':'appointment','ConsultationDeviceCheckDialog':'consultation','ProductAssetVideoPlayer':'media'}
   for cls,id in aliases.items():
    if cls in types:return id,'component-owner'
   return 'shared-reference','shared-component-reference'

@@ -1,13 +1,15 @@
 import '../shared/local_date.dart';
 import '../shared/record_deletion.dart';
 
-enum BabyRecordKind { feeding, sleep, diaper, growth, development }
+enum BabyRecordKind { feeding, sleep, diaper, growth, development, dailyStatus }
 
 const babyDevelopmentItems = {
   'looks-at-face': '看向靠近的脸',
   'responds-to-sound': '听到声音后有动作或表情反应',
   'lifts-head': '俯卧时短暂抬起头',
 };
+
+enum BabyMentalState { content, active, crying, drowsy }
 
 enum BabyFeedingMethod { breastfeeding, expressedMilk, formula }
 
@@ -36,6 +38,7 @@ sealed class BabyRecord {
     BabyDiaperRecord() => BabyRecordKind.diaper,
     BabyGrowthRecord() => BabyRecordKind.growth,
     BabyDevelopmentRecord() => BabyRecordKind.development,
+    BabyDailyStatusRecord() => BabyRecordKind.dailyStatus,
   };
 
   Map<String, String> validate(DateTime now) => {
@@ -171,10 +174,14 @@ final class BabyGrowthRecord extends DatedBabyRecord {
     required super.timezone,
     required this.metric,
     required this.value,
+    this.savedAt,
+    this.measurementSource,
     super.version,
   });
   final GrowthMetric metric;
   final double value;
+  final DateTime? savedAt;
+  final String? measurementSource;
   String get unit => metric == GrowthMetric.weight ? 'kg' : 'cm';
   @override
   Map<String, String> validate(DateTime now) => {
@@ -205,6 +212,40 @@ final class BabyDevelopmentRecord extends DatedBabyRecord {
   };
 }
 
+/// One atomic daily form: omitted fields leave the other daily observations intact.
+final class BabyDailyStatusRecord extends DatedBabyRecord {
+  const BabyDailyStatusRecord({
+    required super.id,
+    required super.babyId,
+    required super.recordedOn,
+    required super.timezone,
+    required this.savedAt,
+    this.mentalState,
+    this.wetCount,
+    this.stoolCount,
+    this.color,
+    this.consistency,
+    super.version,
+  });
+  final DateTime savedAt;
+  final BabyMentalState? mentalState;
+  final int? wetCount, stoolCount;
+  final StoolColor? color;
+  final StoolConsistency? consistency;
+  @override
+  Map<String, String> validate(DateTime now) => {
+    ...super.validate(now),
+    if (mentalState == null && wetCount == null && stoolCount == null)
+      'daily': 'required',
+    if (wetCount != null && (wetCount! < 1 || wetCount! > 100))
+      'wet_count': 'out_of_range',
+    if (stoolCount != null && (stoolCount! < 1 || stoolCount! > 100))
+      'stool_count': 'out_of_range',
+    if (stoolCount == null && (color != null || consistency != null))
+      'stool_count': 'required',
+  };
+}
+
 final class BabyDaySummary {
   const BabyDaySummary._({
     required this.feedingCount,
@@ -217,6 +258,7 @@ final class BabyDaySummary {
     required this.nursingMinutes,
     this.latestFeeding,
     this.activeSleep,
+    this.latestMentalState,
   });
 
   factory BabyDaySummary.fromRecords(
@@ -231,9 +273,31 @@ final class BabyDaySummary {
     BabyFeedingRecord? latestFeeding;
     var wet = 0;
     var dirty = 0;
+    BabyMentalState? mental;
+    DateTime? mentalAt, wetAt, stoolAt;
+    int? dailyWet, dailyStool;
     final sleepIntervals = <(DateTime, DateTime)>[];
     BabySleepRecord? active;
     for (final record in records) {
+      if (record is BabyDailyStatusRecord &&
+          record.babyId == babyId &&
+          record.recordedOn == LocalDate.fromDateTime(window.start)) {
+        if (record.mentalState != null &&
+            (mentalAt == null || record.savedAt.isAfter(mentalAt))) {
+          mental = record.mentalState;
+          mentalAt = record.savedAt;
+        }
+        if (record.wetCount != null &&
+            (wetAt == null || record.savedAt.isAfter(wetAt))) {
+          dailyWet = record.wetCount;
+          wetAt = record.savedAt;
+        }
+        if (record.stoolCount != null &&
+            (stoolAt == null || record.savedAt.isAfter(stoolAt))) {
+          dailyStool = record.stoolCount;
+          stoolAt = record.savedAt;
+        }
+      }
       if (record is! TimedBabyRecord ||
           record.babyId != babyId ||
           record.occurredAt.isAfter(now)) {
@@ -292,8 +356,9 @@ final class BabyDaySummary {
     return BabyDaySummary._(
       feedingCount: feedings,
       measuredIntakeMl: intake,
-      wetCount: wet,
-      dirtyCount: dirty,
+      wetCount: dailyWet ?? wet,
+      dirtyCount: dailyStool ?? dirty,
+      latestMentalState: mental,
       sleepDuration: duration,
       sleepCount: sleepIntervals.length,
       longestSleep: sleepIntervals.fold(Duration.zero, (longest, interval) {
@@ -316,6 +381,7 @@ final class BabyDaySummary {
   final int? nursingMinutes;
   final BabyFeedingRecord? latestFeeding;
   final BabySleepRecord? activeSleep;
+  final BabyMentalState? latestMentalState;
 }
 
 final class BabyRecordPage {

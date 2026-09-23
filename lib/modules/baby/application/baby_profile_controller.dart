@@ -11,11 +11,21 @@ class BabyProfileController extends ChangeNotifier {
     required this.timezone,
     required this.now,
     BabyProfile? initial,
+    this.deliveryDate,
   }) : _initial = initial {
     _fill(initial);
   }
   final BabyProfileRepository repository;
   final String timezone;
+  final LocalDate? deliveryDate;
+  BabyProfile? get savedProfile => _initial;
+  bool get canSave =>
+      editable &&
+      dirty &&
+      name.trim().isNotEmpty &&
+      name.trim().runes.length <= 120 &&
+      birthDate != null &&
+      sex != BabySex.unspecified;
   final DateTime Function() now;
   BabyProfile? _initial;
   BabyProfile? _pending;
@@ -26,20 +36,21 @@ class BabyProfileController extends ChangeNotifier {
   late BabySex sex;
   late FeedingMode feedingMode;
   bool busy = false, uncertain = false;
+  bool hasSaved = false;
   String? validation;
   ProductFailure? failure;
-  bool get editable => !busy && !uncertain;
+  bool get editable => !busy;
   bool get isNew => _initial == null;
   LocalDate get today => dateInTimezone(now(), timezone);
   bool get dirty =>
       name != (_initial?.name ?? '') ||
-      birthDate != _initial?.birthDate ||
+      birthDate != (_initial?.birthDate ?? deliveryDate) ||
       sex != (_initial?.sex ?? BabySex.unspecified) ||
       feedingMode != (_initial?.feedingMode ?? FeedingMode.unknown);
 
   void _fill(BabyProfile? value) {
     name = value?.name ?? '';
-    birthDate = value?.birthDate;
+    birthDate = deliveryDate ?? value?.birthDate;
     sex = value?.sex ?? BabySex.unspecified;
     feedingMode = value?.feedingMode ?? FeedingMode.unknown;
   }
@@ -60,7 +71,7 @@ class BabyProfileController extends ChangeNotifier {
   void setFeedingMode(FeedingMode value) => _edit(() => feedingMode = value);
 
   Future<BabyProfile?> save() async {
-    if (busy) return null;
+    if (!canSave) return null;
     validation = name.trim().isEmpty
         ? '请填写宝宝称呼。'
         : name.trim().runes.length > 120
@@ -93,6 +104,7 @@ class BabyProfileController extends ChangeNotifier {
       );
       if (_disposed) return null;
       _initial = saved;
+      hasSaved = true;
       _fill(saved);
       _pending = null;
       uncertain = false;

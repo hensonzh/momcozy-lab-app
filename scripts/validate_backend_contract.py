@@ -42,6 +42,7 @@ REQUIRED_OPENAPI_PATHS = {
     },
     AGENT_RUNTIME_SERVICE: {
         "/v1/agent/threads",
+        "/v1/agent/threads/{thread_id}/history",
         "/v1/agent/runs",
         "/v1/agent/actions/{action_id}",
         "/v1/agent/actions/{action_id}/confirm",
@@ -65,6 +66,10 @@ REQUIRED_QUERY_KEYS = {
         AGENT_RUNTIME_SERVICE,
         "/v1/agent/runs/{run_id}/stream",
     ): {"after_sequence", "follow"},
+    (
+        AGENT_RUNTIME_SERVICE,
+        "/v1/agent/threads/{thread_id}/history",
+    ): {"before_sequence", "limit"},
 }
 FORBIDDEN_QUERY_KEYS = {
     "access_token",

@@ -12,7 +12,7 @@ void main() {
     testWidgets('navigation reference at $width with all selected states', (
       tester,
     ) async {
-      tester.view.physicalSize = Size(width, 390);
+      tester.view.physicalSize = Size(width, 500);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
@@ -39,7 +39,7 @@ void main() {
       expect(tester.takeException(), isNull);
       final bars = find.byKey(const ValueKey('bottom-nav-chrome'));
       for (var index = 0; index < 5; index++) {
-        expect(tester.getSize(bars.at(index)), Size(width, 78));
+        expect(tester.getSize(bars.at(index)), Size(width, 82));
         final navigation = find.byType(MomCozyBottomNavigation).at(index);
         final origin = tester.getTopLeft(navigation);
         for (final label in ['me', 'baby', 'cozymate', 'schedule', 'more']) {
@@ -110,6 +110,12 @@ void main() {
         final initialBar = tester.getRect(
           find.byKey(const ValueKey('bottom-nav-chrome')),
         );
+        final avatar = tester.getRect(
+          find.byKey(const ValueKey('bottom-nav-center-avatar')),
+        );
+        await tester.tapAt(Offset(avatar.center.dx, avatar.top + 3));
+        await tester.pumpAndSettle();
+        expect(find.text('Page: /'), findsOneWidget);
         for (final entry in {
           'Baby': '/baby',
           'Cozymate': '/',

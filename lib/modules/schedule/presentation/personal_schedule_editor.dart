@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'schedule_design.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
 import '../../../shared/design_system/mom_settings_theme.dart';
 import '../../../shared/widgets/mom_settings_widgets.dart';
@@ -32,9 +34,20 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
   late var _date = _initialDate;
   late var _time = widget.existing?.startTime ?? '09:00';
   String _createKey = 'schedule-${DateTime.now().microsecondsSinceEpoch}';
-  bool _busy = false, _uncertain = false, _allowPop = false, _closing = false;
+  bool _busy = false,
+      _allowPop = false,
+      _closing = false,
+      _titleTouched = false;
+  late PersonalScheduleEntry? _workingEntry = widget.existing;
+  ({String title, LocalDate date, String time, String note})? _createAttempt;
+  ({String title, LocalDate date, String time, String note}) get _draft => (
+    title: _title.text.trim(),
+    date: _date,
+    time: _time,
+    note: _note.text.trim(),
+  );
   ProductFailure? _failure;
-  bool get _editable => !_busy && !_uncertain;
+  bool get _editable => !_busy;
   bool get _dirty =>
       _title.text != (widget.existing?.title ?? '') ||
       _note.text != (widget.existing?.note ?? '') ||
@@ -45,10 +58,9 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
     if (_busy || _closing) return;
     _closing = true;
     if (!saved &&
-        (_dirty || _uncertain) &&
+        _dirty &&
         !await confirmDiscard(
           context,
-          uncertainSave: _uncertain,
           theme: momSettingsTheme(Theme.of(context)),
         )) {
       _closing = false;
@@ -68,19 +80,38 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
       _failure = null;
     });
     try {
-      await widget.controller.savePersonal(
-        existing: widget.existing,
-        title: _title.text.trim(),
-        date: _date,
-        startTime: _time,
-        note: _note.text.trim(),
-        idempotencyKey: _createKey,
-      );
+      final draft = _draft;
+      if (_workingEntry == null) {
+        // A retry reuses the original payload and key, even if the user has
+        // edited the retained draft. Apply later edits to the recovered entry.
+        final attempt = _createAttempt ??= draft;
+        _workingEntry = await widget.controller.savePersonal(
+          title: attempt.title,
+          date: attempt.date,
+          startTime: attempt.time,
+          note: attempt.note,
+          idempotencyKey: _createKey,
+        );
+        if (attempt != draft) {
+          _workingEntry = await widget.controller.savePersonal(
+            existing: _workingEntry,
+            title: draft.title,
+            date: draft.date,
+            startTime: draft.time,
+            note: draft.note,
+          );
+        }
+      } else {
+        _workingEntry = await widget.controller.savePersonal(
+          existing: _workingEntry,
+          title: draft.title,
+          date: draft.date,
+          startTime: draft.time,
+          note: draft.note,
+        );
+      }
       if (!mounted) return;
-      setState(() {
-        _busy = false;
-        _uncertain = false;
-      });
+      setState(() => _busy = false);
       await _close(true);
     } catch (error) {
       if (!mounted) return;
@@ -90,10 +121,9 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
       setState(() {
         _busy = false;
         _failure = failure;
-        _uncertain =
-            failure.kind == ProductFailureKind.offline ||
-            failure.kind == ProductFailureKind.unavailable;
-        if (!_uncertain) {
+        if (failure.kind != ProductFailureKind.offline &&
+            failure.kind != ProductFailureKind.unavailable) {
+          _createAttempt = null;
           _createKey = 'schedule-${DateTime.now().microsecondsSinceEpoch}';
         }
       });
@@ -151,9 +181,6 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
 
   @override
   Widget build(BuildContext context) {
-    final stacked =
-        MediaQuery.sizeOf(context).width <= 390 ||
-        MediaQuery.textScalerOf(context).scale(13) > 18;
     final dateField = _ScheduleField(
       label: '日期',
       child: OutlinedButton(
@@ -164,7 +191,11 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
           children: [
             Expanded(child: Text(_date.toString())),
             const SizedBox(width: 8),
-            const Icon(Icons.calendar_today_outlined, size: 16),
+            SvgPicture.asset(
+              'assets/images/schedule_date.svg',
+              width: 16,
+              height: 16,
+            ),
           ],
         ),
       ),
@@ -175,13 +206,7 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
         key: const ValueKey('schedule-time'),
         onPressed: _editable ? _pickTime : null,
         style: _pickerStyle(context),
-        child: Row(
-          children: [
-            Expanded(child: Text(_time)),
-            const SizedBox(width: 8),
-            const Icon(Icons.schedule_outlined, size: 16),
-          ],
-        ),
+        child: Row(children: [Expanded(child: Text(_time))]),
       ),
     );
     return PopScope<bool>(
@@ -190,7 +215,7 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
         if (!didPop) _close();
       },
       child: _ScheduleDialogFrame(
-        title: widget.existing == null ? '添加日程' : '修改日程',
+        title: widget.existing == null ? '添加日程' : '编辑日程',
         onClose: _busy ? null : () => _close(),
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -201,27 +226,24 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
                 key: const ValueKey('schedule-title'),
                 controller: _title,
                 enabled: _editable,
-                autofocus: true,
+                autofocus: false,
                 maxLength: 40,
-                style: const TextStyle(fontSize: 13),
-                onChanged: (_) => setState(() => _failure = null),
-                decoration: _input('例如：宝宝体检'),
+                style: ScheduleDesign.text(13, lineHeight: 18),
+                onChanged: (_) => setState(() {
+                  _failure = null;
+                  _titleTouched = true;
+                }),
+                decoration: _input('例如：宝宝体检').copyWith(
+                  errorText: _titleTouched && _title.text.trim().isEmpty
+                      ? '请填写日程名称'
+                      : null,
+                ),
               ),
             ),
             const SizedBox(height: 14),
-            if (stacked) ...[
-              dateField,
-              const SizedBox(height: 14),
-              timeField,
-            ] else
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(flex: 6, child: dateField),
-                  const SizedBox(width: 10),
-                  Expanded(flex: 4, child: timeField),
-                ],
-              ),
+            dateField,
+            const SizedBox(height: 14),
+            timeField,
             const SizedBox(height: 14),
             _ScheduleField(
               label: '备注',
@@ -233,7 +255,7 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
                 maxLength: 120,
                 minLines: 3,
                 maxLines: 5,
-                style: const TextStyle(fontSize: 13, height: 1.45),
+                style: ScheduleDesign.text(13, lineHeight: 20),
                 onChanged: (_) => setState(() => _failure = null),
                 decoration: _input('需要准备的东西或地点'),
               ),
@@ -261,18 +283,23 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
               ),
             FilledButton(
               key: const ValueKey('schedule-save'),
-              onPressed: _busy || _title.text.trim().isEmpty ? null : _save,
+              onPressed: _busy || _title.text.trim().isEmpty
+                  ? null
+                  : widget.existing != null && !_dirty
+                  ? () => _close(true)
+                  : _save,
               style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-                textStyle: Theme.of(
-                  context,
-                ).textTheme.labelLarge?.copyWith(fontSize: 14),
+                minimumSize: const Size.fromHeight(44),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                disabledBackgroundColor: const Color(0xffe4e2e1),
+                disabledForegroundColor: MomHomeTokens.secondary,
+                textStyle: ScheduleDesign.text(13, bold: true, lineHeight: 18),
               ),
               child: Text(
                 _busy
                     ? '正在保存…'
-                    : _uncertain
-                    ? '重试确认保存'
+                    : _failure != null
+                    ? '重试保存'
                     : widget.existing == null
                     ? '添加到日程'
                     : '保存修改',
@@ -285,21 +312,27 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
   }
 
   String get _failureMessage => switch (_failure?.kind) {
-    ProductFailureKind.conflict => '日程已发生变化。请保留需要的内容，关闭后刷新并核对。',
+    ProductFailureKind.conflict => '这条日程已更新，请刷新后再试。填写内容已保留。',
     ProductFailureKind.unauthenticated => '登录已过期。请重新登录后继续。',
     ProductFailureKind.forbidden => '当前账号无法修改这条日程。',
     ProductFailureKind.invalid => '请检查填写内容后重试，草稿仍然保留。',
-    _ => '保存结果暂未确认，草稿仍然保留。请重试确认后再修改。',
+    _ => '暂时无法保存，填写内容已保留，请稍后重试。',
   };
-  InputDecoration _input(String hint) =>
-      InputDecoration(hintText: hint, counterText: '');
+  InputDecoration _input(String hint) => InputDecoration(
+    hintText: hint,
+    counterText: '',
+    isDense: true,
+    hintStyle: ScheduleDesign.text(13, lineHeight: 18),
+    contentPadding: const EdgeInsets.all(14),
+  );
   ButtonStyle _pickerStyle(BuildContext context) => OutlinedButton.styleFrom(
     minimumSize: const Size.fromHeight(46),
-    padding: const EdgeInsets.all(12),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     foregroundColor: MomHomeTokens.ink,
     side: const BorderSide(color: MomHomeTokens.border),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-    textStyle: MomHomeTokens.text(13, weight: FontWeight.w500),
+    textStyle: ScheduleDesign.text(13, lineHeight: 18),
   );
 }
 
@@ -316,26 +349,16 @@ class _ScheduleField extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: MomHomeTokens.secondary,
-              ),
-            ),
-          ),
-          if (optional)
-            const Text(
-              '选填',
-              style: TextStyle(fontSize: 11, color: MomHomeTokens.secondary),
-            ),
-        ],
+      Text(
+        optional ? '$label · 选填' : label,
+        style: ScheduleDesign.text(
+          12,
+          bold: true,
+          color: MomHomeTokens.secondary,
+          lineHeight: 17,
+        ),
       ),
-      const SizedBox(height: 7),
+      const SizedBox(height: 6),
       child,
     ],
   );
@@ -357,6 +380,10 @@ class _ScheduleDialogFrame extends StatelessWidget {
     child: MomSettingsFlowDialog(
       title: title,
       closeLabel: '关闭日程',
+      closeIcon: Text(
+        '×',
+        style: ScheduleDesign.text(13, bold: true, color: MomHomeTokens.rose),
+      ),
       onClose: onClose,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -377,6 +404,7 @@ class PersonalScheduleDeleteDialog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         MomSettingsCard(
+          borderInside: true,
           color: MomCozyColors.amberSoft,
           children: [
             Text(
@@ -394,7 +422,7 @@ class PersonalScheduleDeleteDialog extends StatelessWidget {
           '删除后将从日历和当日日程中移除，且无法恢复。',
           style: MomHomeTokens.text(
             13,
-            height: 1.55,
+            height: 1.4,
             color: MomHomeTokens.secondary,
           ),
         ),
@@ -404,11 +432,17 @@ class PersonalScheduleDeleteDialog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         FilledButton(
+          style: FilledButton.styleFrom(
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
           onPressed: () => Navigator.pop(context, false),
           child: const Text('保留日程'),
         ),
         const SizedBox(height: 14),
         OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
           onPressed: () => Navigator.pop(context, true),
           child: const Text('确认删除'),
         ),

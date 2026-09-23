@@ -13,19 +13,20 @@ make flutter-release-gate
 该 gate 会在仓库根目录顺序执行：
 
 ```text
+flutter pub get
+flutter test --no-pub tool/test_environment_smoke_test.dart
 node scripts/check-flutter-android-packaging.mjs
 node scripts/check-flutter-security-privacy.mjs
-flutter pub get
 dart format --output=none --set-exit-if-changed lib test integration_test tool
-flutter analyze
-flutter test
-flutter test --no-pub tool/test_environment_smoke_test.dart
-node scripts/build-flutter-android-apk.mjs --mode debug --flavor local
+flutter analyze --no-pub
+flutter test --no-pub --exclude-tags=golden
 node scripts/build-flutter-android-apk.mjs --mode release --flavor unified \
   --dart-define=MOMCOZY_ENV=test \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
+
+发布 gate 只构建待分发的 unified release APK；local debug 构建保留在独立开发命令中。Golden 测试由 App CI 的 macOS lane 执行。手动发布检查 `TEST_APPROVERS` 中的发起者和重跑者，不再等待第二次 issue 评论确认。
 
 所有受支持的打包封装都会执行同一套 API 配置校验。`local` 缺省注入 Product
 Backend `http://127.0.0.1:8769` 与 Agent Runtime `http://127.0.0.1:8010`；`unified`

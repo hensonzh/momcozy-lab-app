@@ -1,3 +1,4 @@
+import 'baby_motion.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../domain/baby/baby_profile.dart';
@@ -9,6 +10,8 @@ import '../../../shared/design_system/momcozy_design_system.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
 import '../../../shared/widgets/product_feedback.dart';
 import 'baby_labels.dart';
+import 'baby_design.dart';
+import 'baby_artwork.dart';
 import '../../../shared/widgets/mom_companion_widgets.dart';
 
 class BabyGrowthCurve extends StatelessWidget {
@@ -53,28 +56,31 @@ class BabyGrowthCurve extends StatelessWidget {
       for (final value in GrowthMetric.values)
         Semantics(
           selected: value == metric,
-          child: TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: value == metric
-                  ? MomHomeTokens.teal
-                  : MomHomeTokens.rose,
-              backgroundColor: value == metric
-                  ? MomHomeTokens.mint
-                  : Colors.transparent,
-              minimumSize: const Size(44, 44),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+          child: BabyPressFeedback(
+            child: TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: value == metric
+                    ? BabyDesign.selectedInk
+                    : MomHomeTokens.rose,
+                backgroundColor: value == metric
+                    ? BabyDesign.selected
+                    : Colors.transparent,
+                minimumSize: const Size(44, 44),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: VisualDensity.standard,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                textStyle: BabyDesign.text(
+                  13,
+                  line: 18,
+                  weight: FontWeight.w700,
+                ),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              textStyle: const TextStyle(
-                fontFamily: 'NotoSansSCHome',
-                fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
+              onPressed: () => onMetricChanged(value),
+              child: Text(growthMetricLabel(value)),
             ),
-            onPressed: () => onMetricChanged(value),
-            child: Text(growthMetricLabel(value)),
           ),
         ),
     ];
@@ -83,119 +89,163 @@ class BabyGrowthCurve extends StatelessWidget {
         colors: [MomHomeTokens.surface, MomHomeTokens.surface],
       ),
       border: MomHomeTokens.border,
-      backgroundDecoration: MomCardDecoration.chart,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              '生长趋势',
-              style: MomHomeTokens.text(16, weight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '出生至 6 月 · ${babySexLabel(baby.sex)} · $unit',
-              style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              decoration: BoxDecoration(
-                color: MomHomeTokens.neutralSurface,
-                borderRadius: BorderRadius.circular(14),
+      borderInside: true,
+      child: BabyArtwork(
+        kind: 'chart',
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                '生长趋势',
+                style: BabyDesign.text(16, line: 22, weight: FontWeight.w700),
               ),
-              child: Row(
-                children: [
-                  for (final button in metricButtons) Expanded(child: button),
-                ],
-              ),
-            ),
-            if (references.isEmpty)
-              Container(
-                margin: const EdgeInsets.only(top: 14),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: MomHomeTokens.background,
-                  borderRadius: BorderRadius.circular(MomCozyRadii.control),
+              const SizedBox(height: 12),
+              Text(
+                '出生至 6 月 · ${babySexLabel(baby.sex)} · $unit',
+                style: BabyDesign.text(
+                  12,
+                  line: 17,
+                  color: MomHomeTokens.secondary,
                 ),
-                child: Column(
+              ),
+              const SizedBox(height: 12),
+              Container(
+                decoration: BoxDecoration(
+                  color: MomHomeTokens.neutralSurface,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
                   children: [
-                    const Text(
-                      '补充出生日期和出生记录性别后，才能显示对应的生长参考范围。',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: MomCozyTypography.captionSize),
-                    ),
-                    TextButton(
-                      onPressed: onEditProfile,
-                      child: const Text('完善资料'),
-                    ),
+                    for (final button in metricButtons) Expanded(child: button),
                   ],
                 ),
-              )
-            else if (records.failure != null)
-              ProductErrorView(
-                useMomStyle: true,
-                failure: records.failure!,
-                onRetry: onRetry,
-              )
-            else if (records.loading)
-              const Padding(
-                padding: EdgeInsets.all(28),
-                child: Center(child: CircularProgressIndicator()),
-              )
-            else ...[
-              const SizedBox(height: 8),
-              Semantics(
-                label:
-                    '${baby.name}的${growthMetricLabel(metric)}记录，出生至六个月。${visible.isEmpty ? '这段时间还没有测量记录。' : visible.map((record) => '${record.recordedOn}：${babyNumber(record.value)} $unit').join('；')}。浅绿色为 WHO 同龄参考范围。',
-                child: ExcludeSemantics(
-                  child: SizedBox(
-                    height:
-                        145 *
-                        MediaQuery.textScalerOf(context).scale(1).clamp(1, 2),
-                    child: CustomPaint(
-                      painter: _GrowthPainter(
-                        birth: birth!,
-                        metric: metric,
-                        records: visible,
-                        references: references,
-                        textScaler: MediaQuery.textScalerOf(context),
-                        scale: GrowthChartScale.forRecords(metric, visible),
+              ),
+              if (references.isEmpty)
+                Container(
+                  margin: const EdgeInsets.only(top: 11),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: MomHomeTokens.neutralSurface,
+                    borderRadius: BorderRadius.circular(MomCozyRadii.control),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        '补充出生日期和出生记录性别后，才能显示对应的生长参考范围。',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: MomCozyTypography.captionSize,
+                        ),
+                      ),
+                      BabyPressFeedback(
+                        child: TextButton(
+                          onPressed: onEditProfile,
+                          child: const Text('完善资料'),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else if (records.failure != null && !records.hasValue) ...[
+                const SizedBox(height: 11),
+                ProductErrorView(
+                  useMomStyle: true,
+                  compactMomStyle: true,
+                  failure: records.failure!,
+                  onRetry: onRetry,
+                ),
+              ] else if (records.loading && !records.hasValue)
+                const Padding(
+                  padding: EdgeInsets.all(28),
+                  child: Center(child: _BabyDottedLoader()),
+                )
+              else ...[
+                const SizedBox(height: 12),
+                Semantics(
+                  label:
+                      '${baby.name}的${growthMetricLabel(metric)}记录，出生至六个月。${visible.isEmpty ? '这段时间还没有测量记录。' : visible.map((record) => '${record.recordedOn}：${babyNumber(record.value)} $unit').join('；')}。浅绿色为 WHO 同龄参考范围。',
+                  child: ExcludeSemantics(
+                    child: SizedBox(
+                      height:
+                          145 *
+                          MediaQuery.textScalerOf(context).scale(1).clamp(1, 2),
+                      child: CustomPaint(
+                        painter: _GrowthPainter(
+                          birth: birth!,
+                          metric: metric,
+                          records: visible,
+                          references: references,
+                          textScaler: MediaQuery.textScalerOf(context),
+                          scale: GrowthChartScale.forRecords(metric, visible),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              if (visible.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    '出生至六个月还没有测量记录。',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: MomHomeTokens.secondary,
+                if (visible.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      '出生至六个月还没有测量记录。',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: MomHomeTokens.secondary,
+                      ),
                     ),
                   ),
+              ],
+              if (references.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                const Divider(height: 1, color: MomHomeTokens.border),
+                const SizedBox(height: 12),
+                Text(
+                  '${visible.isEmpty ? '记录后会显示${baby.name}的变化' : '深色线是 ${baby.name} 的记录'}，浅绿色为 WHO 同龄参考范围。适合观察长期变化，不能根据单次测量下结论。',
+                  style: BabyDesign.text(
+                    13,
+                    line: 18,
+                    color: MomHomeTokens.secondary,
+                  ),
                 ),
+              ],
             ],
-            if (references.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              const Divider(height: 1, color: MomHomeTokens.border),
-              const SizedBox(height: 8),
-              Text(
-                '${visible.isEmpty ? '记录后会显示${baby.name}的变化' : '深色线是${baby.name}的记录'}，浅绿色为 WHO 同龄参考范围。适合观察长期变化，不能根据单次测量下结论。',
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: MomHomeTokens.secondary,
-                  height: 1.7,
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
   }
+}
+
+class _BabyDottedLoader extends StatelessWidget {
+  const _BabyDottedLoader();
+
+  @override
+  Widget build(BuildContext context) => const SizedBox(
+    width: 28,
+    height: 28,
+    child: CustomPaint(painter: _BabyDottedLoaderPainter()),
+  );
+}
+
+class _BabyDottedLoaderPainter extends CustomPainter {
+  const _BabyDottedLoaderPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final paint = Paint()..color = MomHomeTokens.rose;
+    const dots = 16;
+    const radius = 11.5;
+    for (var index = 0; index < dots; index++) {
+      final angle = -math.pi / 2 + index * 2 * math.pi / dots;
+      final point = center + Offset(math.cos(angle), math.sin(angle)) * radius;
+      canvas.drawCircle(point, 1.2, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _GrowthPainter extends CustomPainter {
@@ -216,11 +266,11 @@ class _GrowthPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final font = textScaler.scale(9);
+    final font = textScaler.scale(10);
     final plot = Rect.fromLTRB(
       math.min(font * 3.5, size.width * .28),
       10,
-      size.width - font * 1.6,
+      size.width - font * 1.8,
       size.height - font * 2.8,
     );
     final days = birth.addMonths(whoGrowthMaxMonths).daysSince(birth);
@@ -237,11 +287,10 @@ class _GrowthPainter extends CustomPainter {
       final text = TextPainter(
         text: TextSpan(
           text: value,
-          style: TextStyle(
-            fontSize: font,
+          style: BabyDesign.text(
+            font,
+            line: font * 1.4,
             color: MomHomeTokens.secondary,
-            fontFamily: 'NotoSansSCHome',
-            fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -267,18 +316,14 @@ class _GrowthPainter extends CustomPainter {
         Offset(plot.right, y(value)),
         Paint()..color = MomHomeTokens.border,
       );
-      label(
-        value.toStringAsFixed(1),
-        Offset(plot.left - 6, y(value)),
-        right: true,
-      );
+      label(value.toStringAsFixed(1), Offset(0, y(value)));
     }
     for (final month in [0, 2, 4, 6]) {
       label(
         '$month月',
         Offset(
           x(birth.addMonths(month).daysSince(birth)),
-          plot.bottom + font * 1.8,
+          plot.bottom + font * 1.5,
         ),
         center: true,
       );

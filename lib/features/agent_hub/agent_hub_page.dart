@@ -1,20 +1,15 @@
-import 'artifacts/cards/agent_result_card.dart';
-import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
 import 'package:momcozy_flutter_app/shared/widgets/mom_settings_widgets.dart';
-import 'presentation/agent_voice_notice.dart';
+import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
 import 'dart:async';
-import 'presentation/agent_message_menu.dart';
-import 'package:momcozy_flutter_app/shared/widgets/momcozy_line_icon.dart';
+
 import 'dart:convert';
 import 'dart:math' as math;
 
-import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
@@ -23,46 +18,35 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dar
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_work_status_projection.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_voice.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_conversation_panel.dart';
-import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
-import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
-import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:video_player/video_player.dart';
-
-export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
+import 'presentation/agent_text_reveal.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
-typedef AgentArtifactActionHandler =
-    void Function(AgentArtifactActionView action);
 typedef AgentHubApplicationEventHandler = void Function(AgentStreamEvent event);
 
-const _agentDefaultGreetingPlaybackId = 'agent-default-greeting';
 const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
 const _completedReplyRunSettlementTimeout = Duration(seconds: 2);
 const _completedReplyCancelTimeout = Duration(seconds: 2);
 const _agentRunAttachmentLimit = 20;
-const _supportTicketSubmittedReply =
-    '已经帮你提交工单啦，我们的人工客服团队会在 24 小时内主动联系你，陪你一起跟进这个问题。很抱歉这次没能直接帮你解决，给你添麻烦了。接下来还请稍微耐心等待一下，我们会尽力协助你把问题处理好。';
+const _unsupportedActionMessage = '当前版本暂不支持此操作，请继续提问。';
+
+AgentStreamRunState _phaseOneRunState(AgentStreamRunState state) {
+  if (state.phase != AgentStreamRunPhase.waitingForConfirmation) return state;
+  // Retired actions must never execute or leave the composer locked.
+  return state.copyWith(
+    phase: AgentStreamRunPhase.error,
+    errorMessage: _unsupportedActionMessage,
+  );
+}
 
 String _agentAssistantTextForState(
   AgentStreamRunState state, {
@@ -77,106 +61,15 @@ String _agentAssistantTextForState(
     AgentStreamRunPhase.cancelRequested => '我正在停止这次回复。',
     AgentStreamRunPhase.cancelled =>
       state.cancelAcknowledged ? '已停止本次回复。' : '本地已停止，服务端取消未确认。',
-    AgentStreamRunPhase.waitingForConfirmation => '需要你确认后继续。',
+    AgentStreamRunPhase.waitingForConfirmation => _unsupportedActionMessage,
     AgentStreamRunPhase.finished => '我已经处理完成，但这次没有返回可见内容。',
     AgentStreamRunPhase.error ||
     AgentStreamRunPhase.disconnected => '这次没有拿到回复。',
   };
 }
 
-String _formSubmitRequestMessage(AgentArtifactActionView action) {
-  final extra = action.routeExtra;
-  final extraMap = extra is Map ? Map<String, Object?>.from(extra) : const {};
-  final formId = extraMap['formId']?.toString().trim();
-  return [
-    '我已提交信息采集表单，请基于确认后的表单数据继续完成对应服务。',
-    if (formId != null && formId.isNotEmpty) 'form_id: $formId',
-  ].join('\n');
-}
-
-({String artifactId, String? formId, Map<String, Object?> values})?
-_formSubmissionFromAction(AgentArtifactActionView action) {
-  final extra = action.routeExtra;
-  if (extra is! Map) return null;
-  final artifactId = extra['artifactId']?.toString().trim();
-  final rawValues = extra['values'];
-  if (artifactId == null || artifactId.isEmpty || rawValues is! Map) {
-    return null;
-  }
-  final values = <String, Object?>{};
-  for (final entry in rawValues.entries) {
-    final key = entry.key;
-    if (key is String && key.trim().isNotEmpty) values[key] = entry.value;
-  }
-  final rawFormId = extra['formId']?.toString().trim();
-  return (
-    artifactId: artifactId,
-    formId: rawFormId == null || rawFormId.isEmpty ? null : rawFormId,
-    values: Map<String, Object?>.unmodifiable(values),
-  );
-}
-
-Map<String, Object?> _formSubmissionMetadata(AgentArtifactActionView action) {
-  final submission = _formSubmissionFromAction(action);
-  final formId = submission?.formId;
-  if (submission == null || formId == null) return const {};
-  return {
-    'form_submission': {
-      'artifact_id': submission.artifactId,
-      'form_id': formId,
-      'values': submission.values,
-    },
-  };
-}
-
-String _formSubmissionIdempotencyKey({
-  required String artifactId,
-  required String? formId,
-  required String? threadId,
-  required Map<String, Object?> values,
-}) {
-  final canonicalPayload = jsonEncode(
-    _canonicalJsonValue({
-      'artifact_id': artifactId,
-      'form_id': formId ?? '',
-      'thread_id': threadId?.trim() ?? '',
-      'values': values,
-    }),
-  );
-  return 'agent-form-submit-${sha256.convert(utf8.encode(canonicalPayload))}';
-}
-
 String _newAgentRunIdempotencyKey() {
   return 'agent-run-${DateTime.now().microsecondsSinceEpoch}';
-}
-
-Object? _canonicalJsonValue(Object? value) {
-  if (value is Map) {
-    final entries =
-        value.entries
-            .where((entry) => entry.key is String)
-            .map((entry) => MapEntry(entry.key as String, entry.value))
-            .toList(growable: false)
-          ..sort((left, right) => left.key.compareTo(right.key));
-    return {
-      for (final entry in entries) entry.key: _canonicalJsonValue(entry.value),
-    };
-  }
-  if (value is List) {
-    return value.map(_canonicalJsonValue).toList(growable: false);
-  }
-  return value;
-}
-
-class _PendingAutoVoiceReplay {
-  const _PendingAutoVoiceReplay({required this.state, this.attempts = 0});
-
-  final AgentStreamRunState state;
-  final int attempts;
-
-  _PendingAutoVoiceReplay incrementAttempts() {
-    return _PendingAutoVoiceReplay(state: state, attempts: attempts + 1);
-  }
 }
 
 final _agentHubInteractionStates = Expando<_AgentHubInteractionState>(
@@ -189,11 +82,11 @@ class _AgentHubInteractionState {
   String composerText = '';
   List<AgentStreamImageInput> attachedImages = const <AgentStreamImageInput>[];
   List<AgentStreamFileInput> attachedFiles = const <AgentStreamFileInput>[];
-  bool autoVoiceEnabled = true;
+  List<String> pendingAttachmentCleanupIds = const <String>[];
+
   AgentStreamRequest? activeRequest;
-  Map<String, String> localActionStatuses = const <String, String>{};
-  Map<String, AgentArtifactFormSubmission> formSubmissions =
-      const <String, AgentArtifactFormSubmission>{};
+  int? nextBeforeSequence;
+  final Map<String, AgentHubInteractionSnapshot> threads = {};
 }
 
 class AgentHubAutoRunRequest {
@@ -212,12 +105,12 @@ class AgentHubPage extends StatefulWidget {
   const AgentHubPage({
     super.key,
     this.stateCacheKey,
+    this.isVisible = true,
+    this.now,
     this.state = const AgentStreamRunState(),
     this.historyMessages = const <AgentHubHistoryMessage>[],
     this.runner,
     this.cancelClient,
-    this.actionClient,
-    this.clientEventClient,
     this.conversationRepository,
     this.initialConversationId,
     this.interactionStateStore,
@@ -228,11 +121,6 @@ class AgentHubPage extends StatefulWidget {
     this.mediaRepository,
     this.loadImageThumbnail,
     this.loadImageContent,
-    this.voicePlaybackCoordinator,
-    this.voicePlaybackPlayer,
-    this.productAssetRepository,
-    this.supportTicketSubmitter,
-    this.onArtifactAction,
     this.onApplicationEvent,
     this.initialComposerText,
     this.initialAutoSend = false,
@@ -246,12 +134,13 @@ class AgentHubPage extends StatefulWidget {
   });
 
   final Object? stateCacheKey;
+  final bool isVisible;
+  final DateTime Function()? now;
   final AgentStreamRunState state;
   final List<AgentHubHistoryMessage> historyMessages;
   final AgentStreamRunner? runner;
   final AgentStreamCancelClient? cancelClient;
-  final AgentStreamActionClient? actionClient;
-  final AgentStreamClientEventClient? clientEventClient;
+
   final AgentConversationRepository? conversationRepository;
   final String? initialConversationId;
   final AgentHubInteractionStateStore? interactionStateStore;
@@ -262,11 +151,7 @@ class AgentHubPage extends StatefulWidget {
   final MediaRepository? mediaRepository;
   final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
-  final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
-  final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
-  final ProductAssetRepository? productAssetRepository;
-  final SupportTicketSubmitter? supportTicketSubmitter;
-  final AgentArtifactActionHandler? onArtifactAction;
+
   final AgentHubApplicationEventHandler? onApplicationEvent;
   final String? initialComposerText;
   final bool initialAutoSend;
@@ -280,7 +165,21 @@ class AgentHubPage extends StatefulWidget {
   State<AgentHubPage> createState() => _AgentHubPageState();
 }
 
-class _AgentHubPageState extends State<AgentHubPage> {
+class _AgentHubPageState extends State<AgentHubPage>
+    with WidgetsBindingObserver {
+  bool _appForeground = true;
+  bool _historyRecoveryPending = false;
+  Object? _historyRecoveryError;
+  bool _initialRecoveryScheduled = false;
+  int _localTurnRevision = 0;
+  DateTime get _now => (widget.now ?? DateTime.now)();
+  bool get _isPageVisible => widget.isVisible && _appForeground;
+  String? get _completedMessageId =>
+      _state.hasCompletedAssistantMessage ||
+          _state.phase == AgentStreamRunPhase.finished
+      ? (_state.messageId ??
+            (_state.runId == null ? null : 'run:${_state.runId}:assistant'))
+      : null;
   late AgentStreamRunState _state;
   late List<AgentHubHistoryMessage> _historyMessages;
   late final TextEditingController _composerController;
@@ -291,26 +190,23 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Completer<void>? _runSettlementCompleter;
   Future<void>? _pendingServerCancel;
   bool _followUpStartPending = false;
-  bool _newSessionStartPending = false;
-  bool _supportTicketSubmitPending = false;
+
   bool _conversationSwitchPending = false;
   int _sessionOperationGeneration = 0;
   int? _conversationHistoryBeforeSequence;
   bool _olderConversationHistoryLoading = false;
   bool _olderConversationHistoryLoadArmed = false;
   Object? _olderConversationHistoryError;
+  final GlobalKey _olderHistoryViewportAnchorKey = GlobalKey();
+  String? _olderHistoryViewportAnchorMessageId;
   AgentStreamRequest? _activeRequest;
   String? _submittedComposerText;
-  AgentVoiceState _voiceState = const AgentVoiceState();
-  final _voiceStateNotifier = ValueNotifier<AgentVoiceState>(
-    const AgentVoiceState(),
-  );
+
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
   final List<AgentStreamFileInput> _attachedFiles = <AgentStreamFileInput>[];
-  final Set<String> _pendingActionIds = <String>{};
-  final Map<String, String> _localActionStatuses = <String, String>{};
+
   final ScrollController _chatScrollController = ScrollController();
-  final GlobalKey _activeArtifactPanelKey = GlobalKey();
+
   final ValueNotifier<AgentStreamRunState> _runStateNotifier =
       ValueNotifier<AgentStreamRunState>(const AgentStreamRunState());
   final ValueNotifier<bool> _visibleReplyRunningNotifier = ValueNotifier<bool>(
@@ -319,29 +215,18 @@ class _AgentHubPageState extends State<AgentHubPage> {
   final ValueNotifier<bool> _composerLockedNotifier = ValueNotifier<bool>(
     false,
   );
-  final ValueNotifier<bool> _sessionMutationPendingNotifier =
-      ValueNotifier<bool>(false);
-  final ValueNotifier<bool> _conversationSwitchEnabledNotifier =
-      ValueNotifier<bool>(true);
+
   final ValueNotifier<_AgentResponseLightRailMode>
   _responseLightRailModeNotifier = ValueNotifier<_AgentResponseLightRailMode>(
     _AgentResponseLightRailMode.idle,
   );
-  final ValueNotifier<String?> _activeVoicePlaybackIdNotifier =
-      ValueNotifier<String?>(null);
-  final ValueNotifier<int> _actionStateRevisionNotifier = ValueNotifier<int>(0);
-  final ValueNotifier<Map<String, AgentArtifactFormSubmission>>
-  _formSubmissionsNotifier =
-      ValueNotifier<Map<String, AgentArtifactFormSubmission>>(
-        const <String, AgentArtifactFormSubmission>{},
-      );
-  final AgentArtifactFormPresentationSession _formPresentationSession =
-      AgentArtifactFormPresentationSession();
-  bool _autoVoiceEnabled = true;
+
   bool _interactionRestoreResolved = false;
   bool _showLatestButton = false;
   bool _attachmentUploadPending = false;
-  bool _attachmentDiscardPending = false;
+  final Set<String> _pendingAttachmentCleanupIds = <String>{};
+  Timer? _attachmentCleanupRetryTimer;
+  bool _attachmentCleanupInFlight = false;
   double? _attachmentUploadProgress;
   Timer? _persistentWriteTimer;
   Timer? _activeRunPersistentWriteTimer;
@@ -349,21 +234,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _scrollToLatestFrameScheduled = false;
   bool _scheduledScrollToLatestSmooth = false;
   int _scheduledScrollToLatestIntentVersion = 0;
-  bool _artifactFocusFrameScheduled = false;
-  bool _preserveArtifactFocus = false;
+
   int _scrollIntentVersion = 0;
-  _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
-  String? _activeAutoVoicePlaybackId;
-  String _autoVoiceAppendedText = '';
-  bool _autoVoiceHasSubmittedContent = false;
-  AgentVoiceRealtimePlaybackSession? _autoVoiceSession;
-  bool _autoVoiceSessionFinished = false;
-  final Set<String> _autoVoiceSubmittedArtifactTexts = <String>{};
-  final Set<String> _autoVoiceSubmittedMediaNarrations = <String>{};
-  Object? _mediaVoiceEventIdentity;
-  AgentMediaVoiceNarrationIndex _mediaVoiceNarrationIndex =
-      AgentMediaVoiceNarrationIndex.fromEvents(const []);
-  VoidCallback? _unsubscribeVoicePlaybackIdle;
+
   bool _consumedInitialAutoSend = false;
   String? _consumedInitialAutoRunKey;
   bool _initialAutoRunInFlight = false;
@@ -378,18 +251,26 @@ class _AgentHubPageState extends State<AgentHubPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _restoreCachedInteractionState();
-    _seedExistingFormPresentations();
+
     _publishRunState(_state);
-    _composerController.addListener(_persistInteractionState);
+    _composerController.addListener(_handleComposerChanged);
     _chatScrollController.addListener(_handleChatScroll);
-    _syncVoicePlaybackIdleSubscription();
+
     _initializeInteractionState();
   }
 
   @override
   void didUpdateWidget(covariant AgentHubPage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.isVisible != widget.isVisible) {
+      if (widget.isVisible) {
+        _returnToConversation();
+      } else {
+        _leaveConversation();
+      }
+    }
     if (oldWidget.initialConversationId != widget.initialConversationId &&
         _interactionRestoreResolved) {
       _scheduleInitialConversation();
@@ -427,19 +308,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _interactionRestoreResolved) {
       _scheduleExternalConversationRefreshIfNeeded();
     }
-    if (oldWidget.voicePlaybackCoordinator != widget.voicePlaybackCoordinator) {
-      _syncVoicePlaybackIdleSubscription();
-    }
   }
 
   @override
   void dispose() {
+    _leaveConversation();
+    WidgetsBinding.instance.removeObserver(this);
     _externalConversationRefreshGeneration += 1;
+    _attachmentCleanupRetryTimer?.cancel();
     _cancelRunSubscription();
-    _unsubscribeVoicePlaybackIdle?.call();
+
     _persistInteractionState();
     _flushPersistentInteractionState();
-    _composerController.removeListener(_persistInteractionState);
+    _composerController.removeListener(_handleComposerChanged);
     _chatScrollController
       ..removeListener(_handleChatScroll)
       ..dispose();
@@ -448,41 +329,14 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _runStateNotifier.dispose();
     _visibleReplyRunningNotifier.dispose();
     _composerLockedNotifier.dispose();
-    _sessionMutationPendingNotifier.dispose();
-    _conversationSwitchEnabledNotifier.dispose();
     _responseLightRailModeNotifier.dispose();
-    _activeVoicePlaybackIdNotifier.dispose();
-    _voiceStateNotifier.dispose();
-    _actionStateRevisionNotifier.dispose();
-    _formSubmissionsNotifier.dispose();
-    _formPresentationSession.clear();
+
     super.dispose();
   }
 
-  void _syncVoicePlaybackIdleSubscription() {
-    _unsubscribeVoicePlaybackIdle?.call();
-    _unsubscribeVoicePlaybackIdle = null;
-
-    final coordinator = widget.voicePlaybackCoordinator;
-    if (coordinator == null) return;
-    _unsubscribeVoicePlaybackIdle = coordinator.subscribeIdle(() {
-      scheduleMicrotask(() {
-        if (!mounted) return;
-        if (coordinator.isSuspended) {
-          _pendingAutoVoiceReplay = null;
-          if (_voiceState.isPlaybackActive) {
-            _setVoiceState(_voiceState.cancelPlayback());
-          }
-          return;
-        }
-        _tryRunPendingAutoVoiceReplay();
-      });
-    });
-  }
-
   void _setRunState(AgentStreamRunState nextState) {
-    _state = nextState;
-    _publishRunState(nextState);
+    _state = _phaseOneRunState(nextState);
+    _publishRunState(_state);
   }
 
   void _publishRunState(AgentStreamRunState state) {
@@ -492,24 +346,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _isVisibleReplyRunningForState(state),
     );
     _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
-    _syncConversationSwitchEnabled();
+
     _setNotifierValue(
       _responseLightRailModeNotifier,
       _agentResponseLightRailModeForState(state),
     );
-  }
-
-  void _setVoiceState(AgentVoiceState nextState) {
-    _voiceState = nextState;
-    _voiceStateNotifier.value = nextState;
-    _setNotifierValue(
-      _activeVoicePlaybackIdNotifier,
-      nextState.isPlaybackActive ? nextState.playbackId : null,
-    );
-  }
-
-  void _notifyActionStateChanged() {
-    _actionStateRevisionNotifier.value += 1;
   }
 
   void _setNotifierValue<T>(ValueNotifier<T> notifier, T value) {
@@ -517,10 +358,129 @@ class _AgentHubPageState extends State<AgentHubPage> {
     notifier.value = value;
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.detached) {
+      if (_appForeground && widget.isVisible) _leaveConversation();
+      _appForeground = false;
+    } else if (state == AppLifecycleState.resumed && !_appForeground) {
+      _appForeground = true;
+      if (widget.isVisible) _returnToConversation();
+    }
+  }
+
+  void _handleComposerChanged() {
+    _persistInteractionState();
+  }
+
+  void _leaveConversation() {
+    if (!_interactionRestoreResolved) return;
+    _persistInteractionState();
+    _flushPersistentInteractionState();
+  }
+
+  void _returnToConversation() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_isPageVisible || !_interactionRestoreResolved) return;
+      unawaited(_recoverConversation());
+    });
+  }
+
+  void _identifyAcceptedUserMessage(AgentStreamRunState nextState) {
+    final queued = nextState.events
+        .where((event) => event.type == 'run.queued' && event.messageId != null)
+        .firstOrNull;
+    if (queued == null) return;
+    final index = _historyMessages.lastIndexWhere(
+      (message) =>
+          message.role == AgentHubHistoryRole.user &&
+          message.id?.startsWith('local:') == true,
+    );
+    if (index < 0) return;
+    final local = _historyMessages[index];
+    _historyMessages[index] = AgentHubHistoryMessage(
+      id: queued.messageId,
+      sequence: local.sequence,
+      createdAt: queued.createdAt ?? local.createdAt,
+      role: local.role,
+      content: local.content,
+      images: local.images,
+      files: local.files,
+    );
+  }
+
+  Future<void> _recoverConversation() async {
+    final repository = widget.conversationRepository;
+    if (repository == null ||
+        _historyRecoveryPending ||
+        (widget.initialConversationId != null &&
+            widget.initialConversationId != _state.threadId) ||
+        _state.isActive ||
+        (_activeRequest != null &&
+            _state.phase != AgentStreamRunPhase.finished)) {
+      if (_isPageVisible) _scheduleScrollToLatest();
+      _persistInteractionState();
+      return;
+    }
+    final generation = _sessionOperationGeneration;
+    final revision = _localTurnRevision;
+    final threadId = _state.threadId;
+    setState(() {
+      _historyRecoveryPending = true;
+      _historyRecoveryError = null;
+    });
+    try {
+      final history = threadId == null
+          ? await repository.loadLatestConversation()
+          : await repository.loadConversation(threadId);
+      if (!mounted ||
+          generation != _sessionOperationGeneration ||
+          revision != _localTurnRevision ||
+          _state.threadId != threadId ||
+          _state.isActive) {
+        return;
+      }
+      if (history != null) {
+        final merged = _mergeRecoveredHistory(history);
+        setState(() {
+          _historyMessages = merged;
+          _setRunState(history.currentState);
+          _conversationHistoryBeforeSequence = history.nextBeforeSequence;
+          _historyRecoveryPending = false;
+        });
+        _armOlderConversationHistoryLoading();
+      }
+      if (mounted) {
+        setState(() => _historyRecoveryPending = false);
+        _scheduleScrollToLatest();
+        _persistInteractionState();
+        if (history?.currentState.isActive == true && widget.runner != null) {
+          await _resumeCurrentRun();
+        }
+      }
+    } catch (error) {
+      if (mounted &&
+          generation == _sessionOperationGeneration &&
+          revision == _localTurnRevision) {
+        setState(() {
+          _historyRecoveryPending = false;
+          _historyRecoveryError = error;
+        });
+        if (_isPageVisible) _scheduleScrollToLatest();
+      }
+    } finally {
+      if (mounted && _historyRecoveryPending) {
+        setState(() => _historyRecoveryPending = false);
+      }
+    }
+  }
+
   void _restoreCachedInteractionState() {
     final stateCacheKey = widget.stateCacheKey;
     if (stateCacheKey == null) {
-      _state = widget.state;
+      _state = _phaseOneRunState(widget.state);
       _historyMessages = _visibleAgentHubHistoryMessages(
         widget.historyMessages,
       );
@@ -546,13 +506,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
     _attachedImages.addAll(interactionState.attachedImages);
     _attachedFiles.addAll(interactionState.attachedFiles);
-    _autoVoiceEnabled = interactionState.autoVoiceEnabled;
+    _pendingAttachmentCleanupIds.addAll(
+      interactionState.pendingAttachmentCleanupIds,
+    );
+
     _activeRequest = interactionState.activeRequest;
-    _localActionStatuses.addAll(interactionState.localActionStatuses);
-    _formSubmissionsNotifier.value =
-        Map<String, AgentArtifactFormSubmission>.of(
-          interactionState.formSubmissions,
-        );
+    _conversationHistoryBeforeSequence = interactionState.nextBeforeSequence;
+
     interactionState.runState = _state;
   }
 
@@ -590,10 +550,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ..composerText = _composerController.text
         ..attachedImages = [..._attachedImages]
         ..attachedFiles = [..._attachedFiles]
-        ..autoVoiceEnabled = _autoVoiceEnabled
+        ..pendingAttachmentCleanupIds = [..._pendingAttachmentCleanupIds]
         ..activeRequest = _activeRequest
-        ..localActionStatuses = {..._localActionStatuses}
-        ..formSubmissions = _completedFormSubmissions();
+        ..nextBeforeSequence = _conversationHistoryBeforeSequence;
     }
   }
 
@@ -602,7 +561,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (interactionState == null) return;
     interactionState
       ..runState = _state
-      ..autoVoiceEnabled = _autoVoiceEnabled
       ..activeRequest = _activeRequest;
   }
 
@@ -614,6 +572,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _scheduleInitialAutoRunIfNeeded();
       _scheduleExternalConversationRefreshIfNeeded();
       _scheduleInitialInteractionPostFrame();
+      unawaited(_retryAttachmentCleanup());
       return;
     }
     unawaited(_restorePersistedInteractionState());
@@ -629,9 +588,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
     if (!mounted) return;
     final shouldRestore =
-        snapshot?.hasConversationHistory == true && !_hasLocalInteraction();
+        snapshot?.hasContent == true && !_hasLocalInteraction();
     setState(() {
       if (shouldRestore) _applyInteractionSnapshot(snapshot!);
+      _pendingAttachmentCleanupIds.addAll(
+        snapshot?.pendingAttachmentCleanupIds ?? const [],
+      );
       _interactionRestoreResolved = true;
     });
     _applyInitialComposerText();
@@ -639,7 +601,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _scheduleInitialAutoRunIfNeeded();
     _scheduleExternalConversationRefreshIfNeeded();
     if (shouldRestore) _persistInteractionState();
-    _scheduleInitialInteractionPostFrame(scrollToLatest: shouldRestore);
+    unawaited(_retryAttachmentCleanup());
+    _scheduleInitialInteractionPostFrame();
   }
 
   void _scheduleInitialConversation() {
@@ -650,7 +613,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _consumedInitialConversationId = id;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      final opened = await _switchConversation(id);
+      final opened = await _loadTargetConversation(id);
       if (!opened && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -668,15 +631,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
     });
   }
 
-  void _scheduleInitialInteractionPostFrame({bool scrollToLatest = false}) {
+  void _scheduleInitialInteractionPostFrame() {
     _scheduleInitialConversation();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_interactionRestoreResolved) return;
-      _updateLatestButtonVisibility();
-      if (scrollToLatest) {
-        _scheduleScrollToLatest();
+      _scheduleScrollToLatest();
+      _armOlderConversationHistoryLoading();
+      if (!_initialRecoveryScheduled) {
+        _initialRecoveryScheduled = true;
+        unawaited(_recoverConversation());
       }
-      unawaited(_refreshGreetingAndMaybePlayVoice());
+      unawaited(_refreshGreeting());
     });
   }
 
@@ -690,9 +655,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _composerController.text.trim().isNotEmpty ||
         _attachedImages.isNotEmpty ||
         _attachedFiles.isNotEmpty ||
-        _activeRequest != null ||
-        _localActionStatuses.isNotEmpty ||
-        _formSubmissionsNotifier.value.isNotEmpty;
+        _activeRequest != null;
   }
 
   void _applyInteractionSnapshot(AgentHubInteractionSnapshot snapshot) {
@@ -716,30 +679,16 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _attachedFiles
       ..clear()
       ..addAll(snapshot.attachedFiles);
-    _autoVoiceEnabled = snapshot.autoVoiceEnabled;
-    _activeRequest = snapshot.activeRequest;
-    _localActionStatuses
-      ..clear()
-      ..addAll(snapshot.localActionStatuses);
-    _formSubmissionsNotifier.value =
-        Map<String, AgentArtifactFormSubmission>.of(snapshot.formSubmissions);
-    _seedExistingFormPresentations();
-  }
 
-  void _seedExistingFormPresentations() {
-    _formPresentationSession.seedExistingFormIds([
-      ..._formArtifactIdsForState(_state),
-      for (final message in _historyMessages)
-        if (message.runState case final runState?)
-          ..._formArtifactIdsForState(runState),
-    ]);
+    _activeRequest = snapshot.activeRequest;
+    _conversationHistoryBeforeSequence = snapshot.nextBeforeSequence;
   }
 
   AgentStreamRunState _restoreInterruptedRunState(
     AgentStreamRunState state, {
     required String disconnectedMessage,
   }) {
-    if (!state.isActive) return state;
+    if (!state.isActive) return _phaseOneRunState(state);
     if (state.hasCompletedAssistantMessage) return state.finishVisibleReply();
     return state.markDisconnected(disconnectedMessage);
   }
@@ -753,18 +702,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
       composerText: _composerController.text,
       attachedImages: [..._attachedImages],
       attachedFiles: [..._attachedFiles],
-      autoVoiceEnabled: _autoVoiceEnabled,
+      pendingAttachmentCleanupIds: [..._pendingAttachmentCleanupIds],
       activeRequest: _activeRequest,
-      localActionStatuses: {..._localActionStatuses},
-      formSubmissions: _completedFormSubmissions(),
+      nextBeforeSequence: _conversationHistoryBeforeSequence,
     );
-  }
-
-  Map<String, AgentArtifactFormSubmission> _completedFormSubmissions() {
-    return {
-      for (final entry in _formSubmissionsNotifier.value.entries)
-        if (entry.value.isSubmitted) entry.key: entry.value,
-    };
   }
 
   void _schedulePersistentInteractionStateWrite(
@@ -941,46 +882,62 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (!mounted || _isVisibleReplyRunning || _isSessionMutationPending) {
       return false;
     }
-    widget.voicePlaybackCoordinator?.cancel();
+
+    final shouldFollow = _isPageVisible && _isNearLatest();
+    final merged = _mergeRecoveredHistory(history);
     _cancelRunSubscription();
     setState(() {
       _externalConversationRefreshPending = false;
-      _historyMessages = history.messages
-          .map(_historyMessageFromConversation)
-          .toList(growable: true);
+      _historyMessages = merged;
       _conversationHistoryBeforeSequence = history.nextBeforeSequence;
       _olderConversationHistoryLoading = false;
       _olderConversationHistoryLoadArmed = false;
       _olderConversationHistoryError = null;
       _setRunState(history.currentState);
       _activeRequest = null;
-      _pendingAutoVoiceReplay = null;
-      _resetAutoVoiceProgress();
     });
-    _seedExistingFormPresentations();
-    _notifyActionStateChanged();
+
     _persistInteractionState();
     _flushPersistentInteractionState();
-    _scheduleScrollToLatest();
+    if (shouldFollow) _scheduleScrollToLatest();
     _armOlderConversationHistoryLoading();
 
     if (history.currentState.isActive &&
         history.currentState.runId?.trim().isNotEmpty == true &&
         widget.runner != null) {
-      await _resumeCurrentRun(preserveActionState: true);
+      await _resumeCurrentRun();
       return true;
     }
-    _maybeStartAutoVoicePlayback(history.currentState);
+
     return true;
+  }
+
+  List<AgentHubHistoryMessage> _mergeRecoveredHistory(
+    AgentConversationHistory history,
+  ) {
+    final remote = history.messages
+        .map(_historyMessageFromConversation)
+        .toList();
+    if (_state.threadId != history.thread.id) return remote;
+    final remoteIds = remote.map(_messageIdentity).toSet();
+    final previousAssistant = _state.phase == AgentStreamRunPhase.idle
+        ? null
+        : _currentAssistantHistoryMessage();
+    // Keep cached older records and merge by durable identity. The server
+    // cursor still pages every gap, even if some older rows are cached.
+    final retained = [..._historyMessages, ?previousAssistant].where(
+      (message) =>
+          message.id != null &&
+          !remoteIds.contains(_messageIdentity(message)) &&
+          _messageIdentity(message) != history.currentState.messageId &&
+          (message.id == 'local:welcome' || !message.id!.startsWith('local:')),
+    );
+    return _mergeHistoryMessages([...retained, ...remote]);
   }
 
   void _updateLatestButtonVisibility() {
     if (!_chatScrollController.hasClients) return;
     final position = _chatScrollController.position;
-    if (_preserveArtifactFocus &&
-        position.maxScrollExtent - position.pixels <= 20) {
-      _preserveArtifactFocus = false;
-    }
     final shouldShow =
         position.maxScrollExtent > 160 &&
         position.pixels < position.maxScrollExtent - 40;
@@ -1028,11 +985,26 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final oldPixels = _chatScrollController.hasClients
         ? _chatScrollController.position.pixels
         : 0.0;
+    final anchorMessageId = _historyMessages.firstOrNull == null
+        ? null
+        : _messageIdentity(_historyMessages.first);
     setState(() {
       _olderConversationHistoryLoading = true;
       _olderConversationHistoryError = null;
+      _olderHistoryViewportAnchorMessageId = anchorMessageId;
     });
     try {
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted ||
+          operationGeneration != _sessionOperationGeneration ||
+          beforeSequence != _conversationHistoryBeforeSequence) {
+        return;
+      }
+      final anchorTop = _olderHistoryViewportAnchorKey.currentContext
+          ?.findRenderObject();
+      final anchorTopBefore = anchorTop is RenderBox && anchorTop.hasSize
+          ? anchorTop.localToGlobal(Offset.zero).dy
+          : null;
       final page = await repository.loadConversation(
         threadId,
         beforeSequence: beforeSequence,
@@ -1045,20 +1017,48 @@ class _AgentHubPageState extends State<AgentHubPage> {
       }
       final olderMessages = _historyMessagesFromOlderConversationPage(page);
       setState(() {
-        _historyMessages.insertAll(0, olderMessages);
+        final existingIds = _historyMessages.map(_messageIdentity).toSet()
+          ..addAll([?_completedMessageId]);
+        _historyMessages = _mergeHistoryMessages([
+          ...olderMessages.where(
+            (message) => existingIds.add(_messageIdentity(message)),
+          ),
+          ..._historyMessages,
+        ]);
         _conversationHistoryBeforeSequence = page.nextBeforeSequence;
         _olderConversationHistoryLoading = false;
         _olderConversationHistoryError = null;
       });
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      _persistInteractionState();
+      var adjustmentAttempts = 0;
+      void preserveViewport(Duration _) {
         if (!mounted || !_chatScrollController.hasClients) return;
         final position = _chatScrollController.position;
-        final target = (oldPixels + position.maxScrollExtent - oldExtent)
+        final anchorRenderObject = _olderHistoryViewportAnchorKey.currentContext
+            ?.findRenderObject();
+        final anchorTopAfter =
+            anchorRenderObject is RenderBox && anchorRenderObject.hasSize
+            ? anchorRenderObject.localToGlobal(Offset.zero).dy
+            : null;
+        final target =
+            adjustmentAttempts > 0 &&
+                anchorTopBefore != null &&
+                anchorTopAfter != null
+            ? position.pixels + anchorTopAfter - anchorTopBefore
+            : oldPixels + position.maxScrollExtent - oldExtent;
+        final clampedTarget = target
             .clamp(position.minScrollExtent, position.maxScrollExtent)
             .toDouble();
-        position.jumpTo(target);
+        final settled = (position.pixels - clampedTarget).abs() <= 0.5;
+        if (!settled) position.jumpTo(clampedTarget);
         _updateLatestButtonVisibility();
-      });
+        if (!settled && ++adjustmentAttempts < 16) {
+          WidgetsBinding.instance.addPostFrameCallback(preserveViewport);
+          WidgetsBinding.instance.scheduleFrame();
+        }
+      }
+
+      WidgetsBinding.instance.addPostFrameCallback(preserveViewport);
     } catch (error) {
       if (!mounted || operationGeneration != _sessionOperationGeneration) {
         return;
@@ -1144,80 +1144,26 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _updateLatestButtonVisibility();
   }
 
-  Future<void> _scrollToLatestFromUser() {
-    _preserveArtifactFocus = false;
+  Future<void> _scrollToLatestFromUser() async {
     _scrollIntentVersion += 1;
-    return _scrollToLatest();
+    await _scrollToLatest(smooth: TickerMode.valuesOf(context).enabled);
+    if (!mounted) return;
+    _scheduleScrollToLatestCorrection(_scrollIntentVersion);
   }
-
-  void _scheduleArtifactFocus({int attempt = 0, int? intentVersion}) {
-    if (_artifactFocusFrameScheduled) return;
-    final focusIntentVersion = intentVersion ?? ++_scrollIntentVersion;
-    _artifactFocusFrameScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _artifactFocusFrameScheduled = false;
-      if (!mounted || focusIntentVersion != _scrollIntentVersion) return;
-      final artifactContext = _activeArtifactPanelKey.currentContext;
-      if (artifactContext == null) {
-        if (attempt < 2) {
-          _scheduleArtifactFocus(
-            attempt: attempt + 1,
-            intentVersion: focusIntentVersion,
-          );
-        }
-        return;
-      }
-      final renderObject = artifactContext.findRenderObject();
-      final viewport = RenderAbstractViewport.maybeOf(renderObject);
-      if (renderObject == null ||
-          viewport == null ||
-          !_chatScrollController.hasClients) {
-        if (attempt < 2) {
-          _scheduleArtifactFocus(
-            attempt: attempt + 1,
-            intentVersion: focusIntentVersion,
-          );
-        }
-        return;
-      }
-      final position = _chatScrollController.position;
-      final artifactLeadingOffset = viewport
-          .getOffsetToReveal(renderObject, 0)
-          .offset;
-      final targetOffset =
-          (artifactLeadingOffset - position.viewportDimension * 0.25).clamp(
-            position.minScrollExtent,
-            position.maxScrollExtent,
-          );
-      unawaited(
-        MomCozyMotion.scrollTo(
-          context,
-          _chatScrollController,
-          targetOffset,
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-        ).then((_) => _updateLatestButtonVisibility()),
-      );
-    });
-  }
-
-  bool _isComposerLockedForState(AgentStreamRunState state) =>
-      state.phase == AgentStreamRunPhase.waitingForConfirmation;
 
   bool _isVisibleReplyRunningForState(AgentStreamRunState state) =>
       state.isAwaitingVisibleReply;
 
   bool _canRetryForState(AgentStreamRunState state) =>
-      widget.runner != null && state.canRetry && _activeRequest != null;
+      widget.runner != null &&
+      state.canRetry &&
+      state.errorMessage != _unsupportedActionMessage &&
+      _activeRequest != null;
 
   bool get _isComposerLocked =>
       _followUpStartPending ||
-      _newSessionStartPending ||
-      _supportTicketSubmitPending ||
       _conversationSwitchPending ||
-      _attachmentUploadPending ||
-      _attachmentDiscardPending ||
-      _isComposerLockedForState(_state);
+      _attachmentUploadPending;
 
   bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
 
@@ -1279,7 +1225,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return;
     }
 
-    _cancelCurrentBubblePlaybackForNewTurn();
     await _waitForCompletedReplyRunSettlement();
     await _waitForPendingServerCancel();
     if (!mounted || _isComposerLocked) return;
@@ -1323,6 +1268,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       }
       _historyMessages.add(
         AgentHubHistoryMessage(
+          id: 'local:${_now.microsecondsSinceEpoch}:${++_localTurnRevision}',
+          createdAt: _now,
           role: AgentHubHistoryRole.user,
           content: message,
           images: sentImages,
@@ -1331,7 +1278,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       );
       _attachedImages.clear();
       _attachedFiles.clear();
-      _pendingAutoVoiceReplay = null;
     });
     _persistInteractionState();
     _scheduleScrollToLatest();
@@ -1351,7 +1297,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return false;
     }
 
-    _cancelCurrentBubblePlaybackForNewTurn();
     await _waitForCompletedReplyRunSettlement();
     await _waitForPendingServerCancel();
     if (!mounted || _isComposerLocked) return false;
@@ -1366,16 +1311,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       idempotencyKey,
     );
     final abandonedAttachmentIds = _attachedFileIds().toList(growable: false);
-    if (abandonedAttachmentIds.isNotEmpty) {
-      _setAttachmentDiscardPending(true);
-      final deleted = await _deleteAbandonedAttachments(abandonedAttachmentIds);
-      _setAttachmentDiscardPending(false);
-      if (!mounted) return false;
-      if (!deleted) {
-        _showAttachmentCleanupFailure();
-        return false;
-      }
-    }
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
@@ -1391,6 +1326,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
       if (optimisticContent.trim().isNotEmpty) {
         _historyMessages.add(
           AgentHubHistoryMessage(
+            id: 'local:${_now.microsecondsSinceEpoch}:${++_localTurnRevision}',
+            createdAt: _now,
             role: AgentHubHistoryRole.user,
             content: optimisticContent,
           ),
@@ -1398,156 +1335,22 @@ class _AgentHubPageState extends State<AgentHubPage> {
       }
       _attachedImages.clear();
       _attachedFiles.clear();
-      _pendingAutoVoiceReplay = null;
     });
-    _persistInteractionState();
+    _queueAttachmentCleanup(abandonedAttachmentIds);
     _scheduleScrollToLatest();
     return _startRun(request, awaitServerRunSignal: awaitServerRunSignal);
-  }
-
-  void _handleArtifactAction(AgentArtifactActionView action) {
-    if (action.kind == 'form.submit') {
-      unawaited(_handleArtifactFormSubmit(action));
-      return;
-    }
-    if (action.routePath == '/media-viewer' &&
-        !_isStableProductAssetAction(action)) {
-      return;
-    }
-    widget.onArtifactAction?.call(action);
-  }
-
-  Future<bool> _handleArtifactFormSubmit(AgentArtifactActionView action) async {
-    final submission = _formSubmissionFromAction(action);
-    if (submission == null) return false;
-    final artifactId = submission.artifactId;
-    final existing = _formSubmissionsNotifier.value[artifactId];
-    if (existing?.isSubmitted == true) return true;
-    if (existing?.isSubmitting == true) return false;
-
-    _setFormSubmission(
-      artifactId,
-      AgentArtifactFormSubmission.submitting(values: submission.values),
-    );
-    final idempotencyKey = _formSubmissionIdempotencyKey(
-      artifactId: artifactId,
-      formId: submission.formId,
-      threadId: _state.threadId ?? _activeRequest?.threadId,
-      values: submission.values,
-    );
-
-    var accepted = false;
-    try {
-      accepted = submission.formId == 'support_ticket'
-          ? await _submitSupportTicket(
-              artifactId: artifactId,
-              values: submission.values,
-              idempotencyKey: idempotencyKey,
-            )
-          : await _sendSyntheticUserMessage(
-              requestMessage: _formSubmitRequestMessage(action),
-              optimisticContent: '已提交信息采集表单',
-              metadata: _formSubmissionMetadata(action),
-              idempotencyKey: idempotencyKey,
-              awaitServerRunSignal: true,
-            );
-    } catch (_) {
-      accepted = false;
-    }
-    if (!mounted) return accepted;
-
-    if (accepted) {
-      _setFormSubmission(
-        artifactId,
-        AgentArtifactFormSubmission.submitted(values: submission.values),
-      );
-    } else {
-      _removeFormSubmission(artifactId);
-    }
-    _persistInteractionState();
-    return accepted;
-  }
-
-  Future<bool> _submitSupportTicket({
-    required String artifactId,
-    required Map<String, Object?> values,
-    required String idempotencyKey,
-  }) async {
-    final submitter = widget.supportTicketSubmitter;
-    if (submitter == null) return false;
-    _supportTicketSubmitPending = true;
-    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
-    try {
-      await submitter(
-        SupportTicketSubmitRequest(
-          artifactId: artifactId,
-          values: values,
-          idempotencyKey: idempotencyKey,
-          threadId: _state.threadId ?? _activeRequest?.threadId,
-          locale: _activeRequest?.locale,
-        ),
-      );
-      if (!mounted) return true;
-
-      _cancelCurrentBubblePlaybackForNewTurn();
-      final archivedAssistantMessage = _currentAssistantHistoryMessage();
-      final threadId = _state.threadId ?? _activeRequest?.threadId;
-      setState(() {
-        if (archivedAssistantMessage != null) {
-          _historyMessages.add(archivedAssistantMessage);
-        }
-        _historyMessages.add(
-          const AgentHubHistoryMessage(
-            role: AgentHubHistoryRole.user,
-            content: '已提交售后工单',
-          ),
-        );
-        _setRunState(
-          AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            threadId: threadId,
-            textContent: _supportTicketSubmittedReply,
-            completedAssistantMessageReceived: true,
-          ),
-        );
-        _pendingAutoVoiceReplay = null;
-      });
-      _persistInteractionState();
-      _scheduleScrollToLatest();
-      return true;
-    } catch (_) {
-      return false;
-    } finally {
-      _supportTicketSubmitPending = false;
-      if (mounted) {
-        _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
-      }
-    }
-  }
-
-  void _setFormSubmission(
-    String artifactId,
-    AgentArtifactFormSubmission submission,
-  ) {
-    _formSubmissionsNotifier.value = {
-      ..._formSubmissionsNotifier.value,
-      artifactId: submission,
-    };
-  }
-
-  void _removeFormSubmission(String artifactId) {
-    if (!_formSubmissionsNotifier.value.containsKey(artifactId)) return;
-    final next = Map<String, AgentArtifactFormSubmission>.of(
-      _formSubmissionsNotifier.value,
-    )..remove(artifactId);
-    _formSubmissionsNotifier.value = next;
   }
 
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
     final state = _state;
     final text = _agentAssistantTextForState(state, greeting: _greeting).trim();
     if (text.isEmpty) return null;
+    // Keep the visible welcome verbatim when the first-entry card becomes
+    // an ordinary assistant bubble in the conversation history.
     return AgentHubHistoryMessage(
+      id: state.phase == AgentStreamRunPhase.idle
+          ? 'local:welcome'
+          : state.messageId ?? 'run:${state.runId}:assistant',
       role: AgentHubHistoryRole.assistant,
       content: text,
       runState: state.phase == AgentStreamRunPhase.idle ? null : state,
@@ -1704,17 +1507,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _publishAttachmentUploadState() {
     _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
-    _syncConversationSwitchEnabled();
-  }
-
-  void _setAttachmentDiscardPending(bool value) {
-    if (_attachmentDiscardPending == value) return;
-    if (!mounted) {
-      _attachmentDiscardPending = value;
-      return;
-    }
-    setState(() => _attachmentDiscardPending = value);
-    _publishAttachmentUploadState();
   }
 
   bool get _canAddAttachment =>
@@ -1723,43 +1515,51 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void _removeAttachedImage(int index) {
     if (index < 0 || index >= _attachedImages.length) return;
     final removed = _attachedImages[index];
-    unawaited(_removeAttachedImageAfterDelete(removed));
-  }
-
-  Future<void> _removeAttachedImageAfterDelete(
-    AgentStreamImageInput removed,
-  ) async {
-    _setAttachmentDiscardPending(true);
-    final deleted = await _deleteAbandonedAttachments([removed.fileId]);
-    _setAttachmentDiscardPending(false);
-    if (!mounted) return;
-    if (!deleted) {
-      _showAttachmentCleanupFailure();
-      return;
-    }
-    setState(() => _attachedImages.remove(removed));
-    _persistInteractionState();
+    setState(() => _attachedImages.removeAt(index));
+    _queueAttachmentCleanup([removed.fileId]);
   }
 
   void _removeAttachedFile(int index) {
     if (index < 0 || index >= _attachedFiles.length) return;
     final removed = _attachedFiles[index];
-    unawaited(_removeAttachedFileAfterDelete(removed));
+    setState(() => _attachedFiles.removeAt(index));
+    _queueAttachmentCleanup([removed.fileId]);
   }
 
-  Future<void> _removeAttachedFileAfterDelete(
-    AgentStreamFileInput removed,
-  ) async {
-    _setAttachmentDiscardPending(true);
-    final deleted = await _deleteAbandonedAttachments([removed.fileId]);
-    _setAttachmentDiscardPending(false);
-    if (!mounted) return;
-    if (!deleted) {
-      _showAttachmentCleanupFailure();
+  void _queueAttachmentCleanup(Iterable<String> fileIds) {
+    _pendingAttachmentCleanupIds.addAll(
+      fileIds.map((id) => id.trim()).where((id) => id.isNotEmpty),
+    );
+    // Persist the removed draft and cleanup intent together before any request.
+    _persistInteractionState();
+    _flushPersistentInteractionState();
+    _attachmentCleanupRetryTimer?.cancel();
+    unawaited(_retryAttachmentCleanup());
+  }
+
+  Future<void> _retryAttachmentCleanup() async {
+    if (!mounted ||
+        _attachmentCleanupInFlight ||
+        _pendingAttachmentCleanupIds.isEmpty ||
+        widget.mediaRepository == null) {
       return;
     }
-    setState(() => _attachedFiles.remove(removed));
-    _persistInteractionState();
+    _attachmentCleanupInFlight = true;
+    final pending = _pendingAttachmentCleanupIds.toList(growable: false);
+    final deleted = await _deleteAbandonedAttachments(pending);
+    _attachmentCleanupInFlight = false;
+    if (!mounted) return; // The persisted intent is retried on the next visit.
+    if (deleted) {
+      _pendingAttachmentCleanupIds.removeAll(pending);
+      _persistInteractionState();
+      _flushPersistentInteractionState();
+    }
+    if (_pendingAttachmentCleanupIds.isNotEmpty) {
+      _attachmentCleanupRetryTimer = Timer(
+        const Duration(seconds: 30),
+        () => unawaited(_retryAttachmentCleanup()),
+      );
+    }
   }
 
   Iterable<String> _attachedFileIds() sync* {
@@ -1782,10 +1582,12 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final results = await Future.wait(
       normalizedIds.map((fileId) async {
         try {
-          await repository.deleteFile(
-            fileId: fileId,
-            idempotencyKey: 'agent-draft-discard:$fileId',
-          );
+          await repository
+              .deleteFile(
+                fileId: fileId,
+                idempotencyKey: 'agent-draft-discard:$fileId',
+              )
+              .timeout(const Duration(seconds: 20));
           return true;
         } on ApiHttpException catch (error) {
           return error.statusCode == 404;
@@ -1807,46 +1609,32 @@ class _AgentHubPageState extends State<AgentHubPage> {
     ),
   );
 
-  void _showAttachmentCleanupFailure() {
-    if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(_attachmentFeedback('附件清理失败，已保留草稿，请重试。'));
-  }
-
-  Future<void> _openConversationHistory() async {
-    final repository = widget.conversationRepository;
-    if (repository == null ||
-        _isSessionMutationPending ||
-        _attachmentUploadPending) {
-      return;
-    }
-    FocusManager.instance.primaryFocus?.unfocus();
-    await showAgentConversationPanel(
-      context: context,
-      repository: repository,
-      activeThreadId: _state.threadId ?? _activeRequest?.threadId,
-      canSwitchListenable: _conversationSwitchEnabledNotifier,
-      onSelected: _switchConversation,
-      onDismissed: _cancelPendingConversationSwitch,
-    );
-  }
-
-  Future<bool> _switchConversation(String threadId) async {
+  Future<bool> _loadTargetConversation(String threadId) async {
     final repository = widget.conversationRepository;
     final normalizedThreadId = threadId.trim();
     if (repository == null ||
         normalizedThreadId.isEmpty ||
         _isVisibleReplyRunning ||
         _attachmentUploadPending ||
-        _conversationSwitchPending ||
-        _newSessionStartPending) {
+        _conversationSwitchPending) {
       return false;
     }
     if (normalizedThreadId == (_state.threadId ?? _activeRequest?.threadId)) {
       return true;
     }
 
+    final previousThreadId = _state.threadId;
+    if (previousThreadId != null) {
+      _interactionState?.threads[previousThreadId] =
+          _buildInteractionSnapshot();
+    }
+    final cached = _interactionState?.threads[normalizedThreadId];
+    if (cached != null) {
+      _sessionOperationGeneration += 1;
+      setState(() => _applyInteractionSnapshot(cached));
+      _returnToConversation();
+      return true;
+    }
     final operationGeneration = ++_sessionOperationGeneration;
     _setConversationSwitchPending(true);
     try {
@@ -1858,29 +1646,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
       }
 
       final abandonedAttachmentIds = _attachedFileIds().toList();
-      if (abandonedAttachmentIds.isNotEmpty) {
-        _setAttachmentDiscardPending(true);
-        final deleted = await _deleteAbandonedAttachments(
-          abandonedAttachmentIds,
-        );
-        _setAttachmentDiscardPending(false);
-        if (!mounted ||
-            operationGeneration != _sessionOperationGeneration ||
-            !_conversationSwitchPending) {
-          return false;
-        }
-        if (!deleted) {
-          _showAttachmentCleanupFailure();
-          return false;
-        }
-      }
 
-      widget.voicePlaybackCoordinator?.cancel();
       _cancelRunSubscription();
       _composerController.clear();
-      _formPresentationSession.clear();
-      _formSubmissionsNotifier.value =
-          const <String, AgentArtifactFormSubmission>{};
+
       setState(() {
         _historyMessages = history.messages
             .map(_historyMessageFromConversation)
@@ -1892,15 +1661,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
         _setRunState(history.currentState);
         _attachedImages.clear();
         _attachedFiles.clear();
-        _pendingActionIds.clear();
-        _localActionStatuses.clear();
         _activeRequest = null;
-        _setVoiceState(const AgentVoiceState());
-        _pendingAutoVoiceReplay = null;
-        _resetAutoVoiceProgress();
       });
-      _seedExistingFormPresentations();
-      _notifyActionStateChanged();
+
+      _queueAttachmentCleanup(abandonedAttachmentIds);
       _persistInteractionState();
       _flushPersistentInteractionState();
       _scheduleScrollToLatest();
@@ -1909,7 +1673,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
       if (history.currentState.isActive &&
           history.currentState.runId?.trim().isNotEmpty == true &&
           widget.runner != null) {
-        await _resumeCurrentRun(preserveActionState: true);
+        await _resumeCurrentRun();
       }
       return true;
     } catch (_) {
@@ -1921,157 +1685,21 @@ class _AgentHubPageState extends State<AgentHubPage> {
     }
   }
 
-  void _cancelPendingConversationSwitch() {
-    if (!_conversationSwitchPending) return;
-    _sessionOperationGeneration += 1;
-    _setConversationSwitchPending(false);
-  }
-
   void _setConversationSwitchPending(bool value) {
     if (_conversationSwitchPending == value) return;
     _conversationSwitchPending = value;
     _publishSessionMutationState();
   }
 
-  Future<void> _startNewSession() async {
-    if (_isVisibleReplyRunning ||
-        _attachmentUploadPending ||
-        _newSessionStartPending ||
-        _conversationSwitchPending) {
-      return;
-    }
-    final operationGeneration = ++_sessionOperationGeneration;
-    _setNewSessionStartPending(true);
-    try {
-      final abandonedAttachmentIds = _attachedFileIds().toList();
-      if (abandonedAttachmentIds.isNotEmpty) {
-        _setAttachmentDiscardPending(true);
-        final deleted = await _deleteAbandonedAttachments(
-          abandonedAttachmentIds,
-        );
-        _setAttachmentDiscardPending(false);
-        if (!mounted || operationGeneration != _sessionOperationGeneration) {
-          return;
-        }
-        if (!deleted) {
-          _showAttachmentCleanupFailure();
-          return;
-        }
-        _forgetDeletedDraftAttachments(abandonedAttachmentIds);
-      }
-      if (_state.isActive) {
-        _sendBestEffortServerCancel(_state, _activeRequest);
-      }
-      widget.voicePlaybackCoordinator?.cancel();
-      _dismissComposerKeyboardOnRunAccepted = false;
-      _cancelRunSubscription();
-      _composerController.clear();
-      _formSubmissionsNotifier.value =
-          const <String, AgentArtifactFormSubmission>{};
-      _formPresentationSession.clear();
-      setState(() {
-        _setRunState(const AgentStreamRunState());
-        _historyMessages.clear();
-        _conversationHistoryBeforeSequence = null;
-        _olderConversationHistoryLoading = false;
-        _olderConversationHistoryLoadArmed = false;
-        _olderConversationHistoryError = null;
-        _attachedImages.clear();
-        _attachedFiles.clear();
-        _pendingActionIds.clear();
-        _localActionStatuses.clear();
-        _activeRequest = null;
-        _setVoiceState(const AgentVoiceState());
-        _pendingAutoVoiceReplay = null;
-        _resetAutoVoiceProgress();
-      });
-      _notifyActionStateChanged();
-      _persistInteractionState();
-      _flushPersistentInteractionState();
-      unawaited(_refreshGreetingAndMaybePlayVoice());
-    } catch (_) {
-      // Keep the current session visible when cleanup fails.
-    } finally {
-      if (operationGeneration == _sessionOperationGeneration) {
-        if (mounted) {
-          _setNewSessionStartPending(false);
-        } else {
-          _newSessionStartPending = false;
-        }
-      }
-    }
-  }
-
-  void _setNewSessionStartPending(bool value) {
-    if (_newSessionStartPending == value) return;
-    _newSessionStartPending = value;
-    _publishSessionMutationState();
-  }
-
-  void _forgetDeletedDraftAttachments(Iterable<String> fileIds) {
-    final deletedIds = fileIds.map((fileId) => fileId.trim()).toSet();
-    if (deletedIds.isEmpty || !mounted) return;
-    setState(() {
-      _attachedImages.removeWhere(
-        (image) => deletedIds.contains(image.fileId.trim()),
-      );
-      _attachedFiles.removeWhere(
-        (file) => deletedIds.contains(file.fileId.trim()),
-      );
-    });
-    _persistInteractionState();
-  }
-
-  bool get _isSessionMutationPending =>
-      _newSessionStartPending || _conversationSwitchPending;
+  bool get _isSessionMutationPending => _conversationSwitchPending;
 
   void _publishSessionMutationState() {
-    _setNotifierValue(
-      _sessionMutationPendingNotifier,
-      _isSessionMutationPending,
-    );
     _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
-    _syncConversationSwitchEnabled();
   }
 
-  void _syncConversationSwitchEnabled() {
-    if (SchedulerBinding.instance.schedulerPhase ==
-        SchedulerPhase.persistentCallbacks) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _syncConversationSwitchEnabled();
-      });
-      return;
-    }
-    _setNotifierValue(
-      _conversationSwitchEnabledNotifier,
-      !_isVisibleReplyRunning &&
-          !_isSessionMutationPending &&
-          !_attachmentUploadPending &&
-          !_attachmentDiscardPending,
-    );
-  }
-
-  void _cancelCurrentBubblePlaybackForNewTurn() {
-    const preservedSources = <AgentVoicePlaybackSource>{
-      AgentVoicePlaybackSource.notification,
-    };
-    final coordinator = widget.voicePlaybackCoordinator;
-    final activeSource = coordinator?.activeSource;
-    final isPreservedPlayback =
-        activeSource != null && preservedSources.contains(activeSource);
-    final didCancel =
-        coordinator?.cancel(preserveSources: preservedSources) ?? false;
-
-    if (!_voiceState.isPlaybackActive) return;
-    if (coordinator != null && isPreservedPlayback && !didCancel) return;
-
-    _setVoiceState(_voiceState.cancelPlayback());
-  }
-
-  Future<void> _refreshGreetingAndMaybePlayVoice() async {
+  Future<void> _refreshGreeting() async {
     final loader = widget.greetingProfileLoader;
     if (loader == null) {
-      _maybeStartGreetingVoicePlayback();
       return;
     }
 
@@ -2093,7 +1721,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       });
     }
     if (!isShowingFreshGreeting) return;
-    _maybeStartGreetingVoicePlayback();
   }
 
   bool get _isShowingFreshGreeting =>
@@ -2103,35 +1730,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _historyMessages.isEmpty &&
       _activeRequest == null;
 
-  void _maybeStartGreetingVoicePlayback() {
-    final coordinator = widget.voicePlaybackCoordinator;
-    final player = widget.voicePlaybackPlayer;
-    if (!_interactionRestoreResolved ||
-        !_isShowingFreshGreeting ||
-        coordinator == null ||
-        coordinator.isSuspended ||
-        player == null ||
-        !_autoVoiceEnabled) {
-      return;
-    }
-
-    final result = coordinator.request(
-      id: _agentDefaultGreetingPlaybackId,
-      source: AgentVoicePlaybackSource.greeting,
-      cancel: () => player.stop().catchError((Object _) {}),
-    );
-    final handle = result.handle;
-    if (!mounted ||
-        result.status != AgentVoicePlaybackRequestStatus.started ||
-        handle == null) {
-      return;
-    }
-    _startVoicePlayback(handle: handle, text: _greeting);
-  }
-
   Future<void> _retryRun() async {
     final request = _activeRequest;
-    if (request == null || widget.runner == null || !_state.canRetry) return;
+    if (request == null || !_canRetryForState(_state)) return;
     final submittedText = _submittedComposerText;
     if (submittedText != null && _composerController.text == submittedText) {
       _composerController.clear();
@@ -2146,7 +1747,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
           afterTransientCursor: _state.lastTransientCursor,
         ),
         initialState: _state.copyWith(phase: AgentStreamRunPhase.streaming),
-        preserveActionState: true,
         submittedComposerText: submittedText,
       );
       return;
@@ -2154,7 +1754,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     await _startRun(request, submittedComposerText: submittedText);
   }
 
-  Future<void> _resumeCurrentRun({bool preserveActionState = false}) async {
+  Future<void> _resumeCurrentRun() async {
     if (widget.runner == null) return;
     final runId = _state.runId?.trim();
     if (runId == null || runId.isEmpty) return;
@@ -2169,7 +1769,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
         afterTransientCursor: _state.lastTransientCursor,
       ),
       initialState: _state.copyWith(phase: AgentStreamRunPhase.streaming),
-      preserveActionState: preserveActionState,
     );
   }
 
@@ -2187,25 +1786,19 @@ class _AgentHubPageState extends State<AgentHubPage> {
         selection: TextSelection.collapsed(offset: submittedText.length),
       );
     }
+    if (nextState.phase == AgentStreamRunPhase.waitingForConfirmation &&
+        _state.phase != AgentStreamRunPhase.waitingForConfirmation) {
+      _sendBestEffortServerCancel(nextState, _activeRequest);
+    }
     _forwardNewApplicationEvents(_state, nextState);
     _updateComposerFocusForRun(nextState);
-    final shouldFollowLatest = _isNearLatest() || nextState.isActive;
-    _formPresentationSession.registerLiveFormIds(
-      _formArtifactIdsForState(nextState),
-    );
-    final previousArtifactId = _latestVisibleArtifactId(_state);
-    final nextArtifactId = _latestVisibleArtifactId(nextState);
-    final shouldFocusArtifact =
-        nextArtifactId != null && nextArtifactId != previousArtifactId;
+    final shouldFollowLatest = _isPageVisible && _isNearLatest();
+    _identifyAcceptedUserMessage(nextState);
     final activeRequest = _activeRequest;
     if (activeRequest != null) {
       _activeRequest = _requestWithThreadId(activeRequest, nextState.threadId);
     }
-    _applyRunStateUpdate(
-      nextState,
-      shouldFollowLatest: shouldFollowLatest,
-      shouldFocusArtifact: shouldFocusArtifact,
-    );
+    _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
   }
 
   void _updateComposerFocusForRun(AgentStreamRunState nextState) {
@@ -2226,7 +1819,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
   void _applyRunStateUpdate(
     AgentStreamRunState nextState, {
     required bool shouldFollowLatest,
-    bool shouldFocusArtifact = false,
   }) {
     if (!mounted) return;
     _setRunState(nextState);
@@ -2235,11 +1827,8 @@ class _AgentHubPageState extends State<AgentHubPage> {
     } else {
       _persistInteractionState();
     }
-    _maybeStartAutoVoicePlayback(nextState);
-    if (shouldFocusArtifact) {
-      _preserveArtifactFocus = true;
-      _scheduleArtifactFocus();
-    } else if (shouldFollowLatest && !_preserveArtifactFocus) {
+
+    if (shouldFollowLatest) {
       _scheduleScrollToLatest();
     }
   }
@@ -2248,7 +1837,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     AgentStreamRequest request, {
     String? submittedComposerText,
     AgentStreamRunState? initialState,
-    bool preserveActionState = false,
     bool awaitServerRunSignal = false,
   }) async {
     final runner = widget.runner;
@@ -2270,22 +1858,16 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final settlement = Completer<void>();
     _runAcceptanceCompleter = acceptance;
     _runSettlementCompleter = settlement;
-    _preserveArtifactFocus = false;
+
     _activeRequest = requestWithThread;
+    _localTurnRevision += 1;
     setState(() {
       _setRunState(initialState ?? const AgentStreamRunState().start());
-      if (initialState == null) {
-        _pendingAutoVoiceReplay = null;
-        _resetAutoVoiceProgress();
-      }
-      if (!preserveActionState) {
-        _pendingActionIds.clear();
-        _localActionStatuses.clear();
-      }
     });
-    if (!preserveActionState) _notifyActionStateChanged();
     _persistInteractionState();
-    _scheduleScrollToLatest();
+    if (initialState == null || (_isPageVisible && _isNearLatest())) {
+      _scheduleScrollToLatest();
+    }
 
     _runSubscription = runner
         .run(requestWithThread, initialState: initialState)
@@ -2344,318 +1926,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
   }
 
-  void _maybeStartAutoVoicePlayback(AgentStreamRunState nextState) {
-    final coordinator = widget.voicePlaybackCoordinator;
-    final player = widget.voicePlaybackPlayer;
-    final text = nextState.textContent.trim();
-    final artifactText = _autoVoiceArtifactTextForState(nextState);
-    final mediaNarrations = _autoVoiceMediaNarrationsForState(nextState);
-    if (coordinator?.isSuspended ?? false) {
-      _pendingAutoVoiceReplay = null;
-      return;
-    }
-    if (coordinator == null ||
-        player == null ||
-        !_autoVoiceEnabled ||
-        !_canAutoVoicePlayback(nextState.phase) ||
-        (text.isEmpty && artifactText == null && mediaNarrations.isEmpty)) {
-      return;
-    }
-
-    final playbackId = _autoVoicePlaybackId(nextState);
-    final isNewPlayback = _activeAutoVoicePlaybackId != playbackId;
-    if (isNewPlayback) {
-      unawaited(_cancelActiveAutoVoiceSession());
-      _activeAutoVoicePlaybackId = playbackId;
-      _autoVoiceAppendedText = '';
-      _autoVoiceHasSubmittedContent = false;
-      _autoVoiceSessionFinished = false;
-      _autoVoiceSubmittedArtifactTexts.clear();
-      _autoVoiceSubmittedMediaNarrations.clear();
-    }
-
-    final textToAppend = _nextAutoVoiceTextToAppend(text);
-    final hasUnsubmittedArtifact =
-        artifactText != null &&
-        !_autoVoiceSubmittedArtifactTexts.contains(artifactText);
-    final hasUnsubmittedMedia = mediaNarrations.any(
-      (narration) =>
-          !_autoVoiceSubmittedMediaNarrations.contains(narration.trim()),
-    );
-    if (_autoVoiceSession == null &&
-        textToAppend.trim().isEmpty &&
-        !hasUnsubmittedArtifact &&
-        !hasUnsubmittedMedia) {
-      return;
-    }
-
-    final session = _autoVoiceSession ?? _startAutoVoiceSession(playbackId);
-    if (session == null) {
-      if (_voiceState.phase == AgentVoicePhase.error) return;
-      if (coordinator.activeSource != AgentVoicePlaybackSource.autoReply ||
-          coordinator.activeId != playbackId) {
-        _queueBlockedAutoVoiceReplay(nextState);
-      }
-      return;
-    }
-
-    _pendingAutoVoiceReplay = null;
-    if (textToAppend.trim().isNotEmpty) {
-      session.append(textToAppend);
-      _autoVoiceAppendedText = text;
-      _autoVoiceHasSubmittedContent = true;
-    }
-    if (mediaNarrations.isNotEmpty &&
-        _shouldFinishAutoVoicePlayback(nextState)) {
-      session.flush();
-    }
-    final supplementalTexts = <String>[
-      if (artifactText != null &&
-          _autoVoiceSubmittedArtifactTexts.add(artifactText))
-        artifactText,
-      ...mediaNarrations.map(_claimAutoVoiceMediaNarration).whereType<String>(),
-    ];
-    if (supplementalTexts.isNotEmpty) {
-      final separator = _autoVoiceAppendedText.isEmpty ? '' : '\n';
-      session.append('$separator${supplementalTexts.join(' ')}');
-      _autoVoiceHasSubmittedContent = true;
-    }
-    if (_shouldFinishAutoVoicePlayback(nextState)) {
-      _finishActiveAutoVoiceSession();
-    }
-  }
-
-  AgentVoiceRealtimePlaybackSession? _startAutoVoiceSession(String playbackId) {
-    final coordinator = widget.voicePlaybackCoordinator;
-    final player = widget.voicePlaybackPlayer;
-    if (coordinator == null || player == null) return null;
-
-    final result = coordinator.request(
-      id: playbackId,
-      source: AgentVoicePlaybackSource.autoReply,
-      cancel: _cancelActiveAutoVoiceSession,
-    );
-    if (result.status == AgentVoicePlaybackRequestStatus.blocked) return null;
-    final handle = result.handle;
-    if (!mounted ||
-        result.status != AgentVoicePlaybackRequestStatus.started ||
-        handle == null) {
-      return null;
-    }
-
-    final AgentVoiceRealtimePlaybackSession session;
-    try {
-      session = player.startRealtimeSession(
-        mediaNarrationResolver: ({required url, required alt}) =>
-            _resolveMediaVoiceNarration(url: url),
-      );
-    } catch (error) {
-      handle.finish();
-      _setVoiceState(_voiceState.fail(error));
-      return null;
-    }
-    _autoVoiceSession = session;
-    _autoVoiceSessionFinished = false;
-    _setVoiceState(_voiceState.startPlayback(handle.id));
-    unawaited(
-      session.done
-          .then((_) {
-            if (!mounted || !handle.isCurrent || _autoVoiceSession != session) {
-              return;
-            }
-            _autoVoiceSession = null;
-            handle.finish();
-            _setVoiceState(const AgentVoiceState());
-          })
-          .catchError((Object error) {
-            if (!mounted || !handle.isCurrent || _autoVoiceSession != session) {
-              return;
-            }
-            _autoVoiceSession = null;
-            handle.finish();
-            _setVoiceState(_voiceState.fail(error));
-          }),
-    );
-    return session;
-  }
-
-  String? _resolveMediaVoiceNarration({required String url}) {
-    final narration = _mediaVoiceNarrationIndexForState(
-      _state,
-    ).resolve(url)?.trim();
-    if (narration == null || narration.isEmpty) return null;
-    _autoVoiceSubmittedMediaNarrations.add(narration);
-    return narration;
-  }
-
-  AgentMediaVoiceNarrationIndex _mediaVoiceNarrationIndexForState(
-    AgentStreamRunState state,
-  ) {
-    final identity = state.events;
-    if (!identical(identity, _mediaVoiceEventIdentity)) {
-      _mediaVoiceEventIdentity = identity;
-      _mediaVoiceNarrationIndex = AgentMediaVoiceNarrationIndex.fromEvents(
-        state.events,
-      );
-    }
-    return _mediaVoiceNarrationIndex;
-  }
-
-  List<String> _autoVoiceMediaNarrationsForState(AgentStreamRunState state) {
-    if (!_shouldFinishAutoVoicePlayback(state)) return const <String>[];
-    return _mediaVoiceNarrationIndexForState(state).autoSpeakableTexts;
-  }
-
-  String? _autoVoiceArtifactTextForState(AgentStreamRunState state) {
-    if (state.textContent.trim().isNotEmpty ||
-        !_shouldFinishAutoVoicePlayback(state) ||
-        !state.canPublishArtifactEvents) {
-      return null;
-    }
-    return agentArtifactVoiceFallbackText(
-      _artifactCardsFromEvents(_artifactEventsForState(state)),
-    );
-  }
-
-  String? _claimAutoVoiceMediaNarration(String? narration) {
-    final text = narration?.trim();
-    if (text == null ||
-        text.isEmpty ||
-        !_autoVoiceSubmittedMediaNarrations.add(text)) {
-      return null;
-    }
-    return text;
-  }
-
-  void _startVoicePlayback({
-    required AgentVoicePlaybackHandle handle,
-    required String text,
-    VoidCallback? onFinished,
-  }) {
-    _setVoiceState(_voiceState.startPlayback(handle.id));
-    final player = widget.voicePlaybackPlayer;
-    if (player == null) return;
-
-    unawaited(
-      Future<void>.sync(() => player.playText(text))
-          .then((_) {
-            if (!mounted || !handle.isCurrent) return;
-            handle.finish();
-            _setVoiceState(const AgentVoiceState());
-            onFinished?.call();
-          })
-          .catchError((Object error) {
-            if (!mounted || !handle.isCurrent) return;
-            handle.finish();
-            _setVoiceState(_voiceState.fail(error));
-          }),
-    );
-  }
-
-  String _autoVoicePlaybackId(AgentStreamRunState state) {
-    final activePlaybackId = _activeAutoVoicePlaybackId?.trim();
-    if (activePlaybackId != null &&
-        activePlaybackId.isNotEmpty &&
-        (state.isActive ||
-            _pendingAutoVoiceReplay != null ||
-            _autoVoiceHasSubmittedContent)) {
-      return activePlaybackId;
-    }
-    return _firstNonEmpty([state.messageId, state.runId, state.threadId]) ?? '';
-  }
-
-  bool _canAutoVoicePlayback(AgentStreamRunPhase phase) {
-    return phase == AgentStreamRunPhase.streaming ||
-        phase == AgentStreamRunPhase.waitingForConfirmation ||
-        phase == AgentStreamRunPhase.finished;
-  }
-
-  String _nextAutoVoiceTextToAppend(String text) {
-    if (_autoVoiceAppendedText.isEmpty) return text;
-    if (text.startsWith(_autoVoiceAppendedText)) {
-      return text.substring(_autoVoiceAppendedText.length);
-    }
-    if (_autoVoiceAppendedText.length >= text.length) return '';
-    return text.substring(_autoVoiceAppendedText.length);
-  }
-
-  bool _shouldFinishAutoVoicePlayback(AgentStreamRunState state) {
-    return state.hasCompletedAssistantMessage ||
-        state.phase == AgentStreamRunPhase.finished ||
-        state.phase == AgentStreamRunPhase.waitingForConfirmation;
-  }
-
-  void _finishActiveAutoVoiceSession() {
-    if (_autoVoiceSessionFinished) return;
-    _autoVoiceSessionFinished = true;
-    _autoVoiceSession?.finish();
-  }
-
-  Future<void> _cancelActiveAutoVoiceSession() async {
-    final session = _autoVoiceSession;
-    _autoVoiceSession = null;
-    _autoVoiceSessionFinished = false;
-    if (session != null) {
-      await session.cancel().catchError((Object _) {});
-    }
-    if (mounted &&
-        _voiceState.isPlaybackActive &&
-        _voiceState.playbackId == _activeAutoVoicePlaybackId) {
-      _setVoiceState(_voiceState.cancelPlayback());
-    }
-  }
-
-  void _resetAutoVoiceProgress() {
-    if (_voiceState.phase == AgentVoicePhase.error) {
-      _setVoiceState(const AgentVoiceState());
-    }
-    unawaited(_cancelActiveAutoVoiceSession());
-    _activeAutoVoicePlaybackId = null;
-    _autoVoiceAppendedText = '';
-    _autoVoiceHasSubmittedContent = false;
-    _autoVoiceSubmittedArtifactTexts.clear();
-    _autoVoiceSubmittedMediaNarrations.clear();
-  }
-
-  void _queueBlockedAutoVoiceReplay(AgentStreamRunState state) {
-    final current = _pendingAutoVoiceReplay;
-    final currentId = current == null
-        ? null
-        : _autoVoicePlaybackId(current.state);
-    final nextId = _autoVoicePlaybackId(state);
-    _pendingAutoVoiceReplay = _PendingAutoVoiceReplay(
-      state: state,
-      attempts: current != null && currentId == nextId ? current.attempts : 0,
-    );
-  }
-
-  void _tryRunPendingAutoVoiceReplay() {
-    if (!mounted || !_autoVoiceEnabled) return;
-    final pending = _pendingAutoVoiceReplay;
-    if (pending == null) return;
-    if (pending.attempts >= 3 || !_hasAutoVoicePlaybackContent(pending.state)) {
-      _pendingAutoVoiceReplay = null;
-      return;
-    }
-
-    _pendingAutoVoiceReplay = pending.incrementAttempts();
-    _maybeStartAutoVoicePlayback(pending.state);
-  }
-
-  bool _hasAutoVoicePlaybackContent(AgentStreamRunState state) {
-    return state.textContent.trim().isNotEmpty ||
-        _autoVoiceArtifactTextForState(state) != null ||
-        _autoVoiceMediaNarrationsForState(state).isNotEmpty;
-  }
-
   void _cancelRun() {
     if (!_state.isActive) return;
     final activeState = _state;
     final activeRequest = _activeRequest;
-    widget.voicePlaybackCoordinator?.cancel();
+
     _dismissComposerKeyboardOnRunAccepted = false;
-    _pendingAutoVoiceReplay = null;
-    _resetAutoVoiceProgress();
+
     _setRunState(activeState.requestCancel());
     _persistInteractionState();
     _cancelRunSubscription();
@@ -2668,45 +1945,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
       _setRunState(_state.applyCancelResult(acknowledged: true));
       _persistInteractionState();
     }
-  }
-
-  bool get _canReplayVoice =>
-      _autoVoiceEnabled &&
-      !_state.isActive &&
-      !_isComposerLocked &&
-      !_attachmentUploadPending &&
-      widget.voicePlaybackCoordinator != null &&
-      widget.voicePlaybackPlayer != null &&
-      !widget.voicePlaybackCoordinator!.isSuspended &&
-      (_isShowingFreshGreeting ||
-          (_canAutoVoicePlayback(_state.phase) &&
-              _hasAutoVoicePlaybackContent(_state)));
-
-  void _replayVoice() {
-    if (!_canReplayVoice) return;
-    _pendingAutoVoiceReplay = null;
-    _resetAutoVoiceProgress();
-    if (_isShowingFreshGreeting) {
-      _maybeStartGreetingVoicePlayback();
-    } else {
-      _maybeStartAutoVoicePlayback(_state);
-    }
-  }
-
-  void _toggleAutoVoice() {
-    setState(() {
-      final nextEnabled = !_autoVoiceEnabled;
-      if (!nextEnabled) {
-        widget.voicePlaybackCoordinator?.cancel();
-        _pendingAutoVoiceReplay = null;
-        _resetAutoVoiceProgress();
-        if (_voiceState.isPlaybackActive) {
-          _setVoiceState(_voiceState.cancelPlayback());
-        }
-      }
-      _autoVoiceEnabled = nextEnabled;
-    });
-    _persistInteractionState();
   }
 
   void _cancelRunSubscription() {
@@ -2804,85 +2042,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
     );
   }
 
-  Future<void> _confirmAction(AgentActionCardView action) async {
-    final actionClient = widget.actionClient;
-    if (actionClient == null || _pendingActionIds.contains(action.id)) return;
-    _pendingActionIds.add(action.id);
-    _localActionStatuses[action.id] = 'confirming';
-    _notifyActionStateChanged();
-
-    final result = await actionClient.confirm(
-      AgentStreamActionConfirmRequest(actionId: action.id),
-    );
-    if (!mounted) return;
-    _pendingActionIds.remove(action.id);
-    _localActionStatuses[action.id] = result.accepted
-        ? _acceptedConfirmStatus(result.actionStatus)
-        : 'failed';
-    _applyActionResultEvents(result.events);
-    _notifyActionStateChanged();
-    _persistInteractionState();
-    if (result.accepted && _shouldResumeAfterActionResult()) {
-      await _resumeCurrentRun(preserveActionState: true);
-    }
-  }
-
-  String _acceptedConfirmStatus(String? actionStatus) {
-    final normalized = actionStatus?.trim();
-    if (normalized == null || normalized.isEmpty || normalized == 'confirmed') {
-      return 'queued';
-    }
-    return normalized;
-  }
-
-  Future<void> _rejectAction(AgentActionCardView action) async {
-    final actionClient = widget.actionClient;
-    if (actionClient == null || _pendingActionIds.contains(action.id)) return;
-    _pendingActionIds.add(action.id);
-    _localActionStatuses[action.id] = 'rejecting';
-    _notifyActionStateChanged();
-
-    final result = await actionClient.reject(
-      AgentStreamActionRejectRequest(
-        actionId: action.id,
-        reason: 'user_rejected',
-      ),
-    );
-    if (!mounted) return;
-    _pendingActionIds.remove(action.id);
-    _localActionStatuses[action.id] = result.accepted
-        ? result.actionStatus ?? 'rejected'
-        : 'failed';
-    _applyActionResultEvents(result.events);
-    _notifyActionStateChanged();
-    _persistInteractionState();
-    if (result.accepted && _shouldResumeAfterActionResult()) {
-      await _resumeCurrentRun(preserveActionState: true);
-    }
-  }
-
-  bool _shouldResumeAfterActionResult() {
-    return switch (_state.phase) {
-      AgentStreamRunPhase.finished ||
-      AgentStreamRunPhase.cancelled ||
-      AgentStreamRunPhase.error => false,
-      _ => true,
-    };
-  }
-
-  void _applyActionResultEvents(List<AgentStreamEvent> events) {
-    if (events.isEmpty) return;
-    final previousState = _state;
-    var nextState = _state.phase == AgentStreamRunPhase.waitingForConfirmation
-        ? _state.copyWith(phase: AgentStreamRunPhase.streaming)
-        : _state;
-    for (final event in events) {
-      nextState = nextState.applyEvent(event);
-    }
-    _forwardNewApplicationEvents(previousState, nextState);
-    _setRunState(nextState);
-  }
-
   void _forwardNewApplicationEvents(
     AgentStreamRunState previous,
     AgentStreamRunState next,
@@ -2916,34 +2075,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
             ),
             Column(
               children: [
-                ListenableBuilder(
-                  listenable: Listenable.merge([
-                    _visibleReplyRunningNotifier,
-                    _sessionMutationPendingNotifier,
-                  ]),
-                  builder: (context, child) {
-                    final isVisibleReplyRunning =
-                        _visibleReplyRunningNotifier.value;
-                    final isSessionMutationPending =
-                        _sessionMutationPendingNotifier.value;
-                    return AgentHubTopBar(
-                      showControls: _interactionRestoreResolved,
-                      autoVoiceEnabled: _autoVoiceEnabled,
-                      isRunning:
-                          isVisibleReplyRunning ||
-                          isSessionMutationPending ||
-                          _attachmentUploadPending,
-                      onOpenConversations:
-                          widget.conversationRepository == null ||
-                              isSessionMutationPending ||
-                              _attachmentUploadPending
-                          ? null
-                          : _openConversationHistory,
-                      onToggleAutoVoice: _toggleAutoVoice,
-                      onNewSession: _startNewSession,
-                    );
-                  },
-                ),
                 if (_externalConversationRefreshPending)
                   Container(
                     key: const ValueKey('motion-feedback-pending'),
@@ -2985,7 +2116,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      const verticalTranscriptPadding = 22.0 + 28.0;
+                      const verticalTranscriptPadding = 24.0 + 28.0;
                       final transcriptMinHeight =
                           constraints.maxHeight > verticalTranscriptPadding
                           ? constraints.maxHeight - verticalTranscriptPadding
@@ -3012,34 +2143,36 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                 SliverPadding(
                                   padding: const EdgeInsets.fromLTRB(
                                     16,
-                                    22,
+                                    24,
                                     16,
                                     0,
                                   ),
                                   sliver: AgentHubHistorySliver(
                                     messages: _historyMessages,
+                                    viewportAnchorMessageId:
+                                        _olderHistoryViewportAnchorMessageId,
+                                    viewportAnchorKey:
+                                        _olderHistoryViewportAnchorKey,
                                     loadImageThumbnail:
                                         widget.loadImageThumbnail,
                                     loadImageContent: widget.loadImageContent,
-                                    productAssetRepository:
-                                        widget.productAssetRepository,
-                                    onArtifactAction: _handleArtifactAction,
-                                    onFormSubmit: _handleArtifactFormSubmit,
-                                    formSubmissionsListenable:
-                                        _formSubmissionsNotifier,
-                                    formPresentationSession:
-                                        _formPresentationSession,
                                   ),
                                 ),
                               if (_historyMessages.isNotEmpty)
                                 const SliverToBoxAdapter(
                                   child: SizedBox(height: 18),
                                 ),
-                              if (_interactionRestoreResolved)
+                              if (!(_state.phase == AgentStreamRunPhase.idle &&
+                                      _historyMessages.isNotEmpty) &&
+                                  _interactionRestoreResolved &&
+                                  !(_historyRecoveryPending &&
+                                      !_hasLocalInteraction()) &&
+                                  !(_historyRecoveryError != null &&
+                                      !_hasLocalInteraction()))
                                 SliverPadding(
                                   padding: EdgeInsets.fromLTRB(
                                     16,
-                                    _historyMessages.isEmpty ? 22 : 0,
+                                    _historyMessages.isEmpty ? 24 : 0,
                                     16,
                                     28,
                                   ),
@@ -3053,43 +2186,36 @@ class _AgentHubPageState extends State<AgentHubPage> {
                                       child: _AgentRunTranscriptListenable(
                                         greeting: _greeting,
                                         stateListenable: _runStateNotifier,
-                                        activeVoicePlaybackIdListenable:
-                                            _activeVoicePlaybackIdNotifier,
-                                        actionStateRevisionListenable:
-                                            _actionStateRevisionNotifier,
-                                        artifactPanelKey:
-                                            _activeArtifactPanelKey,
+                                        onTextRevealed: () {
+                                          if (_isPageVisible &&
+                                              _isNearLatest()) {
+                                            _scheduleScrollToLatest();
+                                          }
+                                        },
                                         canRetryForState: _canRetryForState,
                                         onRetry: _retryRun,
-                                        onArtifactAction: _handleArtifactAction,
-                                        onFormSubmit: _handleArtifactFormSubmit,
-                                        formSubmissionsListenable:
-                                            _formSubmissionsNotifier,
-                                        formPresentationSession:
-                                            _formPresentationSession,
                                         // Generated quick replies are temporarily hidden
                                         // while the follow-up interaction is redesigned.
                                         onQuickReplySelected: null,
-                                        pendingActionIds: _pendingActionIds,
-                                        localActionStatuses:
-                                            _localActionStatuses,
-                                        productAssetRepository:
-                                            widget.productAssetRepository,
-                                        onConfirmAction:
-                                            widget.actionClient == null
-                                            ? null
-                                            : _confirmAction,
-                                        onRejectAction:
-                                            widget.actionClient == null
-                                            ? null
-                                            : _rejectAction,
                                       ),
                                     ),
                                   ),
                                 )
-                              else
+                              else if (_historyMessages.isEmpty)
                                 SliverToBoxAdapter(
-                                  child: SizedBox(height: transcriptMinHeight),
+                                  child: SizedBox(
+                                    height: transcriptMinHeight,
+                                    child: _historyRecoveryError != null
+                                        ? Center(
+                                            child: TextButton(
+                                              onPressed: _recoverConversation,
+                                              child: const Text(
+                                                '历史消息加载失败，点击重试',
+                                              ),
+                                            ),
+                                          )
+                                        : const Center(child: Text('正在恢复对话…')),
+                                  ),
                                 ),
                             ],
                           ),
@@ -3129,7 +2255,6 @@ class _AgentHubPageState extends State<AgentHubPage> {
                   animation: Listenable.merge([
                     _visibleReplyRunningNotifier,
                     _composerLockedNotifier,
-                    _voiceStateNotifier,
                   ]),
                   builder: (context, child) {
                     final isVisibleReplyRunning =
@@ -3139,34 +2264,25 @@ class _AgentHubPageState extends State<AgentHubPage> {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Semantics(
-                          liveRegion: true,
-                          label: _voiceState.isPlaybackActive
-                              ? '\u8bed\u97f3\u64ad\u62a5\u5df2\u542f\u52a8\uff08AI \u5408\u6210\u8bed\u97f3\uff09'
-                              : '',
-                          child: const SizedBox.shrink(),
+                        if (_historyRecoveryError != null &&
+                            _hasLocalInteraction())
+                          TextButton(
+                            onPressed: _recoverConversation,
+                            child: const Text('历史同步失败，点击重试'),
+                          ),
+                        _AgentHomeShortcuts(
+                          onSelected:
+                              widget.runner == null ||
+                                  isComposerLocked ||
+                                  isRestoring ||
+                                  isVisibleReplyRunning ||
+                                  _attachmentUploadPending
+                              ? null
+                              : (prompt) {
+                                  _composerController.text = prompt;
+                                  unawaited(_sendMessage());
+                                },
                         ),
-                        if (_voiceState.phase == AgentVoicePhase.error)
-                          AgentVoiceNotice(
-                            onReplay: _canReplayVoice ? _replayVoice : null,
-                            onDismiss: () =>
-                                _setVoiceState(const AgentVoiceState()),
-                          ),
-                        if (_voiceState.phase != AgentVoicePhase.error ||
-                            pageConstraints.maxHeight >= 600)
-                          _AgentHomeShortcuts(
-                            onSelected:
-                                widget.runner == null ||
-                                    isComposerLocked ||
-                                    isRestoring ||
-                                    isVisibleReplyRunning ||
-                                    _attachmentUploadPending
-                                ? null
-                                : (prompt) {
-                                    _composerController.text = prompt;
-                                    unawaited(_sendMessage());
-                                  },
-                          ),
                         AgentComposerBar(
                           controller: _composerController,
                           focusNode: _composerFocusNode,
@@ -3238,7 +2354,7 @@ class _AgentHomeShortcuts extends StatelessWidget {
         runSpacing: 4,
         children: [
           for (final action in const [
-            ('奶量分析', '帮我分析最近的奶量记录，告诉我可以先关注哪些变化。'),
+            ('奶量分析', '我想了解奶量和喂养情况，请先问我最重要的问题。'),
             ('产后康复评估', '我想做一次产后身体恢复评估，请先从最重要的问题开始问我。'),
           ])
             OutlinedButton(
@@ -3267,146 +2383,6 @@ class _AgentHomeShortcuts extends StatelessWidget {
       ),
     ),
   );
-}
-
-class AgentHubTopBar extends StatelessWidget {
-  const AgentHubTopBar({
-    super.key,
-    required this.showControls,
-    required this.autoVoiceEnabled,
-    required this.isRunning,
-    this.onOpenConversations,
-    required this.onToggleAutoVoice,
-    required this.onNewSession,
-  });
-
-  final bool showControls;
-  final bool autoVoiceEnabled;
-  final bool isRunning;
-  final VoidCallback? onOpenConversations;
-  final VoidCallback onToggleAutoVoice;
-  final VoidCallback onNewSession;
-
-  @override
-  Widget build(BuildContext context) {
-    final largeText = MediaQuery.textScalerOf(context).scale(21) > 28;
-    final buttonStyle = IconButton.styleFrom(
-      foregroundColor: MomHomeTokens.rose,
-      backgroundColor: MomHomeTokens.surface,
-      side: BorderSide(color: MomHomeTokens.border),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      fixedSize: const Size.square(44),
-      padding: EdgeInsets.zero,
-    );
-    final controls = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        if (showControls && onOpenConversations != null)
-          IconButton(
-            key: const ValueKey('agent-conversation-history-button'),
-            onPressed: onOpenConversations,
-            icon: const Icon(Icons.menu_rounded, size: 20),
-            tooltip: '打开会话历史',
-            style: buttonStyle,
-          )
-        else
-          const SizedBox.square(dimension: 44),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (showControls) ...[
-              Semantics(
-                toggled: autoVoiceEnabled,
-                label: autoVoiceEnabled
-                    ? '\u5173\u95ed\u5b9e\u65f6\u8bed\u97f3\u64ad\u62a5'
-                    : '\u5f00\u542f\u5b9e\u65f6\u8bed\u97f3\u64ad\u62a5',
-                onTap: onToggleAutoVoice,
-                child: ExcludeSemantics(
-                  child: IconButton(
-                    key: const ValueKey('agent-auto-voice-button'),
-                    onPressed: onToggleAutoVoice,
-                    tooltip: autoVoiceEnabled ? '关闭实时语音播报' : '开启实时语音播报',
-                    isSelected: autoVoiceEnabled,
-                    style: IconButton.styleFrom(
-                      fixedSize: const Size.square(44),
-                      padding: EdgeInsets.zero,
-                    ),
-                    icon: Container(
-                      width: 40,
-                      height: 24,
-                      padding: const EdgeInsets.all(3),
-                      alignment: autoVoiceEnabled
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        color: autoVoiceEnabled
-                            ? MomHomeTokens.rose
-                            : MomHomeTokens.neutralSurface,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DecoratedBox(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: SizedBox.square(
-                          dimension: 18,
-                          child: Icon(
-                            autoVoiceEnabled
-                                ? Icons.volume_up_outlined
-                                : Icons.volume_off_outlined,
-                            size: 12,
-                            color: MomHomeTokens.rose,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
-              IconButton(
-                key: const ValueKey('agent-new-session-button'),
-                onPressed: isRunning ? null : onNewSession,
-                icon: const Icon(Icons.add_rounded, size: 20),
-                tooltip: '新建会话',
-                style: buttonStyle,
-              ),
-            ],
-          ],
-        ),
-      ],
-    );
-    final title = Text(
-      'Cozymate',
-      style: MomHomeTokens.text(22, weight: FontWeight.w700),
-    );
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: largeText
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [title, const SizedBox(height: 8), controls],
-            )
-          : Row(
-              children: [
-                if (showControls && onOpenConversations != null) ...[
-                  IconButton(
-                    key: const ValueKey('agent-conversation-history-button'),
-                    onPressed: onOpenConversations,
-                    icon: const Icon(Icons.menu_rounded, size: 20),
-                    tooltip: '打开会话历史',
-                    style: buttonStyle,
-                  ),
-                  const SizedBox(width: 8),
-                ],
-                Expanded(child: title),
-                const SizedBox(width: 8),
-                controls.children.last,
-              ],
-            ),
-    );
-  }
 }
 
 class _AgentOlderConversationHistoryControl extends StatelessWidget {
@@ -3730,7 +2706,11 @@ class _AgentWelcomeCard extends StatelessWidget {
             Expanded(
               child: Text(
                 heading,
-                style: MomHomeTokens.text(22, weight: FontWeight.w700),
+                style: MomHomeTokens.text(
+                  18,
+                  weight: FontWeight.w700,
+                  height: 26 / 18,
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -3750,8 +2730,12 @@ class _AgentAssistantBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
+    key: const ValueKey('agent-assistant-bubble'),
     width: double.infinity,
-    padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 360 ? 13 : 16),
+    padding: EdgeInsets.symmetric(
+      horizontal: MediaQuery.sizeOf(context).width < 360 ? 13 : 16,
+      vertical: 12,
+    ),
     decoration: BoxDecoration(
       color: MomHomeTokens.surface,
       border: Border.all(color: MomHomeTokens.border),
@@ -3890,11 +2874,17 @@ class AgentHubHistoryMessage {
   const AgentHubHistoryMessage({
     required this.role,
     required this.content,
+    this.id,
+    this.sequence,
+    this.createdAt,
     this.runState,
     this.images = const <AgentStreamImageInput>[],
     this.files = const <AgentStreamFileInput>[],
   });
 
+  final String? id;
+  final int? sequence;
+  final DateTime? createdAt;
   final AgentHubHistoryRole role;
   final String content;
   final AgentStreamRunState? runState;
@@ -3916,6 +2906,9 @@ AgentHubHistoryMessage _historyMessageFromSnapshot(
     role: snapshot.role == 'user'
         ? AgentHubHistoryRole.user
         : AgentHubHistoryRole.assistant,
+    id: snapshot.id,
+    sequence: snapshot.sequence,
+    createdAt: snapshot.createdAt,
     content: snapshot.content,
     runState: snapshot.runState,
     images: snapshot.images,
@@ -3930,6 +2923,9 @@ AgentHubHistoryMessage _historyMessageFromConversation(
     role: message.role == AgentConversationMessageRole.user
         ? AgentHubHistoryRole.user
         : AgentHubHistoryRole.assistant,
+    id: message.id,
+    sequence: message.sequence,
+    createdAt: message.createdAt,
     content: message.content,
     runState: message.runState,
     images: message.images,
@@ -3958,6 +2954,10 @@ List<AgentHubHistoryMessage> _historyMessagesFromOlderConversationPage(
     messages.add(
       AgentHubHistoryMessage(
         role: AgentHubHistoryRole.assistant,
+        id:
+            page.currentState.messageId ??
+            'run:${page.currentState.runId}:assistant',
+        createdAt: page.latestMessageCreatedAt,
         content: page.currentState.textContent,
         runState: page.currentState,
       ),
@@ -3971,6 +2971,9 @@ AgentHubHistorySnapshot _historySnapshotFromMessage(
 ) {
   return AgentHubHistorySnapshot(
     role: message.role == AgentHubHistoryRole.user ? 'user' : 'assistant',
+    id: message.id,
+    sequence: message.sequence,
+    createdAt: message.createdAt,
     content: message.content,
     runState: _historyRunStateForPersistence(message),
     images: message.images,
@@ -3986,49 +2989,12 @@ AgentStreamRunState? _historyRunStateForPersistence(
     return null;
   }
 
-  final structuredEvents = <String, AgentStreamEvent>{};
-  final artifactEvents = state.canPublishArtifactEvents
-      ? _artifactEventsForState(
-          state,
-        ).where((event) => event.type.startsWith('artifact.'))
-      : const <AgentStreamEvent>[];
-  for (final event in artifactEvents) {
-    final key = event.artifactId ?? event.eventId ?? event.mergeKey;
-    structuredEvents['artifact:$key'] = event;
-  }
-  final visibleActionTimeline = _actionEventsForState(
-    state,
-  ).toList(growable: false);
-  final finalActionIds = visibleActionTimeline
-      .where((event) => _isFinalActionStatus(_actionStatus(event)))
-      .map((event) => event.actionId?.trim())
-      .whereType<String>()
-      .where((actionId) => actionId.isNotEmpty)
-      .toSet();
-  for (var index = 0; index < visibleActionTimeline.length; index += 1) {
-    final event = visibleActionTimeline[index];
-    final actionId = event.actionId?.trim();
-    if (actionId == null || !finalActionIds.contains(actionId)) continue;
-    final eventKey = event.eventId ?? '$index:${event.type}';
-    structuredEvents['action:$actionId:$eventKey'] = event;
-  }
-  for (final event in state.events.where(AgentCitationMapper.isCitationEvent)) {
-    final key = event.messageId ?? event.eventId ?? event.mergeKey;
-    structuredEvents['citation:$key'] = event;
-  }
-  if (structuredEvents.isEmpty) return null;
-
-  final events = List<AgentStreamEvent>.unmodifiable(structuredEvents.values);
   return AgentStreamRunState(
     phase: AgentStreamRunPhase.finished,
-    events: events,
-    threadId: state.threadId,
-    runId: state.runId,
+    textContent: state.textContent,
     messageId: state.messageId,
-    textContent: message.content,
-    artifactEvents: {for (final event in events) ?event.artifactId: event},
-    actionEvents: {for (final event in events) ?event.actionId: event},
-    completedAssistantMessageReceived: true,
+    runId: state.runId,
+    threadId: state.threadId,
   );
 }
 
@@ -4036,24 +3002,14 @@ class AgentHubHistoryPanel extends StatelessWidget {
   const AgentHubHistoryPanel({
     super.key,
     required this.messages,
-    this.productAssetRepository,
     this.loadImageThumbnail,
     this.loadImageContent,
-    this.onArtifactAction,
-    this.onFormSubmit,
-    this.formSubmissionsListenable,
-    this.formPresentationSession,
   });
 
   final List<AgentHubHistoryMessage> messages;
-  final ProductAssetRepository? productAssetRepository;
+
   final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
-  final AgentArtifactActionHandler? onArtifactAction;
-  final AgentArtifactFormSubmitHandler? onFormSubmit;
-  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
-  formSubmissionsListenable;
-  final AgentArtifactFormPresentationSession? formPresentationSession;
 
   @override
   Widget build(BuildContext context) {
@@ -4066,13 +3022,8 @@ class AgentHubHistoryPanel extends StatelessWidget {
             message: messages[index],
             loadImageThumbnail: loadImageThumbnail,
             loadImageContent: loadImageContent,
-            productAssetRepository: productAssetRepository,
-            onArtifactAction: onArtifactAction,
-            onFormSubmit: onFormSubmit,
-            formSubmissionsListenable: formSubmissionsListenable,
-            formPresentationSession: formPresentationSession,
           ),
-          if (index != messages.length - 1) const SizedBox(height: 20),
+          if (index != messages.length - 1) const SizedBox(height: 18),
         ],
       ],
     );
@@ -4083,45 +3034,53 @@ class AgentHubHistorySliver extends StatelessWidget {
   const AgentHubHistorySliver({
     super.key,
     required this.messages,
-    this.productAssetRepository,
+    this.viewportAnchorMessageId,
+    this.viewportAnchorKey,
     this.loadImageThumbnail,
     this.loadImageContent,
-    this.onArtifactAction,
-    this.onFormSubmit,
-    this.formSubmissionsListenable,
-    this.formPresentationSession,
   });
 
   final List<AgentHubHistoryMessage> messages;
-  final ProductAssetRepository? productAssetRepository;
+  final String? viewportAnchorMessageId;
+  final GlobalKey? viewportAnchorKey;
   final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
-  final AgentArtifactActionHandler? onArtifactAction;
-  final AgentArtifactFormSubmitHandler? onFormSubmit;
-  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
-  formSubmissionsListenable;
-  final AgentArtifactFormPresentationSession? formPresentationSession;
 
   @override
   Widget build(BuildContext context) {
     final itemCount = messages.isEmpty ? 0 : messages.length * 2 - 1;
+    final messageKeys = <Key>[
+      for (final message in messages)
+        if (viewportAnchorKey != null &&
+            _messageIdentity(message) == viewportAnchorMessageId)
+          viewportAnchorKey!
+        else
+          ValueKey<String>(
+            'agent-history-message:${_messageIdentity(message)}',
+          ),
+    ];
     return SliverList(
       key: const ValueKey('agent-history-panel'),
-      delegate: SliverChildBuilderDelegate((context, index) {
-        if (index.isOdd) return const SizedBox(height: 20);
-        final messageIndex = index ~/ 2;
-        return _AgentHistoryBubble(
-          key: ValueKey('agent-history-$messageIndex'),
-          message: messages[messageIndex],
-          loadImageThumbnail: loadImageThumbnail,
-          loadImageContent: loadImageContent,
-          productAssetRepository: productAssetRepository,
-          onArtifactAction: onArtifactAction,
-          onFormSubmit: onFormSubmit,
-          formSubmissionsListenable: formSubmissionsListenable,
-          formPresentationSession: formPresentationSession,
-        );
-      }, childCount: itemCount),
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          if (index.isOdd) return const SizedBox(height: 18);
+          final messageIndex = index ~/ 2;
+          return KeyedSubtree(
+            key: messageKeys[messageIndex],
+            child: _AgentHistoryBubble(
+              key: ValueKey('agent-history-$messageIndex'),
+              message: messages[messageIndex],
+              loadImageThumbnail: loadImageThumbnail,
+              loadImageContent: loadImageContent,
+            ),
+          );
+        },
+        childCount: itemCount,
+        findChildIndexCallback: (key) {
+          final index = messageKeys.indexOf(key);
+          return index < 0 ? null : index * 2;
+        },
+      ),
     );
   }
 }
@@ -4130,24 +3089,14 @@ class _AgentHistoryBubble extends StatelessWidget {
   const _AgentHistoryBubble({
     super.key,
     required this.message,
-    this.productAssetRepository,
     this.loadImageThumbnail,
     this.loadImageContent,
-    this.onArtifactAction,
-    this.onFormSubmit,
-    this.formSubmissionsListenable,
-    this.formPresentationSession,
   });
 
   final AgentHubHistoryMessage message;
-  final ProductAssetRepository? productAssetRepository;
+
   final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
-  final AgentArtifactActionHandler? onArtifactAction;
-  final AgentArtifactFormSubmitHandler? onFormSubmit;
-  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
-  formSubmissionsListenable;
-  final AgentArtifactFormPresentationSession? formPresentationSession;
 
   @override
   Widget build(BuildContext context) {
@@ -4161,81 +3110,78 @@ class _AgentHistoryBubble extends StatelessWidget {
     if (!isUser) {
       final runState = message.runState;
       if (runState != null) {
-        return AgentRunTranscript(
-          state: runState,
-          productAssetRepository: productAssetRepository,
-          onArtifactAction: onArtifactAction,
-          onFormSubmit: onFormSubmit,
-          formSubmissionsListenable: formSubmissionsListenable,
-          formPresentationSession: formPresentationSession,
-          allowFormAutoPresentation: false,
-        );
+        return AgentRunTranscript(state: runState);
       }
 
       return _AgentAssistantTurn(
         avatar: const _AgentAssistantAvatar(),
         child: _AgentAssistantBubble(
-          child: AgentMessageMenu(
-            text: message.content,
-            child: AgentMarkdownText(
-              message.content,
-              style: textStyle,
-              onArtifactAction: onArtifactAction,
-              productAssetRepository: productAssetRepository,
-            ),
-          ),
+          child: AgentMarkdownText(message.content, style: textStyle),
         ),
       );
     }
+
+    final hasAttachments =
+        message.images.isNotEmpty || message.files.isNotEmpty;
+    final attachments = Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if (message.images.isNotEmpty)
+          AgentSentImages(
+            images: message.images,
+            loadImageThumbnail: loadImageThumbnail,
+            loadImageContent: loadImageContent,
+          ),
+        if (message.images.isNotEmpty && message.files.isNotEmpty)
+          const SizedBox(height: 8),
+        if (message.files.isNotEmpty) AgentSentFiles(files: message.files),
+      ],
+    );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: math.min(
-              340,
-              MediaQuery.sizeOf(context).width -
-                  (MediaQuery.textScalerOf(context).scale(16) > 21 ? 32 : 78),
-            ),
+            maxWidth: hasAttachments && message.content.isEmpty
+                ? 244
+                : math.min(
+                    340,
+                    MediaQuery.sizeOf(context).width -
+                        (MediaQuery.textScalerOf(context).scale(16) > 21
+                            ? 32
+                            : 78),
+                  ),
           ),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: MomHomeTokens.rose,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(22),
-                topRight: Radius.circular(22),
-                bottomLeft: Radius.circular(22),
-                bottomRight: Radius.circular(6),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 13),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  if (message.images.isNotEmpty)
-                    AgentSentImages(
-                      images: message.images,
-                      loadImageThumbnail: loadImageThumbnail,
-                      loadImageContent: loadImageContent,
+          child: hasAttachments && message.content.isEmpty
+              ? attachments
+              : DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: MomHomeTokens.rose,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(22),
+                      topRight: Radius.circular(22),
+                      bottomLeft: Radius.circular(22),
+                      bottomRight: Radius.circular(6),
                     ),
-                  if (message.images.isNotEmpty && message.files.isNotEmpty)
-                    const SizedBox(height: 8),
-                  if (message.files.isNotEmpty)
-                    AgentSentFiles(files: message.files),
-                  if ((message.images.isNotEmpty || message.files.isNotEmpty) &&
-                      message.content.isNotEmpty)
-                    const SizedBox(height: 8),
-                  if (message.content.isNotEmpty)
-                    AgentMessageMenu(
-                      text: message.content,
-                      child: Text(message.content, style: textStyle),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 17,
+                      vertical: 12,
                     ),
-                ],
-              ),
-            ),
-          ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (hasAttachments) attachments,
+                        if (hasAttachments && message.content.isNotEmpty)
+                          const SizedBox(height: 8),
+                        if (message.content.isNotEmpty)
+                          Text(message.content, style: textStyle),
+                      ],
+                    ),
+                  ),
+                ),
         ),
       ],
     );
@@ -4335,41 +3281,20 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   const _AgentRunTranscriptListenable({
     required this.greeting,
     required this.stateListenable,
-    required this.activeVoicePlaybackIdListenable,
-    required this.actionStateRevisionListenable,
-    this.artifactPanelKey,
+    required this.onTextRevealed,
     required this.canRetryForState,
     this.onRetry,
-    this.onArtifactAction,
-    this.onFormSubmit,
-    required this.formSubmissionsListenable,
-    required this.formPresentationSession,
     this.onQuickReplySelected,
-    required this.pendingActionIds,
-    required this.localActionStatuses,
-    this.productAssetRepository,
-    this.onConfirmAction,
-    this.onRejectAction,
   });
 
   final String greeting;
+  final VoidCallback onTextRevealed;
   final ValueListenable<AgentStreamRunState> stateListenable;
-  final ValueListenable<String?> activeVoicePlaybackIdListenable;
-  final ValueListenable<int> actionStateRevisionListenable;
-  final Key? artifactPanelKey;
+
   final bool Function(AgentStreamRunState state) canRetryForState;
   final VoidCallback? onRetry;
-  final AgentArtifactActionHandler? onArtifactAction;
-  final AgentArtifactFormSubmitHandler? onFormSubmit;
-  final ValueListenable<Map<String, AgentArtifactFormSubmission>>
-  formSubmissionsListenable;
-  final AgentArtifactFormPresentationSession formPresentationSession;
+
   final ValueChanged<String>? onQuickReplySelected;
-  final Set<String> pendingActionIds;
-  final Map<String, String> localActionStatuses;
-  final ProductAssetRepository? productAssetRepository;
-  final ValueChanged<AgentActionCardView>? onConfirmAction;
-  final ValueChanged<AgentActionCardView>? onRejectAction;
 
   @override
   State<_AgentRunTranscriptListenable> createState() =>
@@ -4378,98 +3303,33 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
 
 class _AgentRunTranscriptListenableState
     extends State<_AgentRunTranscriptListenable> {
-  Object? _artifactSourceIdentity;
-  List<AgentArtifactCardView> _artifactCards = const <AgentArtifactCardView>[];
-  Object? _actionSourceIdentity;
-  int? _actionRevision;
-  List<AgentActionCardView> _actionCards = const <AgentActionCardView>[];
-  Object? _citationSourceIdentity;
-  String? _citationMessageId;
-  List<AgentCitationView> _citations = const <AgentCitationView>[];
-
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([
-        widget.stateListenable,
-        widget.activeVoicePlaybackIdListenable,
-        widget.actionStateRevisionListenable,
-      ]),
+      animation: widget.stateListenable,
       builder: (context, child) {
         final state = widget.stateListenable.value;
-        final actionRevision = widget.actionStateRevisionListenable.value;
-        return AgentRunTranscript(
-          state: state,
-          greeting: widget.greeting,
-          activeVoicePlaybackId: widget.activeVoicePlaybackIdListenable.value,
-          canRetry: widget.canRetryForState(state),
-          onRetry: widget.onRetry,
-          onArtifactAction: widget.onArtifactAction,
-          onFormSubmit: widget.onFormSubmit,
-          formSubmissionsListenable: widget.formSubmissionsListenable,
-          formPresentationSession: widget.formPresentationSession,
-          allowFormAutoPresentation: true,
-          artifactPanelKey: widget.artifactPanelKey,
-          onQuickReplySelected: widget.onQuickReplySelected,
-          pendingActionIds: widget.pendingActionIds,
-          productAssetRepository: widget.productAssetRepository,
-          artifactCards: _artifactCardsForState(state),
-          actionCards: _actionCardsForState(state, actionRevision),
-          citations: _citationsForState(state),
-          onConfirmAction: widget.onConfirmAction,
-          onRejectAction: widget.onRejectAction,
+
+        return AgentTextReveal(
+          text: state.textContent,
+          streaming: state.phase == AgentStreamRunPhase.streaming,
+          completed:
+              state.phase == AgentStreamRunPhase.finished ||
+              (state.phase == AgentStreamRunPhase.streaming &&
+                  state.hasCompletedAssistantMessage),
+          replyId: state.runId,
+          onReveal: widget.onTextRevealed,
+          builder: (context, visibleText) => AgentRunTranscript(
+            visibleText: visibleText,
+            state: state,
+            greeting: widget.greeting,
+            canRetry: widget.canRetryForState(state),
+            onRetry: widget.onRetry,
+            onQuickReplySelected: widget.onQuickReplySelected,
+          ),
         );
       },
     );
-  }
-
-  List<AgentArtifactCardView> _artifactCardsForState(
-    AgentStreamRunState state,
-  ) {
-    if (!state.canPublishArtifactEvents) return const [];
-    final identity = state.artifactEvents.isNotEmpty
-        ? state.artifactEvents
-        : state.events;
-    if (identical(identity, _artifactSourceIdentity)) {
-      return _artifactCards;
-    }
-    _artifactSourceIdentity = identity;
-    _artifactCards = _artifactCardsFromEvents(_artifactEventsForState(state));
-    return _artifactCards;
-  }
-
-  List<AgentActionCardView> _actionCardsForState(
-    AgentStreamRunState state,
-    int actionRevision,
-  ) {
-    final identity = state.actionEvents.isNotEmpty
-        ? state.actionEvents
-        : state.events;
-    if (identical(identity, _actionSourceIdentity) &&
-        actionRevision == _actionRevision) {
-      return _actionCards;
-    }
-    _actionSourceIdentity = identity;
-    _actionRevision = actionRevision;
-    _actionCards = _actionCardsFromEvents(
-      _actionEventsForState(state),
-      widget.localActionStatuses,
-    );
-    return _actionCards;
-  }
-
-  List<AgentCitationView> _citationsForState(AgentStreamRunState state) {
-    if (identical(state.events, _citationSourceIdentity) &&
-        state.messageId == _citationMessageId) {
-      return _citations;
-    }
-    _citationSourceIdentity = state.events;
-    _citationMessageId = state.messageId;
-    _citations = AgentCitationMapper.citationsFromEvents(
-      state.events,
-      messageId: state.messageId,
-    );
-    return _citations;
   }
 }
 
@@ -4478,92 +3338,36 @@ class AgentRunTranscript extends StatelessWidget {
     super.key,
     required this.state,
     this.greeting = agentHubDefaultGreeting,
-    this.activeVoicePlaybackId,
+    this.visibleText,
     this.canRetry = false,
     this.onRetry,
-    this.onArtifactAction,
-    this.onFormSubmit,
-    this.formSubmissionsListenable,
-    this.formPresentationSession,
-    this.allowFormAutoPresentation = false,
-    this.artifactPanelKey,
     this.onQuickReplySelected,
-    this.pendingActionIds = const <String>{},
-    this.localActionStatuses = const <String, String>{},
-    this.productAssetRepository,
-    this.artifactCards,
-    this.actionCards,
-    this.citations,
-    this.onConfirmAction,
-    this.onRejectAction,
   });
 
   final AgentStreamRunState state;
   final String greeting;
-  final String? activeVoicePlaybackId;
+  final String? visibleText;
+
   final bool canRetry;
   final VoidCallback? onRetry;
-  final AgentArtifactActionHandler? onArtifactAction;
-  final AgentArtifactFormSubmitHandler? onFormSubmit;
-  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
-  formSubmissionsListenable;
-  final AgentArtifactFormPresentationSession? formPresentationSession;
-  final bool allowFormAutoPresentation;
-  final Key? artifactPanelKey;
+
   final ValueChanged<String>? onQuickReplySelected;
-  final Set<String> pendingActionIds;
-  final Map<String, String> localActionStatuses;
-  final ProductAssetRepository? productAssetRepository;
-  final List<AgentArtifactCardView>? artifactCards;
-  final List<AgentActionCardView>? actionCards;
-  final List<AgentCitationView>? citations;
-  final ValueChanged<AgentActionCardView>? onConfirmAction;
-  final ValueChanged<AgentActionCardView>? onRejectAction;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final text = _primaryText;
+    final text = state.textContent.isNotEmpty
+        ? (visibleText ?? _primaryText)
+        : _primaryText;
     final allowsSupplementaryContent =
         state.phase != AgentStreamRunPhase.error &&
         state.phase != AgentStreamRunPhase.cancelled;
-    final artifactCards =
-        allowsSupplementaryContent && state.canPublishArtifactEvents
-        ? this.artifactCards ??
-              _artifactCardsFromEvents(_artifactEventsForState(state))
-        : const <AgentArtifactCardView>[];
-    final canShowFormEntries =
-        state.hasCompletedAssistantMessage ||
-        (!state.isActive && state.textContent.trim().isNotEmpty);
-    final visibleArtifactCards = artifactCards
-        .where((card) => !card.isForm || canShowFormEntries)
-        .toList(growable: false);
-    final actionCards = allowsSupplementaryContent
-        ? this.actionCards ??
-              _actionCardsFromEvents(
-                _actionEventsForState(state),
-                localActionStatuses,
-              )
-        : const <AgentActionCardView>[];
-    final citations = allowsSupplementaryContent
-        ? this.citations ??
-              AgentCitationMapper.citationsFromEvents(
-                state.events,
-                messageId: state.messageId,
-              )
-        : const <AgentCitationView>[];
     final quickReplies = state.quickReplies;
-    final artifactActionForState = onArtifactAction == null
-        ? null
-        : (AgentArtifactActionView action) {
-            onArtifactAction!(action);
-          };
     final shouldRenderQuickReplies =
         allowsSupplementaryContent &&
         quickReplies.length == 3 &&
         !state.isAwaitingVisibleReply &&
-        !artifactCards.any((card) => card.isForm) &&
         onQuickReplySelected != null;
     final avatarMode = _avatarMode;
     final loopDecor = _loopDecorState;
@@ -4617,23 +3421,7 @@ class AgentRunTranscript extends StatelessWidget {
                       avatar: _AgentAssistantAvatar(mode: avatarMode),
                     )
                   : _AgentAssistantBubble(
-                      child: AgentMessageMenu(
-                        text: state.textContent,
-                        enabled:
-                            !state.isActive &&
-                            state.phase !=
-                                AgentStreamRunPhase.waitingForConfirmation,
-                        onRetry: allowsSupplementaryContent && canRetry
-                            ? onRetry
-                            : null,
-                        child: AgentMarkdownText(
-                          text,
-                          style: primaryTextStyle,
-                          onArtifactAction: onArtifactAction,
-                          productAssetRepository: productAssetRepository,
-                          citations: citations,
-                        ),
-                      ),
+                      child: AgentMarkdownText(text, style: primaryTextStyle),
                     ),
             ),
           if (_supportingText != null) ...[
@@ -4687,35 +3475,8 @@ class AgentRunTranscript extends StatelessWidget {
               ),
             ),
           ],
-          if (visibleArtifactCards.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            AgentArtifactPanel(
-              key: artifactPanelKey,
-              cards: visibleArtifactCards,
-              onAction: artifactActionForState,
-              onFormSubmit: onFormSubmit,
-              formSubmissionsListenable: formSubmissionsListenable,
-              formPresentationSession: formPresentationSession,
-              autoPresentForms:
-                  allowFormAutoPresentation &&
-                  state.hasCompletedAssistantMessage,
-            ),
-          ],
-          if (actionCards.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            AgentActionPanel(
-              actions: actionCards,
-              pendingActionIds: pendingActionIds,
-              onConfirm: onConfirmAction,
-              onReject: onRejectAction,
-            ),
-          ],
-          if (citations.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            AgentCitationList(citations: citations, onAction: onArtifactAction),
-          ],
           if (shouldRenderQuickReplies) ...[
-            SizedBox(height: citations.isNotEmpty ? 20 : 16),
+            const SizedBox(height: 16),
             AgentQuickRepliesBar(
               replies: quickReplies,
               onSelected: onQuickReplySelected!,
@@ -4758,7 +3519,7 @@ class AgentRunTranscript extends StatelessWidget {
 
   String? get _supportingText {
     if (state.phase == AgentStreamRunPhase.waitingForConfirmation) {
-      return '等待确认后继续';
+      return _unsupportedActionMessage;
     }
     if (state.phase == AgentStreamRunPhase.disconnected) {
       return _safeAgentErrorText(state.errorMessage, fallback: '连接暂时中断，可重试') ??
@@ -4801,23 +3562,6 @@ class AgentRunTranscript extends StatelessWidget {
   }
 
   _AgentAssistantAvatarMode? get _avatarMode {
-    final playbackId = activeVoicePlaybackId?.trim();
-    final isDefaultGreeting =
-        state.phase == AgentStreamRunPhase.idle &&
-        state.textContent.trim().isEmpty;
-    if (playbackId == _agentDefaultGreetingPlaybackId && isDefaultGreeting) {
-      return _AgentAssistantAvatarMode.speaking;
-    }
-    final statePlaybackIds = [
-      state.messageId,
-      state.runId,
-      state.threadId,
-    ].map((id) => id?.trim()).whereType<String>().where((id) => id.isNotEmpty);
-    if (playbackId != null &&
-        playbackId.isNotEmpty &&
-        statePlaybackIds.contains(playbackId)) {
-      return _AgentAssistantAvatarMode.speaking;
-    }
     if (state.isAwaitingVisibleReply) {
       return _AgentAssistantAvatarMode.thinking;
     }
@@ -4954,150 +3698,17 @@ class _AgentQuickReplyPill extends StatelessWidget {
   }
 }
 
-class AgentCitationList extends StatelessWidget {
-  const AgentCitationList({super.key, required this.citations, this.onAction});
-
-  final List<AgentCitationView> citations;
-  final AgentArtifactActionHandler? onAction;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Column(
-      key: const ValueKey('agent-citation-list'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const SizedBox(
-              width: 16,
-              child: Divider(height: 1, color: MomCozyColors.border),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              '专业信息源',
-              style: textTheme.labelSmall?.copyWith(
-                color: MomCozyColors.mutedForeground,
-                fontSize: MomCozyTypography.microSize,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        for (var index = 0; index < citations.length; index++) ...[
-          _AgentCitationLink(
-            citation: citations[index],
-            onTap: onAction == null
-                ? null
-                : () => onAction!(
-                    AgentArtifactActionView(
-                      label: citations[index].title,
-                      icon: Icons.open_in_new_rounded,
-                      kind: 'citation',
-                      value: citations[index].url.toString(),
-                      externalUri: citations[index].url,
-                    ),
-                  ),
-          ),
-          if (index < citations.length - 1) const SizedBox(height: 4),
-        ],
-      ],
-    );
-  }
-}
-
-class _AgentCitationLink extends StatelessWidget {
-  const _AgentCitationLink({required this.citation, this.onTap});
-
-  final AgentCitationView citation;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 2),
-          child: Text(
-            '[${citation.index}]',
-            style: textTheme.labelSmall?.copyWith(
-              color: MomCozyColors.mutedForeground,
-              fontSize: MomCozyTypography.labelSize,
-              height: 1.35,
-            ),
-          ),
-        ),
-        const SizedBox(width: 6),
-        Expanded(
-          child: InkWell(
-            key: ValueKey('agent-citation-link-${citation.index}'),
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    citation.displayText,
-                    overflow: TextOverflow.visible,
-                    style: textTheme.labelSmall?.copyWith(
-                      color: MomCozyColors.blue,
-                      fontSize: MomCozyTypography.labelSize,
-                      height: 1.35,
-                      decoration: TextDecoration.underline,
-                      decorationColor: MomCozyColors.border,
-                    ),
-                  ),
-                  if (_citationMetadata(citation) case final metadata?) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      metadata,
-                      style: textTheme.labelSmall?.copyWith(
-                        color: MomCozyColors.mutedForeground,
-                        fontSize: MomCozyTypography.microSize,
-                        height: 1.3,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-String? _citationMetadata(AgentCitationView citation) {
-  final source = citation.source?.trim();
-  final updatedAt = citation.updatedAt?.trim();
-  final parts = <String>[
-    if (source != null && source.isNotEmpty) source,
-    if (updatedAt != null && updatedAt.isNotEmpty) '更新 $updatedAt',
-  ];
-  return parts.isEmpty ? null : parts.join(' · ');
-}
-
 class AgentMarkdownText extends StatelessWidget {
   const AgentMarkdownText(
     this.text, {
     super.key,
     this.style,
-    this.onArtifactAction,
-    this.productAssetRepository,
-    this.citations = const <AgentCitationView>[],
     this.parseMarkdown = true,
   });
 
   final String text;
   final TextStyle? style;
-  final AgentArtifactActionHandler? onArtifactAction;
-  final ProductAssetRepository? productAssetRepository;
-  final List<AgentCitationView> citations;
+
   final bool parseMarkdown;
 
   @override
@@ -5107,12 +3718,10 @@ class AgentMarkdownText extends StatelessWidget {
     if (!parseMarkdown) {
       return Text(normalized, style: baseStyle);
     }
-    final markdown = _prepareAgentMarkdown(
-      replaceCitationLinksWithIndexes(normalized, citations),
-    );
+    final markdown = normalized;
     final markdownBody = markdown.trim().isEmpty
         ? null
-        : !_containsMarkdown(markdown)
+        : !_containsMarkdown(markdown) && !markdown.contains('\n\n')
         ? Text(markdown, style: baseStyle)
         : MarkdownBody(
             data: markdown,
@@ -5120,57 +3729,13 @@ class AgentMarkdownText extends StatelessWidget {
             shrinkWrap: true,
             softLineBreak: true,
             styleSheet: _momcozyMarkdownStyleSheet(context, baseStyle),
-            imageBuilder: (uri, title, alt) {
-              final url = uri.toString();
-              return _AgentMarkdownImage(
-                url: url,
-                title: alt?.trim().isNotEmpty == true ? alt!.trim() : title,
-                repository: productAssetRepository,
-                onTap: () => _openMarkdownMedia(url: url, title: alt ?? title),
-              );
-            },
-            onTapLink: (label, href, title) {
-              final url = href?.trim();
-              if (url == null || url.isEmpty) return;
-              if (_isRetiredSkillAssetReference(url)) return;
-              if (_openMarkdownMedia(url: url, title: label.trim())) return;
-              final target = SafeLinkTarget.tryParse(url);
-              if (target == null) return;
-              onArtifactAction?.call(
-                AgentArtifactActionView(
-                  label: label.trim().isEmpty ? '打开链接' : label.trim(),
-                  icon: Icons.open_in_new_rounded,
-                  kind: 'link',
-                  value: url,
-                  routePath: target.internalPath,
-                  externalUri: target.externalUri,
-                ),
-              );
-            },
+            imageBuilder: (uri, title, alt) => Text(
+              alt?.trim().isNotEmpty == true ? alt!.trim() : '图片',
+              style: baseStyle,
+            ),
           );
 
     return markdownBody ?? Text('', style: baseStyle);
-  }
-
-  bool _openMarkdownMedia({required String url, String? title}) {
-    final kind = _viewerKindForUrl(url);
-    if (kind == null) return false;
-    final normalizedTitle = title?.trim();
-    onArtifactAction?.call(
-      AgentArtifactActionView(
-        label: normalizedTitle?.isNotEmpty == true ? normalizedTitle! : '打开资源',
-        icon: _mediaIconForKind(kind),
-        kind: 'media',
-        value: url,
-        routePath: '/media-viewer',
-        routeExtra: {
-          'kind': kind,
-          'url': url,
-          if (normalizedTitle?.isNotEmpty == true) 'title': normalizedTitle!,
-        },
-      ),
-    );
-    return true;
   }
 
   MarkdownStyleSheet _momcozyMarkdownStyleSheet(
@@ -5229,7 +3794,7 @@ class AgentMarkdownText extends StatelessWidget {
         borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
         border: Border.all(color: MomCozyColors.border),
       ),
-      blockSpacing: 10,
+      blockSpacing: 16,
       listIndent: 20,
       listBullet: paragraphStyle,
       listBulletPadding: const EdgeInsets.only(right: 6),
@@ -5266,202 +3831,6 @@ class AgentMarkdownText extends StatelessWidget {
     ).hasMatch(value);
   }
 }
-
-class _AgentMarkdownImage extends StatelessWidget {
-  const _AgentMarkdownImage({
-    required this.url,
-    this.title,
-    this.repository,
-    this.onTap,
-  });
-
-  final String url;
-  final String? title;
-  final ProductAssetRepository? repository;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = title?.trim().isNotEmpty == true ? title!.trim() : '查看图片';
-    final cacheWidth = (360 * MediaQuery.devicePixelRatioOf(context))
-        .round()
-        .clamp(360, 720)
-        .toInt();
-    final productAsset = ProductAssetReference.tryParse(
-      url,
-      kind: ProductAssetKind.image.routeValue,
-      title: label,
-    );
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: InkWell(
-        key: ValueKey('agent-markdown-image-$url'),
-        onTap: productAsset == null ? null : onTap,
-        borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              minHeight: 112,
-              maxHeight: 220,
-              minWidth: 180,
-              maxWidth: 360,
-            ),
-            child: productAsset == null
-                ? const _AgentMarkdownImagePlaceholder(label: '图片暂不可用')
-                : ProductAssetImage(
-                    reference: productAsset,
-                    repository: repository,
-                    variant: ProductAssetVariant.display,
-                    fit: BoxFit.contain,
-                    cacheWidth: cacheWidth,
-                    semanticLabel: label,
-                    loadingBuilder: (context) {
-                      return _AgentMarkdownImagePlaceholder(
-                        label: label,
-                        loading: true,
-                      );
-                    },
-                    errorBuilder: (context, error, retry) {
-                      return _AgentMarkdownImagePlaceholder(
-                        label: label,
-                        onRetry: retry,
-                      );
-                    },
-                  ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AgentMarkdownImagePlaceholder extends StatelessWidget {
-  const _AgentMarkdownImagePlaceholder({
-    required this.label,
-    this.loading = false,
-    this.onRetry,
-  });
-
-  final String label;
-  final bool loading;
-  final VoidCallback? onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: MomCozyColors.muted.withValues(alpha: 0.72),
-        border: Border.all(color: MomCozyColors.border),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.image_outlined,
-              color: MomCozyColors.mutedForeground,
-              size: 28,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: textTheme.labelMedium?.copyWith(
-                color: MomCozyColors.foreground,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 6),
-            if (loading)
-              const SizedBox.square(
-                dimension: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            else if (onRetry != null)
-              IconButton(
-                key: ValueKey('agent-markdown-image-retry-$label'),
-                tooltip: '重新加载',
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded, size: 20),
-                color: MomCozyColors.mutedForeground,
-                visualDensity: VisualDensity.compact,
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-String _prepareAgentMarkdown(String markdown) {
-  return _promoteImageLinksToMarkdownImages(markdown);
-}
-
-String _promoteImageLinksToMarkdownImages(String markdown) {
-  var inFence = false;
-  return markdown
-      .split('\n')
-      .map((line) {
-        if (RegExp(r'^\s*```').hasMatch(line)) {
-          inFence = !inFence;
-          return line;
-        }
-        if (inFence) return line;
-        return line.replaceAllMapped(_markdownLinkPattern, (match) {
-          final prefix = match.group(1) ?? '';
-          final label = match.group(2) ?? '';
-          final destination = match.group(3) ?? '';
-          final url = _markdownDestinationUrl(destination);
-          if (!_isImageUrl(url)) return match.group(0) ?? '';
-          return '$prefix![$label]($destination)';
-        });
-      })
-      .join('\n');
-}
-
-String _markdownDestinationUrl(String destination) {
-  return destination.trim().split(RegExp(r'\s+')).first;
-}
-
-String? _viewerKindForUrl(String url) {
-  final productAsset = ProductAssetReference.tryParse(url);
-  return productAsset?.kind.routeValue;
-}
-
-bool _isImageUrl(String url) => _viewerKindForUrl(url) == 'image';
-
-IconData _mediaIconForKind(String kind) {
-  return switch (kind) {
-    'pdf' => Icons.picture_as_pdf_outlined,
-    'video' => Icons.play_circle_outline_rounded,
-    _ => Icons.image_outlined,
-  };
-}
-
-bool _isRetiredSkillAssetReference(String url) {
-  final uri = Uri.tryParse(url.trim());
-  return uri?.path.startsWith('/skill-assets/') == true;
-}
-
-bool _isStableProductAssetAction(AgentArtifactActionView action) {
-  final extra = action.routeExtra;
-  final rawUrl = extra is Map && extra['url'] is String
-      ? extra['url']! as String
-      : action.value;
-  final rawKind = extra is Map && extra['kind'] is String
-      ? extra['kind']! as String
-      : null;
-  if (rawUrl == null) return false;
-  return ProductAssetReference.tryParse(rawUrl, kind: rawKind) != null;
-}
-
-final _markdownLinkPattern = RegExp(r'(^|[^!])\[([^\]\n]+)\]\(([^)\n]+)\)');
 
 class AgentRunStatusLine extends StatefulWidget {
   const AgentRunStatusLine({super.key, required this.title});
@@ -5509,7 +3878,11 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
       excludeSemantics: true,
       child: Container(
         key: const ValueKey('agent-run-status-line'),
-        constraints: const BoxConstraints(maxWidth: double.infinity),
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.sizeOf(context).width < 360 ? 36 : 40,
+          maxWidth: double.infinity,
+        ),
+        alignment: Alignment.centerLeft,
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: _AgentSweepText(
           title,
@@ -5633,7 +4006,7 @@ class _AgentThinkingNoteState extends State<AgentThinkingNote>
   }
 }
 
-enum _AgentAssistantAvatarMode { thinking, speaking }
+enum _AgentAssistantAvatarMode { thinking }
 
 class _AgentAssistantAvatar extends StatefulWidget {
   const _AgentAssistantAvatar({this.mode});
@@ -5774,7 +4147,6 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
 
   String _videoAssetForMode(_AgentAssistantAvatarMode mode) {
     return switch (mode) {
-      _AgentAssistantAvatarMode.speaking => MomCozyAssets.agentSpeakingAvatar,
       _AgentAssistantAvatarMode.thinking => MomCozyAssets.agentThinkingAvatar,
     };
   }
@@ -5789,15 +4161,11 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
   Widget build(BuildContext context) {
     final mode = widget.mode;
     final shouldAnimate = _shouldAnimateAvatar();
-    final isSpeakingMode = mode == _AgentAssistantAvatarMode.speaking;
     final isThinkingMode = mode == _AgentAssistantAvatarMode.thinking;
-    final isActiveMode = isSpeakingMode || isThinkingMode;
-    final showSpeakingVideo = shouldAnimate && isSpeakingMode;
+    final isActiveMode = isThinkingMode;
     final showThinkingVideo = shouldAnimate && isThinkingMode;
-    final ringColor = isSpeakingMode ? MomHomeTokens.rose : MomCozyColors.care;
-    final activeAvatarKey = showSpeakingVideo
-        ? 'agent-assistant-avatar-speaking-media'
-        : showThinkingVideo
+    const ringColor = MomCozyColors.care;
+    final activeAvatarKey = showThinkingVideo
         ? 'agent-assistant-avatar-thinking-media'
         : null;
     final videoController = mode == null ? null : _videoControllers[mode];
@@ -5824,29 +4192,24 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
                     _pulseController.value,
                   );
                   return Transform.scale(
-                    scale: 1 + pulse * (isSpeakingMode ? 0.12 : 0.08),
+                    scale: 1 + pulse * (0.08),
                     child: DecoratedBox(
-                      key: ValueKey(
-                        isSpeakingMode
-                            ? 'agent-assistant-avatar-speaking'
-                            : 'agent-assistant-avatar-thinking',
-                      ),
+                      key: ValueKey('agent-assistant-avatar-thinking'),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: ringColor.withValues(
                             alpha: 0.42 + pulse * 0.18,
                           ),
-                          width: isSpeakingMode ? 3 : 2,
+                          width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
                             color: ringColor.withValues(
-                              alpha:
-                                  (isSpeakingMode ? 0.18 : 0.12) + pulse * 0.12,
+                              alpha: 0.12 + pulse * 0.12,
                             ),
-                            blurRadius: (isSpeakingMode ? 12 : 9) + pulse * 6,
-                            spreadRadius: (isSpeakingMode ? 1.4 : 0.8) + pulse,
+                            blurRadius: 9 + pulse * 6,
+                            spreadRadius: 0.8 + pulse,
                           ),
                         ],
                       ),
@@ -5901,240 +4264,6 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
         ],
       ),
     );
-  }
-}
-
-class AgentActionPanel extends StatelessWidget {
-  const AgentActionPanel({
-    super.key,
-    required this.actions,
-    this.pendingActionIds = const <String>{},
-    this.onConfirm,
-    this.onReject,
-  });
-
-  final List<AgentActionCardView> actions;
-  final Set<String> pendingActionIds;
-  final ValueChanged<AgentActionCardView>? onConfirm;
-  final ValueChanged<AgentActionCardView>? onReject;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    key: const ValueKey('agent-action-panel'),
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Semantics(
-        header: true,
-        child: Text(
-          '操作事项',
-          style: MomHomeTokens.text(
-            13,
-            color: MomHomeTokens.secondary,
-            weight: FontWeight.w700,
-          ),
-        ),
-      ),
-      const SizedBox(height: 14),
-      for (final action in actions) ...[
-        _buildCard(context, action),
-        if (action != actions.last) const SizedBox(height: 14),
-      ],
-    ],
-  );
-
-  Widget _buildCard(BuildContext context, AgentActionCardView action) {
-    final color = action.color(
-      Theme.of(context).colorScheme.copyWith(
-        primary: MomHomeTokens.teal,
-        tertiary: MomHomeTokens.teal,
-        onSurfaceVariant: MomHomeTokens.secondary,
-      ),
-    );
-    return AgentResultCard(
-      key: ValueKey('agent-action-card-${action.id}'),
-      title: action.title,
-      icon: Icon(action.icon, size: 22, color: color),
-      children: [
-        Wrap(
-          spacing: 10,
-          runSpacing: 8,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Semantics(
-              liveRegion: true,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color:
-                      action.status == 'failed' || action.status == 'rejected'
-                      ? MomHomeTokens.neutralSurface
-                      : MomHomeTokens.mint,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  action.statusLabel,
-                  style: MomHomeTokens.text(
-                    13,
-                    color: color,
-                    weight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-            if (action.actionTypeLabel != null)
-              Text(
-                action.actionTypeLabel!,
-                style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
-              ),
-          ],
-        ),
-        if (action.subtitle != null) ...[
-          const SizedBox(height: 14),
-          Text(action.subtitle!, style: agentResultBodyStyle),
-        ],
-        if (action.previewRows.isNotEmpty) ...[
-          const SizedBox(height: 14),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: MomHomeTokens.background,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (
-                  var index = 0;
-                  index < action.previewRows.length;
-                  index++
-                ) ...[
-                  Text(
-                    action.previewRows[index],
-                    style: MomHomeTokens.text(14),
-                  ),
-                  if (index < action.previewRows.length - 1)
-                    const SizedBox(height: 8),
-                ],
-              ],
-            ),
-          ),
-        ],
-        if (action.canConfirm) ...[
-          const SizedBox(height: 14),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final confirm = FilledButton.icon(
-                key: ValueKey('agent-action-confirm-${action.id}'),
-                style: agentResultButtonStyle(primary: true),
-                onPressed:
-                    pendingActionIds.contains(action.id) || onConfirm == null
-                    ? null
-                    : () => onConfirm?.call(action),
-                icon: const Icon(Icons.check_rounded, size: 18),
-                label: const Text('确认'),
-              );
-              final reject = OutlinedButton.icon(
-                key: ValueKey('agent-action-reject-${action.id}'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: MomHomeTokens.rose,
-                  disabledForegroundColor: MomHomeTokens.secondary,
-                  backgroundColor: MomHomeTokens.surface,
-                  minimumSize: const Size(44, 44),
-                  padding: const EdgeInsets.all(12),
-                  side: const BorderSide(color: MomHomeTokens.border),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  textStyle: MomHomeTokens.text(13, weight: FontWeight.w600),
-                ),
-                onPressed:
-                    pendingActionIds.contains(action.id) || onReject == null
-                    ? null
-                    : () => onReject?.call(action),
-                icon: const Icon(Icons.close_rounded, size: 18),
-                label: const Text('拒绝'),
-              );
-              if (constraints.maxWidth < 300 ||
-                  MediaQuery.textScalerOf(context).scale(14) > 17.5) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [confirm, const SizedBox(height: 8), reject],
-                );
-              }
-              return Row(
-                children: [
-                  Expanded(child: confirm),
-                  const SizedBox(width: 8),
-                  Expanded(child: reject),
-                ],
-              );
-            },
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-class AgentActionCardView {
-  const AgentActionCardView({
-    required this.id,
-    required this.title,
-    required this.status,
-    this.subtitle,
-    this.actionType,
-    this.previewRows = const <String>[],
-  });
-
-  final String id;
-  final String title;
-  final String status;
-  final String? subtitle;
-  final String? actionType;
-  final List<String> previewRows;
-
-  String? get actionTypeLabel => _agentActionTypeLabel(actionType);
-
-  bool get canConfirm {
-    return status == 'proposed' || status == 'confirmation_required';
-  }
-
-  String get statusLabel {
-    return switch (status) {
-      'confirming' => '确认中',
-      'rejecting' => '拒绝中',
-      'proposed' => '待确认',
-      'confirmation_required' => '待确认',
-      'confirmed' => '已确认',
-      'queued' => '已提交',
-      'applied' => '已应用',
-      'rejected' => '已拒绝',
-      'failed' => '失败',
-      _ => status,
-    };
-  }
-
-  IconData get icon {
-    return switch (status) {
-      'applied' => Icons.check_circle_outline_rounded,
-      'rejected' => Icons.block_rounded,
-      'failed' => Icons.error_outline_rounded,
-      'confirming' || 'rejecting' || 'queued' => Icons.sync_rounded,
-      _ => Icons.fact_check_outlined,
-    };
-  }
-
-  Color color(ColorScheme colorScheme) {
-    return switch (status) {
-      'failed' => colorScheme.error,
-      'applied' || 'confirmed' || 'queued' => colorScheme.primary,
-      'rejected' => colorScheme.onSurfaceVariant,
-      _ => colorScheme.tertiary,
-    };
   }
 }
 
@@ -6239,7 +4368,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     required Key key,
     required String label,
     required String description,
-    required MomCozyLineGlyph glyph,
+    required String iconAsset,
     required VoidCallback? onPressed,
   }) {
     return MenuItemButton(
@@ -6251,31 +4380,44 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
               onPressed();
             },
       style: MenuItemButton.styleFrom(
-        minimumSize: const Size(0, 56),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        minimumSize: const Size(0, 48),
+        visualDensity: VisualDensity.standard,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        padding: const EdgeInsets.all(6),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       child: Row(
         children: [
           DecoratedBox(
             decoration: const BoxDecoration(
-              color: MomHomeTokens.mint,
-              borderRadius: BorderRadius.all(Radius.circular(12)),
+              color: Color(0xFFF5E7ED),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: SizedBox.square(
-              dimension: 40,
+              dimension: 32,
               child: Center(
-                child: MomCozyLineIcon(
-                  glyph,
-                  size: 22,
-                  color: onPressed == null
-                      ? MomHomeTokens.muted
-                      : MomHomeTokens.teal,
-                ),
+                child: iconAsset.endsWith('.png')
+                    ? Image.asset(
+                        iconAsset,
+                        width: 18,
+                        height: 18,
+                        color: onPressed == null ? MomHomeTokens.muted : null,
+                      )
+                    : SvgPicture.asset(
+                        iconAsset,
+                        width: 18,
+                        height: 18,
+                        colorFilter: onPressed == null
+                            ? const ColorFilter.mode(
+                                MomHomeTokens.muted,
+                                BlendMode.srcIn,
+                              )
+                            : null,
+                      ),
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -6284,17 +4426,22 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                 Text(
                   label,
                   style: MomHomeTokens.text(
-                    15,
-                    weight: FontWeight.w600,
+                    14,
+                    height: 18 / 14,
+                    weight: FontWeight.w700,
                     color: onPressed == null
                         ? MomHomeTokens.muted
                         : MomHomeTokens.ink,
                   ),
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 2),
                 Text(
                   description,
-                  style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+                  style: MomHomeTokens.text(
+                    11,
+                    height: 14 / 11,
+                    color: MomHomeTokens.secondary,
+                  ),
                 ),
               ],
             ),
@@ -6333,7 +4480,10 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
 
     return Padding(
       key: const ValueKey('agent-composer-bar'),
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      // Figma's composer ends 20px above the 82px navigation chrome. The
+      // route shell reserves the raised navigation hit area separately, so
+      // only a 2px local inset belongs here.
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
       child: DecoratedBox(
         decoration: const BoxDecoration(),
         child: Column(
@@ -6344,10 +4494,9 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                 builder: (context, constraints) {
                   final largeText =
                       MediaQuery.textScalerOf(context).scale(14) > 20;
-                  final width = math.min(
-                    largeText ? 320.0 : 252.0,
-                    constraints.maxWidth * .92,
-                  );
+                  final width = largeText
+                      ? math.min(320.0, constraints.maxWidth * .92)
+                      : 64.0;
                   return SingleChildScrollView(
                     key: const ValueKey('agent-pending-attachments'),
                     scrollDirection: Axis.horizontal,
@@ -6510,19 +4659,19 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                 return MenuAnchor(
                   controller: _attachmentMenuController,
                   consumeOutsideTap: true,
-                  alignmentOffset: const Offset(4, 4),
+                  alignmentOffset: const Offset(0, 8),
                   style: MenuStyle(
                     backgroundColor: const WidgetStatePropertyAll(
                       MomHomeTokens.surface,
                     ),
-                    padding: const WidgetStatePropertyAll(EdgeInsets.all(8)),
+                    padding: const WidgetStatePropertyAll(EdgeInsets.all(6)),
                     shape: WidgetStatePropertyAll(
                       RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(22),
-                        side: const BorderSide(color: MomHomeTokens.border),
+                        borderRadius: BorderRadius.circular(18),
+                        side: const BorderSide(color: Color(0xFFE9DFE4)),
                       ),
                     ),
-                    elevation: const WidgetStatePropertyAll(4),
+                    elevation: const WidgetStatePropertyAll(0),
                     shadowColor: WidgetStatePropertyAll(
                       MomHomeTokens.ink.withValues(alpha: 0.12),
                     ),
@@ -6533,12 +4682,12 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                       width:
                           math.min(
                             MediaQuery.sizeOf(context).width - 32,
-                            260 *
+                            220 *
                                 (MediaQuery.textScalerOf(context).scale(15) /
                                         15)
                                     .clamp(1, 1.2),
                           ) -
-                          16,
+                          12,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -6548,7 +4697,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                             ),
                             label: '相机',
                             description: '拍摄一张照片',
-                            glyph: MomCozyLineGlyph.camera,
+                            iconAsset:
+                                'assets/images/cozymate_attachment_camera.png',
                             onPressed: canAttachImage
                                 ? widget.onTakePhoto
                                 : null,
@@ -6559,7 +4709,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                             ),
                             label: '照片',
                             description: 'JPG、PNG、WebP',
-                            glyph: MomCozyLineGlyph.image,
+                            iconAsset:
+                                'assets/images/cozymate_attachment_photo.svg',
                             onPressed: canAttachImage
                                 ? widget.onPickPhoto
                                 : null,
@@ -6568,7 +4719,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                             key: const ValueKey('agent-attachment-file-button'),
                             label: '文件',
                             description: 'PDF · 最大 10 MB',
-                            glyph: MomCozyLineGlyph.file,
+                            iconAsset:
+                                'assets/images/cozymate_attachment_file.svg',
                             onPressed: canAttachFile ? widget.onPickFile : null,
                           ),
                         ],
@@ -6683,7 +4835,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                                     child: Icon(
                                       sendIsStop
                                           ? Icons.stop_rounded
-                                          : Icons.send_outlined,
+                                          : Icons.arrow_upward_rounded,
                                       size: sendIsStop ? 18 : 16,
                                       color: sendLooksActive
                                           ? colorScheme.onPrimary
@@ -6774,207 +4926,6 @@ bool _hasServerRunSignal(AgentStreamRunState state) {
       state.provisionalTextContent.isNotEmpty;
 }
 
-Iterable<AgentStreamEvent> _artifactEventsForState(AgentStreamRunState state) {
-  return state.artifactEvents.isNotEmpty
-      ? state.artifactEvents.values
-      : state.events;
-}
-
-Set<String> _formArtifactIdsForState(AgentStreamRunState state) {
-  return _artifactCardsFromEvents(
-    _artifactEventsForState(state),
-  ).where((card) => card.isForm).map((card) => card.id).toSet();
-}
-
-String? _latestVisibleArtifactId(AgentStreamRunState state) {
-  if (!state.canPublishArtifactEvents) return null;
-  final canShowForms =
-      state.hasCompletedAssistantMessage ||
-      (!state.isActive && state.textContent.trim().isNotEmpty);
-  for (final card in _artifactCardsFromEvents(
-    _artifactEventsForState(state),
-  ).reversed) {
-    if (!card.isForm || canShowForms) return card.id;
-  }
-  return null;
-}
-
-Iterable<AgentStreamEvent> _actionEventsForState(AgentStreamRunState state) {
-  final timeline = state.events
-      .where((event) => event.type.startsWith('action.'))
-      .toList(growable: false);
-  return userVisibleAgentActionEvents(
-    timeline.isNotEmpty ? timeline : state.actionEvents.values,
-  );
-}
-
-List<AgentArtifactCardView> _artifactCardsFromEvents(
-  Iterable<AgentStreamEvent> events,
-) {
-  return AgentArtifactMapper.cardsFromEvents(events);
-}
-
-List<AgentActionCardView> _actionCardsFromEvents(
-  Iterable<AgentStreamEvent> events,
-  Map<String, String> localStatuses,
-) {
-  final cards = <String, AgentActionCardView>{};
-  for (final event in userVisibleAgentActionEvents(events)) {
-    final card = _actionCardFromEvent(event);
-    if (card != null) cards[card.id] = card;
-  }
-
-  for (final entry in localStatuses.entries) {
-    final existing = cards[entry.key];
-    if (existing == null) continue;
-    if (_isFinalActionStatus(existing.status)) continue;
-    cards[entry.key] = AgentActionCardView(
-      id: existing.id,
-      title: existing.title,
-      status: entry.value,
-      subtitle: existing.subtitle,
-      actionType: existing.actionType,
-      previewRows: existing.previewRows,
-    );
-  }
-
-  return List<AgentActionCardView>.unmodifiable(cards.values);
-}
-
-bool _isFinalActionStatus(String status) {
-  return status == 'applied' || status == 'failed' || status == 'rejected';
-}
-
-AgentActionCardView? _actionCardFromEvent(AgentStreamEvent event) {
-  if (!event.type.startsWith('action.')) return null;
-
-  final actionId =
-      stringField(event.raw, 'action_id') ??
-      stringField(event.raw, 'actionId') ??
-      stringField(event.payload, 'action_id') ??
-      stringField(event.payload, 'actionId');
-  if (actionId == null || actionId.trim().isEmpty) return null;
-
-  final preview = _mapField(event.payload, 'preview_payload', 'previewPayload');
-  final actionType = _firstNonEmpty([
-    _stringField(event.payload, 'action_type', 'actionType'),
-    stringField(event.raw, 'action_type') ??
-        stringField(event.raw, 'actionType'),
-  ]);
-  final title =
-      _firstNonEmpty([
-        _stringField(event.payload, 'title'),
-        _stringField(preview, 'title'),
-        _stringField(preview, 'summary'),
-        actionType,
-        '需要确认后继续',
-      ]) ??
-      '需要确认后继续';
-  final subtitle = _firstNonEmpty([
-    _stringField(event.payload, 'summary'),
-    _stringField(preview, 'description'),
-    _stringField(preview, 'message'),
-    _stringField(event.payload, 'target_type', 'targetType'),
-  ]);
-
-  return AgentActionCardView(
-    id: actionId.trim(),
-    title: title,
-    status: _actionStatus(event),
-    subtitle: subtitle,
-    actionType: actionType,
-    previewRows: _agentActionPreviewRows(preview),
-  );
-}
-
-String? _agentActionTypeLabel(String? actionType) {
-  final normalized = actionType?.trim().toLowerCase();
-  if (normalized == null || normalized.isEmpty) return null;
-  if (normalized.contains('schedule') || normalized.contains('task')) {
-    if (normalized.contains('delete') || normalized.contains('remove')) {
-      return '日程删除';
-    }
-    if (normalized.contains('create') || normalized.contains('add')) {
-      return '日程新增';
-    }
-    if (normalized.contains('update') || normalized.contains('edit')) {
-      return '日程修改';
-    }
-    return '日程操作';
-  }
-  return null;
-}
-
-List<String> _agentActionPreviewRows(Map<String, Object?> preview) {
-  if (preview.isEmpty) return const <String>[];
-  final specs = <({String label, List<String> keys})>[
-    (label: '对象', keys: const ['target', 'object', 'task_title']),
-    (
-      label: '原值',
-      keys: const ['before', 'old_value', 'from', 'current_status'],
-    ),
-    (label: '变更后', keys: const ['after', 'new_value', 'to', 'next_status']),
-    (label: '日期', keys: const ['date', 'task_date']),
-    (label: '时间', keys: const ['time', 'task_time']),
-    (label: '时区', keys: const ['timezone', 'time_zone']),
-    (label: '影响范围', keys: const ['impact_scope', 'scope', 'impact_range']),
-  ];
-  final rows = <String>[];
-  for (final spec in specs) {
-    Object? value;
-    for (final key in spec.keys) {
-      final candidate = preview[key];
-      if (candidate != null) {
-        value = candidate;
-        break;
-      }
-    }
-    final displayValue = _agentActionPreviewValue(value);
-    if (displayValue != null) rows.add('${spec.label}：$displayValue');
-  }
-  return List<String>.unmodifiable(rows);
-}
-
-String? _agentActionPreviewValue(Object? value) {
-  if (value is String) {
-    final normalized = value.trim();
-    return normalized.isEmpty ? null : normalized;
-  }
-  if (value is num || value is bool) return value.toString();
-  return null;
-}
-
-String _actionStatus(AgentStreamEvent event) {
-  final statusFromType = switch (event.type) {
-    'action.proposed' => 'proposed',
-    'action.confirmation_required' => 'confirmation_required',
-    'action.queued' => 'queued',
-    'action.applied' => 'applied',
-    'action.failed' => 'failed',
-    'action.rejected' => 'rejected',
-    _ => null,
-  };
-  if (statusFromType != null) return statusFromType;
-
-  final explicit = _firstNonEmpty([
-    _stringField(event.payload, 'action_status', 'actionStatus'),
-    _stringField(event.payload, 'status'),
-    stringField(event.raw, 'status'),
-  ]);
-  if (explicit != null) return explicit;
-
-  return 'proposed';
-}
-
-Map<String, Object?> _mapField(
-  Map<String, Object?> map,
-  String key, [
-  String? alias,
-]) {
-  final value = map[key] ?? (alias == null ? null : map[alias]);
-  return value is Map ? Map<String, Object?>.from(value) : const {};
-}
-
 String? _stringField(Map<String, Object?> map, String key, [String? alias]) {
   return stringField(map, key) ??
       (alias == null ? null : stringField(map, alias));
@@ -6991,6 +4942,7 @@ String? _firstNonEmpty(List<String?> values) {
 String? _safeAgentErrorText(String? errorMessage, {String? fallback}) {
   final normalized = errorMessage?.trim();
   if (normalized == null || normalized.isEmpty) return null;
+  if (normalized == _unsupportedActionMessage) return normalized;
   final lower = normalized.toLowerCase();
   if (lower.contains('timeoutexception') || lower.contains('timeout')) {
     return '请求超时，请稍后重试';
@@ -7203,4 +5155,37 @@ String? _visibleAgentStatusTitle(String? value) {
     '正在整理回复' => '我在组织回复～',
     _ => normalized,
   };
+}
+
+String _messageIdentity(AgentHubHistoryMessage message) =>
+    message.id ??
+    message.runState?.messageId ??
+    (message.runState?.runId != null
+        ? 'run:${message.runState!.runId}:assistant'
+        : 'legacy:${identityHashCode(message)}');
+
+List<AgentHubHistoryMessage> _mergeHistoryMessages(
+  Iterable<AgentHubHistoryMessage> messages,
+) {
+  final byId = <String, AgentHubHistoryMessage>{};
+  for (final message in messages) {
+    byId[_messageIdentity(message)] = message;
+  }
+  final rows = byId.values.toList();
+  final order = {
+    for (var i = 0; i < rows.length; i++) _messageIdentity(rows[i]): i,
+  };
+  rows.sort((a, b) {
+    if (a.id == 'local:welcome') return -1;
+    if (b.id == 'local:welcome') return 1;
+    if (a.sequence != null && b.sequence != null) {
+      return a.sequence!.compareTo(b.sequence!);
+    }
+    if (a.createdAt != null && b.createdAt != null) {
+      final result = a.createdAt!.compareTo(b.createdAt!);
+      if (result != 0) return result;
+    }
+    return order[_messageIdentity(a)]!.compareTo(order[_messageIdentity(b)]!);
+  });
+  return rows;
 }

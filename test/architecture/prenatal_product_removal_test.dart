@@ -8,6 +8,9 @@ void main() {
   test('prenatal product modules and assets are removed', () {
     const removedPaths = <String>[
       'lib/features/hospital_bag',
+      'lib/domain/mother/mother_diary.dart',
+      'lib/modules/mom/presentation/mother_diary_page.dart',
+      'lib/services/mother/mother_diary_api_repository.dart',
       'lib/features/profile_overview/domain/mom_life_stage.dart',
       'lib/features/agent_hub/domain/birth_prep_profile_defaults.dart',
       'assets/images/me_baby_overview/pregnancy_avatar.png',
@@ -38,6 +41,9 @@ void main() {
   test('active Flutter source has no prenatal product contracts', () {
     const allowedLegacyFiles = <String>{'lib/core/privacy/log_redactor.dart'};
     const removedContracts = <String>[
+      'MotherDiary',
+      '/me/diary',
+      '/v1/mother/diary',
       'OnboardingCareStage',
       'MomLifeStage',
       'PregnancyProgress',
