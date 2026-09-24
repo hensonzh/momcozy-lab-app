@@ -48,8 +48,7 @@ void main() {
           apiRuntime: runtime,
           router: createMomCozyRouter(
             initialLocation: location,
-            agentHubBuilder: (_, _, _) =>
-                const Center(child: Text('媒体返回目标')),
+            agentHubBuilder: (_, _, _) => const Center(child: Text('媒体返回目标')),
           ),
         ),
       );

@@ -266,10 +266,7 @@ class BookingSelectionDialog extends StatelessWidget {
             maxHeight: 620,
             onClose: c.busy ? null : () => Navigator.pop(context),
             child: _stack([
-              MomAppointmentSummary(
-                appointment: appointment,
-                title: '本次咨询',
-              ),
+              MomAppointmentSummary(appointment: appointment, title: '本次咨询'),
               if (valid) ...[
                 const Text(
                   '所选时间已暂时保留',

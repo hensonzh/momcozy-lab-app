@@ -50,7 +50,7 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 脚本会依次：
 
 1. 构建 Flutter APK。
-2. 生成极简下载页、manifest 和带 “Momcozy Lab” 文本的二维码。
+2. 生成极简下载页、manifest 和带 “momcozy AI” 文本的二维码。
 3. 创建 `unified-android-v<version>-<build>` GitHub Release。
 4. 将 APK、SHA256 和 immutable provenance JSON 上传为 Release 资产。
 5. 更新公开仓库 `/unified/` 目录中的 GitHub Pages 文件。

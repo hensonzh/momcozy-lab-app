@@ -243,7 +243,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
         );
       },
       child: MaterialApp.router(
-        title: 'Momcozy Lab',
+        title: 'momcozy AI',
         scaffoldMessengerKey: _messengerKey,
         locale: const Locale('zh', 'CN'),
         supportedLocales: const [Locale('zh', 'CN')],

@@ -41,7 +41,7 @@ def reset_permission():
     activities = shell('dumpsys', 'activity', 'activities')
     if any('topResumedActivity=' in line and 'permissioncontroller' in line for line in activities.splitlines()):
         xml = dump()
-        if 'Allow Momcozy Lab to send you notifications?' in xml:
+        if 'Allow momcozy AI to send you notifications?' in xml:
             shell('input', 'keyevent', '4')
     shell('am', 'force-stop', PKG)
     shell('pm', 'revoke', PKG, PERM)

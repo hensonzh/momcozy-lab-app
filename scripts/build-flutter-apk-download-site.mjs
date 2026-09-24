@@ -16,7 +16,7 @@ const projectRoot = path.resolve(scriptDir, "..");
 const flutterAppDir = projectRoot;
 const defaultDistDir = path.join(projectRoot, "dist", "android-apk");
 const defaultBaseUrl = "https://download.momcozy.ai/app";
-const qrLabel = "Momcozy Lab";
+const qrLabel = "momcozy AI";
 const qrFileName = "momcozy-lab-download-qr.svg";
 
 if (process.argv.includes("--help")) {
@@ -326,11 +326,11 @@ function renderDownloadPage(manifest) {
 </head>
 <body>
   <main>
-    <h1>Momcozy Lab 内测版</h1>
+    <h1>momcozy AI 内测版</h1>
     <p class="intro">使用 Android 手机扫描或点击二维码下载 APK。</p>
     <p class="version">版本 ${escapeHtml(displayVersion)}</p>
-    <a class="qr-link" href="${escapeHtml(manifest.apkUrl)}" aria-label="下载 Momcozy Lab Android APK">
-      <img class="qr" src="${escapeHtml(manifest.qrCodePath)}" alt="Momcozy Lab APK 下载二维码" />
+    <a class="qr-link" href="${escapeHtml(manifest.apkUrl)}" aria-label="下载 momcozy AI Android APK">
+      <img class="qr" src="${escapeHtml(manifest.qrCodePath)}" alt="momcozy AI APK 下载二维码" />
     </a>
   </main>
 </body>

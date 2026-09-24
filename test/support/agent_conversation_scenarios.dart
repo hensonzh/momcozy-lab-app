@@ -45,10 +45,13 @@ Future<void> verifyAgentConversation(
   final imageContext = tester.element(find.byType(Scaffold));
   final images = <ImageProvider>{
     const AssetImage(MomCozyAssets.agentAvatar),
-    for (final image in tester.widgetList<Image>(find.byType(Image))) image.image,
+    for (final image in tester.widgetList<Image>(find.byType(Image)))
+      image.image,
   };
   await tester.runAsync(() async {
-    await Future.wait(images.map((image) => precacheImage(image, imageContext)));
+    await Future.wait(
+      images.map((image) => precacheImage(image, imageContext)),
+    );
   });
   await tester.pumpAndSettle();
   expect(client.requests, isEmpty);
@@ -65,7 +68,10 @@ Future<void> verifyAgentConversation(
     expect(messages.first.role, AgentHubHistoryRole.assistant);
     expect(messages.first.content, welcome);
     expect(messages.first.runState, isNull);
-    expect(messages.where((message) => message.content == welcome), hasLength(1));
+    expect(
+      messages.where((message) => message.content == welcome),
+      hasLength(1),
+    );
     expect(messages[1].role, AgentHubHistoryRole.user);
     expect(messages[1].content, '这是一条仅用于本地视觉检查的消息。');
     await capture(state);

@@ -6,10 +6,18 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.d
 
 void main() {
   test(
-    'app display name is Momcozy Lab across Flutter and Android flavors',
+    'app display name is momcozy AI across Flutter and native platforms',
     () {
       final appSource = File('lib/app/momcozy_app.dart').readAsStringSync();
-      expect(appSource, contains("title: 'Momcozy Lab'"));
+      expect(appSource, contains("title: 'momcozy AI'"));
+
+      final iosInfo = File('ios/Runner/Info.plist').readAsStringSync();
+      expect(
+        iosInfo,
+        contains(
+          '<key>CFBundleDisplayName</key>\n\t<string>momcozy AI</string>',
+        ),
+      );
 
       for (final path in [
         'android/app/src/main/res/values/strings.xml',
@@ -20,7 +28,7 @@ void main() {
         final strings = File(path).readAsStringSync();
         expect(
           strings,
-          contains('<string name="app_name">Momcozy Lab</string>'),
+          contains('<string name="app_name">momcozy AI</string>'),
           reason: path,
         );
       }
