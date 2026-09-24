@@ -3,7 +3,6 @@ import '../../../shared/design_system/mom_home_tokens.dart';
 import '../../../shared/design_system/mom_settings_theme.dart';
 import '../../../shared/design_system/momcozy_design_system.dart';
 import '../../../shared/widgets/mom_settings_widgets.dart';
-import '../../../shared/widgets/momcozy_wordmark.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -177,15 +176,22 @@ class AuthLoginHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!compact) {
       return Padding(
-        padding: const EdgeInsets.only(top: 4, bottom: 36),
+        padding: const EdgeInsets.only(top: 4, bottom: 24),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const MomCozyWordmark(
-              key: ValueKey('auth-brand-wordmark'),
-              width: 108,
+            Text(
+              'Momcozy',
+              key: const ValueKey('auth-brand-wordmark'),
+              textScaler: TextScaler.noScaling,
+              style: const TextStyle(
+                fontFamily: 'LibreCaslonDisplay',
+                fontSize: 32,
+                height: 44 / 32,
+                color: authRose,
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
               title,
               textAlign: TextAlign.center,

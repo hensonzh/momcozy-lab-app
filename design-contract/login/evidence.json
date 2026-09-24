@@ -4,11 +4,11 @@
     "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
     "page": "login",
     "frame": "Login · Default",
-    "nodeId": "853:53",
+    "nodeId": "858:157",
     "viewport": "393x844",
     "editableLayersVerified": true,
     "reference": "references/figma-login-frame-393x844.png",
-    "brandNodeId": "853:55"
+    "brandNodeId": "858:159"
   },
   "flutter": {
     "screen": "MomCozyAuthPage",
@@ -20,13 +20,13 @@
     "emulatorActual": "comparisons/actual/emulator-login-final-1280x2856.png",
     "apk": {
       "path": "build/app/outputs/flutter-apk/app-local-debug.apk",
-      "sha256": "5b9985ab441c530aec3e4888163a693ab4dad86b4ff7e1445be345d30cc3db35",
-      "sizeBytes": 336978340,
+      "sha256": "4b4805da1492df4b3858b6a2855269c0b5515d45e3a9a375ef000baeeb607860",
+      "sizeBytes": 336976484,
       "flavor": "local",
       "mode": "debug",
       "productApi": "http://10.0.2.2:8769",
       "agentApi": "http://10.0.2.2:8010",
-      "installedAt": "2026-09-24T09:23:23+08:00"
+      "installedAt": "2026-09-24T10:49:48+08:00"
     },
     "androidStudio": {
       "project": "app/android",
@@ -38,9 +38,13 @@
       ]
     },
     "brandWordmark": {
-      "asset": "assets/images/momcozy_logo.png",
+      "type": "text",
+      "text": "Momcozy",
       "key": "auth-brand-wordmark",
-      "logicalWidth": 108
+      "fontFamily": "LibreCaslonDisplay",
+      "fontSize": 32,
+      "color": "#B54F78",
+      "alignment": "left"
     }
   },
   "visual": {
@@ -48,11 +52,11 @@
     "sideBySide": "comparisons/default/side-by-side.png",
     "overlay": "comparisons/default/overlay.png",
     "difference": "comparisons/default/difference.png",
-    "meanAbsoluteChannelDifference": 3.6300503680120917,
-    "status": "passed-with-platform-font-antialiasing-differences",
-    "emulatorStatus": "verified-on-emulator-5554-with-brand-wordmark",
+    "meanAbsoluteChannelDifference": 5.404294747335882,
+    "status": "passed-with-font-rendering-and-antialiasing-differences",
+    "emulatorStatus": "verified-on-emulator-5554-with-original-prominent-wordmark",
     "emulatorScreenshot": "comparisons/actual/emulator-login-final-1280x2856.png",
-    "emulatorScreenshotSha256": "630085bc208255e17c355308784ba2d242f935e96928fb53ba7649114e0d8de5"
+    "emulatorScreenshotSha256": "2037f8552faf5c4709b633a8a2202413dd422ca56a5d1e3d2c9d41ec19f7fdaf"
   },
   "interaction": {
     "google": "verified by auth tests",
@@ -68,8 +72,8 @@
     "The Figma frame uses Inter while Flutter uses the app's registered NotoSansSCHome family; the remaining visual delta is primarily font metrics and screenshot resampling.",
     "Terms, Privacy, and Language remain available below the initially visible composition.",
     "The legacy Auth golden baseline was repaired in isolation: 75 stale UI-inventory images were regenerated on commit 1380f506, two missing-pump race conditions were fixed, and the combined login branch now passes all 69 Auth and route-motion tests.",
-    "The login page now uses the approved Momcozy wordmark above the title without restoring the previous illustration or promotional card.",
-    "The branded login local-debug APK was rebuilt, installed on emulator-5554, cold-launched, and checked without fatal Android, Flutter, or local-network errors."
+    "The compact centered wordmark was replaced with the original prominent 32px Libre Caslon Display Momcozy treatment at the upper left; the simplified login form remains unchanged.",
+    "The original prominent Momcozy treatment was rebuilt into the local-debug APK, installed on emulator-5554, cold-launched, and checked without fatal Android, Flutter, or local-network errors."
   ],
   "verification": {
     "contract": "passed",
@@ -83,8 +87,8 @@
       ]
     },
     "localStack": "passed",
-    "androidInstallAndColdLaunch": "passed on emulator-5554 at 2026-09-24 09:23:23 +08:00",
-    "fatalLogScan": "passed after branded login cold launch",
+    "androidInstallAndColdLaunch": "passed on emulator-5554 at 2026-09-24 10:49:48 +08:00",
+    "fatalLogScan": "passed after original prominent wordmark cold launch",
     "legacyGoldenBaseline": {
       "status": "resolved",
       "sourceCommit": "1380f506",
@@ -98,5 +102,10 @@
       ]
     },
     "brandGoldenUpdates": 23
+  },
+  "userFeedback": {
+    "reference": "references/user-brand-feedback.png",
+    "sha256": "6b4abd7e7b798cdfa231fd5266b56cc63d6249a550d228eda35d6c28feba6e22",
+    "decision": "Replace the subtle centered bitmap wordmark with the original prominent left-aligned rose text treatment."
   }
 }
