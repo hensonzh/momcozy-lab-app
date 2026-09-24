@@ -8,8 +8,8 @@
   "source": {
     "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
     "fileUrl": "https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/",
-    "version": "figma-node-853-53",
-    "exportedAt": "2026-09-24T09:18:00+08:00",
+    "version": "figma-node-858-157",
+    "exportedAt": "2026-09-24T09:30:00+08:00",
     "referenceType": "userProvidedImage",
     "referenceChecksum": "cbc2c7ed6e0ddc205ba293d41d4d4aadbeb25892b2197a705ca63b40d9f947dc"
   },
@@ -22,7 +22,7 @@
       "border": "#D8DAE1",
       "button": "#111111",
       "buttonText": "#FFFFFF",
-      "brandWordmark": "#662C43"
+      "brandWordmark": "#B54F78"
     },
     "typography": {
       "title": {
@@ -48,6 +48,12 @@
         "size": 14,
         "weight": 400,
         "lineHeight": 20
+      },
+      "brand": {
+        "family": "Libre Caslon Display",
+        "size": 32,
+        "weight": 400,
+        "lineHeight": 44
       }
     },
     "spacing": {
@@ -56,7 +62,7 @@
       "heroGap": 40,
       "section": 24,
       "field": 16,
-      "brandTitleGap": 16
+      "brandTitleGap": 12
     },
     "radius": {
       "control": 12,
@@ -67,7 +73,7 @@
     {
       "id": "login.main",
       "name": "Login",
-      "figmaNodeId": "853:53",
+      "figmaNodeId": "858:157",
       "route": "/login",
       "viewport": {
         "width": 393,
@@ -101,16 +107,19 @@
         "legalPlacement": "below initial viewport in the scroll region",
         "rememberBehavior": "Controls OS autofill credential saving; authenticated session persistence remains unchanged.",
         "brand": {
-          "asset": "assets/images/momcozy_logo.png",
-          "placement": "centered above title",
-          "logicalWidth": 108,
-          "presentation": "wordmark only; no additional illustration or tagline"
+          "text": "Momcozy",
+          "placement": "top-left above the centered title",
+          "family": "Libre Caslon Display",
+          "size": 32,
+          "lineHeight": 44,
+          "color": "#B54F78",
+          "presentation": "Original prominent text treatment; no illustration, promotional card, or top language control."
         }
       },
       "states": [
         {
           "id": "default",
-          "figmaNodeId": "853:53",
+          "figmaNodeId": "858:157",
           "reference": "references/figma-login-frame-393x844.png",
           "status": "visuallyVerified",
           "fixture": {
@@ -185,23 +194,7 @@
       "status": "interactionVerified"
     }
   ],
-  "assets": [
-    {
-      "id": "login.momcozy-wordmark",
-      "figmaNodeId": "853:55",
-      "localPath": "assets/images/momcozy_logo.png",
-      "format": "png",
-      "checksum": "b0d608b6fb358e1de04e0c58a579c1b3c7ebd74915e30443ec9ad36dd48f16aa",
-      "logicalSize": {
-        "width": 108,
-        "height": 26
-      },
-      "crop": "x=6,y=53,width=280,height=68 from the 292x172 source",
-      "usedBy": [
-        "login.main.default"
-      ]
-    }
-  ],
+  "assets": [],
   "validation": {
     "referenceDir": "references",
     "actualDir": "comparisons/actual",
@@ -217,7 +210,7 @@
       "Android emulator check"
     ],
     "comparisonMetric": {
-      "meanAbsoluteChannelDifference": 3.6300503680120917,
+      "meanAbsoluteChannelDifference": 5.404294747335882,
       "comparison": "comparisons/default/comparison.json"
     }
   },
@@ -240,7 +233,7 @@
     },
     {
       "id": "login.brand-wordmark",
-      "reason": "User requested Momcozy brand identification on the login page while keeping the simplified composition.",
+      "reason": "User found the compact centered bitmap wordmark too subtle and requested the original login treatment: a prominent left-aligned rose Momcozy label in Libre Caslon Display.",
       "impact": [
         "login.main.default"
       ],

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
+import 'package:momcozy_flutter_app/features/auth/presentation/auth_login_chrome.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 
 import '../../support/fixture_api_transport.dart';
@@ -39,20 +40,20 @@ void main() {
     );
     await tester.runAsync(() async {
       final context = tester.element(find.byType(MaterialApp));
-      await Future.wait([
-        precacheImage(
-          const AssetImage('assets/images/google_sign_in.png'),
-          context,
-        ),
-        precacheImage(
-          const AssetImage('assets/images/momcozy_logo.png'),
-          context,
-        ),
-      ]);
+      await precacheImage(
+        const AssetImage('assets/images/google_sign_in.png'),
+        context,
+      );
     });
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('auth-brand-wordmark')), findsOneWidget);
+    final brand = find.byKey(const ValueKey('auth-brand-wordmark'));
+    expect(brand, findsOneWidget);
+    final brandText = tester.widget<Text>(brand);
+    expect(brandText.data, 'Momcozy');
+    expect(brandText.style?.fontFamily, 'LibreCaslonDisplay');
+    expect(brandText.style?.fontSize, 32);
+    expect(brandText.style?.color, authRose);
     expect(tester.takeException(), isNull);
     await expectLater(
       find.byType(MaterialApp),
