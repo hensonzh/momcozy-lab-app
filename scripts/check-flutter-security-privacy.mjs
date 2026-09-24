@@ -28,14 +28,24 @@ const forbidContains = (relativePath, needle, description) => {
 };
 
 requireContains(
-  "lib/features/agent_hub/data/voice_api.dart",
+  "lib/features/motion_assessment/data/motion_voice_signaling.dart",
   "TransportSecurityPolicy.requireSecureHttp(baseUri)",
-  "Voice API must reuse transport security policy",
+  "Motion voice signaling must reuse transport security policy",
 );
 requireContains(
-  "lib/features/agent_hub/data/voice_api.dart",
-  "redactedRealtimeVoiceStreamLogContext",
-  "Voice API must expose redacted stream log context",
+  "lib/features/motion_assessment/data/motion_realtime_voice.dart",
+  "final code = error['code']?.toString() ?? 'unknown';",
+  "Motion voice logs must select non-content server error metadata",
+);
+requireContains(
+  "lib/features/motion_assessment/data/motion_realtime_voice.dart",
+  "final type = error['type']?.toString() ?? 'unknown';",
+  "Motion voice logs must select non-content server error type",
+);
+forbidContains(
+  "lib/features/motion_assessment/data/motion_realtime_voice.dart",
+  "debugPrint(event.toString())",
+  "Motion voice logs must not print the complete server event",
 );
 requireContains(
   "lib/core/privacy/log_redactor.dart",

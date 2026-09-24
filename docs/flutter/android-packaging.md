@@ -10,7 +10,7 @@
 | Flutter unified appId | `com.momcozymai.app.flutterpoc.unified` |
 | Flutter production-shaped appId | `com.momcozymai.app.flutterpoc` |
 | Flutter namespace | `com.momcozymai.momcozy_flutter_app` |
-| App label | 当前三个 flavor 统一为 `Momcozy Lab`；安装隔离仍由 appId 保证。 |
+| App label | 当前三个 flavor 统一为 `momcozy AI`；安装隔离仍由 appId 保证。 |
 | Debug signing | 使用 Android debug keystore，仅用于本机和真机 smoke。 |
 | Release signing | 通过环境变量注入；未注入时 release build 使用 debug signing，仅允许作为本地 smoke artifact。 |
 | Gradle flavor | 已启用 `local`、`unified`、`production` 三个 flavor。 |
@@ -45,7 +45,7 @@ production: production-shaped artifact；保持当前基础 appId。
 | 项目 | Flutter local | Flutter unified（test runtime） | Flutter production-shaped |
 | --- | --- | --- | --- |
 | Application ID | `com.momcozymai.app.flutterpoc.local` | `com.momcozymai.app.flutterpoc.unified` | `com.momcozymai.app.flutterpoc` |
-| Launcher label | `Momcozy Lab` | `Momcozy Lab` | `Momcozy Lab` |
+| Launcher label | `momcozy AI` | `momcozy AI` | `momcozy AI` |
 | Deep link / custom scheme | 未声明 | 未声明 | 未声明 |
 | FileProvider authority | 未声明 | 未声明 | 未声明 |
 | Notification owner | Flutter foreground service notification，独立 appId scope | 同左 | 同左 |

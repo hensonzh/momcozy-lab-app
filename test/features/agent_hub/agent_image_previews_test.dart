@@ -92,7 +92,10 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.byKey(const ValueKey('agent-sent-image-0')), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('agent-sent-image-0')),
+          findsOneWidget,
+        );
         await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
         await tester.runAsync(
           () async => Future<void>.delayed(const Duration(milliseconds: 50)),

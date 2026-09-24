@@ -69,7 +69,7 @@ def main():
                 xml=dump();tree=ET.fromstring(xml)
                 texts=' '.join(n.get('text','') for n in tree.iter('node'))
                 device='camera' if 'take pictures and record video' in texts else 'microphone' if 'record audio' in texts else None
-                if device is None or 'Momcozy Lab' not in texts:time.sleep(.3);continue
+                if device is None or 'momcozy AI' not in texts:time.sleep(.3);continue
                 seen=phase_seen.setdefault(action,[])
                 if device in seen:time.sleep(.3);continue
                 rid='com.android.permissioncontroller:id/'+('permission_deny_button' if action=='deny' else 'permission_allow_foreground_only_button')
@@ -96,7 +96,7 @@ def main():
             except subprocess.TimeoutExpired:process.kill();process.wait()
         # Dismiss only this app's outstanding camera/audio request.
         xml=dump()
-        if 'com.android.permissioncontroller' in xml and 'Momcozy Lab' in xml:shell('input','keyevent','4')
+        if 'com.android.permissioncontroller' in xml and 'momcozy AI' in xml:shell('input','keyevent','4')
         for name in shell('run-as',PKG,'ls','app_flutter',check=False).splitlines():
             if name.startswith('native-device-') and name.endswith(('.png','.json')):
                 (OUT/name).write_bytes(adb('exec-out','run-as',PKG,'cat','app_flutter/'+name).stdout)

@@ -16,7 +16,7 @@ Usage:
   ./scripts/build-flutter-app.sh
   ./scripts/build-flutter-app.sh --check-config
 
-Builds the Flutter Android APK, generates its download page and "Momcozy Lab"
+Builds the Flutter Android APK, generates its download page and "momcozy AI"
 QR code under dist/android-apk/, uploads the APK to GitHub Releases and publishes
 the download page through GitHub Pages.
 
@@ -116,7 +116,7 @@ export MOMCOZY_APK_DART_DEFINES="${MOMCOZY_EXTRA_DART_DEFINES:-}"
 export MOMCOZY_APK_FLAVOR="${apk_flavor}"
 export MOMCOZY_APK_MODE="${apk_mode}"
 
-printf 'Building Momcozy Lab Flutter App\n'
+printf 'Building momcozy AI Flutter App\n'
 printf '  Product Backend API: %s\n' "${api_base_url}"
 printf '  Agent Runtime API:   %s\n' "${agent_api_base_url}"
 printf '  Download:    %s\n' "${download_base_url}"
@@ -163,8 +163,8 @@ provenance_file="$(read_manifest_field provenanceFile)"
 apk_path="${PROJECT_ROOT}/dist/android-apk/releases/${apk_file}"
 checksum_path="${apk_path}.sha256"
 provenance_path="${PROJECT_ROOT}/dist/android-apk/releases/${provenance_file}"
-release_title="Momcozy Lab Android ${version_name} (${build_number})"
-release_notes="Momcozy Lab Android 内测版 ${version_name} (${build_number})。"
+release_title="momcozy AI Android ${version_name} (${build_number})"
+release_notes="momcozy AI Android 内测版 ${version_name} (${build_number})。"
 pages_checkout=""
 existing_release_dir=""
 cleanup() {
