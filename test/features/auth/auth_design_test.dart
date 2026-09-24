@@ -105,7 +105,7 @@ void main() {
         await tester.ensureVisible(find.text('Privacy Policy.'));
         await tester.pumpAndSettle();
         await capture(tester, 'auth-legal');
-        await tap(tester, find.text('Create an account'));
+        await tap(tester, find.byKey(const ValueKey('auth-register-button')));
         await tester.ensureVisible(find.text('Create your account'));
         await tester.pumpAndSettle();
         await capture(tester, 'auth-register');
@@ -150,7 +150,7 @@ void main() {
             internalInviteOnly: false,
           ),
         );
-        await tap(tester, find.text('Forgot password?'));
+        await tap(tester, find.byKey(const ValueKey('auth-forgot-button')));
         await tester.ensureVisible(find.text('Forgot password?'));
         await tester.pumpAndSettle();
         await capture(tester, 'auth-forgot');

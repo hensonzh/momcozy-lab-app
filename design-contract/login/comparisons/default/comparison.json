@@ -1,0 +1,13 @@
+{
+  "reference": "design-contract/login/references/figma-login-frame-393x844.png",
+  "actual": "design-contract/login/comparisons/actual/flutter-login-393x844.png",
+  "reference_crop": null,
+  "actual_crop": null,
+  "actual_dpr": 1,
+  "size": [
+    393,
+    844
+  ],
+  "mean_absolute_channel_difference": 4.47418187153544,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

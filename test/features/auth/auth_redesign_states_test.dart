@@ -155,18 +155,7 @@ void main() {
     expect(t.widget<FilledButton>(key('submit-button')).onPressed, isNull);
     expect(t.widget<TextFormField>(key('email-field')).enabled, isFalse);
     expect(t.widget<TextFormField>(key('password-field')).enabled, isFalse);
-    if (t
-        .widget<TextFormField>(key('password-field'))
-        .controller!
-        .text
-        .isEmpty) {
-      expect(key('password-visibility'), findsNothing);
-    } else {
-      expect(
-        t.widget<IconButton>(key('password-visibility')).onPressed,
-        isNull,
-      );
-    }
+    expect(t.widget<IconButton>(key('password-visibility')).onPressed, isNull);
   }
 
   testWidgets(
@@ -204,7 +193,7 @@ void main() {
         return {'status': 'verification_required'};
       };
       final runtime = await mount(t, api);
-      await tap(t, find.text('Create an account'));
+      await tap(t, find.byKey(const ValueKey('auth-register-button')));
       await fill(t);
       await tap(t, key('submit-button'));
       await t.enterText(key('code-field'), '123');

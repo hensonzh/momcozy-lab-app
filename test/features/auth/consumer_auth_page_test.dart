@@ -235,8 +235,13 @@ void main() {
       of: password,
       matching: find.byType(TextField),
     );
+    final remember = find.byKey(const ValueKey('auth-remember-me'));
+    expect(tester.widget<CheckboxListTile>(remember).value, isFalse);
+    await tester.tap(remember);
+    await tester.pumpAndSettle();
+    expect(tester.widget<CheckboxListTile>(remember).value, isTrue);
     final visibility = find.byKey(const ValueKey('auth-password-visibility'));
-    expect(visibility, findsNothing);
+    expect(visibility, findsOneWidget);
     await tester.enterText(password, 'secret123');
     await tester.pump();
     expect(tester.widget<TextField>(passwordInput).obscureText, isTrue);
@@ -254,8 +259,10 @@ void main() {
     expect(tester.widget<TextField>(passwordInput).obscureText, isTrue);
     await tester.tap(visibility);
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Create an account'));
-    await tester.tap(find.text('Create an account'));
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-register-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-register-button')));
     await tester.pumpAndSettle();
     expect(tester.widget<TextField>(passwordInput).obscureText, isTrue);
   });
@@ -297,8 +304,10 @@ void main() {
       });
       final store = MemoryMomCozySessionStore();
       final controller = await mount(tester, transport, store);
-      await tester.ensureVisible(find.text('Create an account'));
-      await tester.tap(find.text('Create an account'));
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-register-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-register-button')));
       await tester.pumpAndSettle();
       await fill(tester, password: 'weak');
       await tester.ensureVisible(
@@ -336,8 +345,10 @@ void main() {
         'status': 'reset_if_available',
       });
       await mount(tester, transport, MemoryMomCozySessionStore());
-      await tester.ensureVisible(find.text('Forgot password?'));
-      await tester.tap(find.text('Forgot password?'));
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-forgot-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-forgot-button')));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byKey(const ValueKey('auth-email-field')),

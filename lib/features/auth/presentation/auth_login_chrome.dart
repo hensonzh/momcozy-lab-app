@@ -11,6 +11,72 @@ const authMuted = MomHomeTokens.secondary;
 const authRose = MomHomeTokens.rose;
 const authBorder = MomHomeTokens.border;
 const authBackground = MomHomeTokens.background;
+const authReferenceInk = Color(0xff111111);
+const authReferenceMuted = Color(0xff747487);
+const authReferenceBorder = Color(0xffd8dae1);
+
+TextStyle authReferenceText(
+  double size, {
+  FontWeight weight = FontWeight.w400,
+  Color color = authReferenceInk,
+  double height = 1.4,
+  TextDecoration? decoration,
+}) => TextStyle(
+  fontFamily: 'NotoSansSCHome',
+  fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+  fontSize: size,
+  fontWeight: weight,
+  color: color,
+  height: height,
+  decoration: decoration,
+  decorationColor: color,
+);
+
+InputDecoration authReferenceInputDecoration(
+  BuildContext context, {
+  required String hintText,
+  Widget? suffixIcon,
+}) {
+  const border = OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(12)),
+    borderSide: BorderSide(color: authReferenceBorder),
+  );
+  return InputDecoration(
+    hintText: hintText,
+    hintStyle: authReferenceText(
+      16,
+      color: authReferenceMuted,
+      height: 24 / 16,
+    ),
+    filled: true,
+    fillColor: Colors.white,
+    isDense: true,
+    constraints: const BoxConstraints(minHeight: 56),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+    border: border,
+    enabledBorder: border,
+    disabledBorder: border,
+    focusedBorder: const OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(12)),
+      borderSide: BorderSide(color: authReferenceInk, width: 1.5),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: const BorderRadius.all(Radius.circular(12)),
+      borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: const BorderRadius.all(Radius.circular(12)),
+      borderSide: BorderSide(
+        color: Theme.of(context).colorScheme.error,
+        width: 1.5,
+      ),
+    ),
+    suffixIcon: suffixIcon,
+    suffixIconColor: authReferenceMuted,
+    helperMaxLines: 8,
+    errorMaxLines: 8,
+  );
+}
 
 ThemeData authLoginTheme(ThemeData base) {
   final theme = momSettingsTheme(base);
@@ -66,7 +132,7 @@ class AuthLoginHeader extends StatelessWidget {
   final String title, subtitle;
   final bool compact;
 
-  void _language(BuildContext context) => showModalBottomSheet<void>(
+  static void showLanguage(BuildContext context) => showModalBottomSheet<void>(
     context: context,
     sheetAnimationStyle: MomCozyMotion.animationStyle(context),
     backgroundColor: MomHomeTokens.surface,
@@ -108,6 +174,20 @@ class AuthLoginHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!compact) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 4, bottom: 52),
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: authReferenceText(
+            28,
+            weight: FontWeight.w700,
+            height: 36 / 28,
+          ),
+        ),
+      );
+    }
     final large = MediaQuery.textScalerOf(context).scale(14) > 14 * 1.4;
     final copy = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -151,7 +231,7 @@ class AuthLoginHeader extends StatelessWidget {
             if (!compact)
               TextButton(
                 key: const ValueKey('auth-language-button'),
-                onPressed: () => _language(context),
+                onPressed: () => showLanguage(context),
                 style: TextButton.styleFrom(
                   foregroundColor: authMuted,
                   minimumSize: const Size(130, 44),
@@ -202,6 +282,30 @@ class AuthLoginHeader extends StatelessWidget {
       ],
     );
   }
+}
+
+class AuthLanguageButton extends StatelessWidget {
+  const AuthLanguageButton({super.key});
+
+  @override
+  Widget build(BuildContext context) => TextButton(
+    key: const ValueKey('auth-language-button'),
+    onPressed: () => AuthLoginHeader.showLanguage(context),
+    style: TextButton.styleFrom(
+      foregroundColor: authReferenceMuted,
+      minimumSize: const Size(130, 44),
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      textStyle: authReferenceText(13, height: 18 / 13),
+    ),
+    child: const Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.language, size: 18),
+        SizedBox(width: 6),
+        Text('English'),
+      ],
+    ),
+  );
 }
 
 class AuthLegalFooter extends StatelessWidget {
