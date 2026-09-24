@@ -125,6 +125,10 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      if (isLogin) ...[
+                        const AuthLoginBrandPanel(),
+                        const SizedBox(height: 20),
+                      ],
                       AuthLoginHeader(
                         title: _title,
                         compact: !isLogin,

@@ -40,20 +40,45 @@ void main() {
     );
     await tester.runAsync(() async {
       final context = tester.element(find.byType(MaterialApp));
-      await precacheImage(
-        const AssetImage('assets/images/google_sign_in.png'),
-        context,
-      );
+      await Future.wait([
+        precacheImage(
+          const AssetImage('assets/images/google_sign_in.png'),
+          context,
+        ),
+        precacheImage(
+          const AssetImage('assets/images/auth_mother_baby.png'),
+          context,
+        ),
+      ]);
     });
     await tester.pumpAndSettle();
 
+    final brandPanel = find.byKey(const ValueKey('auth-brand-panel'));
+    expect(brandPanel, findsOneWidget);
+    expect(tester.getSize(brandPanel), const Size(345, 92));
+    expect(
+      find.byKey(const ValueKey('auth-brand-illustration')),
+      findsOneWidget,
+    );
     final brand = find.byKey(const ValueKey('auth-brand-wordmark'));
     expect(brand, findsOneWidget);
     final brandText = tester.widget<Text>(brand);
     expect(brandText.data, 'Momcozy');
     expect(brandText.style?.fontFamily, 'LibreCaslonDisplay');
-    expect(brandText.style?.fontSize, 32);
+    expect(brandText.style?.fontSize, 36);
     expect(brandText.style?.color, authRose);
+
+    final title = find.byKey(const ValueKey('auth-login-title'));
+    final googleButton = find.byKey(const ValueKey('auth-google-button'));
+    expect(title, findsOneWidget);
+    expect(
+      tester.getTopLeft(title).dy - tester.getBottomLeft(brandPanel).dy,
+      24,
+    );
+    expect(
+      tester.getTopLeft(googleButton).dy - tester.getBottomLeft(title).dy,
+      52,
+    );
     expect(tester.takeException(), isNull);
     await expectLater(
       find.byType(MaterialApp),

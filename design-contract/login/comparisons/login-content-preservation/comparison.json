@@ -1,0 +1,23 @@
+{
+  "reference": "design-contract/login/references/login-form-baseline-393x844.png",
+  "actual": "design-contract/login/comparisons/actual/flutter-login-393x844.png",
+  "reference_crop": [
+    0,
+    0,
+    393,
+    728
+  ],
+  "actual_crop": [
+    0,
+    116,
+    393,
+    844
+  ],
+  "actual_dpr": 1,
+  "size": [
+    393,
+    728
+  ],
+  "mean_absolute_channel_difference": 0.0,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}
