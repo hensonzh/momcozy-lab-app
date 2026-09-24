@@ -8,10 +8,10 @@
   "source": {
     "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
     "fileUrl": "https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/",
-    "version": "figma-node-858-157",
-    "exportedAt": "2026-09-24T09:30:00+08:00",
-    "referenceType": "userProvidedImage",
-    "referenceChecksum": "cbc2c7ed6e0ddc205ba293d41d4d4aadbeb25892b2197a705ca63b40d9f947dc"
+    "version": "user-brand-expansion-2026-09-24",
+    "exportedAt": "2026-09-24T14:54:44+08:00",
+    "referenceType": "userProvidedImageWithApprovedAdditiveOverride",
+    "referenceChecksum": "1cbcc44b6a51bb9b590a63787116e262a4969c30ae629e1869ae0ceb338ef20a"
   },
   "tokens": {
     "color": {
@@ -62,11 +62,14 @@
       "heroGap": 40,
       "section": 24,
       "field": 16,
-      "brandTitleGap": 12
+      "brandTitleGap": 12,
+      "brandPanelHeight": 92,
+      "brandLoginGap": 24
     },
     "radius": {
       "control": 12,
-      "button": 12
+      "button": 12,
+      "brandPanel": 24
     }
   },
   "screens": [
@@ -108,26 +111,31 @@
         "rememberBehavior": "Controls OS autofill credential saving; authenticated session persistence remains unchanged.",
         "brand": {
           "text": "Momcozy",
-          "placement": "top-left above the centered title",
+          "placement": "a separate full-width brand panel above the unchanged centered login composition",
           "family": "Libre Caslon Display",
-          "size": 32,
+          "size": 36,
           "lineHeight": 44,
           "color": "#B54F78",
-          "presentation": "Original prominent text treatment; no illustration, promotional card, or top language control."
+          "presentation": "Prominent rose wordmark paired with the existing mother-and-baby illustration on a soft Momcozy gradient panel.",
+          "panelHeight": 92,
+          "panelRadius": 24,
+          "illustration": "assets/images/auth_mother_baby.png",
+          "preservedComposition": "From Welcome back through Sign up now, controls, typography, and internal spacing remain unchanged from references/user-login-base-20260924.png; the complete login composition moves down as one block."
         }
       },
       "states": [
         {
           "id": "default",
           "figmaNodeId": "858:157",
-          "reference": "references/figma-login-frame-393x844.png",
+          "reference": "references/user-login-base-20260924.png",
           "status": "visuallyVerified",
           "fixture": {
             "email": "",
             "password": "",
             "rememberMe": false,
             "busy": false
-          }
+          },
+          "referenceScope": "unchanged login composition below the additive Momcozy brand panel"
         },
         {
           "id": "validation-error",
@@ -203,15 +211,35 @@
       "login.main.default"
     ],
     "requiredChecks": [
+      "design contract validation",
       "flutter analyze",
       "auth widget tests",
-      "same-size visual comparison",
-      "interaction regression",
-      "Android emulator check"
+      "same-size login-content geometry checks",
+      "updated golden verification",
+      "Android emulator install and cold-launch check"
     ],
     "comparisonMetric": {
-      "meanAbsoluteChannelDifference": 5.404294747335882,
-      "comparison": "comparisons/default/comparison.json"
+      "meanAbsoluteChannelDifference": 0.0,
+      "comparison": "comparisons/login-content-preservation/comparison.json",
+      "scope": "unchanged login composition after uniform 116px translation; additive brand panel separately checked on emulator"
+    },
+    "loginCompositionPreservation": {
+      "reference": "references/login-form-baseline-393x844.png",
+      "referenceCrop": [
+        0,
+        0,
+        393,
+        728
+      ],
+      "actual": "comparisons/actual/flutter-login-393x844.png",
+      "actualCrop": [
+        0,
+        116,
+        393,
+        844
+      ],
+      "comparison": "comparisons/login-content-preservation/comparison.json",
+      "result": "zero pixel difference after uniform 116 px downward translation"
     }
   },
   "overrides": [
@@ -234,6 +262,14 @@
     {
       "id": "login.brand-wordmark",
       "reason": "User found the compact centered bitmap wordmark too subtle and requested the original login treatment: a prominent left-aligned rose Momcozy label in Libre Caslon Display.",
+      "impact": [
+        "login.main.default"
+      ],
+      "reviewedAt": "2026-09-24"
+    },
+    {
+      "id": "login.brand-panel-expansion",
+      "reason": "User requested more visible Momcozy elements while preserving the supplied login composition unchanged. Add a separate top brand panel with the Momcozy wordmark and existing mother-and-baby illustration, then move the original login composition down as a unit.",
       "impact": [
         "login.main.default"
       ],

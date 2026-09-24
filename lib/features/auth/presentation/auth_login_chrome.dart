@@ -122,6 +122,51 @@ class AuthNotice extends StatelessWidget {
   );
 }
 
+class AuthLoginBrandPanel extends StatelessWidget {
+  const AuthLoginBrandPanel({super.key});
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 4),
+    child: Container(
+      key: const ValueKey('auth-brand-panel'),
+      height: 92,
+      padding: const EdgeInsets.fromLTRB(18, 8, 10, 8),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xfffff7f8), Color(0xfff8edf3)],
+        ),
+        border: Border.all(color: const Color(0xfff0dce4)),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        children: [
+          const Expanded(
+            child: Text(
+              'Momcozy',
+              key: ValueKey('auth-brand-wordmark'),
+              textScaler: TextScaler.noScaling,
+              style: TextStyle(
+                fontFamily: 'LibreCaslonDisplay',
+                fontSize: 36,
+                height: 44 / 36,
+                color: authRose,
+              ),
+            ),
+          ),
+          Image.asset(
+            'assets/images/auth_mother_baby.png',
+            key: const ValueKey('auth-brand-illustration'),
+            width: 76,
+            height: 76,
+            excludeFromSemantics: true,
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 class AuthLoginHeader extends StatelessWidget {
   const AuthLoginHeader({
     super.key,
@@ -176,32 +221,16 @@ class AuthLoginHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!compact) {
       return Padding(
-        padding: const EdgeInsets.only(top: 4, bottom: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Momcozy',
-              key: const ValueKey('auth-brand-wordmark'),
-              textScaler: TextScaler.noScaling,
-              style: const TextStyle(
-                fontFamily: 'LibreCaslonDisplay',
-                fontSize: 32,
-                height: 44 / 32,
-                color: authRose,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: authReferenceText(
-                28,
-                weight: FontWeight.w700,
-                height: 36 / 28,
-              ),
-            ),
-          ],
+        padding: const EdgeInsets.only(top: 4, bottom: 52),
+        child: Text(
+          title,
+          key: const ValueKey('auth-login-title'),
+          textAlign: TextAlign.center,
+          style: authReferenceText(
+            28,
+            weight: FontWeight.w700,
+            height: 36 / 28,
+          ),
         ),
       );
     }

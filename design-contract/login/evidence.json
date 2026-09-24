@@ -20,13 +20,14 @@
     "emulatorActual": "comparisons/actual/emulator-login-final-1280x2856.png",
     "apk": {
       "path": "build/app/outputs/flutter-apk/app-local-debug.apk",
-      "sha256": "4b4805da1492df4b3858b6a2855269c0b5515d45e3a9a375ef000baeeb607860",
-      "sizeBytes": 336976484,
+      "sha256": "e796895a9ca285f2e39110d85ffe182fb4026067f9116e694249e807cbf2b8bd",
+      "sizeBytes": 328496622,
       "flavor": "local",
       "mode": "debug",
       "productApi": "http://10.0.2.2:8769",
       "agentApi": "http://10.0.2.2:8010",
-      "installedAt": "2026-09-24T10:49:48+08:00"
+      "installedAt": "2026-09-24T17:02:31+08:00",
+      "source": "Built in an isolated worktree at 63e20ccb with only the two login presentation files overlaid; the temporary SDK AAPT2 override was not committed."
     },
     "androidStudio": {
       "project": "app/android",
@@ -42,21 +43,30 @@
       "text": "Momcozy",
       "key": "auth-brand-wordmark",
       "fontFamily": "LibreCaslonDisplay",
-      "fontSize": 32,
+      "fontSize": 36,
       "color": "#B54F78",
-      "alignment": "left"
+      "alignment": "left",
+      "panel": "auth-brand-panel",
+      "illustration": "assets/images/auth_mother_baby.png"
     }
   },
   "visual": {
-    "comparison": "comparisons/default/comparison.json",
-    "sideBySide": "comparisons/default/side-by-side.png",
-    "overlay": "comparisons/default/overlay.png",
-    "difference": "comparisons/default/difference.png",
-    "meanAbsoluteChannelDifference": 5.404294747335882,
-    "status": "passed-with-font-rendering-and-antialiasing-differences",
-    "emulatorStatus": "verified-on-emulator-5554-with-original-prominent-wordmark",
+    "comparison": "comparisons/login-content-preservation/comparison.json",
+    "sideBySide": "comparisons/login-content-preservation/side-by-side.png",
+    "overlay": "comparisons/login-content-preservation/overlay.png",
+    "difference": "comparisons/login-content-preservation/difference.png",
+    "meanAbsoluteChannelDifference": 0.0,
+    "status": "brand-panel-visually-checked-on-emulator; pre-existing-login-content-pixel-identical-after-116px-shift",
+    "emulatorStatus": "verified-on-emulator-5554-with-brand-panel",
     "emulatorScreenshot": "comparisons/actual/emulator-login-final-1280x2856.png",
-    "emulatorScreenshotSha256": "2037f8552faf5c4709b633a8a2202413dd422ca56a5d1e3d2c9d41ec19f7fdaf"
+    "emulatorScreenshotSha256": "faab90aaed8739b3771c3eade43f8dbd95a2518aef21fa7d9c8922f96e9644b6",
+    "loginCompositionPreservation": {
+      "reference": "references/login-form-baseline-393x844.png",
+      "comparison": "comparisons/login-content-preservation/comparison.json",
+      "meanAbsoluteChannelDifference": 0.0,
+      "uniformDownwardShiftPx": 116,
+      "status": "verified-for-visible-unchanged-content"
+    }
   },
   "interaction": {
     "google": "verified by auth tests",
@@ -73,7 +83,9 @@
     "Terms, Privacy, and Language remain available below the initially visible composition.",
     "The legacy Auth golden baseline was repaired in isolation: 75 stale UI-inventory images were regenerated on commit 1380f506, two missing-pump race conditions were fixed, and the combined login branch now passes all 69 Auth and route-motion tests.",
     "The compact centered wordmark was replaced with the original prominent 32px Libre Caslon Display Momcozy treatment at the upper left; the simplified login form remains unchanged.",
-    "The original prominent Momcozy treatment was rebuilt into the local-debug APK, installed on emulator-5554, cold-launched, and checked without fatal Android, Flutter, or local-network errors."
+    "The original prominent Momcozy treatment was rebuilt into the local-debug APK, installed on emulator-5554, cold-launched, and checked without fatal Android, Flutter, or local-network errors.",
+    "The new 92px Momcozy gradient panel uses the existing mother-and-baby illustration; original login composition matches the pre-brand Flutter baseline exactly after a uniform 116px downward translation. This is a product override, not a Figma 1:1 match for the brand panel.",
+    "The prior Figma default comparison was produced for an older brand header; the current brand panel is a user-directed override, verified on emulator, not claimed as Figma pixel parity."
   ],
   "verification": {
     "contract": "passed",
@@ -87,8 +99,8 @@
       ]
     },
     "localStack": "passed",
-    "androidInstallAndColdLaunch": "passed on emulator-5554 at 2026-09-24 10:49:48 +08:00",
-    "fatalLogScan": "passed after original prominent wordmark cold launch",
+    "androidInstallAndColdLaunch": "passed on emulator-5554 with local-debug APK and actual screenshot",
+    "fatalLogScan": "passed: no FATAL EXCEPTION or E/flutter after login cold launch",
     "legacyGoldenBaseline": {
       "status": "resolved",
       "sourceCommit": "1380f506",
@@ -104,8 +116,8 @@
     "brandGoldenUpdates": 23
   },
   "userFeedback": {
-    "reference": "references/user-brand-feedback.png",
-    "sha256": "6b4abd7e7b798cdfa231fd5266b56cc63d6249a550d228eda35d6c28feba6e22",
-    "decision": "Replace the subtle centered bitmap wordmark with the original prominent left-aligned rose text treatment."
+    "reference": "references/user-login-base-20260924.png",
+    "sha256": "1cbcc44b6a51bb9b590a63787116e262a4969c30ae629e1869ae0ceb338ef20a",
+    "decision": "Add a separate prominent Momcozy brand panel above the login composition, leaving the form visually unchanged and shifting it down together."
   }
 }
