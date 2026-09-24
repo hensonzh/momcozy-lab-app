@@ -8,8 +8,8 @@
   "source": {
     "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
     "fileUrl": "https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/",
-    "version": "figma-node-852-3",
-    "exportedAt": "2026-09-24T00:00:00Z",
+    "version": "figma-node-853-53",
+    "exportedAt": "2026-09-24T09:18:00+08:00",
     "referenceType": "userProvidedImage",
     "referenceChecksum": "cbc2c7ed6e0ddc205ba293d41d4d4aadbeb25892b2197a705ca63b40d9f947dc"
   },
@@ -21,7 +21,8 @@
       "secondary": "#747487",
       "border": "#D8DAE1",
       "button": "#111111",
-      "buttonText": "#FFFFFF"
+      "buttonText": "#FFFFFF",
+      "brandWordmark": "#662C43"
     },
     "typography": {
       "title": {
@@ -54,7 +55,8 @@
       "titleTop": 24,
       "heroGap": 40,
       "section": 24,
-      "field": 16
+      "field": 16,
+      "brandTitleGap": 16
     },
     "radius": {
       "control": 12,
@@ -65,7 +67,7 @@
     {
       "id": "login.main",
       "name": "Login",
-      "figmaNodeId": "852:3",
+      "figmaNodeId": "853:53",
       "route": "/login",
       "viewport": {
         "width": 393,
@@ -97,12 +99,18 @@
         "signupPrompt": "Don't have an account?",
         "signupLabel": "Sign up now",
         "legalPlacement": "below initial viewport in the scroll region",
-        "rememberBehavior": "Controls OS autofill credential saving; authenticated session persistence remains unchanged."
+        "rememberBehavior": "Controls OS autofill credential saving; authenticated session persistence remains unchanged.",
+        "brand": {
+          "asset": "assets/images/momcozy_logo.png",
+          "placement": "centered above title",
+          "logicalWidth": 108,
+          "presentation": "wordmark only; no additional illustration or tagline"
+        }
       },
       "states": [
         {
           "id": "default",
-          "figmaNodeId": "852:3",
+          "figmaNodeId": "853:53",
           "reference": "references/figma-login-frame-393x844.png",
           "status": "visuallyVerified",
           "fixture": {
@@ -177,7 +185,23 @@
       "status": "interactionVerified"
     }
   ],
-  "assets": [],
+  "assets": [
+    {
+      "id": "login.momcozy-wordmark",
+      "figmaNodeId": "853:55",
+      "localPath": "assets/images/momcozy_logo.png",
+      "format": "png",
+      "checksum": "b0d608b6fb358e1de04e0c58a579c1b3c7ebd74915e30443ec9ad36dd48f16aa",
+      "logicalSize": {
+        "width": 108,
+        "height": 26
+      },
+      "crop": "x=6,y=53,width=280,height=68 from the 292x172 source",
+      "usedBy": [
+        "login.main.default"
+      ]
+    }
+  ],
   "validation": {
     "referenceDir": "references",
     "actualDir": "comparisons/actual",
@@ -193,7 +217,7 @@
       "Android emulator check"
     ],
     "comparisonMetric": {
-      "meanAbsoluteChannelDifference": 4.47418187153544,
+      "meanAbsoluteChannelDifference": 3.6300503680120917,
       "comparison": "comparisons/default/comparison.json"
     }
   },
@@ -209,6 +233,14 @@
     {
       "id": "login.legal-retention",
       "reason": "Existing Terms and Privacy actions remain available below the initially visible reference composition.",
+      "impact": [
+        "login.main.default"
+      ],
+      "reviewedAt": "2026-09-24"
+    },
+    {
+      "id": "login.brand-wordmark",
+      "reason": "User requested Momcozy brand identification on the login page while keeping the simplified composition.",
       "impact": [
         "login.main.default"
       ],

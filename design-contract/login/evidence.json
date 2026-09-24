@@ -4,10 +4,11 @@
     "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
     "page": "login",
     "frame": "Login · Default",
-    "nodeId": "852:3",
+    "nodeId": "853:53",
     "viewport": "393x844",
     "editableLayersVerified": true,
-    "reference": "references/figma-login-frame-393x844.png"
+    "reference": "references/figma-login-frame-393x844.png",
+    "brandNodeId": "853:55"
   },
   "flutter": {
     "screen": "MomCozyAuthPage",
@@ -19,13 +20,13 @@
     "emulatorActual": "comparisons/actual/emulator-login-final-1280x2856.png",
     "apk": {
       "path": "build/app/outputs/flutter-apk/app-local-debug.apk",
-      "sha256": "a3bf60a1699086b3241f5981264173918d41f6e0c3c370bba18a3e90a741e271",
-      "sizeBytes": 336990961,
+      "sha256": "5b9985ab441c530aec3e4888163a693ab4dad86b4ff7e1445be345d30cc3db35",
+      "sizeBytes": 336978340,
       "flavor": "local",
       "mode": "debug",
       "productApi": "http://10.0.2.2:8769",
       "agentApi": "http://10.0.2.2:8010",
-      "installedAt": "2026-09-24T08:46:15+08:00"
+      "installedAt": "2026-09-24T09:23:23+08:00"
     },
     "androidStudio": {
       "project": "app/android",
@@ -35,6 +36,11 @@
         "AGP/Kotlin built-in migration warnings remain; sync completed successfully.",
         "A CMake pdfium scope warning remains; sync completed successfully."
       ]
+    },
+    "brandWordmark": {
+      "asset": "assets/images/momcozy_logo.png",
+      "key": "auth-brand-wordmark",
+      "logicalWidth": 108
     }
   },
   "visual": {
@@ -42,11 +48,11 @@
     "sideBySide": "comparisons/default/side-by-side.png",
     "overlay": "comparisons/default/overlay.png",
     "difference": "comparisons/default/difference.png",
-    "meanAbsoluteChannelDifference": 4.47418187153544,
+    "meanAbsoluteChannelDifference": 3.6300503680120917,
     "status": "passed-with-platform-font-antialiasing-differences",
-    "emulatorStatus": "verified-on-emulator-5554",
+    "emulatorStatus": "verified-on-emulator-5554-with-brand-wordmark",
     "emulatorScreenshot": "comparisons/actual/emulator-login-final-1280x2856.png",
-    "emulatorScreenshotSha256": "aed1930a7c8d9ab80d57e5478f9aad3f03ca40e9fc2b51b480dc634bc3420e87"
+    "emulatorScreenshotSha256": "630085bc208255e17c355308784ba2d242f935e96928fb53ba7649114e0d8de5"
   },
   "interaction": {
     "google": "verified by auth tests",
@@ -61,8 +67,9 @@
     "The user reference uses Username/Email, but the product backend accepts email only, so the implemented placeholder is Email.",
     "The Figma frame uses Inter while Flutter uses the app's registered NotoSansSCHome family; the remaining visual delta is primarily font metrics and screenshot resampling.",
     "Terms, Privacy, and Language remain available below the initially visible composition.",
-    "The final local-debug APK was rebuilt after the footer/language placement change, installed on emulator-5554, cold-launched, and checked without fatal Android or Flutter log errors.",
-    "The legacy Auth golden baseline was repaired in isolation: 75 stale UI-inventory images were regenerated on commit 1380f506, two missing-pump race conditions were fixed, and the combined login branch now passes all 69 Auth and route-motion tests."
+    "The legacy Auth golden baseline was repaired in isolation: 75 stale UI-inventory images were regenerated on commit 1380f506, two missing-pump race conditions were fixed, and the combined login branch now passes all 69 Auth and route-motion tests.",
+    "The login page now uses the approved Momcozy wordmark above the title without restoring the previous illustration or promotional card.",
+    "The branded login local-debug APK was rebuilt, installed on emulator-5554, cold-launched, and checked without fatal Android, Flutter, or local-network errors."
   ],
   "verification": {
     "contract": "passed",
@@ -76,8 +83,8 @@
       ]
     },
     "localStack": "passed",
-    "androidInstallAndColdLaunch": "passed",
-    "fatalLogScan": "passed",
+    "androidInstallAndColdLaunch": "passed on emulator-5554 at 2026-09-24 09:23:23 +08:00",
+    "fatalLogScan": "passed after branded login cold launch",
     "legacyGoldenBaseline": {
       "status": "resolved",
       "sourceCommit": "1380f506",
@@ -89,6 +96,7 @@
         "Pump after entering the password before locating the conditionally rendered visibility action in auth_followup_inventory_test.dart.",
         "Pump after filling credentials before locating the conditionally rendered visibility action in auth_inventory_journey_test.dart."
       ]
-    }
+    },
+    "brandGoldenUpdates": 23
   }
 }

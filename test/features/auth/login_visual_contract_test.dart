@@ -39,13 +39,20 @@ void main() {
     );
     await tester.runAsync(() async {
       final context = tester.element(find.byType(MaterialApp));
-      await precacheImage(
-        const AssetImage('assets/images/google_sign_in.png'),
-        context,
-      );
+      await Future.wait([
+        precacheImage(
+          const AssetImage('assets/images/google_sign_in.png'),
+          context,
+        ),
+        precacheImage(
+          const AssetImage('assets/images/momcozy_logo.png'),
+          context,
+        ),
+      ]);
     });
     await tester.pumpAndSettle();
 
+    expect(find.byKey(const ValueKey('auth-brand-wordmark')), findsOneWidget);
     expect(tester.takeException(), isNull);
     await expectLater(
       find.byType(MaterialApp),
