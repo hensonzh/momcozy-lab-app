@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "1.0",
+  "project": {
+    "id": "login",
+    "name": "Login page redesign",
+    "target": "flutter"
+  },
+  "source": {
+    "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
+    "fileUrl": "https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/",
+    "version": "figma-node-852-3",
+    "exportedAt": "2026-09-24T00:00:00Z",
+    "referenceType": "userProvidedImage",
+    "referenceChecksum": "cbc2c7ed6e0ddc205ba293d41d4d4aadbeb25892b2197a705ca63b40d9f947dc"
+  },
+  "tokens": {
+    "color": {
+      "background": "#FFFFFF",
+      "surface": "#FFFFFF",
+      "ink": "#111111",
+      "secondary": "#747487",
+      "border": "#D8DAE1",
+      "button": "#111111",
+      "buttonText": "#FFFFFF"
+    },
+    "typography": {
+      "title": {
+        "family": "Noto Sans SC",
+        "size": 28,
+        "weight": 700,
+        "lineHeight": 36
+      },
+      "button": {
+        "family": "Noto Sans SC",
+        "size": 16,
+        "weight": 600,
+        "lineHeight": 24
+      },
+      "input": {
+        "family": "Noto Sans SC",
+        "size": 16,
+        "weight": 400,
+        "lineHeight": 24
+      },
+      "support": {
+        "family": "Noto Sans SC",
+        "size": 14,
+        "weight": 400,
+        "lineHeight": 20
+      }
+    },
+    "spacing": {
+      "page": 24,
+      "titleTop": 24,
+      "heroGap": 40,
+      "section": 24,
+      "field": 16
+    },
+    "radius": {
+      "control": 12,
+      "button": 12
+    }
+  },
+  "screens": [
+    {
+      "id": "login.main",
+      "name": "Login",
+      "figmaNodeId": "852:3",
+      "route": "/login",
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 24,
+          "right": 0,
+          "bottom": 24,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "background": "white",
+        "horizontalPadding": 24,
+        "maxContentWidth": 440,
+        "bottomNavigation": null
+      },
+      "designSpec": {
+        "title": "Welcome back",
+        "googleButton": "Continue with Google",
+        "divider": "OR",
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Password",
+        "rememberLabel": "Remember me",
+        "forgotLabel": "Forgot your password?",
+        "submitLabel": "Sign in",
+        "signupPrompt": "Don't have an account?",
+        "signupLabel": "Sign up now",
+        "legalPlacement": "below initial viewport in the scroll region",
+        "rememberBehavior": "Controls OS autofill credential saving; authenticated session persistence remains unchanged."
+      },
+      "states": [
+        {
+          "id": "default",
+          "figmaNodeId": "852:3",
+          "reference": "references/figma-login-frame-393x844.png",
+          "status": "visuallyVerified",
+          "fixture": {
+            "email": "",
+            "password": "",
+            "rememberMe": false,
+            "busy": false
+          }
+        },
+        {
+          "id": "validation-error",
+          "status": "referenceMissing",
+          "fixture": {
+            "email": "invalid",
+            "password": "",
+            "rememberMe": false,
+            "busy": false
+          }
+        }
+      ],
+      "components": []
+    }
+  ],
+  "components": [],
+  "interactions": [
+    {
+      "id": "login.google",
+      "screen": "login.main",
+      "trigger": "tap:auth-google-button",
+      "from": "default",
+      "to": "authenticated-or-inline-error",
+      "status": "interactionVerified"
+    },
+    {
+      "id": "login.toggle-password",
+      "screen": "login.main",
+      "trigger": "tap:auth-password-visibility",
+      "from": "default",
+      "to": "password-visible",
+      "status": "interactionVerified"
+    },
+    {
+      "id": "login.toggle-remember",
+      "screen": "login.main",
+      "trigger": "tap:auth-remember-me",
+      "from": "default",
+      "to": "remember-choice-updated",
+      "status": "interactionVerified"
+    },
+    {
+      "id": "login.forgot",
+      "screen": "login.main",
+      "trigger": "tap:auth-forgot-button",
+      "from": "default",
+      "to": "forgot-password",
+      "status": "interactionVerified"
+    },
+    {
+      "id": "login.submit",
+      "screen": "login.main",
+      "trigger": "tap:auth-submit-button",
+      "from": "default",
+      "to": "authenticated-or-validation-error",
+      "status": "interactionVerified"
+    },
+    {
+      "id": "login.signup",
+      "screen": "login.main",
+      "trigger": "tap:auth-register-button",
+      "from": "default",
+      "to": "register",
+      "status": "interactionVerified"
+    }
+  ],
+  "assets": [],
+  "validation": {
+    "referenceDir": "references",
+    "actualDir": "comparisons/actual",
+    "comparisonDir": "comparisons",
+    "requiredStates": [
+      "login.main.default"
+    ],
+    "requiredChecks": [
+      "flutter analyze",
+      "auth widget tests",
+      "same-size visual comparison",
+      "interaction regression",
+      "Android emulator check"
+    ],
+    "comparisonMetric": {
+      "meanAbsoluteChannelDifference": 4.47418187153544,
+      "comparison": "comparisons/default/comparison.json"
+    }
+  },
+  "overrides": [
+    {
+      "id": "login.backend-email-contract",
+      "reason": "The backend authenticates by email only, so the app uses Email instead of the reference's Username/Email placeholder.",
+      "impact": [
+        "login.main.default"
+      ],
+      "reviewedAt": "2026-09-24"
+    },
+    {
+      "id": "login.legal-retention",
+      "reason": "Existing Terms and Privacy actions remain available below the initially visible reference composition.",
+      "impact": [
+        "login.main.default"
+      ],
+      "reviewedAt": "2026-09-24"
+    }
+  ]
+}

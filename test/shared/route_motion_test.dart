@@ -99,7 +99,11 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      _host(const SingleChildScrollView(child: AuthLoginHeader())),
+      _host(
+        const SingleChildScrollView(
+          child: Column(children: [AuthLoginHeader(), AuthLanguageButton()]),
+        ),
+      ),
     );
     await tester.tap(find.byKey(const ValueKey('auth-language-button')));
     await tester.pump();

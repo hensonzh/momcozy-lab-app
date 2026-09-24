@@ -216,6 +216,7 @@ void main() {
       'Continue with Google; current build has no client ID',
     );
     await fill(tester);
+    await tester.pump();
     await tap(tester, find.byKey(const ValueKey('auth-password-visibility')));
     await capture(
       tester,
@@ -368,7 +369,7 @@ void main() {
     tester,
   ) async {
     await mount(tester);
-    await tap(tester, find.text('Create an account'));
+    await tap(tester, find.byKey(const ValueKey('auth-register-button')));
     await capture(
       tester,
       'auth-journey-register',

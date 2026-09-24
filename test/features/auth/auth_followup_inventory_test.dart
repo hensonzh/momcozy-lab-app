@@ -238,6 +238,7 @@ void main() {
       // One shared password-visibility state; no form/size cross product.
       if (size.$1 == 393 && size.$2 == 1) {
         await tester.enterText(password, 'Sample123');
+        await tester.pump();
         await tap(
           tester,
           find.byKey(const ValueKey('auth-password-visibility')),
@@ -275,7 +276,7 @@ void main() {
         );
         await tester.enterText(password, '');
       }
-      await tap(tester, find.text('Forgot password?'));
+      await tap(tester, find.byKey(const ValueKey('auth-forgot-button')));
       await snap(
         tester,
         'forgot-empty',
@@ -423,7 +424,7 @@ void main() {
     tester,
   ) async {
     await mount(tester);
-    await tap(tester, find.text('Create an account'));
+    await tap(tester, find.byKey(const ValueKey('auth-register-button')));
     await fill(tester);
     transport.responsesByPath['/v1/auth/register'] = _error(
       'auth_email_unavailable',
@@ -612,7 +613,7 @@ void main() {
       'https://momcozy.com/pages/terms-conditions',
       'https://momcozy.com/pages/privacy-security',
     ]);
-    await tap(tester, find.text('Forgot password?'));
+    await tap(tester, find.byKey(const ValueKey('auth-forgot-button')));
     await snap(
       tester,
       'forgot-back-entry',
@@ -624,7 +625,7 @@ void main() {
       'forgot-back-login',
       'Forgot form Back to sign in → draft retained',
     );
-    await tap(tester, find.text('Create an account'));
+    await tap(tester, find.byKey(const ValueKey('auth-register-button')));
     await snap(tester, 'register-back-entry', 'Login → registration form');
     await tap(tester, find.text('Back to sign in'));
     await snap(

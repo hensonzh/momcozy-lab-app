@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
 import '../../../shared/widgets/mom_settings_widgets.dart';
 import '../../../shared/design_system/momcozy_design_system.dart';
@@ -46,6 +47,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
   _AuthStep _step = _AuthStep.login;
   bool _busy = false;
   bool _showPassword = false;
+  bool _rememberMe = false;
   bool _googleFeedback = false;
   String? _message;
   String? _error;
@@ -106,13 +108,16 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
     return Theme(
       data: theme,
       child: Scaffold(
+        backgroundColor: isLogin ? Colors.white : null,
         body: MomCozyPageBody(
           maxWidth: MomCozyLayout.maxAppWidth,
           child: Align(
             alignment: Alignment.topCenter,
             child: SingleChildScrollView(
               controller: _scroll,
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+              padding: isLogin
+                  ? const EdgeInsets.fromLTRB(24, 20, 24, 32)
+                  : const EdgeInsets.fromLTRB(16, 16, 16, 28),
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               child: AutofillGroup(
                 child: Form(
@@ -137,7 +142,14 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                         },
                       ),
                       MomSettingsCard(
-                        borderInside: isLogin,
+                        color: isLogin
+                            ? Colors.transparent
+                            : MomHomeTokens.surface,
+                        border: !isLogin,
+                        padding: isLogin
+                            ? EdgeInsets.zero
+                            : const EdgeInsets.all(MomHomeTokens.inset),
+                        spacing: isLogin ? 0 : MomHomeTokens.gap,
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -180,28 +192,31 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                   // Official asset: https://developers.google.com/identity/branding-guidelines
                                   icon: Image.asset(
                                     'assets/images/google_sign_in.png',
-                                    width: MomCozyIconSizes.medium,
-                                    height: MomCozyIconSizes.medium,
+                                    width: 24,
+                                    height: 24,
                                     excludeFromSemantics: true,
                                   ),
                                   label: const Text('Continue with Google'),
                                   style: OutlinedButton.styleFrom(
-                                    alignment: Alignment.topCenter,
-                                    foregroundColor: authInk,
+                                    alignment: Alignment.center,
+                                    foregroundColor: authReferenceInk,
                                     backgroundColor: Colors.white,
-                                    minimumSize: const Size.fromHeight(48),
+                                    minimumSize: const Size.fromHeight(56),
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: MomCozySpacing.page,
-                                      vertical: MomCozySpacing.content,
+                                      horizontal: 20,
+                                      vertical: 15,
                                     ),
-                                    textStyle: MomHomeTokens.text(
-                                      14,
-                                      height: 20 / 14,
+                                    textStyle: authReferenceText(
+                                      16,
+                                      weight: FontWeight.w600,
+                                      height: 24 / 16,
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
-                                    side: const BorderSide(color: authBorder),
+                                    side: const BorderSide(
+                                      color: authReferenceBorder,
+                                    ),
                                   ),
                                 ),
                                 if (_error != null && _googleFeedback)
@@ -217,22 +232,44 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                       ),
                                     ),
                                   ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                  ),
-                                  child: Text(
-                                    'or continue with email',
-                                    style: MomHomeTokens.text(
-                                      12,
-                                      color: authMuted,
-                                      height: 17 / 12,
-                                    ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 44),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Divider(
+                                          color: authReferenceBorder,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                        ),
+                                        child: Text(
+                                          'OR',
+                                          style: TextStyle(
+                                            fontFamily: 'NotoSansSCHome',
+                                            fontFamilyFallback:
+                                                MomCozyTypography
+                                                    .fontFamilyFallback,
+                                            fontSize: 14,
+                                            height: 20 / 14,
+                                            color: authReferenceMuted,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Divider(
+                                          color: authReferenceBorder,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                               _AuthField(
                                 label: isLogin ? 'Email' : 'Email address',
+                                showLabel: !isLogin,
                                 child: TextFormField(
                                   key: const ValueKey('auth-email-field'),
                                   controller: _email,
@@ -242,35 +279,23 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                   autocorrect: false,
                                   textInputAction: TextInputAction.next,
                                   style: isLogin
-                                      ? MomHomeTokens.text(14, height: 20 / 14)
+                                      ? authReferenceText(16, height: 24 / 16)
                                       : null,
-                                  textAlignVertical: TextAlignVertical.top,
-                                  decoration: InputDecoration(
-                                    hintText: 'you@example.com',
-                                    hintStyle: isLogin
-                                        ? MomHomeTokens.text(
-                                            14,
-                                            color: authMuted,
-                                            height: 20 / 14,
-                                          )
-                                        : null,
-                                    isDense: isLogin,
-                                    constraints: isLogin
-                                        ? const BoxConstraints(minHeight: 48)
-                                        : null,
-                                    // InputDecorator adds a 4px gap beside the editable text.
-                                    contentPadding: isLogin
-                                        ? const EdgeInsets.fromLTRB(
-                                            8,
-                                            12,
-                                            8,
-                                            16,
-                                          )
-                                        : const EdgeInsets.symmetric(
+                                  textAlignVertical: isLogin
+                                      ? TextAlignVertical.center
+                                      : TextAlignVertical.top,
+                                  decoration: isLogin
+                                      ? authReferenceInputDecoration(
+                                          context,
+                                          hintText: 'Email',
+                                        )
+                                      : const InputDecoration(
+                                          hintText: 'you@example.com',
+                                          contentPadding: EdgeInsets.symmetric(
                                             horizontal: MomCozySpacing.page,
                                             vertical: MomCozySpacing.content,
                                           ),
-                                  ),
+                                        ),
                                   validator: (v) =>
                                       v != null &&
                                           RegExp(
@@ -307,34 +332,15 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                               if (_step != _AuthStep.forgot) ...[
                                 SizedBox(
                                   height: _step == _AuthStep.login
-                                      ? 14
+                                      ? 24
                                       : MomCozySpacing.section,
                                 ),
                                 _AuthField(
+                                  showLabel: !isLogin,
                                   label: _step == _AuthStep.login
                                       ? 'Password'
                                       : 'Set password',
-                                  action: _step == _AuthStep.login
-                                      ? TextButton(
-                                          onPressed: _busy
-                                              ? null
-                                              : () =>
-                                                    _navigate(_AuthStep.forgot),
-                                          style: TextButton.styleFrom(
-                                            foregroundColor: authRose,
-                                            minimumSize: const Size(145, 44),
-                                            tapTargetSize: MaterialTapTargetSize
-                                                .shrinkWrap,
-                                            padding: EdgeInsets.zero,
-                                            textStyle: MomHomeTokens.text(
-                                              13,
-                                              weight: FontWeight.w700,
-                                              height: 18 / 13,
-                                            ),
-                                          ),
-                                          child: const Text('Forgot password?'),
-                                        )
-                                      : null,
+                                  action: null,
                                   child: TextFormField(
                                     key: const ValueKey('auth-password-field'),
                                     controller: _password,
@@ -344,12 +350,11 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                     enableSuggestions: false,
                                     textInputAction: TextInputAction.done,
                                     style: isLogin
-                                        ? MomHomeTokens.text(
-                                            14,
-                                            height: 20 / 14,
-                                          )
+                                        ? authReferenceText(16, height: 24 / 16)
                                         : null,
-                                    textAlignVertical: TextAlignVertical.top,
+                                    textAlignVertical: isLogin
+                                        ? TextAlignVertical.center
+                                        : TextAlignVertical.top,
                                     onChanged: isLogin
                                         ? (_) => setState(() {})
                                         : null,
@@ -361,34 +366,42 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                           ? AutofillHints.password
                                           : AutofillHints.newPassword,
                                     ],
-                                    decoration: InputDecoration(
-                                      hintText: 'Enter your password',
-                                      hintStyle: isLogin
-                                          ? MomHomeTokens.text(
-                                              14,
-                                              color: authMuted,
-                                              height: 20 / 14,
-                                            )
-                                          : null,
-                                      isDense: isLogin,
-                                      constraints: isLogin
-                                          ? const BoxConstraints(minHeight: 48)
-                                          : null,
-                                      contentPadding: isLogin
-                                          ? const EdgeInsets.fromLTRB(
-                                              8,
-                                              12,
-                                              8,
-                                              16,
-                                            )
-                                          : const EdgeInsets.symmetric(
-                                              horizontal: MomCozySpacing.page,
-                                              vertical: MomCozySpacing.content,
+                                    decoration: isLogin
+                                        ? authReferenceInputDecoration(
+                                            context,
+                                            hintText: 'Password',
+                                            suffixIcon: IconButton(
+                                              key: const ValueKey(
+                                                'auth-password-visibility',
+                                              ),
+                                              tooltip: _showPassword
+                                                  ? 'Hide password'
+                                                  : 'Show password',
+                                              onPressed: _busy
+                                                  ? null
+                                                  : () => setState(() {
+                                                      _showPassword =
+                                                          !_showPassword;
+                                                    }),
+                                              icon: Icon(
+                                                _showPassword
+                                                    ? Icons.visibility_outlined
+                                                    : Icons
+                                                          .visibility_off_outlined,
+                                                size: 22,
+                                              ),
                                             ),
-                                      suffixIcon:
-                                          isLogin && _password.text.isEmpty
-                                          ? null
-                                          : IconButton(
+                                          )
+                                        : InputDecoration(
+                                            hintText: 'Enter your password',
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      MomCozySpacing.page,
+                                                  vertical:
+                                                      MomCozySpacing.content,
+                                                ),
+                                            suffixIcon: IconButton(
                                               key: const ValueKey(
                                                 'auth-password-visibility',
                                               ),
@@ -409,12 +422,11 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                                 size: MomCozyIconSizes.medium,
                                               ),
                                             ),
-                                      helperMaxLines: 8,
-                                      errorMaxLines: 8,
-                                      helperText: _step == _AuthStep.login
-                                          ? null
-                                          : '8–128 characters, including a letter and a number',
-                                    ),
+                                            helperMaxLines: 8,
+                                            errorMaxLines: 8,
+                                            helperText:
+                                                '8–128 characters, including a letter and a number',
+                                          ),
                                     validator: (v) {
                                       if (v == null || v.isEmpty) {
                                         return 'Enter your password.';
@@ -431,15 +443,82 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                   ),
                                 ),
                               ],
+                              if (isLogin) ...[
+                                const SizedBox(height: 18),
+                                Wrap(
+                                  alignment: WrapAlignment.spaceBetween,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  runSpacing: 4,
+                                  children: [
+                                    SizedBox(
+                                      width: 150,
+                                      child: CheckboxListTile(
+                                        key: const ValueKey('auth-remember-me'),
+                                        value: _rememberMe,
+                                        onChanged: _busy
+                                            ? null
+                                            : (value) => setState(() {
+                                                _rememberMe = value ?? false;
+                                              }),
+                                        controlAffinity:
+                                            ListTileControlAffinity.leading,
+                                        contentPadding: EdgeInsets.zero,
+                                        dense: true,
+                                        visualDensity: VisualDensity.compact,
+                                        checkboxShape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        side: const BorderSide(
+                                          color: authReferenceBorder,
+                                        ),
+                                        activeColor: authReferenceInk,
+                                        title: Text(
+                                          'Remember me',
+                                          maxLines: 1,
+                                          style: authReferenceText(
+                                            14,
+                                            height: 20 / 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      key: const ValueKey('auth-forgot-button'),
+                                      onPressed: _busy
+                                          ? null
+                                          : () => _navigate(_AuthStep.forgot),
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: authReferenceInk,
+                                        minimumSize: const Size(44, 44),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                        textStyle: authReferenceText(
+                                          14,
+                                          height: 20 / 14,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Forgot your password?',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                               SizedBox(
-                                height: isLogin ? 14 : MomCozySpacing.page,
+                                height: isLogin ? 72 : MomCozySpacing.page,
                               ),
                               FilledButton(
                                 key: const ValueKey('auth-submit-button'),
                                 onPressed: _busy ? null : _submit,
                                 style: FilledButton.styleFrom(
                                   minimumSize: Size.fromHeight(
-                                    isLogin ? 44 : 48,
+                                    isLogin ? 56 : 48,
                                   ),
                                   tapTargetSize: isLogin
                                       ? MaterialTapTargetSize.shrinkWrap
@@ -448,16 +527,27 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                     vertical: 12,
                                     horizontal: MomCozySpacing.card,
                                   ),
-                                  backgroundColor: authRose,
+                                  backgroundColor: isLogin
+                                      ? authReferenceInk
+                                      : authRose,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(
+                                      isLogin ? 12 : 16,
+                                    ),
                                   ),
                                   foregroundColor: MomCozyColors.raised,
-                                  textStyle: MomHomeTokens.text(
-                                    13,
-                                    weight: FontWeight.w700,
-                                    height: 18 / 13,
-                                  ),
+                                  textStyle: isLogin
+                                      ? authReferenceText(
+                                          16,
+                                          color: Colors.white,
+                                          weight: FontWeight.w600,
+                                          height: 24 / 16,
+                                        )
+                                      : MomHomeTokens.text(
+                                          13,
+                                          weight: FontWeight.w700,
+                                          height: 18 / 13,
+                                        ),
                                 ),
                                 child: _busy
                                     ? const SizedBox.square(
@@ -469,39 +559,40 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                     : Text(_submitLabel),
                               ),
                               if (_step == _AuthStep.login) ...[
-                                const SizedBox(height: 14),
+                                const SizedBox(height: 36),
                                 Wrap(
-                                  spacing: 8,
+                                  spacing: 12,
                                   alignment: WrapAlignment.center,
                                   crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
-                                    SizedBox(
-                                      width: 75,
-                                      child: Text(
-                                        'New here?',
-                                        style: MomHomeTokens.text(
-                                          13,
-                                          height: 18 / 13,
-                                        ),
+                                    Text(
+                                      "Don't have an account?",
+                                      style: authReferenceText(
+                                        14,
+                                        height: 20 / 14,
                                       ),
                                     ),
                                     TextButton(
+                                      key: const ValueKey(
+                                        'auth-register-button',
+                                      ),
                                       onPressed: _busy
                                           ? null
                                           : () => _navigate(_AuthStep.register),
                                       style: TextButton.styleFrom(
-                                        minimumSize: const Size(145, 44),
+                                        minimumSize: const Size(44, 44),
                                         tapTargetSize:
                                             MaterialTapTargetSize.shrinkWrap,
                                         padding: EdgeInsets.zero,
-                                        foregroundColor: authRose,
-                                        textStyle: MomHomeTokens.text(
-                                          13,
-                                          weight: FontWeight.w700,
-                                          height: 18 / 13,
+                                        foregroundColor: authReferenceInk,
+                                        textStyle: authReferenceText(
+                                          14,
+                                          weight: FontWeight.w600,
+                                          height: 20 / 14,
+                                          decoration: TextDecoration.underline,
                                         ),
                                       ),
-                                      child: const Text('Create an account'),
+                                      child: const Text('Sign up now'),
                                     ),
                                   ],
                                 ),
@@ -528,7 +619,12 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                           ),
                         ],
                       ),
-                      if (isLogin || _step == _AuthStep.register)
+                      if (isLogin) ...[
+                        const SizedBox(height: 224),
+                        const AuthLegalFooter(compact: true),
+                        const SizedBox(height: 8),
+                        const AuthLanguageButton(),
+                      ] else if (_step == _AuthStep.register)
                         const AuthLegalFooter(compact: true),
                     ],
                   ),
@@ -586,13 +682,13 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
           }
         case _AuthStep.login:
           try {
-            await _accept(
-              await api.login(
-                email: email,
-                password: password,
-                deviceId: await widget.authDeviceIdStore.readOrCreateDeviceId(),
-              ),
+            final tokens = await api.login(
+              email: email,
+              password: password,
+              deviceId: await widget.authDeviceIdStore.readOrCreateDeviceId(),
             );
+            await _accept(tokens);
+            TextInput.finishAutofillContext(shouldSave: _rememberMe);
           } on ApiHttpException catch (error) {
             if (error.errorCode != 'email_unverified') rethrow;
             await api.resendVerification(email);
@@ -708,31 +804,39 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
 }
 
 class _AuthField extends StatelessWidget {
-  const _AuthField({required this.label, required this.child, this.action});
+  const _AuthField({
+    required this.label,
+    required this.child,
+    this.action,
+    this.showLabel = true,
+  });
 
   final String label;
   final Widget child;
   final Widget? action;
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: MomCozySpacing.compact,
-        children: [
-          ExcludeSemantics(
-            child: Text(
-              label,
-              style: MomHomeTokens.text(12, weight: FontWeight.w700),
+      if (showLabel) ...[
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: MomCozySpacing.compact,
+          children: [
+            ExcludeSemantics(
+              child: Text(
+                label,
+                style: MomHomeTokens.text(12, weight: FontWeight.w700),
+              ),
             ),
-          ),
-          ?action,
-        ],
-      ),
-      const SizedBox(height: MomCozySpacing.compact),
+            ?action,
+          ],
+        ),
+        const SizedBox(height: MomCozySpacing.compact),
+      ],
       Semantics(label: label, child: child),
     ],
   );
