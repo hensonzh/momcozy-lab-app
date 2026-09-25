@@ -92,13 +92,54 @@ void main() {
       final repository = _MeHomeRepository();
       final controller = _controller(repository);
       await _pumpHome(tester, controller, size: Size(width, 844), scale: 1);
-      expect(find.text('选择想改善的事'), findsOneWidget);
-      expect(find.text('待记录'), findsNWidgets(4));
+      expect(find.text('Choose what you\'d like to work on'), findsOneWidget);
+      if (width < 400) {
+        await tester.scrollUntilVisible(
+          find.text('Energy today'),
+          180,
+          scrollable: find.byType(Scrollable).first,
+        );
+        expect(find.text('Not recorded yet'), findsAtLeastNWidgets(1));
+        await tester.drag(find.byType(ListView), const Offset(0, 4000));
+        await tester.pumpAndSettle();
+      } else {
+        expect(find.text('Not recorded yet'), findsNWidgets(4));
+      }
       await expectLater(
         find.byType(MaterialApp),
         matchesGoldenFile(
           '../../goldens/me_home/me-home-empty-${width.toInt()}.png',
         ),
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  }
+
+  for (final width in [320.0, 393.0, 430.0]) {
+    testWidgets('Me home fits long names and 2x English text at $width', (
+      tester,
+    ) async {
+      final repository = _MeHomeRepository(
+        initial: _MeHomeRepository._emptyState.copyWith(
+          profile: {
+            'preferred_name': 'Alexandra-Margaret',
+            'actual_delivery_date': '2026-08-30',
+          },
+        ),
+      );
+      await _pumpHome(
+        tester,
+        _controller(repository),
+        size: Size(width, 844),
+        scale: 2,
+      );
+      expect(find.textContaining('Alexandra-Margaret'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.scrollUntilVisible(
+        find.text('Energy today'),
+        160,
+        scrollable: find.byType(Scrollable).first,
       );
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
@@ -115,9 +156,9 @@ void main() {
     );
     final controller = _controller(repository);
     await _pumpHome(tester, controller, size: const Size(393, 844), scale: 1);
-    expect(find.text('喂奶或泵奶时不舒服'), findsOneWidget);
-    expect(find.text('我的关注 ›'), findsOneWidget);
-    expect(find.text('待记录'), findsNWidgets(6));
+    expect(find.text('Discomfort while nursing or pumping'), findsOneWidget);
+    expect(find.text('My focus ›'), findsOneWidget);
+    expect(find.text('Not recorded yet'), findsNWidgets(6));
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../../goldens/me_home/me-home-active-393.png'),

@@ -29,10 +29,10 @@ void main() {
           c = editor(BabyTestRecords(), BabyRecordKind.feeding);
       addTearDown(c.dispose);
       expect(await c.save(), isNull);
-      expect(c.validation, contains('方式'));
+      expect(c.validation, contains('method'));
       c.setFeedingMethod(BabyFeedingMethod.breastfeeding);
       expect(await c.save(), isNull);
-      expect(c.validation, contains('侧别'));
+      expect(c.validation, contains('side'));
       c.setSide(FeedingSide.both);
       final unknown = (await c.save())!.single as BabyFeedingRecord;
       expect(unknown.volumeMl, isNull);
@@ -107,7 +107,7 @@ void main() {
     c.setDevelopment('looks-at-face', DevelopmentStatus.unsure);
     c.setDate(LocalDate(2026, 8, 17));
     expect(await c.save(), isNull);
-    expect(c.validation, contains('出生日期'));
+    expect(c.validation, contains('date of birth'));
     c.setDate(LocalDate(2026, 9, 8));
     final result = (await c.save())!.single as BabyDevelopmentRecord;
     expect(result.recordedOn, LocalDate(2026, 9, 8));

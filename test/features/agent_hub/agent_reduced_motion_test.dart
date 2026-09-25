@@ -69,7 +69,7 @@ void main() {
                   ? const Column(
                       children: [
                         AgentRunStatusLine(title: '正在查看记录'),
-                        AgentThinkingNote(title: '我想一下'),
+                        AgentThinkingNote(title: 'Let me think…'),
                       ],
                     )
                   : AgentHubPage(state: _thinking()),
@@ -134,7 +134,7 @@ void main() {
       events: [
         AgentStreamEvent({
           'type': 'run.progress',
-          'payload': {'label': '我想一下'},
+          'payload': {'label': 'Let me think…'},
         }),
       ],
     );
@@ -163,7 +163,7 @@ AgentStreamRunState _thinking() => AgentStreamRunState(
   events: [
     AgentStreamEvent({
       'type': 'run.progress',
-      'payload': {'label': '我想一下'},
+      'payload': {'label': 'Let me think…'},
     }),
   ],
 );

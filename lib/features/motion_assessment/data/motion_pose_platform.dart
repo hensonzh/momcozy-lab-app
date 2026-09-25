@@ -232,7 +232,7 @@ class MotionPosePreview extends StatelessWidget {
       color: Colors.black,
       child: Center(
         child: Text(
-          '动态评估仅支持 Android 与 iOS',
+          'Live assessment is supported only on Android and iOS.',
           style: TextStyle(color: Colors.white),
         ),
       ),

@@ -1,13 +1,13 @@
 String formatPostpartumDay(int day) {
   final stage = switch (day) {
-    >= 0 && <= 3 => '产后初期',
-    <= 14 => '居家适应期',
-    <= 42 => '恢复建立期',
-    <= 84 => '功能恢复期',
-    <= 183 => '节律重建期',
-    <= 365 => '长期恢复期',
+    >= 0 && <= 3 => 'Early postpartum',
+    <= 14 => 'Settling in at home',
+    <= 42 => 'Early recovery',
+    <= 84 => 'Building strength',
+    <= 183 => 'Finding your rhythm',
+    <= 365 => 'Ongoing recovery',
     _ => null,
   };
-  if (day < 0) return '产后阶段待确认';
-  return '产后第 $day 天${stage == null ? '' : ' · $stage'}';
+  if (day < 0) return 'Postpartum stage not set';
+  return 'Postpartum day $day${stage == null ? '' : ' · $stage'}';
 }

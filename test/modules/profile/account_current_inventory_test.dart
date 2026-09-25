@@ -209,14 +209,14 @@ void main() {
       'Authenticated Me before More navigation',
       route: '/me',
     );
-    await tap(tester, find.text('More'));
+    await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
     await capture(
       tester,
       '$stem-more',
       'More before Account settings',
       route: '/more',
     );
-    await tap(tester, find.text('账号设置'));
+    await tap(tester, find.text('Account settings'));
     await tester.pump(const Duration(milliseconds: 500));
   }
 
@@ -225,9 +225,9 @@ void main() {
         ? find.byType(BackButton)
         : find.byTooltip('Back').evaluate().isNotEmpty
         ? find.byTooltip('Back')
-        : find.byTooltip('返回').evaluate().isNotEmpty
-        ? find.byTooltip('返回')
-        : find.text('返回');
+        : find.byTooltip('Back').evaluate().isNotEmpty
+        ? find.byTooltip('Back')
+        : find.text('Back');
     await tap(tester, target.first);
     await tester.pumpAndSettle();
     await capture(tester, state, 'Tap page Back → $route', route: route);
@@ -264,7 +264,7 @@ void main() {
     ) async {
       await mount(tester, width: narrow ? 320 : 393, scale: narrow ? 2 : 1);
       await capture(tester, 'read-mom', 'Authenticated Me', route: '/me');
-      await tap(tester, find.text('More'));
+      await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
       await capture(
         tester,
         'read-more',
@@ -272,7 +272,7 @@ void main() {
         route: '/more',
       );
       transport.readGates['/v1/auth/me'] = Completer<void>();
-      await tap(tester, find.text('账号设置'));
+      await tap(tester, find.text('Account settings'));
       expect(find.text('Loading account…'), findsOneWidget);
       await capture(tester, 'loading', 'Account GET pending → loading');
       transport.failingReads.add('/v1/auth/me');

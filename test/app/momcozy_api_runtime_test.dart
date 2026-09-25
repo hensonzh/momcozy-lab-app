@@ -27,7 +27,7 @@ void main() {
 
     expect(runtime.userId, 'demo-user');
     expect(runtime.babyId, 'demo-baby');
-    expect(runtime.locale, 'zh-CN');
+    expect(runtime.locale, 'en-US');
     expect(runtime.session.status, MomCozySessionStatus.anonymous);
     expect(transport.baseUri, Uri.parse('http://127.0.0.1:8769'));
     expect(agentTransport.baseUri, Uri.parse('http://127.0.0.1:8010'));

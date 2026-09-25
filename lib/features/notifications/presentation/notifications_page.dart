@@ -357,14 +357,12 @@ class _NotificationCard extends StatelessWidget {
                     ],
                   ),
             Text(
-              notification.title.isEmpty
-                  ? 'Momcozy update'
-                  : notification.title,
+              notification.displayTitle,
               style: MomHomeTokens.text(16, weight: FontWeight.w700),
             ),
-            if (notification.body.isNotEmpty)
+            if (notification.displayBody.isNotEmpty)
               Text(
-                notification.body,
+                notification.displayBody,
                 style: MomHomeTokens.text(
                   13,
                   color: MomHomeTokens.secondary,
@@ -423,7 +421,7 @@ class _NotificationsErrorBanner extends StatelessWidget {
       gradient: MomHomeTokens.body,
       children: [
         Text(
-          'Couldn’t refresh notifications',
+          'Couldn\'t refresh notifications',
           style: MomHomeTokens.text(18, weight: FontWeight.w700),
         ),
         Text(

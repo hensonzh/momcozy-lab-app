@@ -12,10 +12,7 @@ const _defaultAgentHubToken = String.fromEnvironment('MOMCOZY_API_TOKEN');
 const _defaultAgentHubThreadId = String.fromEnvironment(
   'MOMCOZY_AGENT_THREAD_ID',
 );
-const _defaultAgentHubLocale = String.fromEnvironment(
-  'MOMCOZY_LOCALE',
-  defaultValue: 'zh-CN',
-);
+const _defaultAgentHubLocale = momCozyEnglishLocale;
 
 AgentStreamRequest buildDefaultAgentHubRequest(String message) {
   return AgentStreamRequest(
@@ -34,7 +31,7 @@ AgentStreamRequest buildSessionAgentHubRequest(
   return AgentStreamRequest(
     threadId: _resolvedThreadId(threadId),
     message: message,
-    locale: session.locale,
+    locale: momCozyEnglishLocale,
     metadata: const {'source': 'flutter-agent-hub'},
   );
 }

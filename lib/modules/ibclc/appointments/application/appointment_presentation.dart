@@ -28,62 +28,62 @@ final class WorkbenchAppointmentPresentation {
     if (appointment.status == AppointmentStatus.cancelled ||
         consultation?.status == ConsultationStatus.cancelled) {
       return const WorkbenchAppointmentPresentation(
-        '已取消',
+        'Canceled',
         WorkbenchStatusTone.neutral,
         WorkbenchAppointmentAction.prepare,
-        '查看资料',
+        'View intake',
       );
     }
     if (consultation?.status == ConsultationStatus.noShow) {
       return const WorkbenchAppointmentPresentation(
-        '用户未到场',
+        'Client did not attend',
         WorkbenchStatusTone.attention,
         WorkbenchAppointmentAction.room,
-        '查看结果',
+        'View outcome',
       );
     }
     if (consultation?.status == ConsultationStatus.failed) {
       return WorkbenchAppointmentPresentation(
         consultation?.endReason == ConsultationEndReason.safetyEscalation
-            ? '已升级处理'
-            : '技术故障',
+            ? 'Escalated'
+            : 'Technical issue',
         WorkbenchStatusTone.attention,
         WorkbenchAppointmentAction.room,
-        '查看结果',
+        'View outcome',
       );
     }
     if (appointment.status == AppointmentStatus.completed ||
         consultation?.ended == true) {
       if (item.publishedRevision > 0) {
         return const WorkbenchAppointmentPresentation(
-          '方案已发布',
+          'Plan published',
           WorkbenchStatusTone.care,
           WorkbenchAppointmentAction.note,
-          '查看记录',
+          'View notes',
         );
       }
       if (item.noteStatus == ClinicalNoteStatus.signed) {
         return const WorkbenchAppointmentPresentation(
-          '待发布方案',
+          'Plan not published yet',
           WorkbenchStatusTone.attention,
           WorkbenchAppointmentAction.note,
-          '整理方案',
+          'Prepare plan',
         );
       }
       return const WorkbenchAppointmentPresentation(
-        '待完成记录',
+        'Notes to complete',
         WorkbenchStatusTone.attention,
         WorkbenchAppointmentAction.note,
-        '整理记录',
+        'Complete notes',
       );
     }
     if (appointment.status == AppointmentStatus.inProgress ||
         consultation?.status == ConsultationStatus.inProgress) {
       return const WorkbenchAppointmentPresentation(
-        '咨询中',
+        'In consultation',
         WorkbenchStatusTone.care,
         WorkbenchAppointmentAction.room,
-        '返回咨询',
+        'Return to consultation',
       );
     }
     if (!now.isBefore(
@@ -91,18 +91,18 @@ final class WorkbenchAppointmentPresentation {
     )) {
       return WorkbenchAppointmentPresentation(
         now.isAfter(appointment.endsAt.add(const Duration(minutes: 15)))
-            ? '待确认结果'
-            : '待开始',
+            ? 'Outcome to confirm'
+            : 'Not started yet',
         WorkbenchStatusTone.attention,
         WorkbenchAppointmentAction.room,
-        '进入咨询室',
+        'Join consultation',
       );
     }
     return const WorkbenchAppointmentPresentation(
-      '已预约',
+      'Booked',
       WorkbenchStatusTone.neutral,
       WorkbenchAppointmentAction.prepare,
-      '查看资料',
+      'View intake',
     );
   }
 }

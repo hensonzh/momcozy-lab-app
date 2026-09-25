@@ -100,21 +100,21 @@ class BabyStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final large = MediaQuery.textScalerOf(context).scale(1) > 1.35;
-    final cumulative = value.startsWith('累计 ');
+    final cumulative = value.startsWith('Total ');
     final heading = Text(
-      label == '吃奶后精神状态' ? '吃奶后\n精神状态' : label,
+      label == 'Baby\'s mood after feeding' ? 'After-feeding\nmood' : label,
       style: BabyDesign.text(
-        label == '吃奶后精神状态' ? 12 : 14,
-        line: label == '吃奶后精神状态' ? 16 : 20,
+        label == 'Baby\'s mood after feeding' ? 12 : 14,
+        line: label == 'Baby\'s mood after feeding' ? 16 : 20,
         color: MomHomeTokens.secondary,
       ),
     );
     final facts = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (cumulative || (label == '吃奶后精神状态' && hasRecord))
+        if (cumulative || (label == 'Baby\'s mood after feeding' && hasRecord))
           Text(
-            cumulative ? '累计' : '最近',
+            cumulative ? 'Total' : 'Latest',
             style: BabyDesign.text(
               12,
               line: 17,
@@ -122,19 +122,19 @@ class BabyStatusCard extends StatelessWidget {
             ),
           ),
         Text(
-          cumulative ? value.substring(3) : value,
+          cumulative ? value.substring('Total '.length) : value,
           style: BabyDesign.text(
-            label == '吃奶后精神状态'
+            label == 'Baby\'s mood after feeding'
                 ? 16
                 : hasRecord
                 ? 22
                 : 16,
             weight: FontWeight.w700,
-            line: label == '吃奶后精神状态' || !hasRecord ? 22 : 31,
+            line: label == 'Baby\'s mood after feeding' || !hasRecord ? 22 : 31,
             color: hasRecord ? MomHomeTokens.ink : MomHomeTokens.secondary,
           ),
         ),
-        if (value == '正在睡')
+        if (value == 'Sleeping now')
           Text(
             detail,
             style: BabyDesign.text(
@@ -147,7 +147,7 @@ class BabyStatusCard extends StatelessWidget {
     );
     final glyph = BabyDesign.asset(asset, width: 28, height: 28);
     return MomHomeSurface(
-      semanticLabel: '今日$label，$value，$detail',
+      semanticLabel: 'Today\'s $label: $value. $detail',
       gradient: gradient,
 
       onTap: onTap,
@@ -271,10 +271,10 @@ class BabyGrowthMetrics extends StatelessWidget {
                               ] else
                                 Text(
                                   controller.latestGrowth.loading
-                                      ? '载入中…'
+                                      ? 'Loading…'
                                       : controller.latestGrowth.failure != null
-                                      ? '暂未载入'
-                                      : '待记录',
+                                      ? 'Not loaded yet'
+                                      : 'Not recorded yet',
                                   style: const TextStyle(
                                     fontFamily: 'NotoSansSCHome',
                                     fontSize: 18,

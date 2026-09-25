@@ -136,7 +136,7 @@ class FlutterSecureMomCozySessionStore implements MomCozySessionStore {
           statusForSessionSecrets(accessToken, refreshToken),
       userId: userId ?? 'demo-user',
       babyId: babyId ?? 'demo-baby',
-      locale: locale ?? 'zh-CN',
+      locale: locale ?? 'en-US',
       accessToken: accessToken,
       refreshToken: refreshToken,
     );

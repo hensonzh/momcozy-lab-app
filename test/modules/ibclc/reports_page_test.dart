@@ -31,15 +31,15 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      expect(find.text('智能体整理'), findsOneWidget);
-      expect(find.text('暂无明确的情绪自述。'), findsOneWidget);
+      expect(find.text('AI summary'), findsOneWidget);
+      expect(find.text('No clear mood statements yet.'), findsOneWidget);
       await expectLater(
         find.byType(MaterialApp),
         matchesGoldenFile(
           '../../goldens/product_baseline/ibclc-report-${width.toInt()}.png',
         ),
       );
-      await tester.ensureVisible(find.text('专业复核'));
+      await tester.ensureVisible(find.text('Clinical review').last);
       await tester.pumpAndSettle();
       await expectLater(
         find.byType(MaterialApp),
@@ -65,9 +65,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Day 1 · 待复核'));
+      await tester.tap(find.text('Day 1 · Needs review'));
       await tester.pumpAndSettle();
-      final context = tester.element(find.text('智能体整理'));
+      final context = tester.element(find.text('AI summary'));
       final uri = GoRouter.of(context).routeInformationProvider.value.uri;
       expect(uri.queryParameters['date'], harness.reportJson['report_date']);
       expect(
@@ -102,14 +102,17 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('反馈修改'));
-      await tester.tap(find.text('反馈修改'));
+      await tester.ensureVisible(find.text('Suggest changes'));
+      await tester.tap(find.text('Suggest changes'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('提交反馈'));
+      await tester.tap(find.text('Submit feedback'));
       await tester.pumpAndSettle();
-      expect(find.text('请填写至少 5 个字的具体意见。'), findsOneWidget);
+      expect(
+        find.text('Enter at least 5 characters of specific feedback.'),
+        findsOneWidget,
+      );
       await tester.enterText(find.byType(TextField), '请进一步核对亲喂表现和宝宝实际摄入量。');
-      await tester.tap(find.text('提交反馈'));
+      await tester.tap(find.text('Submit feedback'));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(find.text('请进一步核对亲喂表现和宝宝实际摄入量。'), findsOneWidget);
@@ -120,16 +123,16 @@ void main() {
         ),
         hasLength(1),
       );
-      await tester.ensureVisible(find.byTooltip('刷新报告'));
-      await tester.tap(find.byTooltip('刷新报告'));
+      await tester.ensureVisible(find.byTooltip('Refresh report'));
+      await tester.tap(find.byTooltip('Refresh report'));
       await tester.pumpAndSettle();
       expect(find.text('请进一步核对亲喂表现和宝宝实际摄入量。'), findsOneWidget);
       harness.reportsDenied = true;
-      await tester.tap(find.byTooltip('刷新报告'));
+      await tester.tap(find.byTooltip('Refresh report'));
       await tester.pumpAndSettle();
-      expect(find.text('等待 AI 授权'), findsOneWidget);
+      expect(find.text('Waiting for AI consent'), findsOneWidget);
       expect(find.text('请进一步核对亲喂表现和宝宝实际摄入量。'), findsNothing);
-      expect(find.text('智能体整理'), findsNothing);
+      expect(find.text('AI summary'), findsNothing);
       await tester.pumpWidget(const SizedBox.shrink());
     },
   );
@@ -151,12 +154,12 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      await tester.ensureVisible(find.text('反馈修改'));
-      await tester.tap(find.text('反馈修改'));
+      await tester.ensureVisible(find.text('Suggest changes'));
+      await tester.tap(find.text('Suggest changes'));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      await tester.ensureVisible(find.text('取消'));
-      await tester.tap(find.text('取消'));
+      await tester.ensureVisible(find.text('Cancel'));
+      await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
@@ -188,7 +191,7 @@ void main() {
       );
       await tester.tap(find.text('林晓').last);
       await tester.pumpAndSettle();
-      expect(find.text('智能体整理'), findsOneWidget);
+      expect(find.text('AI summary'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
     },

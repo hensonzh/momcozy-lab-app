@@ -1,27 +1,47 @@
 enum MeMetric {
-  feed('喂奶记录', 'Feed'),
-  energy('今天精力', 'Energy'),
-  sleep('昨晚睡眠', 'Sleep'),
-  mood('今天心情', 'Mood'),
-  pump('泵奶记录', 'Pump'),
-  pain('喂奶疼痛', 'Pain'),
-  latch('含奶情况', 'Latch'),
-  bottle('奶瓶喂养', 'Bottle'),
-  diaper('尿便记录', 'Diaper'),
-  weight('体重记录', 'Weight'),
-  storage('储奶记录', 'Storage');
+  feed('Feeding', 'Feed'),
+  energy('Energy today', 'Energy'),
+  sleep('Sleep last night', 'Sleep'),
+  mood('Mood today', 'Mood'),
+  pump('Pumping', 'Pump'),
+  pain('Feeding pain', 'Pain'),
+  latch('Latch', 'Latch'),
+  bottle('Bottle feeding', 'Bottle'),
+  diaper('Diapers', 'Diaper'),
+  weight('Weight', 'Weight'),
+  storage('Stored milk', 'Storage');
 
   const MeMetric(this.label, this.artwork);
   final String label, artwork;
 }
 
 enum MeIssue {
-  comfort('喂奶或泵奶时不舒服', [MeMetric.feed, MeMetric.pump, MeMetric.pain]),
-  feeding('宝宝含奶、亲喂或吃奶瓶不顺利', [MeMetric.feed, MeMetric.latch, MeMetric.bottle]),
-  intake('担心宝宝没有吃够', [MeMetric.feed, MeMetric.diaper, MeMetric.weight]),
-  supply('担心奶量或泵出量偏少', [MeMetric.feed, MeMetric.pump]),
-  work('快返工了，想提前安排', [MeMetric.pump, MeMetric.storage, MeMetric.bottle]),
-  other('其他困扰 / 暂时说不清', [MeMetric.energy, MeMetric.sleep, MeMetric.mood]);
+  comfort('Discomfort while nursing or pumping', [
+    MeMetric.feed,
+    MeMetric.pump,
+    MeMetric.pain,
+  ]),
+  feeding('Feeding or latching has been difficult', [
+    MeMetric.feed,
+    MeMetric.latch,
+    MeMetric.bottle,
+  ]),
+  intake('Worried my baby is not getting enough', [
+    MeMetric.feed,
+    MeMetric.diaper,
+    MeMetric.weight,
+  ]),
+  supply('Concerned about my milk supply', [MeMetric.feed, MeMetric.pump]),
+  work('Preparing to return to work', [
+    MeMetric.pump,
+    MeMetric.storage,
+    MeMetric.bottle,
+  ]),
+  other('Something else / Not sure yet', [
+    MeMetric.energy,
+    MeMetric.sleep,
+    MeMetric.mood,
+  ]);
 
   const MeIssue(this.label, this.metrics);
   final String label;
@@ -76,6 +96,33 @@ class MeObservation {
   final MeMetric kind;
   final DateTime occurredAt;
   final Map<String, Object?> fields;
+
+  // Older observations store selected Chinese choice labels as values. Keep
+  // their wire format intact while showing the same choices in English.
+  String get displayValue =>
+      const <String, String>{
+        '有力气': 'Energized',
+        '还撑得住': 'Managing',
+        '很疲惫': 'Exhausted',
+        '少于 3 小时': 'Less than 3 hours',
+        '3–4 小时': '3–4 hours',
+        '4–5 小时': '4–5 hours',
+        '5–6 小时': '5–6 hours',
+        '6 小时以上': 'Over 6 hours',
+        '不确定': 'Not sure',
+        '不太好': 'Having a hard day',
+        '一般': 'Okay',
+        '不错': 'Good',
+        '含得稳': 'Stayed latched',
+        '容易松开': 'Came off easily',
+        '含不住': 'Could not latch',
+        '愿意吃': 'Fed willingly',
+        '愿意吃一些': 'Took some',
+        '不太愿意': 'Reluctant',
+        '不愿意吃': 'Refused',
+      }[value] ??
+      value;
+
   Map<String, Object?> toJson() => {
     'id': id,
     'kind': kind.name,

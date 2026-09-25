@@ -49,7 +49,7 @@ class _ConsultationDeviceCheckDialogState
       _error = '';
     });
     var ready = false;
-    var error = '无法使用摄像头或麦克风，请检查设备权限后重试。';
+    var error = 'Camera or microphone unavailable. Check device permissions and try again.';
     try {
       await check.start();
       if (!mounted) return;
@@ -59,7 +59,7 @@ class _ConsultationDeviceCheckDialogState
           if (check.cameraError != null) check.cameraError!,
           if (check.microphoneError != null) check.microphoneError!,
         ].join('\n');
-        if (error.isEmpty) error = '无法使用摄像头或麦克风，请检查设备权限后重试。';
+        if (error.isEmpty) error = 'Camera or microphone unavailable. Check device permissions and try again.';
       }
     } catch (_) {
       // A failed probe must still release any tracks it acquired.
@@ -78,8 +78,8 @@ class _ConsultationDeviceCheckDialogState
   Widget build(BuildContext context) => Theme(
     data: momSettingsTheme(Theme.of(context)),
     child: MomSettingsFlowDialog(
-      title: '检测摄像头与麦克风',
-      closeLabel: '关闭设备检测',
+      title: 'Check camera & microphone',
+      closeLabel: 'Close device check',
       onClose: () => Navigator.pop(context),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -87,7 +87,7 @@ class _ConsultationDeviceCheckDialogState
         spacing: MomHomeTokens.gap,
         children: [
           Text(
-            '进入咨询室前，请先确认摄像头和麦克风可用。',
+            'Make sure your camera and microphone work before joining.',
             style: MomHomeTokens.text(
               13,
               color: MomHomeTokens.secondary,
@@ -108,7 +108,7 @@ class _ConsultationDeviceCheckDialogState
           if (_status == _DeviceStatus.ready)
             FilledButton(
               onPressed: widget.onSuccess ?? () => Navigator.pop(context),
-              child: Text(widget.onSuccess == null ? '完成' : '继续确认'),
+              child: Text(widget.onSuccess == null ? 'Done' : 'Continue'),
             ),
         ],
       ),
@@ -134,15 +134,15 @@ class _ConsultationDeviceCheckDialogState
           ),
         ),
         Text(
-          '摄像头与麦克风',
+          'Camera & microphone',
           style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
         ),
         Semantics(
           liveRegion: true,
           child: Text(switch (_status) {
-            _DeviceStatus.checking => '正在请求设备权限…',
-            _DeviceStatus.ready => '摄像头和麦克风均可用',
-            _DeviceStatus.error => '检查未通过，请重试',
+            _DeviceStatus.checking => 'Requesting device permissions…',
+            _DeviceStatus.ready => 'Camera and microphone are ready',
+            _DeviceStatus.error => 'Check failed. Try again.',
           }, style: MomHomeTokens.text(18, weight: FontWeight.w700)),
         ),
         FilledButton(
@@ -156,10 +156,10 @@ class _ConsultationDeviceCheckDialogState
               : null,
           child: Text(
             _status == _DeviceStatus.checking
-                ? '检查中…'
+                ? 'Checking…'
                 : ready
-                ? '重新检查'
-                : '开始检测',
+                ? 'Check again'
+                : 'Start check',
           ),
         ),
       ],

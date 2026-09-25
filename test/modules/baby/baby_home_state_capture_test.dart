@@ -292,9 +292,9 @@ void main() {
       ),
     );
     for (final entry in {
-      'home-growth-weight': ('体重', 474.0),
-      'home-growth-length': ('身长', 474.0),
-      'home-growth-head': ('头围', 474.0),
+      'home-growth-weight': ('Weight', 474.0),
+      'home-growth-length': ('Length', 474.0),
+      'home-growth-head': ('Head circumference', 474.0),
     }.entries) {
       await capture(
         tester,

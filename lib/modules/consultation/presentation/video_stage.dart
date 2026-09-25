@@ -26,8 +26,8 @@ class ConsultationVideoStage extends StatelessWidget {
         : ConsultationRole.mom;
     final other = data.participant(otherRole);
     final otherName = data.viewerRole == ConsultationRole.mom
-        ? data.appointment.providerName
-        : '用户';
+        ? data.appointment.publicProviderName
+        : 'Client';
     final remote = rtc?.remoteParticipants.values.firstOrNull;
     final localVideo = rtc?.localParticipant?.videoTrackPublications
         .where((publication) => !publication.muted && publication.track != null)
@@ -38,25 +38,45 @@ class ConsultationVideoStage extends StatelessWidget {
         .firstOrNull
         ?.track;
     final (title, detail) = switch (media.state) {
-      ConsultationMediaState.reconnecting => ('正在恢复连接', '请保持此页开启，网络恢复后会自动重连'),
-      ConsultationMediaState.connecting => ('正在进入咨询室', '正在建立视频连接'),
-      ConsultationMediaState.disconnected => ('视频连接已中断', '请检查网络后重新连接'),
+      ConsultationMediaState.reconnecting => (
+        'Reconnecting',
+        'Keep this page open. We will reconnect when your network returns.',
+      ),
+      ConsultationMediaState.connecting => (
+        'Joining consultation room',
+        'Establishing video connection',
+      ),
+      ConsultationMediaState.disconnected => (
+        'Video connection interrupted',
+        'Check your network and reconnect.',
+      ),
       ConsultationMediaState.connected => switch (other?.presence) {
         ParticipantPresence.reconnecting => (
-          '$otherName 正在重新连接',
-          '咨询尚未结束，请留在房间中稍候',
+          '$otherName is reconnecting',
+          'The consultation is still in progress. Please stay in the room.',
         ),
-        ParticipantPresence.left => ('$otherName 暂时离开', '咨询尚未结束，请稍候'),
+        ParticipantPresence.left => (
+          '$otherName has stepped away',
+          'The consultation is still in progress. Please wait.',
+        ),
         ParticipantPresence.joined =>
           data.active
-              ? (otherName, remoteVideo == null ? '对方的摄像头暂未开启' : '咨询中')
+              ? (
+                  otherName,
+                  remoteVideo == null
+                      ? 'The other camera is off'
+                      : 'In consultation',
+                )
               : (
-                  '$otherName 已进入',
+                  '$otherName has joined',
                   data.viewerRole == ConsultationRole.mom
-                      ? '正在等待专家开始咨询'
-                      : '双方已进入，可以开始本次咨询',
+                      ? 'Waiting for your consultant to begin'
+                      : 'Both participants have joined. You can start.',
                 ),
-        _ => ('等待 $otherName 进入', '你已在咨询室中，可以保持此页开启'),
+        _ => (
+          'Waiting for $otherName to join',
+          'You are in the room. Keep this page open.',
+        ),
       },
     };
     if (data.viewerRole == ConsultationRole.mom) {
@@ -70,7 +90,7 @@ class ConsultationVideoStage extends StatelessWidget {
       );
     }
     return Semantics(
-      label: '咨询视频画面',
+      label: 'Consultation video',
       child: Container(
         constraints: const BoxConstraints(minHeight: 365),
         clipBehavior: Clip.antiAlias,
@@ -135,10 +155,10 @@ class ConsultationVideoStage extends StatelessWidget {
               right: 14,
               child: Text(
                 media.sandbox
-                    ? '模拟咨询 · 无远程音视频'
+                    ? 'Simulated consultation · No remote audio or video'
                     : (media.state == ConsultationMediaState.connected
-                          ? '视频已连接'
-                          : '正在连接视频'),
+                          ? 'Video connected'
+                          : 'Connecting video'),
                 style: const TextStyle(
                   color: MomCozyColors.onMediaMuted,
                   fontSize: MomCozyTypography.microSize,
@@ -150,7 +170,9 @@ class ConsultationVideoStage extends StatelessWidget {
               right: 14,
               bottom: 14,
               child: Semantics(
-                label: media.cameraOn ? '你的画面，摄像头已开启' : '你的摄像头已关闭',
+                label: media.cameraOn
+                    ? 'Your video, camera on'
+                    : 'Your camera is off',
                 child: Container(
                   width: 84,
                   height: 112,
@@ -180,7 +202,7 @@ class ConsultationVideoStage extends StatelessWidget {
                         left: 10,
                         bottom: 8,
                         child: Text(
-                          '你',
+                          'You',
                           style: TextStyle(
                             color: MomCozyColors.onMedia,
                             fontSize: MomCozyTypography.labelSize,
@@ -220,7 +242,7 @@ class ConsultationMediaControls extends StatelessWidget {
       children: [
         Expanded(
           child: _Control(
-            label: media.microphoneOn ? '麦克风' : '已静音',
+            label: media.microphoneOn ? 'Microphone' : 'Muted',
             icon: media.microphoneOn ? Icons.mic_none : Icons.mic_off_outlined,
             selected: media.microphoneOn,
             compact: compact,
@@ -230,7 +252,7 @@ class ConsultationMediaControls extends StatelessWidget {
         const SizedBox(width: MomCozySpacing.compact),
         Expanded(
           child: _Control(
-            label: media.cameraOn ? '摄像头' : '已关闭',
+            label: media.cameraOn ? 'Camera' : 'Off',
             icon: media.cameraOn
                 ? Icons.videocam_outlined
                 : Icons.videocam_off_outlined,
@@ -243,7 +265,7 @@ class ConsultationMediaControls extends StatelessWidget {
         const SizedBox(width: MomCozySpacing.compact),
         Expanded(
           child: _Control(
-            label: '离开房间',
+            label: 'Leave room',
             icon: Icons.logout_rounded,
             danger: true,
             compact: compact,

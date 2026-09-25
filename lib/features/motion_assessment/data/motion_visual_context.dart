@@ -357,7 +357,7 @@ Map<String, Object?> motionVisualConversationItemCreate({
       'type': 'message',
       'role': 'user',
       'content': [
-        {'type': 'input_text', 'text': '[稀疏视觉上下文]${jsonEncode(metadata)}'},
+        {'type': 'input_text', 'text': '[Sparse visual context]${jsonEncode(metadata)}'},
         {
           'type': 'input_image',
           'image_url':

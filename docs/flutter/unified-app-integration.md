@@ -83,7 +83,7 @@ authentication or app-shell prerequisites.
 
 1. Validate both OpenAPI snapshots and smoke-flow service ownership.
 2. Run Flutter format, analyzer, unit/widget tests, and contract tests.
-3. Build at least a local debug APK and a unified release APK targeting test.
+3. Build at least a local debug APK and a staging release APK targeting `MOMCOZY_ENV=staging`.
 4. Run real-device checks for MotionPose, camera/microphone permissions, BLE,
    Agent SSE reconnect/cancel, secure-session upgrade, and login/logout.
 5. Enable gated backend capabilities only after the matching test endpoints

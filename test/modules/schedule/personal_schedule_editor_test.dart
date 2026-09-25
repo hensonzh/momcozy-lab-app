@@ -145,7 +145,7 @@ void main() {
       ) async {
         final repo = MemoryScheduleRepository();
         await mountSchedule(tester, repo, width: width, scale: scale);
-        await tester.tap(find.byTooltip('添加日程'));
+        await tester.tap(find.byTooltip('Add to schedule'));
         await tester.pumpAndSettle();
         expect(
           tester
@@ -163,7 +163,7 @@ void main() {
         }
         await tester.enterText(
           find.byKey(const ValueKey('schedule-title')),
-          '宝宝体检',
+          'Baby checkup',
         );
         await tester.pump();
         await tester.ensureVisible(find.byKey(const ValueKey('schedule-date')));
@@ -198,7 +198,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.enterText(
           find.byKey(const ValueKey('schedule-note')),
-          '带好成长记录',
+          'Bring the growth records',
         );
         await tester.pump();
         if (width == 320) {
@@ -212,13 +212,15 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('schedule-save')));
         await tester.pumpAndSettle();
-        expect(repo.values.single.note, '带好成长记录');
+        expect(repo.values.single.note, 'Bring the growth records');
         expect(repo.values.single.startTime, '09:00');
-        await tester.ensureVisible(find.byTooltip('更多宝宝体检选项'));
+        await tester.ensureVisible(
+          find.byTooltip('More options for Baby checkup'),
+        );
         await tester.pumpAndSettle();
-        await tester.tap(find.byTooltip('更多宝宝体检选项'));
+        await tester.tap(find.byTooltip('More options for Baby checkup'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('编辑'));
+        await tester.tap(find.text('Edit'));
         await tester.pumpAndSettle();
         if (scale == 1) {
           await expectLater(
@@ -230,25 +232,29 @@ void main() {
         }
         await tester.enterText(
           find.byKey(const ValueKey('schedule-title')),
-          '宝宝体检调整',
+          'Baby checkup follow-up',
         );
         await tester.pump();
-        await tester.tap(find.byTooltip('关闭日程'));
+        await tester.tap(find.byTooltip('Close schedule item'));
         await tester.pumpAndSettle();
-        expect(find.text('离开这次记录？'), findsOneWidget);
-        await tester.tap(find.text('继续填写'));
+        expect(find.text('Leave this record?'), findsOneWidget);
+        await tester.tap(find.text('Keep editing'));
         await tester.pumpAndSettle();
-        expect(find.text('宝宝体检调整'), findsOneWidget);
+        expect(find.text('Baby checkup follow-up'), findsOneWidget);
         await tester.ensureVisible(find.byKey(const ValueKey('schedule-save')));
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('schedule-save')));
         await tester.pumpAndSettle();
         expect(repo.values.single.id, 'personal-1');
-        await tester.ensureVisible(find.byTooltip('更多宝宝体检调整选项'));
+        await tester.ensureVisible(
+          find.byTooltip('More options for Baby checkup follow-up'),
+        );
         await tester.pumpAndSettle();
-        await tester.tap(find.byTooltip('更多宝宝体检调整选项'));
+        await tester.tap(
+          find.byTooltip('More options for Baby checkup follow-up'),
+        );
         await tester.pumpAndSettle();
-        await tester.tap(find.text('删除'));
+        await tester.tap(find.text('Delete'));
         await tester.pumpAndSettle();
         if (scale == 1) {
           await expectLater(
@@ -258,18 +264,20 @@ void main() {
             ),
           );
         }
-        await tester.ensureVisible(find.text('保留日程'));
+        await tester.ensureVisible(find.text('Keep item'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('保留日程'));
+        await tester.tap(find.text('Keep item'));
         await tester.pumpAndSettle();
         expect(repo.values, hasLength(1));
-        await tester.tap(find.byTooltip('更多宝宝体检调整选项'));
+        await tester.tap(
+          find.byTooltip('More options for Baby checkup follow-up'),
+        );
         await tester.pumpAndSettle();
-        await tester.tap(find.text('删除'));
+        await tester.tap(find.text('Delete'));
         await tester.pumpAndSettle();
-        await tester.ensureVisible(find.text('确认删除'));
+        await tester.ensureVisible(find.text('Delete item'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('确认删除'));
+        await tester.tap(find.text('Delete item'));
         await tester.pumpAndSettle();
         expect(repo.values, isEmpty);
         expect(tester.takeException(), isNull);
@@ -285,11 +293,11 @@ void main() {
       tester.view.physicalSize = const Size(320, 568);
       tester.view.viewInsets = const FakeViewPadding(bottom: 300);
       addTearDown(tester.view.resetViewInsets);
-      await tester.tap(find.byTooltip('添加日程'));
+      await tester.tap(find.byTooltip('Add to schedule'));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byKey(const ValueKey('schedule-title')),
-        '宝宝体检',
+        'Baby checkup',
       );
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.byKey(const ValueKey('schedule-save')));
@@ -298,11 +306,11 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('schedule-save')));
       await tester.pumpAndSettle();
-      expect(find.text('重试保存'), findsOneWidget);
+      expect(find.text('Try saving again'), findsOneWidget);
       expect(tester.takeException(), isNull);
-      await tester.ensureVisible(find.text('重试保存'));
+      await tester.ensureVisible(find.text('Try saving again'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('重试保存'));
+      await tester.tap(find.text('Try saving again'));
       await tester.pumpAndSettle();
       expect(repo.values, hasLength(1));
       expect(tester.takeException(), isNull);
@@ -314,15 +322,15 @@ void main() {
   ) async {
     final repo = MemoryScheduleRepository()..failCreate = true;
     await mountSchedule(tester, repo);
-    await tester.tap(find.byTooltip('添加日程'));
+    await tester.tap(find.byTooltip('Add to schedule'));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField).first, '宝宝体检');
+    await tester.enterText(find.byType(TextField).first, 'Baby checkup');
     await tester.pump();
     await tester.tap(find.byType(FilledButton).last);
     await tester.pumpAndSettle();
     expect(find.byType(TextField), findsNWidgets(2));
-    expect(find.text('宝宝体检'), findsOneWidget);
-    expect(find.text('重试保存'), findsOneWidget);
+    expect(find.text('Baby checkup'), findsOneWidget);
+    expect(find.text('Try saving again'), findsOneWidget);
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile(
@@ -346,27 +354,27 @@ void main() {
     (tester) async {
       final repo = MemoryScheduleRepository()..failCreate = true;
       await mountSchedule(tester, repo);
-      await tester.tap(find.byTooltip('添加日程'));
+      await tester.tap(find.byTooltip('Add to schedule'));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byKey(const ValueKey('schedule-title')),
-        '原始日程',
+        'Original event',
       );
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('schedule-save')));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byKey(const ValueKey('schedule-title')),
-        '调整后的日程',
+        'Updated event',
       );
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('schedule-save')));
       await tester.pumpAndSettle();
       expect(repo.values, hasLength(1));
-      expect(repo.values.single.title, '调整后的日程');
+      expect(repo.values.single.title, 'Updated event');
       expect(repo.keys, hasLength(2));
       expect(repo.keys.toSet(), hasLength(1));
-      expect(find.byTooltip('关闭日程'), findsNothing);
+      expect(find.byTooltip('Close schedule item'), findsNothing);
     },
   );
   testWidgets('pending personal save locks edits and close then creates once', (
@@ -374,11 +382,11 @@ void main() {
   ) async {
     final repo = MemoryScheduleRepository()..pendingCreate = Completer<void>();
     await mountSchedule(tester, repo, width: 320, scale: 2);
-    await tester.tap(find.byTooltip('添加日程'));
+    await tester.tap(find.byTooltip('Add to schedule'));
     await tester.pumpAndSettle();
     await tester.enterText(
       find.byKey(const ValueKey('schedule-title')),
-      '唯一日程',
+      'Single event',
     );
     await tester.ensureVisible(find.byKey(const ValueKey('schedule-save')));
     await tester.pumpAndSettle();
@@ -395,7 +403,7 @@ void main() {
       tester
           .widget<IconButton>(
             find.byWidgetPredicate(
-              (w) => w is IconButton && w.tooltip == '关闭日程',
+              (w) => w is IconButton && w.tooltip == 'Close schedule item',
             ),
           )
           .onPressed,
@@ -403,13 +411,13 @@ void main() {
     );
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
-    expect(find.text('添加日程'), findsOneWidget);
+    expect(find.text('Add to schedule'), findsOneWidget);
     await _editorShot(tester, 'save-busy-320-2x');
     repo.pendingCreate!.complete();
     await tester.pumpAndSettle();
     expect(repo.values, hasLength(1));
     expect(repo.keys, hasLength(1));
-    expect(find.byTooltip('关闭日程'), findsNothing);
+    expect(find.byTooltip('Close schedule item'), findsNothing);
   });
   testWidgets(
     'large editor date and time validation retain draft and accepted values',
@@ -417,11 +425,11 @@ void main() {
       final repo = MemoryScheduleRepository();
       await mountSchedule(tester, repo, width: 320, scale: 2);
       tester.view.physicalSize = const Size(320, 568);
-      await tester.tap(find.byTooltip('添加日程'));
+      await tester.tap(find.byTooltip('Add to schedule'));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byKey(const ValueKey('schedule-title')),
-        '体检准备',
+        'Prepare for the checkup',
       );
       await tester.ensureVisible(find.byKey(const ValueKey('schedule-date')));
       await tester.pumpAndSettle();
@@ -468,7 +476,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(repo.values.single.date, LocalDate(2026, 9, 15));
       expect(repo.values.single.startTime, '10:45');
-      expect(repo.values.single.title, '体检准备');
+      expect(repo.values.single.title, 'Prepare for the checkup');
       expect(tester.takeException(), isNull);
     },
   );

@@ -130,13 +130,13 @@ void main() {
   }
 
   Future<void> add(WidgetTester tester, String title) async {
-    await tap(tester, find.byTooltip('添加日程'));
+    await tap(tester, find.byTooltip('Add to schedule'));
     await tester.enterText(find.byKey(const ValueKey('schedule-title')), title);
     await tester.pump();
   }
 
   Future<void> menu(WidgetTester tester, String title) =>
-      tap(tester, find.byTooltip('更多$title选项'));
+      tap(tester, find.byTooltip('More options for $title'));
 
   // The September 20 design replaces the old service filter, checkboxes and
   // result-unknown screens. Preserve the real router/HTTP boundary here; visual
@@ -150,29 +150,29 @@ void main() {
       const Rect.fromLTWH(329, 666, 48, 48),
     );
     final reads = transport.queries.length;
-    await tap(tester, find.text('收起日历'));
-    expect(find.text('9月7日–13日'), findsOneWidget);
-    await tap(tester, find.text('展开日历'));
+    await tap(tester, find.text('Collapse calendar'));
+    expect(find.text('9/7–13'), findsOneWidget);
+    await tap(tester, find.text('Expand calendar'));
     expect(transport.queries.length, reads);
-    await add(tester, '我的日程');
+    await add(tester, 'My schedule');
     await tap(tester, find.byKey(const ValueKey('schedule-save')));
-    expect(transport.personal.single['title'], '我的日程');
+    expect(transport.personal.single['title'], 'My schedule');
     expect(transport.queries.length, reads);
-    await menu(tester, '我的日程');
-    await tap(tester, find.text('编辑'));
+    await menu(tester, 'My schedule');
+    await tap(tester, find.text('Edit'));
     await tester.enterText(
       find.byKey(const ValueKey('schedule-title')),
-      '新的名称',
+      'Updated event title',
     );
-    await tap(tester, find.text('保存修改'));
-    expect(transport.personal.single['title'], '新的名称');
-    await menu(tester, '新的名称');
-    await tap(tester, find.text('删除'));
-    await tap(tester, find.text('保留日程'));
+    await tap(tester, find.text('Save changes'));
+    expect(transport.personal.single['title'], 'Updated event title');
+    await menu(tester, 'Updated event title');
+    await tap(tester, find.text('Delete'));
+    await tap(tester, find.text('Keep item'));
     expect(transport.personal, hasLength(1));
-    await menu(tester, '新的名称');
-    await tap(tester, find.text('删除'));
-    await tap(tester, find.text('确认删除'));
+    await menu(tester, 'Updated event title');
+    await tap(tester, find.text('Delete'));
+    await tap(tester, find.text('Delete item'));
     expect(transport.personal, isEmpty);
     expect(transport.queries.length, reads);
   });
@@ -181,12 +181,12 @@ void main() {
     (tester) async {
       await mount(tester);
       final reads = transport.queries.length;
-      await add(tester, '保留草稿');
-      await tap(tester, find.byTooltip('关闭日程'));
-      await tap(tester, find.text('继续填写'));
+      await add(tester, 'Keep this draft');
+      await tap(tester, find.byTooltip('Close schedule item'));
+      await tap(tester, find.text('Keep editing'));
       transport.failWrite = true;
       await tap(tester, find.byKey(const ValueKey('schedule-save')));
-      expect(find.text('重试保存'), findsOneWidget);
+      expect(find.text('Try saving again'), findsOneWidget);
       expect(
         tester
             .widget<TextField>(find.byKey(const ValueKey('schedule-title')))
@@ -194,17 +194,17 @@ void main() {
         isTrue,
       );
       transport.failWrite = false;
-      await tap(tester, find.text('重试保存'));
+      await tap(tester, find.text('Try saving again'));
       expect(transport.personal, hasLength(1));
       expect(transport.createKeys.toSet(), hasLength(1));
-      await menu(tester, '保留草稿');
-      await tap(tester, find.text('编辑'));
+      await menu(tester, 'Keep this draft');
+      await tap(tester, find.text('Edit'));
       await tester.enterText(
         find.byKey(const ValueKey('schedule-note')),
-        '不要保存',
+        'Do not save this note',
       );
-      await tap(tester, find.byTooltip('关闭日程'));
-      await tap(tester, find.text('离开'));
+      await tap(tester, find.byTooltip('Close schedule item'));
+      await tap(tester, find.text('Leave'));
       expect(transport.personal.single['note'], '');
       expect(transport.queries.length, reads);
     },
@@ -214,18 +214,18 @@ void main() {
   ) async {
     await mount(tester, prepare: (t) => t.failingReads.add('/v1/schedule'));
     transport.failingReads.clear();
-    await tap(tester, find.text('重试'));
-    await add(tester, '删除失败保留');
-    await tap(tester, find.text('添加到日程'));
-    await menu(tester, '删除失败保留');
-    await tap(tester, find.text('删除'));
+    await tap(tester, find.text('Try again'));
+    await add(tester, 'Keep row after delete failure');
+    await tap(tester, find.byKey(const ValueKey('schedule-save')));
+    await menu(tester, 'Keep row after delete failure');
+    await tap(tester, find.text('Delete'));
     transport.failWrite = true;
-    await tap(tester, find.text('确认删除'));
-    expect(find.text('删除失败，请重试'), findsOneWidget);
+    await tap(tester, find.text('Delete item'));
+    expect(find.text('Could not delete. Please try again.'), findsOneWidget);
     expect(transport.personal, hasLength(1));
     transport.failWrite = false;
-    await tap(tester, find.text('重试'));
-    await tap(tester, find.text('确认删除'));
+    await tap(tester, find.text('Try again'));
+    await tap(tester, find.text('Delete item'));
     expect(transport.personal, isEmpty);
   });
   testWidgets('schedule existing task status and care plan route', (
@@ -233,25 +233,25 @@ void main() {
   ) async {
     await mount(tester, prepare: (t) => t.seedCare());
     await menu(tester, 'Record an observation');
-    expect(find.text('编辑'), findsNothing);
-    expect(find.text('删除'), findsNothing);
-    await tap(tester, find.text('标记进行中'));
+    expect(find.text('Edit'), findsNothing);
+    expect(find.text('Delete'), findsNothing);
+    await tap(tester, find.text('Mark in progress'));
     expect(
       (transport.publication!['tasks'] as List).first['status'],
       'in_progress',
     );
     await menu(tester, 'Record an observation');
-    await tap(tester, find.text('暂时跳过'));
+    await tap(tester, find.text('Skip for now'));
     await menu(tester, 'Record an observation');
-    await tap(tester, find.text('恢复待完成'));
+    await tap(tester, find.text('Mark as pending'));
     await menu(tester, 'Record an observation');
-    await tap(tester, find.text('标记已完成'));
+    await tap(tester, find.text('Mark completed'));
     expect(
       (transport.publication!['tasks'] as List).first['status'],
       'completed',
     );
     await menu(tester, 'Record an observation');
-    await tap(tester, find.text('查看照护方案'));
+    await tap(tester, find.text('View care plan'));
     expect(router.state.uri.path, '/services/episodes/service-episode');
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
@@ -274,15 +274,15 @@ void main() {
           t.appointment!['status'] = status;
         },
       );
-      await menu(tester, '哺乳咨询');
+      await menu(tester, 'Lactation consultation');
       await tap(
         tester,
         find.text(
           status == 'completed'
-              ? '查看咨询总结'
+              ? 'View consultation summary'
               : status == 'held'
-              ? '确认预约'
-              : '查看预约',
+              ? 'Confirm appointment'
+              : 'View appointment',
         ),
       );
       expect(

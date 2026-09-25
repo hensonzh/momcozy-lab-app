@@ -112,25 +112,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    // Visit the lazy service section through scrolling, let its data and button
-    // animations settle, then return to the top before the entry screenshot.
-    final homeScroll = find.byType(Scrollable).first;
-    await tester.scrollUntilVisible(
-      find.text('服务进度 ›'),
-      250,
-      scrollable: homeScroll,
-    );
-    await tester.pumpAndSettle();
-    await tester.drag(homeScroll, const Offset(0, 10000));
-    await tester.pumpAndSettle();
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -203,7 +191,7 @@ void main() {
       'previous_source': previous,
       'route': route,
       'trigger': action,
-      'root_entry': 'Authenticated More → tap Me bottom navigation',
+      'root_entry': 'Authenticated More → Expert support',
       'evidence':
           'Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone',
       'test':
@@ -236,16 +224,21 @@ void main() {
       await capture(
         tester,
         '$chain-home',
-        'More → Me → owned service',
-        route: '/me',
+        'More before expert support',
+        route: '/more',
       );
     }
-    await tap(tester, find.text('预约咨询'));
+    await tap(tester, find.text('Expert support'));
+    await tap(tester, find.text('View my services'));
+    await tap(tester, find.text('Book an appointment'));
     await tap(tester, find.byType(DropdownButtonFormField<String>));
     await tap(tester, find.text('California (CA)').last);
-    await tap(tester, find.text('我需要的是哺乳或喂养相关的 IBCLC 咨询'));
-    await tap(tester, find.text('目前没有上述紧急情况'));
-    await tap(tester, find.text('继续选择时间'));
+    await tap(
+      tester,
+      find.text('I need IBCLC support with lactation or feeding.'),
+    );
+    await tap(tester, find.text('None of these apply right now'));
+    await tap(tester, find.text('Continue to time selection'));
     if (record) {
       await capture(
         tester,
@@ -256,17 +249,17 @@ void main() {
   }
 
   Future<void> finish(WidgetTester tester, String chain) async {
-    await tap(tester, find.text('返回'));
+    await tap(tester, find.text('Back'));
     await capture(
       tester,
       '$chain-home-return',
-      'Booking Back → Me',
-      route: '/me',
+      'Booking Back → package detail',
+      route: '/services/feeding-confidence',
     );
     await tester.pumpWidget(const SizedBox());
   }
 
-  Future<void> hold(WidgetTester tester) => tap(tester, find.text('60 分钟'));
+  Future<void> hold(WidgetTester tester) => tap(tester, find.text('60 min'));
 
   testWidgets('booking reminder configured coordinator permission chain', (
     tester,
@@ -279,8 +272,8 @@ void main() {
       record: false,
     );
     await hold(tester);
-    await tap(tester, find.text('提前 15 分钟提醒我'));
-    await tap(tester, find.text('确认预约'));
+    await tap(tester, find.text('Remind me 15 minutes before'));
+    await tap(tester, find.text('Confirm appointment'));
     expect(transport.appointment?['status'], 'confirmed');
     expect(find.text('Receive reminders?'), findsOneWidget);
     expect(permissionPlatform.requests, 0);
@@ -290,8 +283,8 @@ void main() {
       router.state.uri.path,
       '/services/appointments/service-appointment/intake',
     );
-    await tap(tester, find.text('返回'));
-    final toggle = find.widgetWithText(SwitchListTile, '预约提醒');
+    await tap(tester, find.text('Back'));
+    final toggle = find.widgetWithText(SwitchListTile, 'Appointment reminder');
     expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
     await tap(tester, toggle);
     expect(find.text('Notifications are off'), findsOneWidget);
@@ -314,41 +307,33 @@ void main() {
   });
 
   for (final compact in [false, true]) {
-    testWidgets('unknown confirm close reopen and page retry $compact', (
+    testWidgets('unknown confirm closes to a safe retry $compact', (
       tester,
     ) async {
       narrow = compact;
       await enter(tester, 'confirm');
       await hold(tester);
       transport.failingWrites.add(confirm);
-      await tap(tester, find.text('确认预约'));
+      await tap(tester, find.text('Confirm appointment'));
       final request = Map<String, Object?>.from(transport.requests.last);
       await capture(
         tester,
         'confirm-unknown',
         'Confirm HTTP 503 → unresolved dialog',
       );
-      await tap(tester, find.byTooltip('关闭预约时间确认'));
+      await tap(tester, find.byTooltip('Close time confirmation'));
       await capture(
         tester,
         'confirm-closed',
         'Close unresolved confirmation → page retry action',
       );
-      await tap(tester, find.text('查看所选时间'));
-      await capture(
-        tester,
-        'confirm-reopened',
-        'View selected time → unresolved review restored',
-      );
-      await router.routerDelegate.popRoute();
-      await settle(tester);
-      await capture(
-        tester,
-        'confirm-back-closed',
-        'System Back while not busy → unresolved page',
-      );
+      await tester.drag(find.byType(ListView).last, const Offset(0, 10000));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('View selected time'), findsNothing);
+      expect(find.text('Retry last submission'), findsOneWidget);
       transport.failingWrites.clear();
-      await tap(tester, find.text('重试上次提交'));
+      await tester.tap(find.text('Retry last submission'));
+      await tester.pump(const Duration(milliseconds: 500));
       expect(transport.requests.last['body'], request['body']);
       await capture(
         tester,
@@ -356,7 +341,7 @@ void main() {
         'Page retry same confirmation → intake',
         route: '/services/appointments/service-appointment/intake',
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'confirm-retry-return',
@@ -371,21 +356,21 @@ void main() {
       await enter(tester, 'cancel');
       await hold(tester);
       transport.failingWrites.add(cancel);
-      await tap(tester, find.text('重新选择'));
+      await tap(tester, find.text('Choose another time'));
       final request = Map<String, Object?>.from(transport.requests.last);
       await capture(
         tester,
         'cancel-unknown',
         'Reselect held time → cancellation HTTP 503',
       );
-      await tap(tester, find.byTooltip('关闭预约时间确认'));
+      await tap(tester, find.byTooltip('Close time confirmation'));
       await capture(
         tester,
         'cancel-closed',
         'Close unresolved held cancellation → page retry',
       );
       transport.failingWrites.clear();
-      await tap(tester, find.text('重试上次提交'));
+      await tap(tester, find.text('Retry last submission'));
       expect(transport.requests.last['body'], request['body']);
       expect(transport.appointment?['status'], 'cancelled');
       await capture(
@@ -402,16 +387,16 @@ void main() {
       await hold(tester);
       final request = Map<String, Object?>.from(transport.requests.last);
       await capture(tester, 'hold-unknown', 'Hold HTTP 503 → retry action');
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'hold-left',
-        'Leave unresolved booking → Me',
-        route: '/me',
+        'Leave unresolved booking → package detail',
+        route: '/services/feeding-confidence',
       );
       transport.failingWrites.clear();
-      await tap(tester, find.text('预约咨询'));
-      expect(find.text('重试上次提交'), findsNothing);
+      await tap(tester, find.text('Book an appointment'));
+      expect(find.text('Retry last submission'), findsNothing);
       await capture(
         tester,
         'hold-reentered',
@@ -424,7 +409,7 @@ void main() {
         'hold-new-request',
         'Select time after reentry → new hold key and review',
       );
-      await tap(tester, find.text('重新选择'));
+      await tap(tester, find.text('Choose another time'));
       await finish(tester, 'hold');
     });
     testWidgets('selected reminder unavailable after confirmation $compact', (
@@ -433,13 +418,13 @@ void main() {
       narrow = compact;
       await enter(tester, 'reminder');
       await hold(tester);
-      await tap(tester, find.text('提前 15 分钟提醒我'));
+      await tap(tester, find.text('Remind me 15 minutes before'));
       await capture(
         tester,
         'reminder-selected',
         'Select reminder before confirming',
       );
-      await tap(tester, find.text('确认预约'));
+      await tap(tester, find.text('Confirm appointment'));
       expect(transport.appointment?['status'], 'confirmed');
       expect(
         find.text(
@@ -461,7 +446,7 @@ void main() {
         'Unavailable reminder snackbar times out → intake remains',
         route: '/services/appointments/service-appointment/intake',
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'reminder-return',

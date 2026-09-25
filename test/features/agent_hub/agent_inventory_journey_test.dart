@@ -143,7 +143,7 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Cozymate'));
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-momcozy ai')));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
@@ -220,7 +220,7 @@ void main() {
       'previous_source': previous,
       'route': route,
       'trigger': action,
-      'root_entry': 'Authenticated More → tap Cozymate bottom navigation',
+      'root_entry': 'Authenticated More → tap Momcozy AI bottom navigation',
       'evidence':
           'Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control HTTP/voice dependencies. History disabled as in default local build; no remote model request.',
       'test': 'test/features/agent_hub/agent_inventory_journey_test.dart',
@@ -269,7 +269,7 @@ void main() {
     await capture(
       tester,
       'home',
-      'More → Cozymate; default history entry disabled',
+      'More → Momcozy AI; default history entry disabled',
     );
     await tester.runAsync(
       () => precacheImage(
@@ -306,19 +306,19 @@ void main() {
     await capture(tester, 'streaming', 'Receive SSE delta → live response');
     await finish(tester, 0, answer, first: 3);
     await capture(tester, 'reply', 'SSE completion → final Markdown response');
-    await tap(tester, find.text('More'));
+    await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
     await capture(
       tester,
       'tab-more',
       'More tab → agent remains mounted offstage',
       route: '/more',
     );
-    await tap(tester, find.text('Cozymate'));
+    await tap(tester, find.byKey(const ValueKey('bottom-nav-momcozy ai')));
     expect(find.text(question), findsOneWidget);
     await capture(
       tester,
       'tab-return',
-      'Return to Cozymate → existing exchange retained',
+      'Return to Momcozy AI → existing exchange retained',
     );
   });
 
@@ -419,7 +419,7 @@ void main() {
       transport.cancelStatus = acknowledged ? 200 : 503;
       final gate = Completer<void>();
       transport.cancelGate = gate;
-      await tap(tester, find.byTooltip('停止'));
+      await tap(tester, find.byTooltip('Stop'));
       await capture(
         tester,
         '$tag-pending',
@@ -505,7 +505,7 @@ void main() {
       'Profile request fails → usable generic greeting and composer',
     );
     await send(tester, 'Stop before first event');
-    await tap(tester, find.byTooltip('停止'));
+    await tap(tester, find.byTooltip('Stop'));
     expect(transport.controls, isEmpty);
     await capture(
       tester,

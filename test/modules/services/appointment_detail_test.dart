@@ -153,25 +153,25 @@ void main() {
       final gate = Completer<CareAppointment>();
       final repo = Repository()..readGate = gate;
       await mount(tester, repo, width: 320, scale: 2, settle: false);
-      expect(find.text('正在加载预约…'), findsOneWidget);
-      expect(find.text('取消预约'), findsNothing);
+      expect(find.text('Loading appointment…'), findsOneWidget);
+      expect(find.text('Cancel appointment'), findsNothing);
       await shot(tester, 'loading', 320, 2);
       gate.complete(repo.value);
       repo.readGate = null;
       await tester.pumpAndSettle();
-      expect(find.text('取消预约'), findsOneWidget);
+      expect(find.text('Cancel appointment'), findsOneWidget);
       repo.failRead = true;
       await tester
           .widget<RefreshIndicator>(find.byType(RefreshIndicator))
           .onRefresh();
       await tester.pumpAndSettle();
-      expect(find.text('取消预约'), findsNothing);
+      expect(find.text('Cancel appointment'), findsNothing);
       await shot(tester, 'refresh-error', 320, 2);
       repo.failRead = false;
       repo.value = appointment(status: 'completed');
-      await click(tester, find.text('重试'));
-      expect(find.text('查看咨询总结'), findsOneWidget);
-      expect(find.text('填写信息采集表'), findsNothing);
+      await click(tester, find.text('Try again'));
+      expect(find.text('View consultation summary'), findsOneWidget);
+      expect(find.text('Complete intake form'), findsNothing);
       expect(tester.takeException(), isNull);
     },
   );
@@ -181,15 +181,15 @@ void main() {
       final repo = Repository()..value = appointment(status: 'held');
       await mount(tester, repo, width: 320, scale: 2);
       await shot(tester, 'held', 320, 2);
-      await click(tester, find.text('继续确认预约'));
+      await click(tester, find.text('Continue confirmation'));
       expect(find.text('Booking'), findsOneWidget);
       repo.value = appointment(status: 'confirmed');
       GoRouter.of(tester.element(find.text('Booking'))).pop();
       await tester.pumpAndSettle();
       expect(repo.reads, 2);
-      expect(find.text('取消预约'), findsOneWidget);
-      expect(find.text('继续确认预约'), findsNothing);
-      await click(tester, find.text('返回'));
+      expect(find.text('Cancel appointment'), findsOneWidget);
+      expect(find.text('Continue confirmation'), findsNothing);
+      await click(tester, find.text('Back'));
       expect(find.text('Notifications'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
@@ -204,8 +204,11 @@ void main() {
       tester.view.padding = const FakeViewPadding(top: 24, bottom: 24);
       addTearDown(tester.view.resetPadding);
       await tester.pumpAndSettle();
-      await click(tester, find.widgetWithText(OutlinedButton, '取消预约'));
-      await click(tester, find.text('确认取消'));
+      await click(
+        tester,
+        find.widgetWithText(OutlinedButton, 'Cancel appointment'),
+      );
+      await click(tester, find.text('Confirm cancellation'));
       expect(repo.versions, [2]);
       expect(find.text('Home after cancellation'), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -219,12 +222,18 @@ void main() {
         final repo = Repository();
         await mount(tester, repo, width: width, scale: scale);
         await shot(tester, 'detail', width, scale);
-        await click(tester, find.widgetWithText(OutlinedButton, '取消预约'));
+        await click(
+          tester,
+          find.widgetWithText(OutlinedButton, 'Cancel appointment'),
+        );
         await shot(tester, 'cancel', width, scale);
-        await click(tester, find.text('保留预约'));
+        await click(tester, find.text('Keep appointment'));
         expect(repo.versions, isEmpty);
-        await click(tester, find.widgetWithText(OutlinedButton, '取消预约'));
-        await click(tester, find.text('确认取消'));
+        await click(
+          tester,
+          find.widgetWithText(OutlinedButton, 'Cancel appointment'),
+        );
+        await click(tester, find.text('Confirm cancellation'));
         expect(repo.versions, [2]);
         expect(find.text('Home after cancellation'), findsOneWidget);
         expect(tester.takeException(), isNull);
@@ -237,8 +246,11 @@ void main() {
     (tester) async {
       final repo = Repository()..pending = Completer<CareAppointment>();
       await mount(tester, repo);
-      await click(tester, find.widgetWithText(OutlinedButton, '取消预约'));
-      await tester.tap(find.text('确认取消'));
+      await click(
+        tester,
+        find.widgetWithText(OutlinedButton, 'Cancel appointment'),
+      );
+      await tester.tap(find.text('Confirm cancellation'));
       await tester.pump();
       expect(repo.versions, [2]);
       expect(
@@ -246,7 +258,8 @@ void main() {
             .widget<IconButton>(
               find.byWidgetPredicate(
                 (w) =>
-                    w is IconButton && (w.tooltip?.startsWith('关闭') ?? false),
+                    w is IconButton &&
+                    (w.tooltip?.startsWith('Close') ?? false),
               ),
             )
             .onPressed,
@@ -254,15 +267,15 @@ void main() {
       );
       await tester.binding.handlePopRoute();
       await tester.pump();
-      expect(find.text('正在处理…'), findsOneWidget);
+      expect(find.text('Processing…'), findsOneWidget);
       repo.pending!.completeError(
         const ProductFailure(ProductFailureKind.offline),
       );
       await tester.pumpAndSettle();
       await shot(tester, 'cancel-uncertain', 390, 1);
-      expect(find.text('返回预约'), findsOneWidget);
+      expect(find.text('Back to appointment'), findsOneWidget);
       repo.pending = null;
-      await click(tester, find.text('重试取消'));
+      await click(tester, find.text('Try canceling again'));
       expect(repo.versions, [2, 2]);
       expect(find.text('Home after cancellation'), findsOneWidget);
     },
@@ -272,15 +285,18 @@ void main() {
     (tester) async {
       final repo = Repository()..pending = Completer<CareAppointment>();
       await mount(tester, repo);
-      await click(tester, find.widgetWithText(OutlinedButton, '取消预约'));
-      await tester.tap(find.text('确认取消'));
+      await click(
+        tester,
+        find.widgetWithText(OutlinedButton, 'Cancel appointment'),
+      );
+      await tester.tap(find.text('Confirm cancellation'));
       await tester.pump();
       repo.value = appointment(status: 'cancelled', version: 3);
       repo.pending!.completeError(
         const ProductFailure(ProductFailureKind.offline),
       );
       await tester.pumpAndSettle();
-      await click(tester, find.text('核对预约状态'));
+      await click(tester, find.text('Check appointment status'));
       expect(repo.versions, [2]);
       expect(find.text('Home after cancellation'), findsOneWidget);
     },
@@ -290,12 +306,12 @@ void main() {
     (tester) async {
       final repo = Repository()..failRead = true;
       await mount(tester, repo);
-      expect(find.text('暂时无法打开预约'), findsOneWidget);
-      expect(find.text('取消预约'), findsNothing);
+      expect(find.text('Could not open appointment'), findsOneWidget);
+      expect(find.text('Cancel appointment'), findsNothing);
       await shot(tester, 'unavailable', 390, 1);
       repo.failRead = false;
-      await click(tester, find.text('重试'));
-      expect(find.text('取消预约'), findsOneWidget);
+      await click(tester, find.text('Try again'));
+      expect(find.text('Cancel appointment'), findsOneWidget);
       expect(repo.reads, 2);
     },
   );
@@ -309,16 +325,16 @@ void main() {
     testWidgets('appointment actions follow $status state', (tester) async {
       final repo = Repository()..value = appointment(status: status);
       await mount(tester, repo);
-      expect(find.text('取消预约'), findsNothing);
+      expect(find.text('Cancel appointment'), findsNothing);
       await shot(tester, status, 390, 1);
       if (status == 'completed') {
-        await click(tester, find.text('查看咨询总结'));
+        await click(tester, find.text('View consultation summary'));
         expect(find.text('Opened summary'), findsOneWidget);
       } else if (status == 'in_progress') {
-        await click(tester, find.text('返回咨询室'));
+        await click(tester, find.text('Return to consultation room'));
         expect(find.text('Opened room'), findsOneWidget);
       } else {
-        expect(find.text('咨询前准备'), findsNothing);
+        expect(find.text('Prepare for your consultation'), findsNothing);
       }
     });
   }

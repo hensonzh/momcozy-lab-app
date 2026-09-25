@@ -4,7 +4,7 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 Future<bool> confirmDiscard(
   BuildContext context, {
   bool uncertainSave = false,
-  String confirmLabel = '离开',
+  String confirmLabel = 'Leave',
   ThemeData? theme,
 }) async =>
     await showDialog<bool>(
@@ -13,14 +13,16 @@ Future<bool> confirmDiscard(
       builder: (context) {
         final dialog = AlertDialog(
           scrollable: true,
-          title: const Text('离开这次记录？'),
+          title: const Text('Leave this record?'),
           content: Text(
-            uncertainSave ? '保存结果还未确认。返回后请先刷新记录，避免重复填写。' : '还未保存的修改会被放弃。',
+            uncertainSave
+                ? 'Your save has not been confirmed. Refresh your records before trying again to avoid duplicates.'
+                : 'Your unsaved changes will be lost.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('继续填写'),
+              child: const Text('Keep editing'),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),

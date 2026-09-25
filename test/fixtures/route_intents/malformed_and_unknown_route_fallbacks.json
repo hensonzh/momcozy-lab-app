@@ -55,13 +55,13 @@
       "type": "MediaViewerMissingResource",
       "path": "/media-viewer",
       "payload": {
-        "message": "缺少资源参数，请从资料卡片进入。"
+        "message": "Resource details are missing. Please open it from the resource card."
       }
     },
     {
       "type": "ShowToast",
       "payload": {
-        "message": "该资料已失效，请获取最新资料。"
+        "message": "This resource has expired. Please request the latest version."
       }
     },
     {

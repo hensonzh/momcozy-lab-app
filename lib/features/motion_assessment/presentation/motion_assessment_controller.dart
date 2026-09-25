@@ -99,7 +99,7 @@ class MotionAssessmentController extends ChangeNotifier {
   ForwardHeadResult? _forwardHeadResult;
   StreamSubscription<MotionPoseObservation>? _poseSubscription;
   StreamSubscription<MotionVoiceCommand>? _voiceCommandSubscription;
-  String _guidance = '正在准备端侧姿态识别…';
+  String _guidance = 'Preparing on-device posture tracking…';
   String? _errorMessage;
   String? _poseDiagnosticMessage;
   bool _started = false;
@@ -240,19 +240,21 @@ class MotionAssessmentController extends ChangeNotifier {
     _voiceCommandSubscription = voice.commands.listen(
       (command) => unawaited(_handleVoiceCommand(command)),
     );
-    _guidance = '正在请求摄像头权限…';
+    _guidance = 'Requesting camera access…';
     _notify();
     try {
       final cameraGranted = await posePlatform.requestCameraPermission();
       if (_closed) return;
       if (!cameraGranted) {
-        throw StateError('需要摄像头权限才能进行体态动态评估。');
+        throw StateError(
+          'Camera access is required for this posture assessment.',
+        );
       }
       _poseSubscription = posePlatform.observations.listen(
         _onObservation,
         onError: _onPoseError,
       );
-      _guidance = '正在打开相机并加载端侧姿态识别…';
+      _guidance = 'Opening camera and loading on-device posture tracking…';
       _notify();
       await posePlatform.start();
       if (_closed) {
@@ -261,7 +263,7 @@ class MotionAssessmentController extends ChangeNotifier {
       }
       _cameraStarted = true;
       _phase = MotionAssessmentPagePhase.calibrating;
-      _guidance = '请让头部和双肩进入画面';
+      _guidance = 'Keep your head and both shoulders in frame';
       _notify();
     } catch (error) {
       await _fail(
@@ -285,7 +287,7 @@ class MotionAssessmentController extends ChangeNotifier {
     } catch (_) {
       await _fail(
         failureCode: 'session_create_failed',
-        message: '实时评估服务暂时不可用，请重试。',
+        message: 'The live assessment is unavailable right now. Try again.',
       );
       return;
     }
@@ -347,7 +349,7 @@ class MotionAssessmentController extends ChangeNotifier {
           if (_closed) return false;
           if (target == 'posture_screen' && !_assessmentPlan.confirmed) {
             _phase = MotionAssessmentPagePhase.selectingAssessments;
-            _guidance = '请通过语音告诉 CozyMate 想评估哪些项目';
+            _guidance = 'Tell Momcozy AI which areas you\'d like to assess.';
             _voiceReady = true;
             _voiceEverReady = true;
             _notify();
@@ -362,15 +364,15 @@ class MotionAssessmentController extends ChangeNotifier {
         } catch (_) {
           if (_closed) return false;
           _voiceStatusMessage = attempt == 0
-              ? 'OpenAI 实时语音正在重新连接'
-              : 'OpenAI 实时语音未连接';
+              ? 'Reconnecting live voice'
+              : 'Live voice is not connected';
           _notify();
         }
       }
       if (!_closed) {
         await _fail(
           failureCode: 'realtime_unavailable',
-          message: 'OpenAI 实时语音暂时无法连接，请重试。',
+          message: 'Could not connect live voice. Try again.',
         );
       }
       return false;
@@ -405,12 +407,12 @@ class MotionAssessmentController extends ChangeNotifier {
         case MotionQualityPhase.checkingMultiplePeople:
           _phase = MotionAssessmentPagePhase.calibrating;
           _guidance = decision.phase == MotionQualityPhase.framing
-              ? '请调整站位，让头部和双肩入镜'
+              ? 'Adjust your position so your head and shoulders are in frame'
               : observation.poses.isEmpty
-              ? '请站到镜头前，让头部和双肩入镜'
+              ? 'Stand in front of the camera with your head and shoulders in frame'
               : observation.poses.length > 1
-              ? '检测到多人，正在确认…'
-              : '保持站位，正在校准评估对象…';
+              ? 'More than one person detected. Checking…'
+              : 'Hold your position while we confirm who is being assessed…';
         case MotionQualityPhase.ready:
           final targetPose = decision.target;
           if (_captureCountdownInProgress && targetPose != null) {
@@ -423,14 +425,16 @@ class MotionAssessmentController extends ChangeNotifier {
             _prepareCaptureReadiness(targetPose, observation);
           } else {
             _syncPagePhaseFromWorkflow();
-            _guidance = '请自然侧身，站稳并目视前方';
+            _guidance = 'Turn to the side, stand still, and look forward';
           }
         case MotionQualityPhase.pausedMultiplePeople:
           _phase = MotionAssessmentPagePhase.pausedMultiplePeople;
-          _guidance = '检测到多人，请让非评估人员离开镜头';
+          _guidance =
+              'More than one person detected. Ask others to step out of frame';
         case MotionQualityPhase.targetChanged:
           _phase = MotionAssessmentPagePhase.targetChanged;
-          _guidance = '检测对象可能已变化，请通过语音确认后重新校准';
+          _guidance =
+              'The person in frame may have changed. Confirm by voice to recalibrate';
       }
     }
 
@@ -458,7 +462,8 @@ class MotionAssessmentController extends ChangeNotifier {
       if (readyResult == null &&
           forwardHeadAnalyzer.lastFrameStatus ==
               ForwardHeadFrameStatus.needsSideView) {
-        _guidance = '请转为自然侧身，让两侧肩部在画面中尽量重合';
+        _guidance =
+            'Turn naturally to the side so your shoulders overlap in the frame';
       } else if (readyResult == null &&
           forwardHeadAnalyzer.lastInspection.missingRegions.isNotEmpty) {
         _guidance = _guidanceForMissingRegions(
@@ -526,10 +531,10 @@ class MotionAssessmentController extends ChangeNotifier {
           _guidance = decision.phase == MotionQualityPhase.framing
               ? _screeningFramingGuidance()
               : observation.poses.isEmpty
-              ? '请站到镜头前，让头部和双肩进入画面'
+              ? 'Stand in front of the camera with your head and shoulders in frame'
               : observation.poses.length > 1
-              ? '检测到多人，正在确认…'
-              : '保持站位，正在校准评估对象…';
+              ? 'More than one person detected. Checking…'
+              : 'Hold your position while we confirm who is being assessed…';
         case MotionQualityPhase.ready:
           final pose = decision.target;
           if (_captureCountdownInProgress && pose != null) {
@@ -542,10 +547,12 @@ class MotionAssessmentController extends ChangeNotifier {
           }
         case MotionQualityPhase.pausedMultiplePeople:
           _phase = MotionAssessmentPagePhase.pausedMultiplePeople;
-          _guidance = '检测到多人，请让非评估人员离开镜头';
+          _guidance =
+              'More than one person detected. Ask others to step out of frame';
         case MotionQualityPhase.targetChanged:
           _phase = MotionAssessmentPagePhase.targetChanged;
-          _guidance = '检测对象可能已变化，请通过语音确认后重新校准';
+          _guidance =
+              'The person in frame may have changed. Confirm by voice to recalibrate';
       }
     }
 
@@ -578,7 +585,7 @@ class MotionAssessmentController extends ChangeNotifier {
         }
         if (frontalPostureAnalyzer.lastFrameStatus ==
             FrontalPostureFrameStatus.needsFrontView) {
-          _guidance = '请自然正对镜头，双肩放松并站稳';
+          _guidance = 'Face the camera, relax your shoulders, and stand still';
         } else if (frontalPostureAnalyzer
             .lastInspection
             .missingRegions
@@ -600,7 +607,8 @@ class MotionAssessmentController extends ChangeNotifier {
         }
         if (forwardHeadAnalyzer.lastFrameStatus ==
             ForwardHeadFrameStatus.needsSideView) {
-          _guidance = '请自然侧身，让两侧肩部在画面中尽量重合';
+          _guidance =
+              'Turn naturally to the side so your shoulders overlap in the frame';
         } else if (forwardHeadAnalyzer
             .lastInspection
             .missingRegions
@@ -662,14 +670,14 @@ class MotionAssessmentController extends ChangeNotifier {
       _guidance = missingRegions.isNotEmpty
           ? _guidanceForMissingRegions(missingRegions)
           : step.view == MotionAssessmentCaptureView.front
-          ? '请自然正对镜头，双肩放松并站稳'
-          : '请自然侧身，站稳并目视前方';
+          ? 'Face the camera, relax your shoulders, and stand still'
+          : 'Turn to the side, stand still, and look forward';
       return;
     }
     if (step.requiredSide == 'opposite' &&
         _screeningForwardResults.isNotEmpty &&
         detectedSide == _screeningForwardResults.last.side) {
-      _guidance = '请转到另一侧，站稳并目视前方';
+      _guidance = 'Turn to your other side, stand still, and look forward';
       _emitScreeningOppositeSideRequired(detectedSide);
       return;
     }
@@ -686,7 +694,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _captureCountdownInProgress = true;
     final generation = ++_captureCountdownGeneration;
     _phase = MotionAssessmentPagePhase.readyCountdown;
-    _guidance = '准备开始采样';
+    _guidance = 'Getting ready to capture';
     _notify();
     unawaited(
       _runScreeningCaptureCountdown(generation: generation, stepId: step.id),
@@ -737,7 +745,7 @@ class MotionAssessmentController extends ChangeNotifier {
       }
       await _fail(
         failureCode: 'capture_countdown_failed',
-        message: '实时语音倒计时中断，请重试。',
+        message: 'Voice countdown was interrupted. Try again.',
       );
     }
   }
@@ -816,8 +824,8 @@ class MotionAssessmentController extends ChangeNotifier {
     _phase = MotionAssessmentPagePhase.capturingSegment;
     final step = _currentScreeningStep;
     _guidance = step?.view == MotionAssessmentCaptureView.front
-        ? '正在采集正面稳定姿态'
-        : '正在采集侧面稳定姿态';
+        ? 'Capturing your front view'
+        : 'Capturing your side view';
     _refreshLatestContext();
     _notify();
   }
@@ -918,7 +926,7 @@ class MotionAssessmentController extends ChangeNotifier {
     if (next == null) {
       _latestResultSummary = Map.unmodifiable(_screeningSummary());
       _phase = MotionAssessmentPagePhase.reviewReady;
-      _guidance = '采集完成，正在复核结果';
+      _guidance = 'Capture complete. Reviewing results…';
       _refreshLatestContext();
       _notify();
       unawaited(_requestScreeningFinishConfirmation());
@@ -928,8 +936,8 @@ class MotionAssessmentController extends ChangeNotifier {
     qualityGate.beginPlannedRecalibration();
     _screeningOrientationGuidanceCompleted = false;
     _guidance = next.view == MotionAssessmentCaptureView.front
-        ? '侧面采集完成，正在引导你转为正面'
-        : '第一侧采集完成，正在引导你转到另一侧';
+        ? 'Side view complete. Preparing your front view…'
+        : 'First side complete. Preparing the other side…';
     _notify();
     unawaited(_prepareNextScreeningStep(completedStep, next));
   }
@@ -959,14 +967,14 @@ class MotionAssessmentController extends ChangeNotifier {
       if (_closed || _currentScreeningStep?.id != next.id) return;
       _screeningOrientationGuidanceCompleted = true;
       _guidance = next.view == MotionAssessmentCaptureView.front
-          ? '请自然正对镜头，双肩放松并站稳'
-          : '请保持另一侧方向，准备开始采样';
+          ? 'Face the camera, relax your shoulders, and stand still'
+          : 'Stay turned to the other side. Preparing to capture…';
       _refreshLatestContext();
       _notify();
     } catch (_) {
       await _fail(
         failureCode: 'realtime_guidance_failed',
-        message: '实时语音指导中断，请重试。',
+        message: 'Voice guidance was interrupted. Try again.',
       );
     }
   }
@@ -999,7 +1007,7 @@ class MotionAssessmentController extends ChangeNotifier {
           ? MotionAssessmentPagePhase.changingOrientation
           : MotionAssessmentPagePhase.calibrating;
       if (inspection.status == ForwardHeadFrameStatus.needsSideView) {
-        _guidance = '请自然侧身，站稳并目视前方';
+        _guidance = 'Turn to the side, stand still, and look forward';
       } else if (inspection.missingRegions.isNotEmpty) {
         _guidance = _guidanceForMissingRegions(inspection.missingRegions);
       }
@@ -1010,7 +1018,7 @@ class MotionAssessmentController extends ChangeNotifier {
     final expectedSide = workflow.expectedValidationSide;
     if (validation && expectedSide != null && inspection.side != expectedSide) {
       _phase = MotionAssessmentPagePhase.changingOrientation;
-      _guidance = '请转到另一侧，站稳并目视前方';
+      _guidance = 'Turn to your other side, stand still, and look forward';
       _emitOppositeSideRequired(inspection.side);
       return;
     }
@@ -1027,7 +1035,7 @@ class MotionAssessmentController extends ChangeNotifier {
     _captureCountdownInProgress = true;
     final generation = ++_captureCountdownGeneration;
     _phase = MotionAssessmentPagePhase.readyCountdown;
-    _guidance = '准备开始采样';
+    _guidance = 'Getting ready to capture';
     _notify();
     unawaited(
       _runCaptureCountdown(
@@ -1083,7 +1091,7 @@ class MotionAssessmentController extends ChangeNotifier {
       }
       await _fail(
         failureCode: 'capture_countdown_failed',
-        message: '实时语音倒计时中断，请重试。',
+        message: 'Voice countdown was interrupted. Try again.',
       );
     }
   }
@@ -1238,8 +1246,8 @@ class MotionAssessmentController extends ChangeNotifier {
       return false;
     }
     _phase = fallbackPhase;
-    _voiceStatusMessage = 'OpenAI 实时语音正在恢复指导';
-    _guidance = '语音倒计时正在恢复';
+    _voiceStatusMessage = 'Restoring live voice guidance';
+    _guidance = 'Restoring voice countdown';
     _notify();
     return true;
   }
@@ -1252,7 +1260,9 @@ class MotionAssessmentController extends ChangeNotifier {
       workflow.beginCapture();
     }
     _syncPagePhaseFromWorkflow();
-    _guidance = validation ? '正在采集另一侧验证段' : '正在采集，请自然站稳';
+    _guidance = validation
+        ? 'Capturing the other side for verification'
+        : 'Capturing. Stand naturally and still';
     _refreshLatestContext();
     _notify();
   }
@@ -1289,8 +1299,8 @@ class MotionAssessmentController extends ChangeNotifier {
       _orientationGuidanceCompleted = false;
       _refreshLatestContext();
       _guidance = decision.code == 'opposite_side_required'
-          ? '仍是原来的方向，请转到另一侧'
-          : '第一段采集完成，正在引导你转换方向';
+          ? 'You are still facing the same way. Turn to the other side'
+          : 'First capture complete. Preparing the next direction…';
       _notify();
       final previous = workflow.segmentResults.isEmpty
           ? result
@@ -1308,7 +1318,10 @@ class MotionAssessmentController extends ChangeNotifier {
       final aggregate = workflow.aggregateResult();
       if (aggregate == null) {
         unawaited(
-          _fail(failureCode: 'aggregate_unavailable', message: '评估结果整理失败，请重试。'),
+          _fail(
+            failureCode: 'aggregate_unavailable',
+            message: 'Could not process the assessment results. Try again.',
+          ),
         );
         return;
       }
@@ -1317,7 +1330,7 @@ class MotionAssessmentController extends ChangeNotifier {
         _forwardHeadSummary(aggregate),
       );
       _refreshLatestContext();
-      _guidance = '采集完成，正在复核结果';
+      _guidance = 'Capture complete. Reviewing results…';
       _notify();
       unawaited(_requestFinishConfirmation());
     }
@@ -1346,12 +1359,12 @@ class MotionAssessmentController extends ChangeNotifier {
       _orientationGuidanceCompleted = true;
       _syncPagePhaseFromWorkflow();
       _refreshLatestContext();
-      _guidance = '请保持另一侧方向，准备开始验证段';
+      _guidance = 'Stay turned to the other side. Preparing verification…';
       _notify();
     } catch (_) {
       await _fail(
         failureCode: 'realtime_guidance_failed',
-        message: '实时语音指导中断，请重试。',
+        message: 'Voice guidance was interrupted. Try again.',
       );
     }
   }
@@ -1530,8 +1543,8 @@ class MotionAssessmentController extends ChangeNotifier {
       valueDegrees: median,
       classification: classification,
       userMessage: classification == ForwardHeadClassification.forwardTendency
-          ? '当前多段画面呈现头部前移倾向，完整结果正在整理。'
-          : '当前多段画面处于参考范围，完整结果正在整理。',
+          ? 'The captured views suggest forward head posture. The full results are being prepared.'
+          : 'The captured views are within the reference range. The full results are being prepared.',
       sampleCount: _screeningForwardResults.fold(
         0,
         (total, result) => total + result.sampleCount,
@@ -1566,12 +1579,12 @@ class MotionAssessmentController extends ChangeNotifier {
           voice.latestCompletedUserAudioItemId;
       _phase = MotionAssessmentPagePhase.awaitingFinishConfirmation;
       _refreshLatestContext();
-      _guidance = '请直接说“结束”或“继续评估”';
+      _guidance = 'Say “Finish” or “Continue assessment”';
       _notify();
     } catch (_) {
       await _fail(
         failureCode: 'finish_prompt_failed',
-        message: '结束确认语音播放失败，请重试。',
+        message: 'Could not play the finish confirmation. Try again.',
       );
     }
   }
@@ -1596,12 +1609,12 @@ class MotionAssessmentController extends ChangeNotifier {
       );
       _syncPagePhaseFromWorkflow();
       _refreshLatestContext();
-      _guidance = '请直接说“结束”或“继续评估”';
+      _guidance = 'Say “Finish” or “Continue assessment”';
       _notify();
     } catch (_) {
       await _fail(
         failureCode: 'finish_prompt_failed',
-        message: '结束确认语音播放失败，请重试。',
+        message: 'Could not play the finish confirmation. Try again.',
       );
     }
   }
@@ -1975,8 +1988,8 @@ class MotionAssessmentController extends ChangeNotifier {
 
   String _screeningFramingGuidance() {
     return _currentFrontalMetrics.trunkLean
-        ? '请后退一点，让头部、双肩和髋部入镜'
-        : '请调整站位，让头部和双肩入镜';
+        ? 'Step back until your head, shoulders, and hips are in frame'
+        : 'Adjust your position so your head and shoulders are in frame';
   }
 
   ({String action, String reason}) _recommendedAction({
@@ -2046,10 +2059,12 @@ class MotionAssessmentController extends ChangeNotifier {
   String _guidanceForMissingRegions(List<String> missingRegions) {
     final recommended = _missingRegionRecommendation(missingRegions);
     return switch (recommended.action) {
-      'step_back_include_hips' => '请后退一点，让髋部入镜',
-      'adjust_side_profile' => '请侧身，让近侧耳朵和肩部入镜',
-      'adjust_framing_include_shoulders' => '请调整站位，让双肩入镜',
-      _ => '请调整站位，让头部和双肩入镜',
+      'step_back_include_hips' => 'Step back until your hips are in frame',
+      'adjust_side_profile' =>
+        'Turn sideways so the nearer ear and shoulder are in frame',
+      'adjust_framing_include_shoulders' =>
+        'Adjust your position so both shoulders are in frame',
+      _ => 'Adjust your position so your head and shoulders are in frame',
     };
   }
 
@@ -2239,7 +2254,7 @@ class MotionAssessmentController extends ChangeNotifier {
     } else {
       _syncPagePhaseFromWorkflow();
     }
-    _guidance = '请保持单人入镜，正在重新校准…';
+    _guidance = 'Keep only one person in frame. Recalibrating…';
     _notify();
     await _updateSession(status: 'active');
   }
@@ -2425,7 +2440,7 @@ class MotionAssessmentController extends ChangeNotifier {
       _resetScreeningCaptureCycle();
       workflow.beginCalibration();
       _phase = MotionAssessmentPagePhase.calibrating;
-      _guidance = '评估项目已确认，正在准备第一个采集方向';
+      _guidance = 'Assessment areas confirmed. Preparing the first view…';
       _notify();
       await voice.requestGuidance(
         'assessment_plan_confirmed',
@@ -2517,7 +2532,7 @@ class MotionAssessmentController extends ChangeNotifier {
       _screeningContinueCount += 1;
       _resetScreeningCaptureCycle();
       _phase = MotionAssessmentPagePhase.calibrating;
-      _guidance = '继续评估，正在重新准备第一个采集方向';
+      _guidance = 'Continuing assessment. Preparing the first view again…';
       _notify();
       await voice.requestGuidance(
         'assessment_continued',
@@ -2569,7 +2584,8 @@ class MotionAssessmentController extends ChangeNotifier {
     _clearCaptureReadiness();
     _syncPagePhaseFromWorkflow();
     _refreshLatestContext();
-    _guidance = '继续评估，请自然侧身并保持稳定';
+    _guidance =
+        'Continuing assessment. Turn naturally to the side and stand still';
     _notify();
   }
 
@@ -2678,7 +2694,7 @@ class MotionAssessmentController extends ChangeNotifier {
     if (_terminalizationInProgress || _closed) return;
     _terminalizationInProgress = true;
     _phase = MotionAssessmentPagePhase.finalizing;
-    _guidance = '正在保存评估结果';
+    _guidance = 'Saving assessment results…';
     _notify();
     try {
       await voice.requestGuidance(
@@ -2700,7 +2716,7 @@ class MotionAssessmentController extends ChangeNotifier {
       _terminalizationInProgress = false;
       await _fail(
         failureCode: 'completion_payload_missing',
-        message: '评估结果保存失败，请重试。',
+        message: 'Could not save the assessment results. Try again.',
       );
       return;
     }
@@ -2721,7 +2737,8 @@ class MotionAssessmentController extends ChangeNotifier {
       _terminalizationInProgress = false;
       await _fail(
         failureCode: 'finalization_storage_failed',
-        message: '评估结果暂时无法安全保存，请重试。',
+        message:
+            'Could not securely save the assessment results right now. Try again.',
         persistFinalization: false,
       );
       return;
@@ -2898,10 +2915,10 @@ class MotionAssessmentController extends ChangeNotifier {
       if (_voiceEverReady && !_voiceConnectInProgress) _voiceReady = true;
     } else if (voice.phase == MotionRealtimeVoicePhase.reconnecting) {
       _voiceReady = false;
-      _voiceStatusMessage = 'OpenAI 实时语音正在重新连接';
+      _voiceStatusMessage = 'Reconnecting live voice';
     } else if (voice.phase == MotionRealtimeVoicePhase.failed) {
       _voiceReady = false;
-      _voiceStatusMessage = 'OpenAI 实时语音未连接';
+      _voiceStatusMessage = 'Live voice is not connected';
       final assessmentId = _voiceAssessmentId;
       if (!_voiceConnectInProgress &&
           !_terminalizationInProgress &&
@@ -2913,7 +2930,7 @@ class MotionAssessmentController extends ChangeNotifier {
         unawaited(
           _fail(
             failureCode: voice.failureCode ?? 'realtime_connection_lost',
-            message: 'OpenAI 实时语音连接已中断，请重试。',
+            message: 'Live voice connection was interrupted. Try again.',
           ),
         );
       }
@@ -2936,23 +2953,29 @@ class MotionAssessmentController extends ChangeNotifier {
   String _friendlyPoseError(Object error) {
     if (error case PlatformException(code: final code)) {
       return switch (code) {
-        'pose_model_initialization_failed' => '端侧姿态模型加载失败，请重试。',
-        'pose_inference_failed' => '端侧姿态识别运行异常，请重试。',
-        'pose_start_timeout' => '端侧姿态模型启动超时，请重试。',
-        'pose_event_stream_closed' => '端侧姿态识别连接中断，请重试。',
-        'camera_start_cancelled' => '端侧姿态识别启动已取消。',
-        'camera_start_failed' => '前置摄像头启动失败，请检查相机是否被其他应用占用。',
-        'permission_denied' => '请允许摄像头权限后重试。',
-        _ => '端侧姿态识别暂时不可用，请重试。',
+        'pose_model_initialization_failed' =>
+          'Could not load on-device posture tracking. Try again.',
+        'pose_inference_failed' =>
+          'On-device posture tracking encountered an error. Try again.',
+        'pose_start_timeout' =>
+          'On-device posture tracking timed out. Try again.',
+        'pose_event_stream_closed' =>
+          'On-device posture tracking disconnected. Try again.',
+        'camera_start_cancelled' => 'On-device posture tracking was canceled.',
+        'camera_start_failed' =>
+          'Could not start the front camera. Check whether another app is using it.',
+        'permission_denied' => 'Allow camera access and try again.',
+        _ => 'On-device posture tracking is unavailable right now. Try again.',
       };
     }
     if (error is MissingPluginException) {
-      return '当前安装版本未包含端侧姿态识别组件，请更新 App 后重试。';
+      return 'This app version does not include on-device posture tracking. Update the app and try again.';
     }
-    if (error.toString().contains('摄像头权限')) {
-      return '请允许摄像头权限后重试。';
+    if (error.toString().contains('camera permission') ||
+        error.toString().contains('Camera access is required')) {
+      return 'Allow camera access and try again.';
     }
-    return '端侧姿态识别暂时不可用，请重试。';
+    return 'On-device posture tracking is unavailable right now. Try again.';
   }
 
   String? _poseDiagnosticFor(Object error) {

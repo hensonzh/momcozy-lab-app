@@ -15,7 +15,7 @@ class ServiceInventoryTransport extends MomInventoryTransport {
     'timezone': 'America/Los_Angeles',
     'regions': ['CA'],
     'languages': ['English'],
-    'bio': '本地测试专家资料，用于验证预约流程。',
+    'bio': 'Fictional consultant profile for testing the booking flow.',
     'sandbox': true,
   };
   Map<String, Object?>? order, episode, appointment, bookingEligibility;

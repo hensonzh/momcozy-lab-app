@@ -192,52 +192,15 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                                           height: 1,
                                           color: MomHomeTokens.border,
                                         ),
-                                      SwitchListTile(
-                                        key: ValueKey(
-                                          'notification-preference-${entry.key}',
-                                        ),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                              horizontal: 16,
-                                              vertical: 8,
-                                            ),
-                                        title: ConstrainedBox(
-                                          constraints: const BoxConstraints(
-                                            minHeight: 24,
-                                          ),
-                                          child: Text(
-                                            entry.value,
-                                            style: MomHomeTokens.text(
-                                              16,
-                                              weight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ),
-                                        subtitle: Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 4,
-                                          ),
-                                          child: ConstrainedBox(
-                                            constraints: const BoxConstraints(
-                                              minHeight: 24,
-                                            ),
-                                            child: Text(
-                                              permission.canNotify &&
-                                                      coordinator.pushReady
-                                                  ? 'Service notifications'
-                                                  : 'Background delivery unavailable',
-                                              style: MomHomeTokens.text(
-                                                12,
-                                                color: MomHomeTokens.secondary,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        value:
-                                            _preferences?[entry.key] ?? false,
-                                        onChanged: _busy || _preferences == null
-                                            ? null
-                                            : (value) => _set(entry.key, value),
+                                      _preferenceTile(
+                                        context,
+                                        key: entry.key,
+                                        title: entry.value,
+                                        subtitle:
+                                            permission.canNotify &&
+                                                coordinator.pushReady
+                                            ? 'Service notifications'
+                                            : 'Background delivery unavailable',
                                       ),
                                     ],
                                   ],
@@ -277,6 +240,68 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _preferenceTile(
+    BuildContext context, {
+    required String key,
+    required String title,
+    required String subtitle,
+  }) {
+    final value = _preferences?[key] ?? false;
+    final onChanged = _busy || _preferences == null
+        ? null
+        : (bool enabled) => _set(key, enabled);
+    final widgetKey = ValueKey('notification-preference-$key');
+    final titleWidget = Text(
+      title,
+      style: MomHomeTokens.text(16, weight: FontWeight.w700),
+    );
+    final subtitleWidget = Text(
+      subtitle,
+      style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+    );
+    if (MediaQuery.sizeOf(context).width <= 360 &&
+        MediaQuery.textScalerOf(context).scale(1) > 1.3) {
+      return MergeSemantics(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              titleWidget,
+              const SizedBox(height: 4),
+              subtitleWidget,
+              Align(
+                alignment: Alignment.centerRight,
+                child: Switch(
+                  key: widgetKey,
+                  value: value,
+                  onChanged: onChanged,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return SwitchListTile(
+      key: widgetKey,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      title: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 24),
+        child: titleWidget,
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 24),
+          child: subtitleWidget,
+        ),
+      ),
+      value: value,
+      onChanged: onChanged,
     );
   }
 

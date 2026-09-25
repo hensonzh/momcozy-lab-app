@@ -69,13 +69,13 @@ void main() {
         );
         await tester.tap(find.text('首页'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('下一步'));
+        await tester.tap(find.text('Continue'));
         await tester.pumpAndSettle();
         await tester.tap(find.byType(FilledButton));
         await tester.pump();
         expect(repo.saves, 1);
         expect(platform.requests, 1);
-        expect(find.text('选择想改善的事'), findsOneWidget);
+        expect(find.text('Choose what you\'d like to work on'), findsOneWidget);
         expect(find.text('开启通知提醒'), findsNothing);
         await tester.tap(find.byType(FilledButton));
         await tester.pump();
@@ -83,7 +83,7 @@ void main() {
         platform.gate.complete(outcome);
         await tester.pumpAndSettle();
         expect(find.text('首页'), findsOneWidget);
-        expect(find.text('选择想改善的事'), findsNothing);
+        expect(find.text('Choose what you\'d like to work on'), findsNothing);
         expect(c.state!.concerns.length, 1);
       },
     );
@@ -128,14 +128,14 @@ void main() {
     );
     await tester.tap(find.text('首页'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('下一步'));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('确认'));
+    await tester.tap(find.text('Confirm'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(platform.requests, 0);
     expect(find.byType(BottomSheet), findsOneWidget);
-    await tester.tap(find.text('暂不开启'));
+    await tester.tap(find.text('Not now'));
     await tester.pumpAndSettle();
     expect(find.text('首页'), findsOneWidget);
     expect(platform.settings, 0);

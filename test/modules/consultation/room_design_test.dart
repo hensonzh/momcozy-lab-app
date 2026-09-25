@@ -52,18 +52,18 @@ void main() {
         await _golden(tester, 'room-device', width, scale);
         expect(
           tester
-              .widget<FilledButton>(find.widgetWithText(FilledButton, '检查中…'))
+              .widget<FilledButton>(find.widgetWithText(FilledButton, 'Checking…'))
               .onPressed,
           isNull,
         );
         pending.completeError(StateError('camera unavailable'));
         await tester.pumpAndSettle();
         expect(requests, 2);
-        await tester.ensureVisible(find.textContaining('未能使用麦克风，请检查权限或设备。'));
+        await tester.ensureVisible(find.textContaining('Could not use the microphone. Check device permissions or hardware.'));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         await _golden(tester, 'room-device-error', width, scale);
-        await tester.tap(find.byTooltip('关闭设备检测'));
+        await tester.tap(find.byTooltip('Close device check'));
         await tester.pumpAndSettle();
         expect(find.byType(ConsultationDeviceCheckDialog), findsNothing);
       });
@@ -85,13 +85,13 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tester.scrollUntilVisible(find.text('开始咨询'), 180);
+        await tester.scrollUntilVisible(find.text('Start consultation'), 180);
         await tester.pumpAndSettle();
-        await tester.tap(find.text('开始咨询'));
+        await tester.tap(find.text('Start consultation'));
         await tester.pumpAndSettle();
-        await tester.ensureVisible(find.text('继续确认'));
+        await tester.ensureVisible(find.text('Continue'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('继续确认'));
+        await tester.tap(find.text('Continue'));
         await tester.pumpAndSettle();
         await tester.ensureVisible(
           find.byKey(const ValueKey('consult-location')),
@@ -105,7 +105,7 @@ void main() {
         await tester.tap(
           find.descendant(
             of: find.byType(ConsultationStartDialog),
-            matching: find.byTooltip('关闭咨询确认'),
+            matching: find.byTooltip('Close consultation confirmation'),
           ),
         );
         await tester.pumpAndSettle();
@@ -135,18 +135,18 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tester.scrollUntilVisible(find.text('咨询无法继续'), 180);
+        await tester.scrollUntilVisible(find.text('Cannot continue consultation'), 180);
         await tester.pumpAndSettle();
-        await tester.tap(find.text('咨询无法继续'));
+        await tester.tap(find.text('Cannot continue consultation'));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         await _golden(tester, 'room-end-reason', width, scale);
-        await tester.ensureVisible(find.text('技术或网络故障'));
-        await tester.tap(find.text('技术或网络故障'));
+        await tester.ensureVisible(find.text('Technical or network issue'));
+        await tester.tap(find.text('Technical or network issue'));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         await _golden(tester, 'room-end-confirm', width, scale);
-        await tester.tap(find.text('继续咨询'));
+        await tester.tap(find.text('Continue consultation'));
         await tester.pumpAndSettle();
         expect(repository.endCalls, 0);
         await tester.pumpWidget(const SizedBox());
@@ -173,10 +173,10 @@ void main() {
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         await _golden(tester, 'room-outcome', width, scale);
-        await tester.ensureVisible(find.text('查看咨询总结'));
-        await tester.tap(find.text('查看咨询总结'));
-        await tester.ensureVisible(find.text('重新预约'));
-        await tester.tap(find.text('重新预约'));
+        await tester.ensureVisible(find.text('View consultation summary'));
+        await tester.tap(find.text('View consultation summary'));
+        await tester.ensureVisible(find.text('Book another appointment'));
+        await tester.tap(find.text('Book another appointment'));
         expect(progress, 1);
         expect(rebook, 1);
         await tester.pumpWidget(const SizedBox());

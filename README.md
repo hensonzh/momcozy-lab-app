@@ -43,13 +43,15 @@ make flutter-release-gate
 make flutter-emulator-smoke
 ```
 
+The canonical environment and release workflow is documented in
+[`docs/deployment/environment-workflow.md`](docs/deployment/environment-workflow.md).
+
 Pinned versions live in [`flutter-toolchain.json`](flutter-toolchain.json);
 `make flutter-check` validates the local SDK/JDK/Android directories and versions against that file.
 `make flutter-release-gate` runs the non-device release gate: format, analyze,
-tests, test smoke harness, local debug APK, and unified release APK. It
+tests, staging smoke harness, local debug APK, and staging release APK. It
 requires explicit HTTPS, non-loopback `MOMCOZY_API_BASE_URL` and
-`MOMCOZY_AGENT_API_BASE_URL` values. The unified flavor is an isolated install
-identity whose runtime environment remains test.
+`MOMCOZY_AGENT_API_BASE_URL` values. The staging flavor is an isolated install identity and uses `MOMCOZY_ENV=staging`.
 `make flutter-emulator-smoke` installs the local debug APK on an online Android emulator, launches the app, captures Agent Hub / Schedule / Device screenshots under `build/emulator-smoke/`, and checks the process/window/crash log.
 
 Direct Flutter commands also run from the repository root:
@@ -59,8 +61,8 @@ flutter pub get
 flutter analyze
 flutter test
 flutter build apk --debug --flavor local
-flutter build apk --release --flavor unified \
-  --dart-define=MOMCOZY_ENV=test \
+flutter build apk --release --flavor staging \
+  --dart-define=MOMCOZY_ENV=staging \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
@@ -71,7 +73,7 @@ flutter build apk --release --flavor unified \
 make local-dev-up
 ```
 
-该命令会在缺失时从示例创建两个仓库各自被忽略的 `env/compose.local.env`，生成本地 JWT 私钥，对齐服务密钥、issuer、audience 和端口，然后依次启动 Backend 与 Agent。Android 模拟器在线后，启动 Android App 使用：
+该命令会在缺失时从示例创建两个仓库各自被忽略的 `env/local.env`，生成本地 JWT 私钥，对齐服务密钥、issuer、audience 和端口，然后依次启动 Backend 与 Agent。Android 模拟器在线后，启动 Android App 使用：
 
 ```bash
 make local-dev-start
@@ -135,7 +137,7 @@ Backend 和 Agent Runtime OpenAPI 合并成一个服务，也不会把 bearer to
 Current Android package IDs:
 
 - `local` applicationId: `com.momcozymai.app.flutterpoc.local`
-- `unified` applicationId: `com.momcozymai.app.flutterpoc.unified`（测试环境分发）
+- `staging` applicationId: `com.momcozymai.app.flutterpoc.staging`（测试环境分发）
 - `production` applicationId: `com.momcozymai.app.flutterpoc`
 - Packaging policy: [docs/flutter/android-packaging.md](docs/flutter/android-packaging.md)
 - Release gate: [docs/flutter/release-gate.md](docs/flutter/release-gate.md)
@@ -192,7 +194,7 @@ The extended Product API rollout flag remains gated by backend availability:
   data remains available while unsupported summaries show an explicit
   unavailable state.
 
-See [the integration baseline](docs/flutter/unified-app-integration.md) for
+See [the integration baseline](docs/flutter/staging-app-integration.md) for
 contract ownership and verification gates.
 
 Versioned UI design contracts and durable visual evidence live under

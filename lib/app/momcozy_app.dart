@@ -206,7 +206,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
             : null,
         inboxRepository: repository,
         deliveryRepository: repository,
-        locale: session.locale,
+        locale: momCozyEnglishLocale,
       ),
     );
   }
@@ -243,10 +243,10 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
         );
       },
       child: MaterialApp.router(
-        title: 'momcozy AI',
+        title: 'Momcozy AI',
         scaffoldMessengerKey: _messengerKey,
-        locale: const Locale('zh', 'CN'),
-        supportedLocales: const [Locale('zh', 'CN')],
+        locale: const Locale('en', 'US'),
+        supportedLocales: const [Locale('en', 'US')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         theme: momCozyTheme().copyWith(
           pageTransitionsTheme: momCozyPageTransitionsTheme,
@@ -443,7 +443,7 @@ class _BackendCapabilityUnavailablePage extends StatelessWidget {
                 Icon(route.icon, color: route.accent, size: 42),
                 const SizedBox(height: 16),
                 Text(
-                  '${route.title} 暂未开放',
+                  '${route.title} is not available yet',
                   textAlign: TextAlign.center,
                   style: Theme.of(
                     context,
@@ -451,7 +451,7 @@ class _BackendCapabilityUnavailablePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '当前环境尚未启用对应后端契约。其他功能可继续使用。',
+                  'This feature is not available in the current environment. You can continue using the rest of the app.',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: MomCozyColors.mutedForeground,
@@ -846,12 +846,12 @@ class MomCozyNotFoundPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '页面未找到',
+                      'Page not found',
                       textAlign: TextAlign.center,
                       style: MomHomeTokens.text(22, weight: FontWeight.w700),
                     ),
                     Text(
-                      '这个页面可能已移动，或链接已失效。',
+                      'This page may have moved, or the link may have expired.',
                       textAlign: TextAlign.center,
                       style: MomHomeTokens.text(
                         14,
@@ -860,7 +860,7 @@ class MomCozyNotFoundPage extends StatelessWidget {
                     ),
                     FilledButton(
                       onPressed: () => context.go('/me'),
-                      child: const Text('返回首页'),
+                      child: const Text('Back to home'),
                     ),
                   ],
                 ),
@@ -893,8 +893,8 @@ class MomCozyRouteConfig {
 
 const notFoundRoute = MomCozyRouteConfig(
   path: '/404',
-  title: '页面未找到',
-  summary: '这个页面可能已移动，或链接已失效。',
+  title: 'Page not found',
+  summary: 'This page may have moved, or the link may have expired.',
   icon: Icons.search_off_rounded,
   accent: Color(0xff7f6a75),
   priority: 'P2',
@@ -903,8 +903,8 @@ const notFoundRoute = MomCozyRouteConfig(
 const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/',
-    title: 'Cozymate',
-    summary: '智能体陪伴、记录衔接与服务入口。',
+    title: 'Momcozy AI',
+    summary: 'AI support, connected records, and expert services.',
     icon: Icons.auto_awesome_rounded,
     accent: Color(0xff9f6378),
     priority: 'P0',
@@ -912,7 +912,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/me',
     title: 'Me',
-    summary: '妈妈资料、泌乳记录和专家支持。',
+    summary: 'Your profile, lactation records, and expert support.',
     icon: Icons.person_rounded,
     accent: Color(0xff862644),
     priority: 'P0',
@@ -920,7 +920,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/baby',
     title: 'Baby',
-    summary: '宝宝档案、照护记录和成长趋势。',
+    summary: 'Baby profiles, care records, and growth trends.',
     icon: Icons.child_care_rounded,
     accent: Color(0xff862644),
     priority: 'P0',
@@ -928,7 +928,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/schedule',
     title: 'Schedule',
-    summary: '预约、专业任务和个人日程。',
+    summary: 'Appointments, care tasks, and your schedule.',
     icon: Icons.event_note_rounded,
     accent: Color(0xffb2773b),
     priority: 'P0',
@@ -936,7 +936,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/more',
     title: 'More',
-    summary: '账号、服务资产、通知与隐私授权。',
+    summary: 'Account, services, notifications, and privacy settings.',
     icon: Icons.more_horiz_rounded,
     accent: Color(0xffa21849),
     priority: 'P0',
@@ -944,15 +944,15 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/notifications',
     title: 'Notifications',
-    summary: '预约、任务和服务提醒。',
+    summary: 'Appointment, task, and service reminders.',
     icon: Icons.notifications_rounded,
     accent: Color(0xff862644),
     priority: 'P1',
   ),
   MomCozyRouteConfig(
     path: '/media-viewer',
-    title: '资料预览',
-    summary: '从 Cozymate 资料卡片打开的安全预览。',
+    title: 'Resource preview',
+    summary: 'A secure preview opened from a Momcozy AI resource card.',
     icon: Icons.perm_media_rounded,
     accent: Color(0xff6b6da8),
     priority: 'P1',

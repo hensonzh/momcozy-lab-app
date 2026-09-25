@@ -94,7 +94,9 @@ void main() {
       expect(find.text('00:10:01'), findsOneWidget);
       expect(
         tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, '开始咨询'))
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Start consultation'),
+            )
             .onPressed,
         isNull,
       );
@@ -103,17 +105,21 @@ void main() {
       expect(find.text('00:10:00'), findsOneWidget);
       expect(
         tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, '开始咨询'))
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Start consultation'),
+            )
             .onPressed,
         isNotNull,
       );
       expect(enters, 0);
       now = data.closesAt;
       await tester.pump(const Duration(seconds: 1));
-      expect(find.text('进入时间已过'), findsOneWidget);
+      expect(find.text('Join window has closed'), findsOneWidget);
       expect(
         tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, '开始咨询'))
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Start consultation'),
+            )
             .onPressed,
         isNull,
       );
@@ -165,20 +171,24 @@ void main() {
               rebook++;
             },
           );
-          expect(find.text('预约详情'), findsOneWidget);
+          expect(find.text('Appointment details'), findsOneWidget);
           expect(find.text('Test IBCLC'), findsOneWidget);
           expect(
             tester
                     .widget<FilledButton>(
-                      find.widgetWithText(FilledButton, '开始咨询'),
+                      find.widgetWithText(FilledButton, 'Start consultation'),
                     )
                     .onPressed !=
                 null,
             state == 'ready' || state == 'demo',
           );
-          if (state == 'early') expect(find.text('2天 00:05'), findsOneWidget);
+          if (state == 'early') {
+            expect(find.text('2 days 00:05'), findsOneWidget);
+          }
           if (state == 'ready') expect(find.text('00:05:00'), findsOneWidget);
-          if (state == 'demo') expect(find.text('可提前进入'), findsOneWidget);
+          if (state == 'demo') {
+            expect(find.text('You can join early'), findsOneWidget);
+          }
           await tester.pump(const Duration(milliseconds: 300));
           if (scale == 1 || width == 320) {
             await expectLater(
@@ -189,7 +199,7 @@ void main() {
             );
           }
           if (scale == 2 && width == 320) {
-            await tester.ensureVisible(find.text('取消预约'));
+            await tester.ensureVisible(find.text('Cancel appointment'));
             await tester.pumpAndSettle();
             await expectLater(
               find.byType(MaterialApp),
@@ -199,14 +209,14 @@ void main() {
             );
           }
           if (state == 'intake' || state == 'case-consent') {
-            await click(tester, '查看信息采集表');
+            await click(tester, 'View intake form');
             expect(intake, 1);
           }
           if (state == 'expired') {
-            await click(tester, '重新预约');
+            await click(tester, 'Book another appointment');
             expect(rebook, 1);
           }
-          await click(tester, '取消预约');
+          await click(tester, 'Cancel appointment');
           expect(cancel, 1);
           expect(repository.keys, isEmpty);
           expect(tester.takeException(), isNull);
@@ -224,7 +234,7 @@ void main() {
       repository.offline = true;
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
-      expect(find.text('刷新咨询状态'), findsOneWidget);
+      expect(find.text('Refresh consultation status'), findsOneWidget);
       expect(find.text('Test IBCLC'), findsOneWidget);
       await expectLater(
         find.byType(MaterialApp),
@@ -233,8 +243,8 @@ void main() {
         ),
       );
       repository.offline = false;
-      await click(tester, '刷新咨询状态');
-      expect(find.text('刷新咨询状态'), findsNothing);
+      await click(tester, 'Refresh consultation status');
+      expect(find.text('Refresh consultation status'), findsNothing);
       expect(repository.keys, isEmpty);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
@@ -246,8 +256,8 @@ void main() {
     (tester) async {
       final repository = TestRoomRepository()..room(status: 'in_progress');
       await mount(tester, repository);
-      expect(find.text('重新进入咨询室'), findsOneWidget);
-      expect(find.text('取消预约'), findsNothing);
+      expect(find.text('Rejoin consultation room'), findsOneWidget);
+      expect(find.text('Cancel appointment'), findsNothing);
       expect(repository.keys, isEmpty);
       await expectLater(
         find.byType(MaterialApp),
@@ -255,8 +265,8 @@ void main() {
           '../../goldens/design_system/preparation-rejoin-390.png',
         ),
       );
-      await click(tester, '重新进入咨询室');
-      expect(find.text('摄像头和麦克风均可用'), findsOneWidget);
+      await click(tester, 'Rejoin consultation room');
+      expect(find.text('Camera and microphone are ready'), findsOneWidget);
       expect(repository.keys, isEmpty);
       await tester.pumpWidget(const SizedBox.shrink());
     },
@@ -279,27 +289,33 @@ void main() {
         return pending.future;
       },
     );
-    await click(tester, '取消预约');
+    await click(tester, 'Cancel appointment');
     expect(calls, 1);
     expect(
       tester
-          .widget<OutlinedButton>(find.widgetWithText(OutlinedButton, '取消预约'))
+          .widget<OutlinedButton>(
+            find.widgetWithText(OutlinedButton, 'Cancel appointment'),
+          )
           .onPressed,
       isNull,
     );
     expect(
       tester
-          .widget<FilledButton>(find.widgetWithText(FilledButton, '请稍候…'))
+          .widget<FilledButton>(
+            find.widgetWithText(FilledButton, 'Please wait…'),
+          )
           .onPressed,
       isNull,
     );
     repository.json['intake_ready'] = false;
     pending.complete();
     await tester.pumpAndSettle();
-    expect(find.text('查看信息采集表'), findsOneWidget);
+    expect(find.text('View intake form'), findsOneWidget);
     expect(
       tester
-          .widget<FilledButton>(find.widgetWithText(FilledButton, '开始咨询'))
+          .widget<FilledButton>(
+            find.widgetWithText(FilledButton, 'Start consultation'),
+          )
           .onPressed,
       isNull,
     );

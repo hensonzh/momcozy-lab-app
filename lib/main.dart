@@ -4,13 +4,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'app/momcozy_app.dart';
 import 'app/momcozy_api_runtime.dart';
 import 'core/config/momcozy_app_capabilities.dart';
-import 'core/network/test_certificate_trust.dart';
+import 'core/network/staging_certificate_trust.dart';
 import 'core/update/app_release_lifecycle.dart';
 import 'features/media/data/product_asset_file_cache.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await configureTestCertificateTrust();
+  await configureStagingCertificateTrust();
   const capabilities = MomCozyAppCapabilities.fromEnvironment();
   final releasePolicy = await prepareAppReleaseLifecycle(
     enabled: capabilities.releaseResetLifecycleEnabled,

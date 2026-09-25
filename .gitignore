@@ -70,3 +70,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/build/
+
+# Environment-specific mobile configuration
+/config/environments/production.json

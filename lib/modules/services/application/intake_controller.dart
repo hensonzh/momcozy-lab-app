@@ -142,11 +142,11 @@ class IntakeController extends ChangeNotifier {
   IntakeContent? _validated() {
     final days = int.tryParse(postpartumDays);
     if (symptoms.isEmpty || goal.trim().isEmpty) {
-      validation = '请至少选择一项问题，并填写希望的变化';
+      validation = 'Select at least one concern and tell us what you hope will change.';
       return null;
     }
     if (goal.trim().length > 1000 || support.trim().length > 3000) {
-      validation = '目标最多 1000 字，补充情况最多 3000 字';
+      validation = 'Your goal can be up to 1,000 characters, and additional details up to 3,000.';
       return null;
     }
     if (babyId == null ||
@@ -158,19 +158,19 @@ class IntakeController extends ChangeNotifier {
         days == null ||
         days < 0 ||
         days > today.daysSince(LocalDate(1900, 1, 1))) {
-      validation = '请完善基础信息';
+      validation = 'Complete your basic information.';
       return null;
     }
     if (babyBirthDate!.compareTo(today) > 0) {
-      validation = '宝宝出生日期不能在未来';
+      validation = 'Your baby\'s date of birth cannot be in the future.';
       return null;
     }
     if (region == null || !RegExp(r'^[A-Z]{2}$').hasMatch(region!)) {
-      validation = '请确认当前所在州';
+      validation = 'Confirm your current state.';
       return null;
     }
     if (!consent) {
-      validation = '请确认允许本次服务的 IBCLC 查看此表';
+      validation = 'Confirm that your IBCLC may view this form.';
       return null;
     }
     return IntakeContent(
@@ -234,9 +234,9 @@ class IntakeController extends ChangeNotifier {
         _pending = null;
       }
       validation = switch (failure!.code) {
-        'consent_conflict' => '授权已发生变化，请重新载入并确认',
-        'service_baby_mismatch' => '本次服务已关联其他宝宝，请重新载入后核对',
-        'region_unavailable' => '这位专家暂时无法在当前州提供服务',
+        'consent_conflict' => 'Consent has changed. Reload and confirm again.',
+        'service_baby_mismatch' => 'This service is linked to another baby. Reload and check your selection.',
+        'region_unavailable' => 'This consultant is not available in your state right now.',
         _ => null,
       };
     }

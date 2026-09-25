@@ -89,115 +89,130 @@ void main() {
     }
   }
 
-  testWidgets('inventory configured invite submission pending', (tester) async {
-    expect(const bool.fromEnvironment('MOMCOZY_INTERNAL_INVITE_LOGIN'), isTrue);
-    final transport = _PendingInvite();
-    final runtime = MomCozyRuntimeController(
-      MomCozyApiRuntime(
-        jsonTransport: transport,
-        supportsSessionAutoRefresh: false,
-      ),
-    );
-    final store = MemoryMomCozySessionStore();
-    final router = createMomCozyRouter(
-      initialLocation: '/login?from=/more',
-      runtimeController: runtime,
-      sessionStore: store,
-    );
-    addTearDown(() {
-      router.dispose();
-      runtime.dispose();
-    });
-    await mount(tester, runtime, router);
-    await tester.enterText(
-      find.byKey(const ValueKey('auth-invite-code-field')),
-      'INVENTORY-CODE',
-    );
-    FocusManager.instance.primaryFocus?.unfocus();
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    await capture(
-      tester,
-      router,
-      'auth-invite-submit-pending',
-      'Configured invitation login → enter code → submit; response pending',
-    );
-    transport.ready.complete();
-    await tester.pumpAndSettle();
-    expect(runtime.currentSession.isAuthenticated, isTrue);
-    expect(router.state.uri.path, '/more');
-    expect(transport.postedBodies, hasLength(1));
-    await tester.pumpWidget(const SizedBox());
-  });
+  testWidgets(
+    'inventory configured invite submission pending',
+    (tester) async {
+      final transport = _PendingInvite();
+      final runtime = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: transport,
+          supportsSessionAutoRefresh: false,
+        ),
+      );
+      final store = MemoryMomCozySessionStore();
+      final router = createMomCozyRouter(
+        initialLocation: '/login?from=/more',
+        runtimeController: runtime,
+        sessionStore: store,
+      );
+      addTearDown(() {
+        router.dispose();
+        runtime.dispose();
+      });
+      await mount(tester, runtime, router);
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-invite-code-field')),
+        'INVENTORY-CODE',
+      );
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
+      await tester.pump();
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      await capture(
+        tester,
+        router,
+        'auth-invite-submit-pending',
+        'Configured invitation login → enter code → submit; response pending',
+      );
+      transport.ready.complete();
+      await tester.pumpAndSettle();
+      expect(runtime.currentSession.isAuthenticated, isTrue);
+      expect(router.state.uri.path, '/more');
+      expect(transport.postedBodies, hasLength(1));
+      await tester.pumpWidget(const SizedBox());
+    },
+    skip: !const bool.fromEnvironment('MOMCOZY_INTERNAL_INVITE_LOGIN'),
+  );
 
-  testWidgets('inventory configured invitation failure outcomes', (
-    tester,
-  ) async {
-    final transport = FixtureApiJsonTransport({
-      'http_status': 403,
-      'body': {
-        'error': {
-          'code': 'permission_denied',
-          'message': 'Invite code is already bound to another device.',
+  testWidgets(
+    'inventory configured invitation failure outcomes',
+    (tester) async {
+      final transport = FixtureApiJsonTransport({
+        'http_status': 403,
+        'body': {
+          'error': {
+            'code': 'permission_denied',
+            'message': 'Invite code is already bound to another device.',
+          },
         },
-      },
-    });
-    final runtime = MomCozyRuntimeController(
-      MomCozyApiRuntime(
-        jsonTransport: transport,
-        supportsSessionAutoRefresh: false,
-      ),
-    );
-    final store = _RecoverableSessionStore();
-    final router = createMomCozyRouter(
-      initialLocation: '/login?from=/more',
-      runtimeController: runtime,
-      sessionStore: store,
-    );
-    addTearDown(() {
-      router.dispose();
-      runtime.dispose();
-    });
-    await mount(tester, runtime, router);
-    await tester.enterText(
-      find.byKey(const ValueKey('auth-invite-code-field')),
-      'INVENTORY-CODE',
-    );
-    FocusManager.instance.primaryFocus?.unfocus();
-    await tester.pumpAndSettle();
-    final submit = find.byKey(const ValueKey('auth-invite-login-button'));
-    await tester.tap(submit);
-    await tester.pumpAndSettle();
-    expect(find.text('邀请码已在其他设备使用过'), findsOneWidget);
-    await capture(
-      tester,
-      router,
-      'auth-invite-device-error',
-      'Invite submit rejected → code retained and device message displayed',
-    );
-    transport.response
-      ..clear()
-      ..addAll(_PendingInvite().response);
-    await tester.tap(submit);
-    await tester.pumpAndSettle();
-    expect(find.text('账号认证已通过，但无法保存本机登录状态。请重启 App 后重试。'), findsOneWidget);
-    expect(runtime.currentSession.isAuthenticated, isFalse);
-    await capture(
-      tester,
-      router,
-      'auth-invite-storage-error',
-      'Retry accepted by server → local session save fails; remains logged out',
-      previous: 'test/goldens/ui_inventory/auth-invite-device-error-390.png',
-    );
-    store.failWrite = false;
-    await tester.tap(submit);
-    await tester.pumpAndSettle();
-    expect(runtime.currentSession.isAuthenticated, isTrue);
-    expect(router.state.uri.path, '/more');
-    await tester.pumpWidget(const SizedBox());
-  });
+      });
+      final runtime = MomCozyRuntimeController(
+        MomCozyApiRuntime(
+          jsonTransport: transport,
+          supportsSessionAutoRefresh: false,
+        ),
+      );
+      final store = _RecoverableSessionStore();
+      final router = createMomCozyRouter(
+        initialLocation: '/login?from=/more',
+        runtimeController: runtime,
+        sessionStore: store,
+      );
+      addTearDown(() {
+        router.dispose();
+        runtime.dispose();
+      });
+      await mount(tester, runtime, router);
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-invite-code-field')),
+        'INVENTORY-CODE',
+      );
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+      final submit = find.byKey(const ValueKey('auth-invite-login-button'));
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      expect(
+        find.text(
+          'This invitation code has already been used on another device.',
+        ),
+        findsOneWidget,
+      );
+      await capture(
+        tester,
+        router,
+        'auth-invite-device-error',
+        'Invite submit rejected → code retained and device message displayed',
+      );
+      transport.response
+        ..clear()
+        ..addAll(_PendingInvite().response);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      expect(
+        find.text(
+          'Your account was verified, but we could not save your sign-in on this device. Restart the app and try again.',
+        ),
+        findsOneWidget,
+      );
+      expect(runtime.currentSession.isAuthenticated, isFalse);
+      await capture(
+        tester,
+        router,
+        'auth-invite-storage-error',
+        'Retry accepted by server → local session save fails; remains logged out',
+        previous: 'test/goldens/ui_inventory/auth-invite-device-error-390.png',
+      );
+      store.failWrite = false;
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      expect(runtime.currentSession.isAuthenticated, isTrue);
+      expect(router.state.uri.path, '/more');
+      await tester.pumpWidget(const SizedBox());
+    },
+    skip: !const bool.fromEnvironment('MOMCOZY_INTERNAL_INVITE_LOGIN'),
+  );
 
   testWidgets('inventory configured avatar failure feedback', (tester) async {
     final portrait = (await rootBundle.load(

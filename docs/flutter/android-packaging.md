@@ -2,23 +2,23 @@
 
 ## 当前策略
 
-当前 Flutter 客户端保持既有 production-shaped appId，并通过 flavor 隔离 local、unified 和 production-shaped 构建。`test` 是 unified 包的运行环境，不是额外的安装 flavor。
+当前 Flutter 客户端保持既有 production-shaped appId，并通过 flavor 隔离 local、staging 和 production-shaped 构建。`test` 是 staging 包的运行环境，不是额外的安装 flavor。
 
 | 项目 | 当前值 |
 | --- | --- |
 | Flutter local appId | `com.momcozymai.app.flutterpoc.local` |
-| Flutter unified appId | `com.momcozymai.app.flutterpoc.unified` |
+| Flutter staging appId | `com.momcozymai.app.flutterpoc.staging` |
 | Flutter production-shaped appId | `com.momcozymai.app.flutterpoc` |
 | Flutter namespace | `com.momcozymai.momcozy_flutter_app` |
 | App label | 当前三个 flavor 统一为 `momcozy AI`；安装隔离仍由 appId 保证。 |
 | Debug signing | 使用 Android debug keystore，仅用于本机和真机 smoke。 |
 | Release signing | 通过环境变量注入；未注入时 release build 使用 debug signing，仅允许作为本地 smoke artifact。 |
-| Gradle flavor | 已启用 `local`、`unified`、`production` 三个 flavor。 |
+| Gradle flavor | 已启用 `local`、`staging`、`production` 三个 flavor。 |
 
 ## 为什么当前 appId 保持不变
 
 - 避免未规划的包迁移破坏用户已安装数据、通知、权限和 BLE 绑定状态。
-- local、unified 和 production flavor 仍有清晰的安装与发布边界；测试环境由 `MOMCOZY_ENV=test` 显式表达。
+- local、staging 和 production flavor 仍有清晰的安装与发布边界；staging 环境由 `MOMCOZY_ENV=staging` 显式表达。
 
 ## Flavor 矩阵
 
@@ -26,7 +26,7 @@
 
 ```text
 local: 本地开发和 debug smoke，独立 appId。
-unified: 受保护内测分发，独立 appId；网络和证书 runtime 固定为 test。
+staging: 受保护内测分发，独立 appId；网络和证书 runtime 固定为 test。
 production: production-shaped artifact；保持当前基础 appId。
 ```
 
@@ -42,9 +42,9 @@ production: production-shaped artifact；保持当前基础 appId。
 
 ## AppId / Deep Link / FileProvider 矩阵
 
-| 项目 | Flutter local | Flutter unified（test runtime） | Flutter production-shaped |
+| 项目 | Flutter local | Flutter staging（test runtime） | Flutter production-shaped |
 | --- | --- | --- | --- |
-| Application ID | `com.momcozymai.app.flutterpoc.local` | `com.momcozymai.app.flutterpoc.unified` | `com.momcozymai.app.flutterpoc` |
+| Application ID | `com.momcozymai.app.flutterpoc.local` | `com.momcozymai.app.flutterpoc.staging` | `com.momcozymai.app.flutterpoc` |
 | Launcher label | `momcozy AI` | `momcozy AI` | `momcozy AI` |
 | Deep link / custom scheme | 未声明 | 未声明 | 未声明 |
 | FileProvider authority | 未声明 | 未声明 | 未声明 |
@@ -83,8 +83,8 @@ Android 构建继续使用固定版本的 MediaPipe Pose Landmarker Lite 模型�
 MOMCOZY_POSE_MODEL_FILE=/absolute/path/to/pose_landmarker_lite.task \
   node scripts/build-flutter-android-apk.mjs \
     --mode release \
-    --flavor unified \
-    --dart-define=MOMCOZY_ENV=test \
+    --flavor staging \
+    --dart-define=MOMCOZY_ENV=staging \
     --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
     --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
@@ -110,14 +110,14 @@ node scripts/build-flutter-android-apk.mjs \
 
 node scripts/build-flutter-android-apk.mjs \
   --mode release \
-  --flavor unified \
-  --dart-define=MOMCOZY_ENV=test \
+  --flavor staging \
+  --dart-define=MOMCOZY_ENV=staging \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
 低层 APK、下载页和一键发布封装共享同一配置校验。`local` 缺省注入 Product
-`http://127.0.0.1:8769` 与 Agent `http://127.0.0.1:8010`；`unified` / `production`
+`http://127.0.0.1:8769` 与 Agent `http://127.0.0.1:8010`；`staging` / `production`
 必须显式传入两个非 loopback HTTPS URL。直接调用裸
 `flutter build` 不具备这层 fail-closed 门禁，不应用于分发产物。
 
@@ -125,5 +125,5 @@ node scripts/build-flutter-android-apk.mjs \
 
 ```text
 [x] local debug APK `build/app/outputs/flutter-apk/app-local-debug.apk` 可生成
-[x] unified release APK `build/app/outputs/flutter-apk/app-unified-release.apk` 由受保护发布 gate 生成
+[x] staging release APK `build/app/outputs/flutter-apk/app-staging-release.apk` 由受保护发布 gate 生成
 ```

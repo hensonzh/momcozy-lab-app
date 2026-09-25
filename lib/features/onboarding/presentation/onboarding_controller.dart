@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/text/english_error_text.dart';
 import 'package:momcozy_flutter_app/core/update/app_release_lifecycle.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
 import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';
@@ -308,9 +309,17 @@ class OnboardingController extends ChangeNotifier {
 
   String _messageFor(Object error) {
     if (error is ApiHttpException) {
-      return error.errorMessage ?? 'We could not save that. Please try again.';
+      return englishErrorText(
+        error.errorMessage,
+        fallback: 'We could not save that. Please try again.',
+      );
     }
-    if (error is FormatException) return error.message;
+    if (error is FormatException) {
+      return englishErrorText(
+        error.message,
+        fallback: 'We could not save that. Please try again.',
+      );
+    }
     return 'Something went wrong. Check your connection and try again.';
   }
 

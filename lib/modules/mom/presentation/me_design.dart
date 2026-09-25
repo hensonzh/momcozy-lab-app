@@ -171,7 +171,7 @@ class MePage extends StatelessWidget {
                         Positioned(
                           left: 8,
                           child: IconButton(
-                            tooltip: '返回',
+                            tooltip: 'Back',
                             onPressed: onBack ?? () => Navigator.pop(context),
                             icon: MeDesign.asset(
                               'IconChevronLeft.svg',
@@ -311,7 +311,7 @@ class MeMetricRow extends StatelessWidget {
 }
 
 class MeError extends StatelessWidget {
-  const MeError({super.key, this.message = '保存失败，请重试'});
+  const MeError({super.key, this.message = 'Could not save. Please try again.'});
   final String message;
   @override
   Widget build(BuildContext context) => Container(
@@ -331,15 +331,15 @@ class MeError extends StatelessWidget {
 Future<bool> meDiscard(BuildContext context) => showDialog<bool>(
   context: context,
   builder: (context) => AlertDialog(
-    title: const Text('放弃本次修改？'),
+    title: const Text('Discard your changes?'),
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context, false),
-        child: const Text('继续编辑'),
+        child: const Text('Keep editing'),
       ),
       TextButton(
         onPressed: () => Navigator.pop(context, true),
-        child: const Text('放弃修改'),
+        child: const Text('Discard changes'),
       ),
     ],
   ),

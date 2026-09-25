@@ -138,13 +138,13 @@ final class ScheduleAgendaEntry {
       : 'task-${task!.plan.publication.id}-${task!.task.content.sourceKey}';
   String get title =>
       personal?.title ??
-      (appointment != null ? '哺乳咨询' : task!.task.content.title);
+      (appointment != null ? 'Lactation consultation' : task!.task.content.title);
   String get timeLabel => task != null
-      ? '全天'
+      ? 'All day'
       : personal?.startTime ??
             '${_time(appointment!.startsAt)}–${_time(appointment!.endsAt)}';
   int get startMinute {
-    if (task != null || personal?.startTime == '全天') return -1;
+    if (task != null || personal?.startTime == 'All day') return -1;
     if (appointment case final a?) {
       return a.startsAt.toLocal().hour * 60 + a.startsAt.toLocal().minute;
     }

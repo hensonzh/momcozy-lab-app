@@ -98,12 +98,12 @@ class BabyGrowthCurve extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                '生长趋势',
+                'Growth trends',
                 style: BabyDesign.text(16, line: 22, weight: FontWeight.w700),
               ),
               const SizedBox(height: 12),
               Text(
-                '出生至 6 月 · ${babySexLabel(baby.sex)} · $unit',
+                'Birth to 6 months · ${babySexLabel(baby.sex)} · $unit',
                 style: BabyDesign.text(
                   12,
                   line: 17,
@@ -133,7 +133,7 @@ class BabyGrowthCurve extends StatelessWidget {
                   child: Column(
                     children: [
                       const Text(
-                        '补充出生日期和出生记录性别后，才能显示对应的生长参考范围。',
+                        'Add the date of birth and sex recorded at birth to see the corresponding growth reference range.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: MomCozyTypography.captionSize,
@@ -142,7 +142,7 @@ class BabyGrowthCurve extends StatelessWidget {
                       BabyPressFeedback(
                         child: TextButton(
                           onPressed: onEditProfile,
-                          child: const Text('完善资料'),
+                          child: const Text('Complete profile'),
                         ),
                       ),
                     ],
@@ -165,7 +165,7 @@ class BabyGrowthCurve extends StatelessWidget {
                 const SizedBox(height: 12),
                 Semantics(
                   label:
-                      '${baby.name}的${growthMetricLabel(metric)}记录，出生至六个月。${visible.isEmpty ? '这段时间还没有测量记录。' : visible.map((record) => '${record.recordedOn}：${babyNumber(record.value)} $unit').join('；')}。浅绿色为 WHO 同龄参考范围。',
+                      '${baby.name}\'s ${growthMetricLabel(metric)} records from birth to 6 months. ${visible.isEmpty ? 'No measurements recorded during this period.' : visible.map((record) => '${record.recordedOn}: ${babyNumber(record.value)} $unit').join('; ')} The light green band shows the WHO reference range for this age.',
                   child: ExcludeSemantics(
                     child: SizedBox(
                       height:
@@ -188,7 +188,7 @@ class BabyGrowthCurve extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.only(bottom: 8),
                     child: Text(
-                      '出生至六个月还没有测量记录。',
+                      'No measurements recorded from birth to 6 months.',
                       style: TextStyle(
                         fontSize: 13,
                         color: MomHomeTokens.secondary,
@@ -201,7 +201,7 @@ class BabyGrowthCurve extends StatelessWidget {
                 const Divider(height: 1, color: MomHomeTokens.border),
                 const SizedBox(height: 12),
                 Text(
-                  '${visible.isEmpty ? '记录后会显示${baby.name}的变化' : '深色线是 ${baby.name} 的记录'}，浅绿色为 WHO 同龄参考范围。适合观察长期变化，不能根据单次测量下结论。',
+                  '${visible.isEmpty ? 'After you add measurements, you can see how ${baby.name} is growing' : 'The dark line shows ${baby.name}\'s measurements'}. The light green band shows the WHO reference range for this age. Look at trends over time rather than drawing conclusions from one measurement.',
                   style: BabyDesign.text(
                     13,
                     line: 18,
@@ -320,7 +320,7 @@ class _GrowthPainter extends CustomPainter {
     }
     for (final month in [0, 2, 4, 6]) {
       label(
-        '$month月',
+        '$month mo',
         Offset(
           x(birth.addMonths(month).daysSince(birth)),
           plot.bottom + font * 1.5,

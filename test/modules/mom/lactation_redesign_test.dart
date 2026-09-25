@@ -14,7 +14,8 @@ import 'lactation_test.dart' show LactationFixture, date, now, sample;
 
 const _offline = ProductFailure(ProductFailureKind.offline);
 const _conflict = ProductFailure(ProductFailureKind.conflict);
-final _longNote = '${('记录感受，按自己的节奏来。' * 160).substring(0, 1995)}结束备注。';
+final _longNote =
+    '${('Track how feeding feels, one day at a time. ' * 60).substring(0, 1995)}End of note.';
 
 class _Repository extends LactationFixture {
   ProductFailure? readFailure, updateFailure, deleteFailure, restoreFailure;
@@ -180,20 +181,22 @@ void main() {
           repo.pendingRead = null;
           await tester.pumpAndSettle();
           await _shot(tester, 'read-error', width, scale);
-          await _click(tester, find.text('重试'));
+          await _click(tester, find.text('Try again'));
           await _shot(tester, 'overview', width, scale);
-          await _click(tester, find.text('30天'));
+          await _click(tester, find.text('30 days'));
           final semantics = tester.ensureSemantics();
           expect(
             find.bySemanticsLabel(
-              RegExp('30天泵奶量趋势.*8月31日：65.5毫升.*9月7日：未记录.*9月8日：0毫升'),
+              RegExp(
+                'Pumped milk over 30 days.*8/31: 65.5 ml.*9/7: Not recorded.*9/8: 0 ml',
+              ),
             ),
             findsOneWidget,
           );
           await _shot(tester, '30-days', width, scale);
-          await _click(tester, find.text('7天'));
+          await _click(tester, find.text('7 days'));
           expect(
-            find.bySemanticsLabel(RegExp('7天泵奶量趋势.*9月8日：0毫升')),
+            find.bySemanticsLabel(RegExp('Pumped milk over 7 days.*9/8: 0 ml')),
             findsOneWidget,
           );
           semantics.dispose();
@@ -212,37 +215,40 @@ void main() {
             find.byKey(const ValueKey('lactation-measurement-pump')),
             '65.5',
           );
-          await _click(tester, find.text('保存修改'));
+          await _click(tester, find.text('Save changes'));
           expect(repo.records.first.version, 4);
           await _shot(tester, 'save-conflict', width, scale);
-          await _click(tester, find.text('返回记录'));
+          await _click(tester, find.text('Back to records'));
           await _shot(tester, 'leave-confirm', width, scale);
-          await _click(tester, find.text('继续填写'));
+          await _click(tester, find.text('Keep editing'));
           expect(find.text('65.5'), findsOneWidget);
-          await _click(tester, find.text('返回记录'));
-          await _click(tester, find.text('离开'));
+          await _click(tester, find.text('Back to records'));
+          await _click(tester, find.text('Leave'));
           final delete = find.byKey(const ValueKey('lactation-delete-entry'));
           repo.deleteFailure = _offline;
           await _click(tester, delete);
           expect(repo.records.any((r) => r.id == 'entry'), isTrue);
-          expect(find.text('网络未连接，请连接后重试').hitTestable(), findsOneWidget);
+          expect(
+            find.text("You're offline. Connect and try again.").hitTestable(),
+            findsOneWidget,
+          );
           await _shot(tester, 'delete-error', width, scale);
           repo.deleteFailure = null;
-          await _click(tester, find.text('重试'));
+          await _click(tester, find.text('Try again'));
           await _click(tester, delete);
-          expect(find.text('记录已删除').hitTestable(), findsOneWidget);
+          expect(find.text('Record deleted').hitTestable(), findsOneWidget);
           repo.restoreFailure = _offline;
-          await _click(tester, find.text('撤销'));
+          await _click(tester, find.text('Undo'));
           expect(repo.records.any((r) => r.id == 'entry'), isFalse);
           await _shot(tester, 'restore-error', width, scale);
           repo.restoreFailure = null;
-          await _click(tester, find.text('撤销'));
+          await _click(tester, find.text('Undo'));
           expect(repo.restoreVersion, 9);
           expect(
             repo.records.firstWhere((r) => r.id == 'entry').observation.note,
             _longNote,
           );
-          expect(find.text('记录已恢复。').hitTestable(), findsOneWidget);
+          expect(find.text('Record restored.').hitTestable(), findsOneWidget);
           await _shot(tester, 'restored', width, scale);
           await tester.pumpWidget(const SizedBox());
         },
@@ -336,32 +342,35 @@ void main() {
           await tester.pumpAndSettle();
           final pending = Completer<LactationRecord>();
           repo.nextCreate = pending.future;
-          await _click(tester, find.text('保存这次记录'));
+          await _click(tester, find.text('Save this record'));
           expect(repo.keys, hasLength(1));
           expect(
             tester
                 .widget<FilledButton>(
-                  find.widgetWithText(FilledButton, '正在保存…'),
+                  find.widgetWithText(FilledButton, 'Saving…'),
                 )
                 .onPressed,
             isNull,
           );
           await _shot(tester, 'saving', width, scale);
-          await tester.tap(find.byTooltip('关闭泌乳记录'));
+          await tester.tap(find.byTooltip('Close feeding and pumping records'));
           expect(closed, 0);
           pending.completeError(_offline);
           await tester.pumpAndSettle();
-          await _click(tester, find.byTooltip('关闭泌乳记录'));
+          await _click(
+            tester,
+            find.byTooltip('Close feeding and pumping records'),
+          );
           await _shot(tester, 'uncertain-leave', width, scale);
-          await _click(tester, find.text('继续填写'));
+          await _click(tester, find.text('Keep editing'));
           repo.nextCreate = null;
-          await _click(tester, find.text('重试保存'));
+          await _click(tester, find.text('Try saving again'));
           expect(repo.keys, hasLength(2));
           expect(repo.keys.first, repo.keys.last);
           final saved = repo.records.single.observation as PumpObservation;
           expect(saved.volumeMl, 0);
           expect(saved.occurredAt, DateTime(2026, 9, 8, 12));
-          expect(find.text('这次记录已保存。').hitTestable(), findsOneWidget);
+          expect(find.text('Record saved.').hitTestable(), findsOneWidget);
           await _shot(tester, 'saved-zero', width, scale);
           await tester.pumpWidget(const SizedBox());
         },

@@ -29,7 +29,7 @@ class MediaViewerHeader extends StatelessWidget {
               dimension: 44,
               child: IconButton(
                 key: returnButtonKey,
-                tooltip: '返回',
+                tooltip: 'Back',
                 onPressed: onBack,
                 icon: const Icon(Icons.arrow_back_rounded, size: 24),
                 style: IconButton.styleFrom(
@@ -47,14 +47,20 @@ class MediaViewerHeader extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Tooltip(
-                message: title,
-                child: Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  semanticsLabel: title,
-                  style: MomHomeTokens.text(16, weight: FontWeight.w700),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.sizeOf(context).height * .3,
+                ),
+                child: SingleChildScrollView(
+                  child: Tooltip(
+                    message: title,
+                    child: Text(
+                      title,
+                      softWrap: true,
+                      semanticsLabel: title,
+                      style: MomHomeTokens.text(16, weight: FontWeight.w700),
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -3,32 +3,32 @@ import '../../domain/care/intake.dart';
 import '../../domain/baby/baby_profile.dart';
 
 const episodeStatusLabels = {
-  CareEpisodeStatus.active: '服务进行中',
-  CareEpisodeStatus.provisioningPending: '已购服务',
-  CareEpisodeStatus.paused: '服务已暂停',
-  CareEpisodeStatus.completed: '服务已完成',
-  CareEpisodeStatus.cancelled: '服务已取消',
+  CareEpisodeStatus.active: 'Care in progress',
+  CareEpisodeStatus.provisioningPending: 'Service purchased',
+  CareEpisodeStatus.paused: 'Care paused',
+  CareEpisodeStatus.completed: 'Care completed',
+  CareEpisodeStatus.cancelled: 'Care canceled',
 };
 const careStageLabels = {
-  CareStage.preparation: '咨询准备',
-  CareStage.initialConsultation: '首次咨询',
-  CareStage.activeCare: '方案执行',
-  CareStage.followUp: '持续跟进',
-  CareStage.conclusion: '阶段总结',
+  CareStage.preparation: 'Preparing for your consultation',
+  CareStage.initialConsultation: 'Initial consultation',
+  CareStage.activeCare: 'Following your care plan',
+  CareStage.followUp: 'Ongoing follow-up',
+  CareStage.conclusion: 'Care summary',
 };
 
 const intakeSymptomLabels = {
-  IntakeSymptom.latchDifficulty: '含乳困难',
-  IntakeSymptom.feedingPain: '喂养疼痛',
-  IntakeSymptom.supplyConcern: '奶量担心',
-  IntakeSymptom.frequentWaking: '宝宝频繁醒来',
-  IntakeSymptom.pumpingSchedule: '泵奶安排',
-  IntakeSymptom.other: '其他',
+  IntakeSymptom.latchDifficulty: 'Latching difficulties',
+  IntakeSymptom.feedingPain: 'Pain during feeding',
+  IntakeSymptom.supplyConcern: 'Milk supply concerns',
+  IntakeSymptom.frequentWaking: 'Frequent waking',
+  IntakeSymptom.pumpingSchedule: 'Pumping schedule',
+  IntakeSymptom.other: 'Other',
 };
 const feedingModeLabels = {
-  FeedingMode.breastfeeding: '纯母乳',
-  FeedingMode.expressedMilk: '母乳瓶喂',
-  FeedingMode.mixed: '混合喂养',
-  FeedingMode.formula: '配方奶',
-  FeedingMode.unknown: '请选择',
+  FeedingMode.breastfeeding: 'Exclusive breastfeeding',
+  FeedingMode.expressedMilk: 'Bottle-fed breast milk',
+  FeedingMode.mixed: 'Combination feeding',
+  FeedingMode.formula: 'Formula feeding',
+  FeedingMode.unknown: 'Select an option',
 };

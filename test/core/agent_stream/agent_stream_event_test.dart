@@ -130,7 +130,7 @@ void main() {
         'transient': true,
         'cursor': '1720000000-0',
         'payload': {
-          'delta': '正在生成',
+          'delta': 'Generating',
           'message_stream_id': 'assistant',
           'stream_schema_version': 'append-only.v1',
           'segment_index': 2,
@@ -141,7 +141,7 @@ void main() {
 
       expect(event.isTransient, isTrue);
       expect(event.sequence, isNull);
-      expect(event.textDelta, '正在生成');
+      expect(event.textDelta, 'Generating');
       expect(event.messageStreamId, 'assistant');
       expect(event.streamSchemaVersion, 'append-only.v1');
       expect(event.segmentIndex, 2);
@@ -156,7 +156,7 @@ void main() {
         'created_at': '2026-07-27T10:00:00Z',
         'payload': {
           'semantic': {
-            'label': '我在组织回复～',
+            'label': 'Putting together a response…',
             'surface': 'status_bar',
             'lifecycle': 'running',
             'merge_key': 'progress:response_finalizing',
@@ -166,16 +166,16 @@ void main() {
       });
       final rawSemantic = AgentStreamEvent(const {
         'type': 'run.progress',
-        'semantic': {'label': '我想一下', 'surface': 'thinking_note'},
+        'semantic': {'label': 'Let me think…', 'surface': 'thinking_note'},
       });
 
-      expect(payloadSemantic.semanticLabel, '我在组织回复～');
+      expect(payloadSemantic.semanticLabel, 'Putting together a response…');
       expect(payloadSemantic.semanticSurface, 'status_bar');
       expect(payloadSemantic.semanticLifecycle, 'running');
       expect(payloadSemantic.semanticMergeKey, 'progress:response_finalizing');
       expect(payloadSemantic.semanticPriority, 80);
       expect(payloadSemantic.createdAt, DateTime.utc(2026, 7, 27, 10));
-      expect(rawSemantic.semanticLabel, '我想一下');
+      expect(rawSemantic.semanticLabel, 'Let me think…');
       expect(rawSemantic.semanticSurface, 'thinking_note');
     });
 

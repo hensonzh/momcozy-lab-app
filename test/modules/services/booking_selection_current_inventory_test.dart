@@ -91,25 +91,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    // Visit the lazy service section through scrolling, let its data and button
-    // animations settle, then return to the top before the entry screenshot.
-    final homeScroll = find.byType(Scrollable).first;
-    await tester.scrollUntilVisible(
-      find.text('服务进度 ›'),
-      250,
-      scrollable: homeScroll,
-    );
-    await tester.pumpAndSettle();
-    await tester.drag(homeScroll, const Offset(0, 10000));
-    await tester.pumpAndSettle();
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -209,15 +197,20 @@ void main() {
     await capture(
       tester,
       '$chain-home',
-      'More → Me → owned service',
-      route: '/me',
+      'More before expert support',
+      route: '/more',
     );
-    await tap(tester, find.text('预约咨询'));
+    await tap(tester, find.text('Expert support'));
+    await tap(tester, find.text('View my services'));
+    await tap(tester, find.text('Book an appointment'));
     await tap(tester, find.byType(DropdownButtonFormField<String>));
     await tap(tester, find.text('California (CA)').last);
-    await tap(tester, find.text('我需要的是哺乳或喂养相关的 IBCLC 咨询'));
-    await tap(tester, find.text('目前没有上述紧急情况'));
-    await tap(tester, find.text('继续选择时间'));
+    await tap(
+      tester,
+      find.text('I need IBCLC support with lactation or feeding.'),
+    );
+    await tap(tester, find.text('None of these apply right now'));
+    await tap(tester, find.text('Continue to time selection'));
     await capture(
       tester,
       '$chain-slots',
@@ -226,12 +219,12 @@ void main() {
   }
 
   Future<void> finish(WidgetTester tester, String chain) async {
-    await tap(tester, find.text('返回'));
+    await tap(tester, find.text('Back'));
     await capture(
       tester,
       '$chain-home-return',
-      'Booking Back → Me',
-      route: '/me',
+      'Booking Back → service plan',
+      route: '/services/feeding-confidence',
     );
     await tester.pumpWidget(const SizedBox());
   }
@@ -398,7 +391,7 @@ void main() {
         narrow = compact;
         await enter(tester, 'hold');
         transport.writeGate = Completer<void>();
-        await tap(tester, find.text('60 分钟'));
+        await tap(tester, find.text('60 min'));
         await capture(
           tester,
           'hold-pending',
@@ -413,7 +406,7 @@ void main() {
           'Hold HTTP 503 → unresolved submission with retry',
         );
         transport.failingWrites.clear();
-        await tap(tester, find.text('重试上次提交'));
+        await tap(tester, find.text('Retry last submission'));
         expect(transport.requests.last['body'], first['body']);
         expect(transport.requests.last['headers'], first['headers']);
         expect(find.byType(BookingSelectionDialog), findsOneWidget);
@@ -422,25 +415,25 @@ void main() {
           'held-review',
           'Retry same idempotency key → held appointment review',
         );
-        await tap(tester, find.text('提前 15 分钟提醒我'));
+        await tap(tester, find.text('Remind me 15 minutes before'));
         await capture(tester, 'reminder-selected', 'Enable reminder draft');
-        await tap(tester, find.text('提前 15 分钟提醒我'));
+        await tap(tester, find.text('Remind me 15 minutes before'));
         await capture(tester, 'reminder-cleared', 'Disable reminder draft');
-        await tap(tester, find.byTooltip('关闭预约时间确认'));
+        await tap(tester, find.byTooltip('Close time confirmation'));
         expect(transport.appointment?['status'], 'held');
         await capture(
           tester,
           'held-closed',
           'Close review → time remains held; provider and date disabled',
         );
-        await tap(tester, find.text('查看所选时间'));
+        await tap(tester, find.text('View selected time'));
         await capture(
           tester,
           'held-reopened',
           'View selected time → reopen review',
         );
         transport.writeGate = Completer<void>();
-        await tap(tester, find.text('重新选择'));
+        await tap(tester, find.text('Choose another time'));
         await capture(
           tester,
           'reselect-pending',
@@ -453,7 +446,7 @@ void main() {
           'Cancel hold HTTP 503 → retry previous submission',
         );
         transport.failingWrites.clear();
-        await tap(tester, find.text('重试上次提交').last);
+        await tap(tester, find.text('Retry last submission').last);
         expect(transport.appointment?['status'], 'cancelled');
         expect(find.byType(BookingSelectionDialog), findsNothing);
         await capture(
@@ -461,7 +454,7 @@ void main() {
           'reselect-restored',
           'Retry cancel → review closes and time selection restored',
         );
-        await tap(tester, find.text('60 分钟'));
+        await tap(tester, find.text('60 min'));
         await capture(
           tester,
           'second-held',
@@ -470,7 +463,7 @@ void main() {
         final newHold = transport.requests.last;
         expect(newHold['headers'], isNot(first['headers']));
         transport.writeGate = Completer<void>();
-        await tap(tester, find.text('确认预约'));
+        await tap(tester, find.text('Confirm appointment'));
         await capture(
           tester,
           'confirm-pending',
@@ -490,7 +483,7 @@ void main() {
           'Pending Back blocked; confirm HTTP 503 → retry',
         );
         transport.failingWrites.clear();
-        await tap(tester, find.text('重试上次提交').last);
+        await tap(tester, find.text('Retry last submission').last);
         expect(transport.requests.last['body'], confirmRequest['body']);
         expect(transport.appointment?['status'], 'confirmed');
         await capture(
@@ -499,7 +492,7 @@ void main() {
           'Retry confirmation → real information intake page',
           route: '/services/appointments/service-appointment/intake',
         );
-        await tap(tester, find.text('返回'));
+        await tap(tester, find.text('Back'));
         await capture(
           tester,
           'confirmed-detail',

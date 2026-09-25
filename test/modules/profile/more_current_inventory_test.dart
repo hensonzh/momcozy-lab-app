@@ -135,6 +135,10 @@ void main() {
 
   Future<void> tap(WidgetTester tester, Finder target) async {
     if (target.evaluate().isEmpty) {
+      await tester.drag(find.byType(Scrollable).last, const Offset(0, 10000));
+      await settle(tester);
+    }
+    if (target.evaluate().isEmpty) {
       await tester.scrollUntilVisible(
         target,
         300,
@@ -203,7 +207,7 @@ void main() {
       'Authenticated Me before More navigation',
       route: '/me',
     );
-    await tap(tester, find.text('More'));
+    await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
   }
 
   Future<void> back(WidgetTester tester, String state, String route) async {
@@ -211,9 +215,9 @@ void main() {
         ? find.byType(BackButton)
         : find.byTooltip('Back').evaluate().isNotEmpty
         ? find.byTooltip('Back')
-        : find.byTooltip('返回').evaluate().isNotEmpty
-        ? find.byTooltip('返回')
-        : find.text('返回');
+        : find.byTooltip('Back').evaluate().isNotEmpty
+        ? find.byTooltip('Back')
+        : find.text('Back');
     await tap(tester, target.first);
     await tester.pumpAndSettle();
     await capture(tester, state, 'Tap page Back → $route', route: route);
@@ -232,7 +236,7 @@ void main() {
         'routes-ready',
         'More current identity and three unread notifications',
       );
-      await tap(tester, find.text('隐私'));
+      await tap(tester, find.text('Privacy'));
       await capture(
         tester,
         'privacy',
@@ -240,7 +244,7 @@ void main() {
         route: '/privacy',
       );
       await back(tester, 'privacy-return', '/more');
-      await tap(tester, find.text('账号设置'));
+      await tap(tester, find.text('Account settings'));
       expect(find.text('Email verified'), findsOneWidget);
       await capture(
         tester,
@@ -277,7 +281,7 @@ void main() {
         route: '/account',
       );
       await back(tester, 'account-return', '/more');
-      await tap(tester, find.text('通知'));
+      await tap(tester, find.text('Notifications'));
       expect(router.state.uri.queryParameters['from'], '/more');
       await capture(
         tester,
@@ -304,14 +308,14 @@ void main() {
       await back(tester, 'inbox-return', '/more');
       expect(coordinator.inbox!.state.unreadCount, 0);
       expect(find.text('3'), findsNothing);
-      await tap(tester, find.text('专家支持'));
+      await tap(tester, find.text('Expert support'));
       await capture(
         tester,
         'expert-catalog',
         'Expert support card → real service catalog',
         route: '/services',
       );
-      await tap(tester, find.text('查看我的服务'));
+      await tap(tester, find.text('View my services'));
       await capture(
         tester,
         'expert-package',
@@ -392,7 +396,7 @@ void main() {
           );
           await start(tester, condition);
           if (condition == 'pending') {
-            expect(find.text('正在加载账号…'), findsOneWidget);
+            expect(find.text('Loading account…'), findsOneWidget);
             await capture(
               tester,
               'identity-pending',
@@ -400,7 +404,7 @@ void main() {
             );
             transport.readGates['/v1/profile/me']!.complete();
             await tester.pumpAndSettle();
-            expect(find.text('正在加载账号…'), findsOneWidget);
+            expect(find.text('Loading account…'), findsOneWidget);
             await capture(
               tester,
               'identity-name-only-arrived',
@@ -417,11 +421,14 @@ void main() {
           } else {
             if (condition == 'name-unavailable' ||
                 condition == 'both-unavailable') {
-              expect(find.text('我的账号'), findsOneWidget);
+              expect(find.text('My account'), findsOneWidget);
             }
             if (condition == 'email-unavailable' ||
                 condition == 'both-unavailable') {
-              expect(find.text('管理你的账号信息'), findsOneWidget);
+              expect(
+                find.text('Manage your account information'),
+                findsOneWidget,
+              );
             }
             if (condition == 'name-unavailable') {
               expect(find.text('mia@example.test'), findsOneWidget);

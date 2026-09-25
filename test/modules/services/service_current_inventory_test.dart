@@ -94,14 +94,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -266,23 +265,39 @@ void main() {
     }
   }
 
+  Future<void> openFirstAvailablePlan(WidgetTester tester) async {
+    final scroll = find.descendant(
+      of: find.byType(ServiceCatalogPage),
+      matching: find.byType(ListView),
+    );
+    for (
+      var i = 0;
+      i < 30 && find.text('View plans →').hitTestable().evaluate().isEmpty;
+      i++
+    ) {
+      await tester.drag(scroll, const Offset(0, -240));
+      await settle(tester);
+    }
+    await tap(tester, find.text('View plans →').hitTestable().first);
+  }
+
   Future<void> enter(WidgetTester tester, String entry) async {
     await capture(
       tester,
       '$entry-home',
-      'Authenticated More → Me before service entry',
-      route: '/me',
+      'Authenticated More before service entry',
+      route: '/more',
     );
     await catalog(tester);
   }
 
   Future<void> closeDialog(WidgetTester tester) => tap(
     tester,
-    find.byTooltip('关闭购买').evaluate().isNotEmpty
-        ? find.byTooltip('关闭购买')
-        : find.byTooltip('关闭预约前确认').evaluate().isNotEmpty
-        ? find.byTooltip('关闭预约前确认')
-        : find.text('关闭').last,
+    find.byTooltip('Close purchase').evaluate().isNotEmpty
+        ? find.byTooltip('Close purchase')
+        : find.byTooltip('Close booking check').evaluate().isNotEmpty
+        ? find.byTooltip('Close booking check')
+        : find.text('Close').last,
   );
   for (final compact in [false, true]) {
     testWidgets(
@@ -297,7 +312,7 @@ void main() {
           'Home expert plan → current catalog',
           route: '/services',
         );
-        await tap(tester, find.text('了解团队'));
+        await tap(tester, find.text('Meet the team'));
         await capture(
           tester,
           'catalog-team',
@@ -311,20 +326,20 @@ void main() {
           'Team Close → catalog',
           route: '/services',
         );
-        await tap(tester, find.text('了解团队'));
+        await tap(tester, find.text('Meet the team'));
         await tester.tapAt(const Offset(3, 3));
         await settle(tester);
-        expect(find.text('IBCLC 专家团队'), findsNothing);
+        expect(find.text('IBCLC team'), findsNothing);
         await capture(
           tester,
           'catalog-team-barrier-dismissed',
           'Team outside tap → catalog',
           route: '/services',
         );
-        await tap(tester, find.text('了解团队'));
+        await tap(tester, find.text('Meet the team'));
         await tester.binding.handlePopRoute();
         await settle(tester);
-        expect(find.text('IBCLC 专家团队'), findsNothing);
+        expect(find.text('IBCLC team'), findsNothing);
         await capture(
           tester,
           'catalog-team-back-dismissed',
@@ -332,10 +347,10 @@ void main() {
           route: '/services',
         );
         const names = {
-          'feeding-confidence': '喂养安心',
-          'better-breastfeeding': '亲喂改善',
-          'milk-supply-care': '奶量管理',
-          'comfortable-feeding': '舒适哺乳支持',
+          'feeding-confidence': 'Feeding Confidence',
+          'better-breastfeeding': 'Better Breastfeeding',
+          'milk-supply-care': 'Milk Supply Care',
+          'comfortable-feeding': 'Comfortable Feeding',
         };
         for (final item in names.entries) {
           final card = find.ancestor(
@@ -346,7 +361,7 @@ void main() {
           );
           await tap(
             tester,
-            find.descendant(of: card, matching: find.text('查看方案 →')),
+            find.descendant(of: card, matching: find.text('View plans →')),
           );
           final route = '/services/${item.key}';
           await capture(
@@ -355,7 +370,7 @@ void main() {
             'Catalog ${item.value} → current package',
             route: route,
           );
-          await tap(tester, find.text('了解团队'));
+          await tap(tester, find.text('Meet the team'));
           await capture(
             tester,
             'package-team-${item.key}',
@@ -363,7 +378,7 @@ void main() {
             route: route,
           );
           await closeDialog(tester);
-          await tap(tester, find.text('购买'));
+          await tap(tester, find.text('Purchase'));
           await capture(
             tester,
             'package-buy-${item.key}',
@@ -377,7 +392,7 @@ void main() {
             'Close before submitting eligibility → package',
             route: route,
           );
-          await tap(tester, find.text('返回').first);
+          await tap(tester, find.text('Back').first);
         }
         await capture(
           tester,
@@ -385,12 +400,12 @@ void main() {
           'Four package Back paths → catalog',
           route: '/services',
         );
-        await tap(tester, find.text('返回').first);
+        await tap(tester, find.text('Back').first);
         await capture(
           tester,
           'catalog-home-return',
           'Catalog Back → mother home',
-          route: '/me',
+          route: '/more',
         );
         expect(transport.requests, isEmpty);
         await tester.pumpWidget(const SizedBox());
@@ -424,15 +439,20 @@ void main() {
       transport.failingReads.clear();
       transport.responsesByPath[catalogPath]!['packages'] = [];
       transport.responsesByPath[catalogPath]!['providers'] = [];
-      await tap(tester, find.text('重试'));
-      expect(find.text('暂无可用的服务方案'), findsOneWidget);
+      await tap(tester, find.text('Try again'));
+      await tester.scrollUntilVisible(
+        find.text('No service plans available'),
+        240,
+        scrollable: find.byType(Scrollable).last,
+      );
+      expect(find.text('No service plans available'), findsOneWidget);
       await capture(
         tester,
         'catalog-empty',
         'Retry → no available packages',
         route: '/services',
       );
-      await tap(tester, find.text('了解团队'));
+      await tap(tester, find.text('Meet the team'));
       await capture(
         tester,
         'catalog-team-empty',
@@ -466,19 +486,19 @@ void main() {
         route: '/services',
       );
       transport.failingReads.clear();
-      await tap(tester, find.text('重试'));
+      await tap(tester, find.text('Try again'));
       await capture(
         tester,
         'catalog-refresh-recovered',
         'Retry refresh → error removed and catalog restored',
         route: '/services',
       );
-      await tap(tester, find.text('返回').first);
+      await tap(tester, find.text('Back').first);
       await capture(
         tester,
         'catalog-recovery-home-return',
         'Catalog recovery Back → home',
-        route: '/me',
+        route: '/more',
       );
       await tester.pumpWidget(const SizedBox());
     });
@@ -498,7 +518,7 @@ void main() {
           transport.responsesByPath[catalogPath]!,
         );
         transport.readGates[catalogPath] = Completer<void>();
-        await tap(tester, find.text('查看方案 →').first);
+        await openFirstAvailablePlan(tester);
         await capture(
           tester,
           'package-loading',
@@ -514,33 +534,33 @@ void main() {
         );
         transport.failingReads.clear();
         transport.responsesByPath[catalogPath]!['packages'] = [];
-        await tap(tester, find.text('重试'));
+        await tap(tester, find.text('Try again'));
         await capture(
           tester,
           'package-missing',
           'Retry returns removed package → unavailable page',
         );
-        expect(find.text('没有找到这个服务方案'), findsOneWidget);
-        await tap(tester, find.text('返回').first);
+        expect(find.text('Could not find this service plan'), findsOneWidget);
+        await tap(tester, find.text('Back').first);
         transport.responsesByPath[catalogPath] = original;
         transport.responsesByPath[catalogPath]!['payment_mode'] = 'disabled';
-        await tap(tester, find.text('查看方案 →').first);
+        await openFirstAvailablePlan(tester);
         await capture(
           tester,
           'package-purchase-disabled',
           'Reenter package when payment disabled',
         );
         final disabled = tester.widget<FilledButton>(
-          find.widgetWithText(FilledButton, '暂未开放购买'),
+          find.widgetWithText(FilledButton, 'Not available to purchase yet'),
         );
         expect(disabled.onPressed, isNull);
-        await tap(tester, find.text('返回').first);
-        await tap(tester, find.text('返回').first);
+        await tap(tester, find.text('Back').first);
+        await tap(tester, find.text('Back').first);
         await capture(
           tester,
           'package-recovery-home-return',
           'Package and catalog Back → home',
-          route: '/me',
+          route: '/more',
         );
         expect(transport.requests, isEmpty);
         await tester.pumpWidget(const SizedBox());
@@ -558,69 +578,69 @@ void main() {
         'Owned service grouped above available packages',
         route: '/services',
       );
-      await tap(tester, find.text('查看我的服务'));
+      await tap(tester, find.text('View my services'));
       await capture(
         tester,
         'owned-package',
         'Owned package → expert identity, remaining sessions, progress and booking',
       );
-      await tap(tester, find.text('查看我的服务进度'));
+      await tap(tester, find.text('View service progress'));
       await capture(
         tester,
         'owned-progress',
         'Package progress action → actual service timeline',
         route: '/services/episodes/service-episode',
       );
-      await tap(tester, find.text('返回').first);
+      await tap(tester, find.text('Back').first);
       await capture(
         tester,
         'owned-progress-return',
         'Timeline Back → owned package',
       );
-      await tap(tester, find.text('开始预约'));
+      await tap(tester, find.text('Book an appointment'));
       await capture(
         tester,
         'owned-booking',
         'Owned package booking → actual booking preparation',
         route: '/services/episodes/service-episode/booking',
       );
-      if (find.text('关闭').evaluate().isNotEmpty ||
-          find.byTooltip('关闭预约前确认').evaluate().isNotEmpty) {
+      if (find.text('Close').evaluate().isNotEmpty ||
+          find.byTooltip('Close booking check').evaluate().isNotEmpty) {
         await closeDialog(tester);
       }
-      await tap(tester, find.text('返回').first);
+      await tap(tester, find.text('Back').first);
       await capture(
         tester,
         'owned-booking-return',
         'Booking cancel/back → owned package',
       );
-      await tap(tester, find.text('返回').first);
+      await tap(tester, find.text('Back').first);
       transport.episode!['status'] = 'paused';
       transport.episode!['remaining_sessions'] = 0;
-      await tap(tester, find.text('查看我的服务'));
+      await tap(tester, find.text('View my services'));
       await capture(
         tester,
         'paused-package',
         'Reenter paused zero-session plan → existing package state',
       );
-      await tap(tester, find.text('开始预约'));
+      await tap(tester, find.text('Book an appointment'));
       await capture(
         tester,
         'paused-booking',
         'Package booking action on paused plan → actual eligibility block',
         route: '/services/episodes/service-episode/booking',
       );
-      if (find.text('关闭').evaluate().isNotEmpty) {
+      if (find.text('Close').evaluate().isNotEmpty) {
         await closeDialog(tester);
       }
-      await tap(tester, find.text('返回').first);
-      await tap(tester, find.text('返回').first);
-      await tap(tester, find.text('返回').first);
+      await tap(tester, find.text('Back').first);
+      await tap(tester, find.text('Back').first);
+      await tap(tester, find.text('Back').first);
       await capture(
         tester,
         'owned-home-return',
         'Return through package and catalog → home',
-        route: '/me',
+        route: '/more',
       );
       await tester.pumpWidget(const SizedBox());
     });
@@ -636,14 +656,14 @@ void main() {
           'Pending order grouped before available packages',
           route: '/services',
         );
-        await tap(tester, find.text('继续付款'));
+        await tap(tester, find.text('Continue to payment'));
         await capture(
           tester,
           'pending-package',
           'Pending order → package resume footer',
         );
         transport.readGates[orderPath] = Completer<void>();
-        await tap(tester, find.text('继续付款'));
+        await tap(tester, find.text('Continue to payment'));
         await capture(
           tester,
           'pending-order-opening',
@@ -665,7 +685,7 @@ void main() {
           'Open order feedback timeout → resume available',
         );
         transport.failingReads.clear();
-        await tap(tester, find.text('继续付款'));
+        await tap(tester, find.text('Continue to payment'));
         await capture(
           tester,
           'pending-order-resumed',
@@ -677,19 +697,19 @@ void main() {
           'pending-order-closed',
           'Close payment form without paying → order remains resumable',
         );
-        await tap(tester, find.text('返回').first);
+        await tap(tester, find.text('Back').first);
         await capture(
           tester,
           'pending-catalog-return',
           'Pending package Back → catalog',
           route: '/services',
         );
-        await tap(tester, find.text('返回').first);
+        await tap(tester, find.text('Back').first);
         await capture(
           tester,
           'pending-home-return',
           'Catalog Back → home',
-          route: '/me',
+          route: '/more',
         );
         expect(transport.requests, isEmpty);
         await tester.pumpWidget(const SizedBox());

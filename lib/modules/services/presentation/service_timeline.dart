@@ -85,7 +85,7 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
               a.status != AppointmentStatus.expired,
         )
         .lastOrNull;
-    final initials = latestExpert?.providerName
+    final initials = latestExpert?.publicProviderName
         .trim()
         .split(RegExp(r'\s+'))
         .where((s) => s.isNotEmpty)
@@ -97,11 +97,11 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
       color: MomHomeTokens.mint,
       children: [
         Text(
-          '我的陪伴计划',
+          'My care plan',
           style: MomHomeTokens.text(11, color: MomHomeTokens.teal),
         ),
         Text(
-          widget.package.name,
+          widget.package.publicName,
           style: MomHomeTokens.text(22, weight: FontWeight.w700),
         ),
         Text(
@@ -113,7 +113,7 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
           ),
         ),
         Text(
-          '当前阶段 · ${careStageLabels[episode.stage]}',
+          'Current stage · ${careStageLabels[episode.stage]}',
           style: MomHomeTokens.text(13, color: MomHomeTokens.teal),
         ),
         Row(
@@ -145,14 +145,14 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                latestExpert?.providerName ?? 'IBCLC 专家团队',
+                latestExpert?.publicProviderName ?? 'IBCLC team',
                 style: MomHomeTokens.text(14, weight: FontWeight.w700),
               ),
             ),
           ],
         ),
         Text(
-          '${total - remaining} 次已使用 · 剩余 $remaining/$total 次咨询',
+          '${total - remaining} used · $remaining/$total consultations left',
           style: MomHomeTokens.text(
             14,
             weight: FontWeight.w700,
@@ -160,7 +160,7 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
           ),
         ),
         Text(
-          '${widget.order.durationDays} 天支持',
+          '${widget.order.durationDays} days of support',
           style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
         ),
       ],
@@ -168,27 +168,27 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
     final events = <_TimelineEvent>[
       _TimelineEvent(
         date: widget.order.createdAt,
-        title: '服务包已购买',
+        title: 'Package purchased',
         description:
-            '${widget.order.durationDays} 天支持 · ${widget.order.totalSessions} 次 IBCLC 在线咨询',
+            '${widget.order.durationDays} days of support · ${widget.order.totalSessions} online IBCLC consultations',
       ),
       for (final a in widget.appointments)
         _TimelineEvent(
           date: a.startsAt,
           timezone: a.timezone,
-          author: a.providerName,
+          author: a.publicProviderName,
           title: switch (a.status) {
-            AppointmentStatus.completed => '咨询已结束',
-            AppointmentStatus.cancelled => '预约已取消',
-            AppointmentStatus.expired => '预约已过期',
-            AppointmentStatus.inProgress => '咨询进行中',
-            _ => '已预约咨询',
+            AppointmentStatus.completed => 'Consultation ended',
+            AppointmentStatus.cancelled => 'Appointment canceled',
+            AppointmentStatus.expired => 'Appointment expired',
+            AppointmentStatus.inProgress => 'Consultation in progress',
+            _ => 'Consultation booked',
           },
           description:
-              '预约时间：${appointmentDay(a.startsAt, a.timezone)} · ${zonedRange(a.startsAt, a.endsAt, a.timezone)}',
+              'Appointment: ${appointmentDay(a.startsAt, a.timezone)} · ${zonedRange(a.startsAt, a.endsAt, a.timezone)}',
           actionLabel: a.status == AppointmentStatus.completed
-              ? '查看咨询总结'
-              : '查看预约',
+              ? 'View consultation summary'
+              : 'View appointment',
           action:
               widget.onOpenAppointment == null ||
                   [
@@ -206,7 +206,7 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
             width: double.infinity,
             child: TextButton(
               onPressed: () => _scroll.jumpTo(0),
-              child: const Text('↑ 查看更早记录'),
+              child: const Text('↑ Earlier records'),
             ),
           ),
         if (widget.loading) const LinearProgressIndicator(minHeight: 2),
@@ -227,7 +227,7 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
                       Semantics(
                         header: true,
                         child: Text(
-                          '服务记录',
+                          'Service history',
                           style: MomHomeTokens.text(
                             18,
                             weight: FontWeight.w700,
@@ -244,7 +244,7 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
                         MomSettingsCard(
                           children: [
                             Text(
-                              '预约记录暂时未更新，已保留当前服务信息。',
+                              'Appointment history has not refreshed. Your current service details are still here.',
                               style: MomHomeTokens.text(
                                 13,
                                 height: 1.55,
@@ -255,7 +255,7 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
                               onPressed: widget.loading
                                   ? null
                                   : widget.onRefresh,
-                              child: const Text('重试读取预约'),
+                              child: const Text('Reload appointments'),
                             ),
                           ],
                         ),
@@ -263,16 +263,16 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
                       if (episode.canBook)
                         FilledButton(
                           onPressed: widget.onBook,
-                          child: const Text('预约咨询'),
+                          child: const Text('Book consultation'),
                         ),
                       if (!episode.ongoing && widget.onRenew != null)
                         FilledButton(
                           onPressed: widget.onRenew,
-                          child: const Text('继续支持'),
+                          child: const Text('Continue care'),
                         ),
                       const SizedBox(height: 14),
                       Text(
-                        '已显示当前服务记录',
+                        'Showing current service history',
                         style: MomHomeTokens.text(
                           11,
                           color: MomHomeTokens.secondary,
@@ -280,7 +280,7 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
                       ),
                       const SizedBox(height: 14),
                       Text(
-                        '${episodeStatusLabels[episode.status]} · 仅展示已同步的信息',
+                        '${episodeStatusLabels[episode.status]} · Showing synced information only',
                         style: MomHomeTokens.text(
                           11,
                           color: MomHomeTokens.secondary,
@@ -305,7 +305,7 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
                     ),
                     onPressed: _latest,
                     child: const Text(
-                      '↓ 回到最近记录',
+                      '↓ Back to latest records',
                       style: TextStyle(fontSize: 11),
                     ),
                   ),
@@ -320,7 +320,7 @@ class _ServiceTimelineState extends State<ServiceTimeline> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: _latest,
-                child: const Text('↓ 回到最近记录'),
+                child: const Text('↓ Back to latest records'),
               ),
             ),
           ),

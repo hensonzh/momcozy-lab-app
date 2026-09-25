@@ -225,7 +225,7 @@ void main() {
       route: '/more',
     );
 
-    await tap(tester, find.text('通知'));
+    await tap(tester, find.text('Notifications'));
     expect(router.state.uri.path, '/notifications');
   }
 
@@ -280,29 +280,22 @@ void main() {
           '$target-inbox',
           'Notification center before $target target',
         );
-        if (target == 'conversation') {
-          await tester.ensureVisible(find.text('Service update 1'));
-          await tester.pumpAndSettle();
-          await tester.tap(find.text('Service update 1'));
-          await tester.pump();
-          await tester.pump(const Duration(milliseconds: 500));
-          final failure = tester.takeException();
-          expect(failure, isArgumentError);
-          expect(failure.toString(), contains('Cannot be a string'));
-          expect(find.byType(ErrorWidget), findsOneWidget);
-        } else {
-          await tap(tester, find.text('Service update 1'));
-        }
+        await tap(tester, find.text('Service update 1'));
+        expect(tester.takeException(), isNull);
+        expect(find.byType(ErrorWidget), findsNothing);
         await tester.pumpAndSettle();
         final route = Uri.parse(transport.target).path;
         expect(router.state.uri.path, route);
         expect(transport.notifications.single['status'], 'read');
         if (target == 'conversation') {
           expect(router.state.uri.queryParameters['conversationId'], uuid);
-          expect(find.text('Notification conversation fixture.'), findsNothing);
+          expect(
+            find.text('Notification conversation fixture.'),
+            findsOneWidget,
+          );
         }
         if (target == 'summary') {
-          expect(find.text('暂时无法读取总结'), findsOneWidget);
+          expect(find.text('Could not load summary'), findsOneWidget);
           await capture(
             tester,
             'summary-load-error',
@@ -310,31 +303,35 @@ void main() {
             route: route,
           );
           transport.failingReads.clear();
-          await tap(tester, find.text('重新加载'));
-          expect(find.text('暂时无法读取总结'), findsNothing);
+          await tap(tester, find.text('Reload'));
+          expect(find.text('Could not load summary'), findsNothing);
           expect(find.text('Published client-facing summary'), findsOneWidget);
         }
         await capture(
           tester,
           '$target-opened',
           target == 'conversation'
-              ? 'Tap notification → conversation route throws Expando string-key ArgumentError and renders ErrorWidget; item is read'
+              ? 'Tap notification → safe conversation route opens without an error; item is read'
               : 'Tap notification → validated $target target, notification marked read',
           route: route,
         );
         if (target == 'conversation') {
-          await tap(tester, find.text('More'));
+          await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
           await capture(
             tester,
             '$target-more-return',
             'Conversation More tab → no unread badge',
             route: '/more',
           );
-          await tap(tester, find.text('通知'));
+          await tap(tester, find.text('Notifications'));
         } else {
           await tap(
             tester,
-            target == 'room' ? find.byTooltip('关闭预约详情') : find.text('返回').first,
+            target == 'room'
+                ? find.byTooltip('Close appointment details')
+                : target == 'summary'
+                ? find.byTooltip('Back')
+                : find.text('Back').first,
           );
           await capture(
             tester,
@@ -342,14 +339,14 @@ void main() {
             'Target Back/Close → mother home (notification route was replaced)',
             route: '/me',
           );
-          await tap(tester, find.text('More'));
+          await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
           await capture(
             tester,
             '$target-more-return',
             'Mother home More tab → updated unread badge',
             route: '/more',
           );
-          await tap(tester, find.text('通知'));
+          await tap(tester, find.text('Notifications'));
         }
         await capture(
           tester,
@@ -423,7 +420,7 @@ void main() {
           'Retry after access restoration → appointment detail',
           route: appointmentRoute,
         );
-        await tap(tester, find.text('返回').first);
+        await tap(tester, find.text('Back').first);
         await capture(
           tester,
           'rejection-recovered-inbox',

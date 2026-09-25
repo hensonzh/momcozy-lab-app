@@ -35,6 +35,8 @@ final class CareAppointment {
   final DateTime? confirmedAt, cancelledAt;
   final AppointmentStatus status;
   final int version, intakeVersion;
+  String get publicProviderName =>
+      englishCareExpertName(providerName, providerId: providerId);
   Duration get duration => endsAt.difference(startsAt);
   bool activeAt(DateTime now) =>
       status == AppointmentStatus.confirmed ||

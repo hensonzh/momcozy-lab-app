@@ -2,6 +2,21 @@ import 'package:flutter/material.dart';
 import '../../domain/shared/local_date.dart';
 import '../design_system/momcozy_design_system.dart';
 
+const _monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
 class MonthSelector extends StatelessWidget {
   const MonthSelector({
     super.key,
@@ -31,7 +46,7 @@ class MonthSelector extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                '${selected.year}年${selected.month}月',
+                '${_monthNames[selected.month - 1]} ${selected.year}',
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -39,12 +54,12 @@ class MonthSelector extends StatelessWidget {
               ),
             ),
             IconButton(
-              tooltip: '上个月',
+              tooltip: 'Previous month',
               onPressed: () => _shift(-1),
               icon: const Icon(Icons.chevron_left_rounded, size: 20),
             ),
             IconButton(
-              tooltip: '下个月',
+              tooltip: 'Next month',
               onPressed: () => _shift(1),
               icon: const Icon(Icons.chevron_right_rounded, size: 20),
             ),
@@ -53,7 +68,15 @@ class MonthSelector extends StatelessWidget {
         const SizedBox(height: 8),
         Row(
           children: [
-            for (final label in ['一', '二', '三', '四', '五', '六', '日'])
+            for (final label in [
+              'Mon',
+              'Tue',
+              'Wed',
+              'Thu',
+              'Fri',
+              'Sat',
+              'Sun',
+            ])
               Expanded(
                 child: Center(
                   child: Text(
@@ -98,7 +121,7 @@ class MonthSelector extends StatelessWidget {
         ? MomCozyColors.foreground
         : MomCozyColors.mutedForeground.withValues(alpha: .55);
     return Semantics(
-      label: '${day.year}年${day.month}月${day.day}日',
+      label: '${_monthNames[day.month - 1]} ${day.day}, ${day.year}',
       selected: active,
       button: true,
       onTap: () => onSelect(day),

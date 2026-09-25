@@ -116,24 +116,24 @@ void main() {
         care.failure = const ProductFailure(ProductFailureKind.offline);
         care.gate!.complete();
         await tester.pumpAndSettle();
-        await _show(tester, find.text('重试'));
+        await _show(tester, find.text('Try again'));
         await _shot(tester, 'overview-error', width, scale);
         care.failure = null;
-        await tester.tap(find.text('重试'));
+        await tester.tap(find.text('Try again'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
         expect(find.byType(Switch), findsNothing);
-        await tester.ensureVisible(find.text('正在加载…'));
+        await tester.ensureVisible(find.text('Loading…'));
         await tester.pump();
         await _shot(tester, 'consent-loading', width, scale);
         repo.readFailure = const ProductFailure(ProductFailureKind.offline);
         repo.readGate!.complete();
         await tester.pumpAndSettle();
         expect(find.byType(Switch), findsNothing);
-        await _show(tester, find.text('重试'));
+        await _show(tester, find.text('Try again'));
         await _shot(tester, 'consent-error', width, scale);
         repo.readFailure = null;
-        await fixture.click(tester, '重试');
+        await fixture.click(tester, 'Try again');
         expect(find.byType(Switch), findsNWidgets(3));
         expect(repo.writes, isEmpty);
       },
@@ -149,7 +149,7 @@ void main() {
         await tester.tap(picker);
         await tester.pumpAndSettle();
         await _shot(tester, 'long-picker', width, scale);
-        await tester.tap(find.text('专家支持服务').last);
+        await tester.tap(find.text('Expert support service').last);
         await tester.pumpAndSettle();
         expect(tester.state<FormFieldState<String>>(picker).value, 'other');
         await _show(
@@ -158,9 +158,9 @@ void main() {
         );
         await _shot(tester, 'required-scopes', width, scale);
         await fixture.toggle(tester, CareConsentScope.aiContext);
-        await fixture.click(tester, '保存更改');
+        await fixture.click(tester, 'Save changes');
         expect(repo.writes.single.episode, 'other');
-        await _show(tester, find.text('隐私设置已保存'));
+        await _show(tester, find.text('Privacy settings saved'));
         await _shot(tester, 'saved-bottom', width, scale);
       },
     );
@@ -171,11 +171,11 @@ void main() {
         await _mount(tester, repo, _Care(), width, scale);
         await tester.pumpAndSettle();
         await fixture.toggle(tester, CareConsentScope.video);
-        await fixture.click(tester, '保存更改');
-        await fixture.click(tester, '继续保留');
-        await fixture.click(tester, '返回');
+        await fixture.click(tester, 'Save changes');
+        await fixture.click(tester, 'Keep access');
+        await fixture.click(tester, 'Back');
         await _shot(tester, 'leave-confirm', width, scale);
-        await tester.tap(find.byTooltip('关闭'));
+        await tester.tap(find.byTooltip('Close'));
         await tester.pumpAndSettle();
         expect(find.byType(AlertDialog), findsNothing);
         expect(
@@ -186,8 +186,8 @@ void main() {
               .value,
           isFalse,
         );
-        await fixture.click(tester, '保存更改');
-        await tester.tap(find.byTooltip('关闭'));
+        await fixture.click(tester, 'Save changes');
+        await tester.tap(find.byTooltip('Close'));
         await tester.pumpAndSettle();
         expect(repo.writes, isEmpty);
       },
@@ -204,20 +204,20 @@ void main() {
         repo.writeFailure = const ProductFailure(
           ProductFailureKind.unavailable,
         );
-        await fixture.click(tester, '保存更改');
-        await fixture.click(tester, '确认关闭');
+        await fixture.click(tester, 'Save changes');
+        await fixture.click(tester, 'Turn off access');
         expect(repo.data[CareConsentScope.ibclcCase]!.active, isFalse);
         expect(repo.data[CareConsentScope.video]!.active, isTrue);
         expect(repo.writes, hasLength(2));
-        await _show(tester, find.text('重试保存'));
+        await _show(tester, find.text('Try saving again'));
         await _shot(tester, 'partial-uncertain', width, scale);
         repo.writeFailure = null;
-        await fixture.click(tester, '重试保存');
+        await fixture.click(tester, 'Try saving again');
         expect(repo.writes, hasLength(3));
         expect(repo.writes.last.scope, CareConsentScope.aiContext);
         expect(repo.writes.last.version, repo.writes[1].version);
         expect(find.byType(AlertDialog), findsNothing);
-        expect(find.text('隐私设置已保存'), findsOneWidget);
+        expect(find.text('Privacy settings saved'), findsOneWidget);
       },
     );
     testWidgets(
@@ -228,30 +228,30 @@ void main() {
         await tester.pumpAndSettle();
         await fixture.toggle(tester, CareConsentScope.aiContext);
         repo.pending = Completer<void>();
-        await _show(tester, find.text('保存更改'));
-        await tester.tap(find.text('保存更改'));
+        await _show(tester, find.text('Save changes'));
+        await tester.tap(find.text('Save changes'));
         await tester.pump();
         await _shot(tester, 'saving', width, scale);
         expect(
           tester
-              .widget<FilledButton>(find.widgetWithText(FilledButton, '正在保存…'))
+              .widget<FilledButton>(find.widgetWithText(FilledButton, 'Saving…'))
               .onPressed,
           isNull,
         );
         repo.writeFailure = const ProductFailure(ProductFailureKind.offline);
         repo.pending!.complete();
         await tester.pumpAndSettle();
-        await _show(tester, find.text('重试保存'));
+        await _show(tester, find.text('Try saving again'));
         await _shot(tester, 'uncertain-bottom', width, scale);
-        await fixture.click(tester, '返回');
+        await fixture.click(tester, 'Back');
         await _shot(tester, 'uncertain-leave', width, scale);
-        await fixture.click(tester, '继续查看');
+        await fixture.click(tester, 'Keep reviewing');
         repo.pending = null;
         repo.writeFailure = const ProductFailure(ProductFailureKind.conflict);
-        await fixture.click(tester, '重试保存');
-        await _show(tester, find.text('重新读取授权'));
+        await fixture.click(tester, 'Try saving again');
+        await _show(tester, find.text('Reload consent'));
         await _shot(tester, 'conflict-bottom', width, scale);
-        expect(find.text('隐私设置已保存'), findsNothing);
+        expect(find.text('Privacy settings saved'), findsNothing);
         expect(
           tester
               .widget<Switch>(
@@ -261,7 +261,7 @@ void main() {
           isNull,
         );
         repo.writeFailure = null;
-        await fixture.click(tester, '重新载入');
+        await fixture.click(tester, 'Reload');
         expect(
           tester
               .widget<Switch>(
@@ -271,8 +271,8 @@ void main() {
           isTrue,
         );
         await fixture.toggle(tester, CareConsentScope.aiContext);
-        await fixture.click(tester, '保存更改');
-        expect(find.text('隐私设置已保存'), findsOneWidget);
+        await fixture.click(tester, 'Save changes');
+        expect(find.text('Privacy settings saved'), findsOneWidget);
         expect(repo.writes.map((w) => w.version).toSet(), {2});
       },
     );

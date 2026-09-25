@@ -116,14 +116,14 @@ class _UnsupportedRoutePage extends StatelessWidget {
             Text(title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
-              '该入口已从当前产品版本移除。',
+              'This entry is no longer available in this version.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 18),
             FilledButton(
               onPressed: () => context.go('/'),
-              child: const Text('返回 Cozymate'),
+              child: const Text('Back to Momcozy AI'),
             ),
           ],
         ),

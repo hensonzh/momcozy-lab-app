@@ -50,10 +50,10 @@ class _MeManageRecordsState extends State<MeManageRecords> {
       if (!didPop) back();
     },
     child: MePage(
-      title: '管理记录',
+      title: 'Manage records',
       onBack: back,
       scroll: false,
-      footer: MeButton('保存', busy: busy, onPressed: dirty ? save : null),
+      footer: MeButton('Save', busy: busy, onPressed: dirty ? save : null),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -63,12 +63,12 @@ class _MeManageRecordsState extends State<MeManageRecords> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '首页排列顺序',
+                  'Order on home',
                   style: MeDesign.text(16, weight: FontWeight.w700, line: 24),
                 ),
                 const SizedBox(height: 9),
                 Text(
-                  '长按左侧图标拖动排序',
+                  'Press and hold the icon to rearrange',
                   style: MeDesign.text(14, color: MeDesign.muted, line: 22),
                 ),
               ],
@@ -123,7 +123,7 @@ class _MeManageRecordsState extends State<MeManageRecords> {
                               ),
                               const SizedBox(height: 3),
                               Text(
-                                '显示在首页',
+                                'Show on home',
                                 style: MeDesign.text(
                                   10,
                                   color: MeDesign.muted,
@@ -140,7 +140,7 @@ class _MeManageRecordsState extends State<MeManageRecords> {
                                   () => order.insert(0, order.removeAt(index)),
                                 ),
                           child: Text(
-                            index == 0 ? '首位' : '移到最前',
+                            index == 0 ? 'First' : 'Move to top',
                             style: MeDesign.text(11, color: MeDesign.rose),
                           ),
                         ),
@@ -156,7 +156,7 @@ class _MeManageRecordsState extends State<MeManageRecords> {
             Padding(
               padding: const EdgeInsets.all(20),
               child: Text(
-                '已调整，保存后应用到首页。',
+                'Order updated. Save to apply it to your home page.',
                 style: MeDesign.text(12, color: MeDesign.muted),
               ),
             ),

@@ -36,7 +36,7 @@ Future<void> verifyTypography(
                   const SizedBox(height: 16),
                   Text('Care plan', style: text.titleLarge),
                   const SizedBox(height: 16),
-                  Text('Today’s notes', style: text.titleMedium),
+                  Text('Today\'s notes', style: text.titleMedium),
                   const SizedBox(height: 16),
                   TextField(
                     controller: draft,

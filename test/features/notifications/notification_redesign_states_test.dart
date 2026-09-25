@@ -217,6 +217,20 @@ void main() {
       return c;
     }
 
+    bool toggleValue(WidgetTester tester, String category) {
+      final f = find.byKey(ValueKey('notification-preference-$category'));
+      return size.$2 == 2
+          ? tester.widget<Switch>(f).value
+          : tester.widget<SwitchListTile>(f).value;
+    }
+
+    bool toggleEnabled(WidgetTester tester, String category) {
+      final f = find.byKey(ValueKey('notification-preference-$category'));
+      return size.$2 == 2
+          ? tester.widget<Switch>(f).onChanged != null
+          : tester.widget<SwitchListTile>(f).onChanged != null;
+    }
+
     testWidgets('notification permission denial and restoration $suffix', (
       tester,
     ) async {
@@ -226,7 +240,9 @@ void main() {
       await mount(tester, NotificationSettingsPage(coordinator: c));
       await tester.pumpAndSettle();
       await capture(tester, 'settings-denied');
-      final toggle = find.widgetWithText(SwitchListTile, 'Consultations');
+      final toggle = find.byKey(
+        const ValueKey('notification-preference-consultations'),
+      );
       await tap(tester, toggle, pending: true);
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.text('Notifications are off'), findsOneWidget);
@@ -241,7 +257,7 @@ void main() {
       await capture(tester, 'settings-restored');
       await tap(tester, toggle);
       expect(repository.writes, ['consultations:true']);
-      expect(tester.widget<SwitchListTile>(toggle).value, isTrue);
+      expect(toggleValue(tester, 'consultations'), isTrue);
       await tester.ensureVisible(find.text('Refresh status'));
       await tester.pumpAndSettle();
       await capture(tester, 'settings-bottom');
@@ -256,14 +272,7 @@ void main() {
         final c = await coordinator(platform, repository);
         repository.gate = Completer<void>();
         await mount(tester, NotificationSettingsPage(coordinator: c));
-        expect(
-          tester
-              .widget<SwitchListTile>(
-                find.widgetWithText(SwitchListTile, 'Appointments'),
-              )
-              .onChanged,
-          isNull,
-        );
+        expect(toggleEnabled(tester, 'appointments'), isFalse);
         await capture(tester, 'preferences-loading');
         repository.fail = true;
         repository.gate!.complete();
@@ -275,14 +284,7 @@ void main() {
         await capture(tester, 'preferences-error');
         repository.fail = false;
         await tap(tester, find.text('Refresh status'));
-        expect(
-          tester
-              .widget<SwitchListTile>(
-                find.widgetWithText(SwitchListTile, 'Appointments'),
-              )
-              .onChanged,
-          isNotNull,
-        );
+        expect(toggleEnabled(tester, 'appointments'), isTrue);
         platform.value = NotificationPermission.unavailable;
         await tap(tester, find.text('Refresh status'));
         await tester.ensureVisible(find.text('Unavailable on this device'));

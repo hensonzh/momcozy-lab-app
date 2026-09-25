@@ -90,14 +90,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -183,7 +182,7 @@ void main() {
       'previous_source': previous,
       'route': route,
       'trigger': action,
-      'root_entry': 'Authenticated More → tap Me bottom navigation',
+      'root_entry': 'Authenticated More → existing service deep link',
       'evidence':
           'Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment',
       'test': 'test/modules/services/renew_inventory_journey_test.dart',
@@ -202,16 +201,17 @@ void main() {
   const progressRoute = '/services/episodes/completed-episode';
   const renewRoute = '$progressRoute/renew';
   Future<void> entry(WidgetTester tester, {VoidCallback? beforeRenew}) async {
-    await tap(tester, find.text('服务进度 ›'));
+    router.go(progressRoute);
+    await tester.pumpAndSettle();
     expect(router.state.uri.path, progressRoute);
     await capture(
       tester,
       'completed-progress',
-      'More → Me → completed service progress; continue support CTA',
+      'Existing completed service deep link → continue care',
       route: progressRoute,
     );
     beforeRenew?.call();
-    await tap(tester, find.text('继续支持'));
+    await tap(tester, find.text('Continue care'));
     expect(router.state.uri.path, renewRoute);
   }
 
@@ -227,11 +227,11 @@ void main() {
   }
 
   Future<void> createOrder(WidgetTester tester) async {
-    await tap(tester, find.text('选择').first);
+    await tap(tester, find.text('Select').first);
     await tap(tester, find.byType(DropdownButtonFormField<String>));
     await tap(tester, find.text('California (CA)').last);
     await tap(tester, find.byType(CheckboxListTile));
-    await tap(tester, find.text('确认并继续'));
+    await tap(tester, find.text('Confirm and continue'));
   }
 
   Future<void> refresh(WidgetTester tester) async {
@@ -258,13 +258,13 @@ void main() {
           'list',
           'Completed timeline continue support → original package highlighted in actual renewal route',
         );
-        await tap(tester, find.text('选择').first);
+        await tap(tester, find.text('Select').first);
         await capture(
           tester,
           'eligibility',
           'Choose highlighted package → existing purchase eligibility dialog',
         );
-        await tap(tester, find.byTooltip('关闭购买'));
+        await tap(tester, find.byTooltip('Close purchase'));
         expect(transport.order, isNull);
         await capture(
           tester,
@@ -281,7 +281,7 @@ void main() {
           find.byType(TextFormField).first,
           '4242 4242 4242 4242',
         );
-        await tap(tester, find.text('支付 \$219'));
+        await tap(tester, find.text('Pay \$219'));
         expect(transport.order!['status'], 'paid');
         expect(transport.completedEpisode['status'], 'completed');
         await capture(
@@ -289,34 +289,34 @@ void main() {
           'paid',
           'Sandbox payment succeeds → new service; original remains completed',
         );
-        await tap(tester, find.text('开始预约'));
+        await tap(tester, find.text('Book an appointment'));
         await capture(
           tester,
           'booking',
           'Purchase success → actual new service booking/precheck',
           route: '/services/episodes/service-episode/booking',
         );
-        await tap(tester, find.byTooltip('关闭预约前确认'));
-        await tap(tester, find.text('返回'));
+        await tap(tester, find.byTooltip('Close booking check'));
+        await tap(tester, find.text('Back'));
         await capture(
           tester,
           'purchase-return',
           'Booking back → renewal list now offers view current service',
         );
-        await tap(tester, find.text('查看我的服务'));
+        await tap(tester, find.text('View my services'));
         await capture(
           tester,
           'active-progress',
           'View current service → actual newly purchased progress',
           route: '/services/episodes/service-episode',
         );
-        await tap(tester, find.text('返回'));
+        await tap(tester, find.text('Back'));
         await capture(
           tester,
           'active-return',
           'New service progress back → renewal list',
         );
-        await tap(tester, find.text('返回'));
+        await tap(tester, find.byTooltip('Back'));
         await capture(
           tester,
           'completed-return',
@@ -344,7 +344,7 @@ void main() {
         );
         const path = '/v1/care/orders/service-order';
         transport.readGates[path] = Completer<void>();
-        await tap(tester, find.text('继续付款'));
+        await tap(tester, find.text('Continue to payment'));
         await capture(
           tester,
           'order-loading',
@@ -365,20 +365,23 @@ void main() {
           await tester.drag(list, const Offset(0, 600));
           await tester.pumpAndSettle();
         }
-        expect(find.text('暂时无法打开订单，请重新选择方案重试。'), findsOneWidget);
+        expect(
+          find.text('Could not open the order. Select a plan and try again.'),
+          findsOneWidget,
+        );
         await capture(
           tester,
           'order-error',
           'Order read fails → scroll to top → inline open error and selectable packages',
         );
         transport.failingReads.clear();
-        await tap(tester, find.text('继续付款'));
+        await tap(tester, find.text('Continue to payment'));
         await capture(
           tester,
           'order-resumed',
           'Retry package → existing payment dialog without creating duplicate order',
         );
-        await tap(tester, find.byTooltip('关闭购买'));
+        await tap(tester, find.byTooltip('Close purchase'));
         await capture(
           tester,
           'pending-closed',
@@ -410,14 +413,14 @@ void main() {
     transport.failingReads.clear();
     final packages = transport.responsesByPath['/v1/care/catalog']!['packages'];
     transport.responsesByPath['/v1/care/catalog']!['packages'] = [];
-    await tap(tester, find.text('重试'));
+    await tap(tester, find.text('Try again'));
     await capture(
       tester,
       'empty',
       'Retry returns no packages → empty support list',
     );
     transport.responsesByPath['/v1/care/catalog']!['packages'] = packages;
-    await tap(tester, find.text('刷新方案'));
+    await tap(tester, find.text('Refresh plans'));
     await capture(
       tester,
       'empty-refreshed',
@@ -426,7 +429,7 @@ void main() {
     transport.responsesByPath['/v1/care/catalog']!['payment_mode'] = 'disabled';
     await refresh(tester);
     await tester.pumpAndSettle();
-    expect(find.text('暂未开放购买'), findsWidgets);
+    expect(find.text('Not available to purchase yet'), findsWidgets);
     await capture(
       tester,
       'purchase-disabled',

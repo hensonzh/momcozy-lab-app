@@ -221,7 +221,7 @@ void main() {
     FocusManager.instance.primaryFocus?.unfocus();
     final pending = Completer<CareIntake>();
     repository.nextSave = pending.future;
-    await _clickIntake(tester, '保存修改');
+    await _clickIntake(tester, 'Save changes');
     pending.completeError(
       const ProductFailure(
         ProductFailureKind.conflict,
@@ -229,7 +229,10 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('授权已发生变化，请重新载入并确认'), findsOneWidget);
+    expect(
+      find.text('Consent has changed. Reload and confirm again.'),
+      findsOneWidget,
+    );
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile(
@@ -242,17 +245,24 @@ void main() {
   test('intake age labels use calendar months and retain remaining days', () {
     expect(
       formatBabyAge(LocalDate(2026, 8, 18), LocalDate(2026, 9, 9)),
-      '3 周 1 天',
+      '3 wk 1 day',
     );
     expect(
       formatBabyAge(LocalDate(2026, 1, 31), LocalDate(2026, 4, 30)),
-      '3 个月',
+      '3 mo',
     );
     expect(
       formatBabyAge(LocalDate(2024, 1, 31), LocalDate(2026, 2, 28)),
-      '2 岁 1 个月',
+      '2 yr 1 mo',
     );
-    expect(formatBabyAge(LocalDate(2026, 9, 8), LocalDate(2026, 9, 8)), '出生当天');
+    expect(
+      formatBabyAge(LocalDate(2026, 9, 8), LocalDate(2026, 9, 8)),
+      'Newborn',
+    );
+    expect(
+      formatBabyAge(LocalDate(2026, 9, 8), LocalDate(2026, 9, 9)),
+      '1 day',
+    );
   });
 
   for (final width in [320.0, 390.0, 430.0]) {
@@ -269,21 +279,23 @@ void main() {
             scale: scale,
             onPreconsult: (v) => preconsult = v,
           );
-          await _clickIntake(tester, '含乳困难');
+          await _clickIntake(tester, 'Latching difficulties');
           await tester.enterText(
             find.byKey(const ValueKey('goal-1')),
-            '希望喂养更规律，减少焦虑',
+            'A steadier feeding routine with less stress',
           );
           FocusManager.instance.primaryFocus?.unfocus();
           await tester.pumpAndSettle();
           await tester.scrollUntilVisible(
-            find.widgetWithText(FilledButton, '保存信息'),
+            find.widgetWithText(FilledButton, 'Save information'),
             250,
             scrollable: find.byType(Scrollable).first,
           );
           expect(
             tester
-                .widget<FilledButton>(find.widgetWithText(FilledButton, '保存信息'))
+                .widget<FilledButton>(
+                  find.widgetWithText(FilledButton, 'Save information'),
+                )
                 .onPressed,
             isNull,
           );
@@ -293,34 +305,40 @@ void main() {
               .jumpTo(0);
           await tester.pumpAndSettle();
           await _intakeShot(tester, 'form', width, scale);
-          await _clickIntake(tester, '补充情况');
+          await _clickIntake(tester, 'Additional details');
           await tester.ensureVisible(find.byKey(const ValueKey('support-1')));
           await tester.enterText(
             find.byKey(const ValueKey('support-1')),
-            '想确认姿势与含乳',
+            'I would like help checking positioning and latch.',
           );
           FocusManager.instance.primaryFocus?.unfocus();
           await tester.pumpAndSettle();
           await _intakeShot(tester, 'optional', width, scale);
-          await _clickIntake(tester, '补充情况');
-          await _clickIntake(tester, '基础信息');
-          await tester.ensureVisible(find.text('宝宝月龄'));
+          await _clickIntake(tester, 'Additional details');
+          await _clickIntake(tester, 'Basic information');
+          await tester.ensureVisible(find.text('Baby\'s age'));
           await tester.pumpAndSettle();
-          expect(find.text('3 周'), findsOneWidget);
+          expect(find.text('3 wk'), findsOneWidget);
           await _intakeShot(tester, 'profile', width, scale);
-          await _clickIntake(tester, '基础信息');
-          await _clickIntake(tester, '查看说明');
-          expect(find.text('提供给谁'), findsOneWidget);
+          await _clickIntake(tester, 'Basic information');
+          await _clickIntake(tester, 'Read details');
+          expect(find.text('Who can see it'), findsOneWidget);
           await _intakeShot(tester, 'consent', width, scale);
-          await _clickIntake(tester, '知道了');
+          await _clickIntake(tester, 'Got it');
           expect(repository.payloads, isEmpty);
-          await _clickIntake(tester, '允许本次服务的 IBCLC 查看此表');
-          await _clickIntake(tester, '保存信息');
-          expect(repository.payloads.single.supportNeeded, '想确认姿势与含乳');
-          expect(find.text('信息采集已完成'), findsOneWidget);
-          expect(find.byTooltip('关闭信息采集结果'), findsNothing);
+          await _clickIntake(
+            tester,
+            'Allow the IBCLC for this service to view this form',
+          );
+          await _clickIntake(tester, 'Save information');
+          expect(
+            repository.payloads.single.supportNeeded,
+            'I would like help checking positioning and latch.',
+          );
+          expect(find.text('Intake form complete'), findsOneWidget);
+          expect(find.byTooltip('Close intake result'), findsNothing);
           await _intakeShot(tester, 'saved', width, scale);
-          await _clickIntake(tester, '开始预问诊');
+          await _clickIntake(tester, 'Discuss with Momcozy AI');
           expect(preconsult?.version, 1);
           expect(tester.takeException(), isNull);
           await tester.pumpWidget(const SizedBox.shrink());
@@ -334,16 +352,19 @@ void main() {
     (tester) async {
       final repository = _Repository()..context = _readyContext();
       await _mountIntake(tester, repository);
-      await _clickIntake(tester, '含乳困难');
+      await _clickIntake(tester, 'Latching difficulties');
       await tester.enterText(
         find.byKey(const ValueKey('goal-1')),
         'Original goal',
       );
       FocusManager.instance.primaryFocus?.unfocus();
-      await _clickIntake(tester, '允许本次服务的 IBCLC 查看此表');
+      await _clickIntake(
+        tester,
+        'Allow the IBCLC for this service to view this form',
+      );
       final wait = Completer<CareIntake>();
       repository.nextSave = wait.future;
-      await _clickIntake(tester, '保存信息');
+      await _clickIntake(tester, 'Save information');
       await tester.binding.handlePopRoute();
       await tester.pump();
       expect(find.byType(IntakePage), findsOneWidget);
@@ -356,14 +377,19 @@ void main() {
         isFalse,
       );
       await _intakeShot(tester, 'uncertain', 390, 1);
-      await _clickIntake(tester, '返回');
-      expect(find.text('保存结果还未确认。返回后请先刷新记录，避免重复填写。'), findsOneWidget);
+      await _clickIntake(tester, 'Back');
+      expect(
+        find.text(
+          'Your save has not been confirmed. Refresh your records before trying again to avoid duplicates.',
+        ),
+        findsOneWidget,
+      );
       await _intakeShot(tester, 'uncertain-leave', 390, 1);
-      await _clickIntake(tester, '继续填写');
+      await _clickIntake(tester, 'Keep editing');
       repository.nextSave = null;
-      await _clickIntake(tester, '重试保存');
+      await _clickIntake(tester, 'Try saving again');
       expect(repository.payloads[0], same(repository.payloads[1]));
-      await _clickIntake(tester, '稍后再说，查看预约');
+      await _clickIntake(tester, 'Maybe later · View appointment');
       await tester.pumpWidget(const SizedBox.shrink());
     },
   );
@@ -376,8 +402,8 @@ void main() {
       (data['appointment'] as Map)['status'] = status;
       final repository = _Repository()..context = readIntakeContext(data);
       await _mountIntake(tester, repository, width: 320, scale: 2);
-      expect(find.text('请先确认预约时间'), findsOneWidget);
-      expect(find.text('这次最想解决什么？'), findsNothing);
+      expect(find.text('Confirm an appointment time first'), findsOneWidget);
+      expect(find.text('What would you most like help with?'), findsNothing);
       expect(repository.payloads, isEmpty);
       await _intakeShot(tester, status, 320, 2);
       expect(tester.takeException(), isNull);
@@ -392,16 +418,19 @@ void main() {
       ..context = _readyContext()
       ..nextLoad = gate.future;
     await _mountIntake(tester, repository, settle: false);
-    expect(find.text('正在载入'), findsOneWidget);
-    expect(find.text('保存信息'), findsNothing);
+    expect(find.text('Loading'), findsOneWidget);
+    expect(find.text('Save information'), findsNothing);
     await _intakeShot(tester, 'loading', 390, 1);
     gate.completeError(const ProductFailure(ProductFailureKind.unavailable));
     await tester.pumpAndSettle();
-    expect(find.text('暂时无法载入，请稍后重试'), findsOneWidget);
+    expect(
+      find.text('Could not load right now. Please try again later.'),
+      findsOneWidget,
+    );
     await _intakeShot(tester, 'load-error', 390, 1);
     repository.nextLoad = null;
-    await _clickIntake(tester, '重试');
-    expect(find.text('这次最想解决什么？'), findsOneWidget);
+    await _clickIntake(tester, 'Try again');
+    expect(find.text('What would you most like help with?'), findsOneWidget);
     expect(repository.payloads, isEmpty);
   });
 
@@ -418,13 +447,16 @@ void main() {
           scale: scale,
           onBack: () => back = true,
         );
-        await _clickIntake(tester, '允许本次服务的 IBCLC 查看此表');
-        await _clickIntake(tester, '保存修改');
+        await _clickIntake(
+          tester,
+          'Allow the IBCLC for this service to view this form',
+        );
+        await _clickIntake(tester, 'Save changes');
         expect(repository.payloads, isEmpty);
-        await _clickIntake(tester, '返回');
-        expect(find.text('还未保存的修改会被放弃。'), findsOneWidget);
+        await _clickIntake(tester, 'Back');
+        expect(find.text('Your unsaved changes will be lost.'), findsOneWidget);
         await _intakeShot(tester, 'discard', 320, scale);
-        await _clickIntake(tester, '继续填写');
+        await _clickIntake(tester, 'Keep editing');
         expect(back, isFalse);
         expect(
           tester
@@ -434,8 +466,8 @@ void main() {
               .value,
           isFalse,
         );
-        await _clickIntake(tester, '返回');
-        await _clickIntake(tester, '离开');
+        await _clickIntake(tester, 'Back');
+        await _clickIntake(tester, 'Leave');
         expect(back, isTrue);
         expect(tester.takeException(), isNull);
       },
@@ -446,23 +478,25 @@ void main() {
       (tester) async {
         final repository = _Repository()..context = _readyContext();
         await _mountIntake(tester, repository, width: 320, scale: scale);
-        await _clickIntake(tester, '基础信息');
+        await _clickIntake(tester, 'Basic information');
         await _clickIntake(tester, 'California (CA)');
         await _intakeShot(tester, 'region-menu', 320, scale);
         await tester.tap(find.text('New York (NY)').last);
         await tester.pumpAndSettle();
-        await _clickIntake(tester, '女宝宝');
+        await _clickIntake(tester, 'Girl');
         await _intakeShot(tester, 'sex-menu', 320, scale);
-        await tester.tap(find.text('男宝宝').last);
+        await tester.tap(find.text('Boy').last);
         await tester.pumpAndSettle();
-        await _clickIntake(tester, '母乳瓶喂');
+        await _clickIntake(tester, 'Bottle-fed breast milk');
         await _intakeShot(tester, 'feeding-menu', 320, scale);
-        await tester.tap(find.text('混合喂养').last);
+        await tester.tap(find.text('Combination feeding').last);
         await tester.pumpAndSettle();
         final birth = find.byKey(const ValueKey('birth-2026-08-18'));
-        await tester.ensureVisible(birth);
+        await Scrollable.ensureVisible(tester.element(birth), alignment: .5);
+        await tester.pumpAndSettle();
         await tester.tap(birth);
         await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
         expect(find.byType(DatePickerDialog), findsOneWidget);
         final picker = tester.widget<DatePickerDialog>(
           find.byType(DatePickerDialog),
@@ -502,10 +536,10 @@ void main() {
         'Updated goal',
       );
       FocusManager.instance.primaryFocus?.unfocus();
-      await _clickIntake(tester, '保存修改');
+      await _clickIntake(tester, 'Save changes');
       expect(back, isTrue);
       expect(preconsult, isFalse);
-      expect(find.text('信息采集已完成'), findsNothing);
+      expect(find.text('Intake form complete'), findsNothing);
       await tester.pumpWidget(const SizedBox.shrink());
     },
   );
@@ -529,7 +563,7 @@ void main() {
       controller.toggleSymptom(IntakeSymptom.feedingPain);
       await controller.save();
       expect(repository.payloads, isEmpty);
-      expect(controller.validation, contains('允许'));
+      expect(controller.validation, contains('IBCLC'));
       controller.change(() => controller.consent = true);
       final pending = Completer<CareIntake>();
       repository.nextSave = pending.future;
@@ -555,7 +589,7 @@ void main() {
     final profile = IntakeProfile(
       baby: BabyProfile(
         id: value.babies.single.id,
-        name: '宝宝',
+        name: 'Baby',
         birthDate: value.babies.single.birthDate,
         sex: BabySex.female,
         feedingMode: FeedingMode.breastfeeding,
@@ -614,7 +648,7 @@ void main() {
         profile: IntakeProfile(
           baby: BabyProfile(
             id: context.babies.single.id,
-            name: '宝宝',
+            name: 'Baby',
             birthDate: context.babies.single.birthDate,
             sex: BabySex.female,
             feedingMode: FeedingMode.breastfeeding,
@@ -730,8 +764,11 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('含乳困难'));
-      await tester.enterText(find.byKey(const ValueKey('goal-1')), '找到舒服的喂养姿势');
+      await tester.tap(find.text('Latching difficulties'));
+      await tester.enterText(
+        find.byKey(const ValueKey('goal-1')),
+        'Find a comfortable feeding position',
+      );
       tester.testTextInput.hide();
       await tester.scrollUntilVisible(
         find.byType(DropdownButtonFormField<FeedingMode>),
@@ -741,7 +778,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byType(DropdownButtonFormField<FeedingMode>));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('纯母乳').last);
+      await tester.tap(find.text('Exclusive breastfeeding').last);
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
         find.byKey(const ValueKey('intake-consent')),
@@ -751,19 +788,19 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('intake-consent')));
       await tester.scrollUntilVisible(
-        find.text('保存信息'),
+        find.text('Save information'),
         200,
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('保存信息'));
+      await tester.tap(find.text('Save information'));
       await tester.pumpAndSettle();
-      expect(find.text('信息采集已完成'), findsOneWidget);
+      expect(find.text('Intake form complete'), findsOneWidget);
       expect(
         repository.payloads.single.profile.baby.id,
         repository.context.babies.single.id,
       );
-      await tester.tap(find.text('稍后再说，查看预约'));
+      await tester.tap(find.text('Maybe later · View appointment'));
       await tester.pumpAndSettle();
       expect(closed, isTrue);
       expect(tester.takeException(), isNull);

@@ -86,36 +86,37 @@ class _WorkbenchCalendarPageState extends State<WorkbenchCalendarPage>
         return WorkbenchPageBody(
           children: [
             WorkbenchHeading(
-              title: '我的日程',
-              subtitle: '通过日历查看已排定的客户咨询',
+              title: 'My schedule',
+              subtitle:
+                  'See your scheduled client consultations on the calendar',
               actions: [
                 TextButton(
                   onPressed: controller.currentWeek,
-                  child: const Text('本周'),
+                  child: const Text('This week'),
                 ),
                 IconButton(
-                  tooltip: '上一周',
+                  tooltip: 'Previous week',
                   onPressed: date == null
                       ? null
                       : () => controller.shiftWeek(-1),
                   icon: const Icon(Icons.chevron_left_rounded),
                 ),
                 IconButton(
-                  tooltip: '下一周',
+                  tooltip: 'Next week',
                   onPressed: date == null
                       ? null
                       : () => controller.shiftWeek(1),
                   icon: const Icon(Icons.chevron_right_rounded),
                 ),
                 IconButton(
-                  tooltip: '刷新日程',
+                  tooltip: 'Refresh schedule',
                   onPressed: controller.loading ? null : controller.load,
                   icon: const Icon(Icons.refresh_rounded),
                 ),
               ],
             ),
             if (controller.loading)
-              const LinearProgressIndicator(semanticsLabel: '正在读取日程'),
+              const LinearProgressIndicator(semanticsLabel: 'Loading schedule'),
             if (controller.failure != null)
               ProductErrorView(
                 failure: controller.failure!,
@@ -161,7 +162,7 @@ class _WorkbenchCalendarPageState extends State<WorkbenchCalendarPage>
                                   ),
                                   const SizedBox(height: 24),
                                   Text(
-                                    '所选周 · ${controller.items.length} 场预约',
+                                    'Selected week · ${controller.items.length} appointments',
                                     style: const TextStyle(
                                       color: MomCozyColors.mutedForeground,
                                       fontSize: 12,
@@ -226,7 +227,7 @@ class _WorkbenchCalendarPageState extends State<WorkbenchCalendarPage>
                           const Padding(
                             padding: EdgeInsets.only(bottom: 14),
                             child: Text(
-                              '本周有时区时钟调整，以下时间按预约所在地显示。',
+                              'Clocks change this week. Times below use each appointment\'s local time zone.',
                               style: TextStyle(
                                 color: MomCozyColors.mutedForeground,
                                 fontSize: 12,
@@ -234,7 +235,7 @@ class _WorkbenchCalendarPageState extends State<WorkbenchCalendarPage>
                             ),
                           ),
                         Text(
-                          '$date · 当日安排',
+                          '$date · Daily schedule',
                           style: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
@@ -242,7 +243,9 @@ class _WorkbenchCalendarPageState extends State<WorkbenchCalendarPage>
                         ),
                         const SizedBox(height: 12),
                         if (controller.onDate(date).isEmpty)
-                          const ProductEmptyView(title: '这一天没有预约')
+                          const ProductEmptyView(
+                            title: 'No appointments this day',
+                          )
                         else
                           WorkbenchAppointmentList(
                             items: controller.onDate(date),
@@ -253,8 +256,9 @@ class _WorkbenchCalendarPageState extends State<WorkbenchCalendarPage>
                       ],
                       if (wide && controller.items.isEmpty)
                         const ProductEmptyView(
-                          title: '本周没有预约',
-                          description: '可选择其他日期查看已排定的咨询。',
+                          title: 'No appointments this week',
+                          description:
+                              'Choose another date to see scheduled consultations.',
                         ),
                     ],
                   ),
@@ -343,7 +347,15 @@ class _WeekTimeline extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    ['周一', '周二', '周三', '周四', '周五', '周六', '周日'][day.weekday - 1],
+                    [
+                      'Mon',
+                      'Tue',
+                      'Wed',
+                      'Thu',
+                      'Fri',
+                      'Sat',
+                      'Sun',
+                    ][day.weekday - 1],
                     style: const TextStyle(fontSize: 11),
                   ),
                   const SizedBox(height: 3),
@@ -423,12 +435,12 @@ class _CalendarEvent extends StatelessWidget {
     final item = event.item, appointment = event.item.appointment;
     final time = zonedRange(appointment.startsAt, appointment.endsAt, timezone);
     return Semantics(
-      label: '$time，${item.displayName}，${item.package.name}',
+      label: '$time, ${item.displayName}, ${item.package.publicName}',
       button: item.caseConsent,
       onTap: item.caseConsent ? () => onOpen(item) : null,
       child: ExcludeSemantics(
         child: Tooltip(
-          message: '$time\n${item.displayName} · ${item.package.name}',
+          message: '$time\n${item.displayName} · ${item.package.publicName}',
           child: Material(
             color: MomCozyColors.careSoft,
             borderRadius: BorderRadius.circular(8),
@@ -470,7 +482,7 @@ class _CalendarEvent extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              item.package.name,
+                              item.package.publicName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(

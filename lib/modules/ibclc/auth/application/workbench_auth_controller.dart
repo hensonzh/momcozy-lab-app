@@ -49,7 +49,7 @@ class WorkbenchAuthController extends ChangeNotifier {
   Future<void> begin(String email, String password) async {
     if (busy || restoring) return;
     if (!email.trim().contains('@') || password.isEmpty) {
-      validation = '请输入工作邮箱和密码';
+      validation = 'Enter your work email and password.';
       _notify();
       return;
     }
@@ -77,7 +77,7 @@ class WorkbenchAuthController extends ChangeNotifier {
   Future<void> verify(String code) async {
     if (busy || challenge == null) return;
     if (!RegExp(r'^\d{6}$').hasMatch(code.trim())) {
-      validation = '请输入认证器中的 6 位验证码';
+      validation = 'Enter the 6-digit code from your authenticator app.';
       _notify();
       return;
     }

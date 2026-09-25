@@ -8,28 +8,28 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 make flutter-release-gate
 ```
 
-上述两个地址是当前 test 的固定 SNI 入口；构建时必须同时显式提供。
+上述两个地址是当前 staging 的固定 SNI 入口（DNS 中的 `test` 是历史遗留）；构建时必须同时显式提供。
 
 该 gate 会在仓库根目录顺序执行：
 
 ```text
 flutter pub get
-flutter test --no-pub tool/test_environment_smoke_test.dart
+flutter test --no-pub tool/staging_environment_smoke_test.dart
 node scripts/check-flutter-android-packaging.mjs
 node scripts/check-flutter-security-privacy.mjs
 dart format --output=none --set-exit-if-changed lib test integration_test tool
 flutter analyze --no-pub
 flutter test --no-pub --exclude-tags=golden
-node scripts/build-flutter-android-apk.mjs --mode release --flavor unified \
-  --dart-define=MOMCOZY_ENV=test \
+node scripts/build-flutter-android-apk.mjs --mode release --flavor staging \
+  --dart-define=MOMCOZY_ENV=staging \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
-发布 gate 只构建待分发的 unified release APK；local debug 构建保留在独立开发命令中。Golden 测试由 App CI 的 macOS lane 执行。手动发布检查 `TEST_APPROVERS` 中的发起者和重跑者，不再等待第二次 issue 评论确认。
+发布 gate 只构建待分发的 staging release APK；local debug 构建保留在独立开发命令中。Golden 测试由 App CI 的 macOS lane 执行。手动发布检查 `STAGING_APPROVERS` 中的发起者和重跑者，不再等待第二次 issue 评论确认。
 
 所有受支持的打包封装都会执行同一套 API 配置校验。`local` 缺省注入 Product
-Backend `http://127.0.0.1:8769` 与 Agent Runtime `http://127.0.0.1:8010`；`unified`
+Backend `http://127.0.0.1:8769` 与 Agent Runtime `http://127.0.0.1:8010`；`staging`
 和 `production` 必须显式提供两个非空、非 loopback HTTPS URL，否则在运行
 Flutter/Gradle 前失败。可用下面的命令只检查 release gate 配置：
 
@@ -39,9 +39,9 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 node scripts/run-flutter-release-gate.mjs --check-config
 ```
 
-`tool/test_environment_smoke_test.dart` 默认安全 skip；只有设置 `MOMCOZY_TEST_SMOKE=1` 才会直连后端。
-受保护的 test 发布还设置 `MOMCOZY_REQUIRE_TEST_JOIN_BARRIER=1`，此时
-`MOMCOZY_TEST_SMOKE` 和 `MOMCOZY_TEST_SMOKE_AGENT` 必须同时为 `1`，否则
+`tool/staging_environment_smoke_test.dart` 默认安全 skip；只有设置 `MOMCOZY_STAGING_SMOKE=1` 才会直连后端。
+受保护的 staging 发布还设置 `MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER=1`，此时
+`MOMCOZY_STAGING_SMOKE` 和 `MOMCOZY_STAGING_SMOKE_AGENT` 必须同时为 `1`，否则
 即使使用 `--check-config` 也会 fail closed。
 
 `scripts/build-flutter-android-apk.mjs` 在构建 release APK 前会执行 `flutter clean` 和 `flutter pub get`，避免分发包复用上一源码版本的 AOT 快照。debug 构建仍保留增量构建以缩短本地开发反馈时间。
@@ -66,10 +66,10 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 ./scripts/build-flutter-app.sh
 ```
 
-该脚本默认构建 `unified` flavor，并将 APK、SHA256 和 immutable provenance JSON
+该脚本默认构建 `staging` flavor，并将 APK、SHA256 和 immutable provenance JSON
 上传到公开仓库
 `hensonzh/momcozy-lab-releases` 的 GitHub Release，并更新同仓库的
-GitHub Pages `/unified/` 下载页。APK 不进入 Git 历史。已存在的 release tag
+GitHub Pages `/staging/` 下载页。APK 不进入 Git 历史。已存在的 release tag
 只能接受三份文件逐字一致，脚本不会覆盖资产。
 
 只生成本地产物、不上传：
@@ -88,7 +88,7 @@ MOMCOZY_SKIP_UPLOAD=1 ./scripts/build-flutter-app.sh
 | Flavor | Application ID | 用途 |
 |---|---|---|
 | `local` | `com.momcozymai.app.flutterpoc.local` | 本地开发和 debug smoke。 |
-| `unified` | `com.momcozymai.app.flutterpoc.unified` | 受保护的内测分发；安装身份独立，runtime 使用 test。 |
+| `staging` | `com.momcozymai.app.flutterpoc.staging` | 受保护的内测分发；安装身份独立，runtime 使用 staging。 |
 | `production` | `com.momcozymai.app.flutterpoc` | Flutter production-shaped artifact；包名变更须经过独立发布审批。 |
 
 ## Release Signing
@@ -118,24 +118,24 @@ MOMCOZY_REQUIRE_RELEASE_SIGNING=1 make flutter-release-gate
 
 当前内测包会在以下条件全部满足时加载随包内部 CA：
 
-- `MOMCOZY_ENV=test`
+- `MOMCOZY_ENV=staging`
 - API 使用 `https`
 - API 主机为 `backend-test.lute-momcozylab.luteos.cloud` 或
   `agent-test.lute-momcozylab.luteos.cloud`
 - API 端口为 `8443`
 
-该方案只是将仓库内的测试环境 CA 加入 Dart 网络栈的信任根，不会关闭
+该方案只是将仓库内的 staging CA 加入 Dart 网络栈的信任根，不会关闭
 主机名、有效期或证书链校验，也不会影响 `local` 和 `production` 构建。服务端叶子
 证书必须包含两个新域名的 SAN。只要叶子证书仍由该 CA 签发，正常续签不要求重建
 App；CA 轮换时才需要替换
-`assets/certificates/momcozy-test-internal-ca.pem` 并重新构建内测包。当前 CA
+`assets/certificates/momcozy-staging-internal-ca.pem` 并重新构建内测包。当前 CA
 有效期截至 2036-08-13。为兼容已经安装的 build 56，证书内容和指纹暂不轮换，
 因此其 X.509 subject 仍保留历史名称 `MomCozy Staging Internal CA`；该名称不再代表
 当前运行环境。
 
 ## 当前边界
 
-- 该 gate 覆盖非真机构建、静态检查、单元/widget/fixture 测试和 test smoke harness。
+- 该 gate 覆盖非真机构建、静态检查、单元/widget/fixture 测试和 staging smoke harness。
 - 该 gate 静态校验 Flutter appId、FileProvider authority 和外部 deep link 边界。
 - 根 release gate 仅覆盖当前 Flutter 客户端及其原生集成。
 - 真机安装、BLE、通知、后台服务、Doze、电池优化和真泵行为仍属于 L4 device lab。

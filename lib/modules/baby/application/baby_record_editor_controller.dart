@@ -273,12 +273,12 @@ class BabyRecordEditorController extends ChangeNotifier {
         ];
       case BabyRecordKind.feeding:
         if (feedingMethod == null) {
-          validation = '先选择这次的喂养方式。';
+          validation = 'Select a feeding method first.';
           return null;
         }
         final breast = feedingMethod == BabyFeedingMethod.breastfeeding;
         if (breast && feedingSide == null) {
-          validation = '请选择这次亲喂的侧别。';
+          validation = 'Select the nursing side.';
           return null;
         }
         if (breast &&
@@ -287,7 +287,9 @@ class BabyRecordEditorController extends ChangeNotifier {
             !breast &&
                 volume.trim().isNotEmpty &&
                 double.tryParse(volume.trim()) == null) {
-          validation = breast ? '亲喂时长请填写整数分钟。' : '请检查瓶喂量。';
+          validation = breast
+              ? 'Enter the nursing duration in whole minutes.'
+              : 'Check the amount bottle-fed.';
           return null;
         }
         records = [
@@ -309,7 +311,7 @@ class BabyRecordEditorController extends ChangeNotifier {
         ];
       case BabyRecordKind.diaper:
         if (diaperKind == null) {
-          validation = '先选择这次换到的尿布。';
+          validation = 'Select the type of diaper change first.';
           return null;
         }
         final hasStool = diaperKind != DiaperKind.wet;
@@ -342,7 +344,7 @@ class BabyRecordEditorController extends ChangeNotifier {
             .where((entry) => entry.value.trim().isNotEmpty)
             .toList();
         if (filled.isEmpty) {
-          validation = '请至少填写一项测量数值。';
+          validation = 'Enter at least one measurement.';
           return null;
         }
         for (final entry in filled) {
@@ -352,7 +354,8 @@ class BabyRecordEditorController extends ChangeNotifier {
               value <= 0 ||
               value > (entry.key == GrowthMetric.weight ? 50 : 150)) {
             growthMetric = entry.key;
-            validation = '请检查测量数值和单位。体重为 kg，身长与头围为 cm。';
+            validation =
+                'Check the values and units: weight in kg, length and head circumference in cm.';
             return null;
           }
         }
@@ -371,7 +374,8 @@ class BabyRecordEditorController extends ChangeNotifier {
         ];
       case BabyRecordKind.development:
         if (development.isEmpty) {
-          validation = '至少记录一项具体行为，拿不准可以选择“不确定”。';
+          validation =
+              'Record at least one behavior. Choose “Not sure” if you are uncertain.';
           return null;
         }
         records = [
@@ -389,11 +393,12 @@ class BabyRecordEditorController extends ChangeNotifier {
     }
     if (records.first is DatedBabyRecord) {
       if (recordedOn.compareTo(today) > 0) {
-        validation = '记录日期不能晚于今天。';
+        validation = 'The record date cannot be in the future.';
         return null;
       }
       if (baby.birthDate != null && recordedOn.compareTo(baby.birthDate!) < 0) {
-        validation = '记录日期不能早于宝宝出生日期。';
+        validation =
+            'The record date cannot be before your baby\'s date of birth.';
         return null;
       }
     }
@@ -403,16 +408,16 @@ class BabyRecordEditorController extends ChangeNotifier {
     };
     if (errors.isNotEmpty) {
       validation = errors.containsKey('occurred_at')
-          ? '发生时间不能晚于现在。'
+          ? 'The time cannot be in the future.'
           : errors.containsKey('ended_at')
-          ? '醒来时间需要晚于入睡时间，且不能晚于现在。'
+          ? 'The wake time must be after the sleep time and cannot be in the future.'
           : errors.containsKey('volume_ml')
-          ? '瓶喂量需要大于 0 且不超过 1000 ml，也可以留空。'
+          ? 'The bottle amount must be greater than 0 and no more than 1,000 ml, or you can leave it blank.'
           : errors.containsKey('duration_minutes')
-          ? '亲喂时长需要为 1–240 分钟，也可以留空。'
+          ? 'Nursing duration must be 1–240 minutes, or you can leave it blank.'
           : errors.containsKey('note')
-          ? '备注不能超过 2000 字。'
-          : '请检查填写内容。';
+          ? 'Notes cannot exceed 2,000 characters.'
+          : 'Check your entries.';
       return null;
     }
     return List.unmodifiable(records);

@@ -55,7 +55,7 @@ class MeController extends ChangeNotifier {
         );
       }
     } catch (_) {
-      if (!disposed && generation == _generation) error = '加载失败，请重试';
+      if (!disposed && generation == _generation) error = 'Could not load. Please try again.';
     } finally {
       if (generation == _generation) loading = false;
       _notify();
@@ -162,7 +162,7 @@ class MeController extends ChangeNotifier {
         id: latest.id,
         kind: kind,
         occurredAt: latest.occurredAt,
-        value: '$count 次',
+        value: '$count times',
       );
     }
     return values.firstOrNull;

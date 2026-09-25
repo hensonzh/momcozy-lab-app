@@ -1,3 +1,5 @@
+const momCozyEnglishLocale = 'en-US';
+
 enum MomCozySessionStatus { anonymous, authenticated, expired, revoked }
 
 class MomCozySession {
@@ -27,7 +29,7 @@ class MomCozySession {
       refreshToken: normalizedRefreshToken,
       userId: _trimmedOrDefault(userId, 'demo-user'),
       babyId: _trimmedOrDefault(babyId, 'demo-baby'),
-      locale: _trimmedOrDefault(locale, 'zh-CN'),
+      locale: _trimmedOrDefault(locale, 'en-US'),
     );
   }
 
@@ -70,7 +72,7 @@ class MomCozySession {
       status: MomCozySessionStatus.anonymous,
       userId: userId,
       babyId: babyId,
-      locale: locale,
+      locale: momCozyEnglishLocale,
     );
   }
 }
@@ -131,17 +133,20 @@ class MomCozySessionManager {
 
   Future<MomCozySession> bootstrap() async {
     final stored = await store.readSession();
-    if (stored == null) return environmentSession;
+    if (stored == null) {
+      return environmentSession.copyWith(locale: momCozyEnglishLocale);
+    }
     return stored.copyWith(
       userId: _trimmedOrDefault(stored.userId, environmentSession.userId),
       babyId: _trimmedOrDefault(stored.babyId, environmentSession.babyId),
-      locale: _trimmedOrDefault(stored.locale, environmentSession.locale),
+      locale: momCozyEnglishLocale,
     );
   }
 
   Future<MomCozySession> authenticate(MomCozySession session) async {
     final authenticated = session.copyWith(
       status: MomCozySessionStatus.authenticated,
+      locale: momCozyEnglishLocale,
     );
     await store.writeSession(authenticated);
     return authenticated;

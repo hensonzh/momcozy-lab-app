@@ -101,13 +101,37 @@ Future<void> capture(WidgetTester tester, String name, Widget child) async {
     image.dispose();
   });
   expect(tester.takeException(), isNull);
-  final back = find.byTooltip('返回');
+  final back = find.byTooltip('Back');
   if (back.evaluate().isNotEmpty) {
     expect(tester.getTopLeft(back.first).dx, lessThan(24));
   }
 }
 
 void main() {
+  test(
+    'legacy choice values display in English without changing stored data',
+    () {
+      final record = MeObservation.fromJson({
+        'id': 'legacy-energy',
+        'kind': 'energy',
+        'occurred_at': '2026-09-20T10:00:00Z',
+        'value': '有力气',
+        'fields': <String, Object?>{},
+      });
+      expect(record.displayValue, 'Energized');
+      expect(record.toJson()['value'], '有力气');
+      expect(
+        MeObservation(
+          id: 'english',
+          kind: MeMetric.latch,
+          occurredAt: now,
+          value: 'Stayed latched',
+        ).displayValue,
+        'Stayed latched',
+      );
+    },
+  );
+
   setUpAll(() async {
     await loadMomCozyTestFonts();
     await (FontLoader(
@@ -220,7 +244,7 @@ void main() {
         ],
       );
     final c = controller(repo);
-    expect(c.latest(MeMetric.diaper)?.value, '8 次');
+    expect(c.latest(MeMetric.diaper)?.value, '8 times');
     c.dispose();
   });
   testWidgets(
@@ -233,13 +257,13 @@ void main() {
         tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
         isNull,
       );
-      await tester.tap(find.text('移到最前').first);
+      await tester.tap(find.text('Move to top').first);
       await tester.pump();
       expect(
         tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
         isNotNull,
       );
-      await tester.tap(find.text('移到最前').first);
+      await tester.tap(find.text('Move to top').first);
       await tester.pump();
       expect(
         tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
@@ -261,9 +285,9 @@ void main() {
     );
     await tester.enterText(find.byType(TextFormField).first, '新名字');
     await tester.pump();
-    await tester.tap(find.text('保存'));
+    await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
-    expect(find.text('保存失败，请重试'), findsOneWidget);
+    expect(find.text('Could not save. Please try again.'), findsOneWidget);
     expect(find.text('新名字'), findsOneWidget);
     expect(repo.reads, 0);
     c.dispose();
@@ -280,13 +304,13 @@ void main() {
       await tester.tap(find.text(MeIssue.comfort.label));
       await tester.tap(find.text(MeIssue.feeding.label));
       await tester.pump();
-      await tester.tap(find.text('下一步'));
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
       expect(find.text(MeIssue.comfort.label), findsOneWidget);
       expect(find.text(MeIssue.feeding.label), findsOneWidget);
-      expect(find.text('喂奶记录'), findsOneWidget);
-      expect(find.text('为你搭配的记录项'), findsOneWidget);
-      expect(find.text('新增'), findsNothing);
+      expect(find.text('Feeding'), findsOneWidget);
+      expect(find.text('Suggested records for you'), findsOneWidget);
+      expect(find.text('Add'), findsNothing);
       c.dispose();
     },
   );
@@ -382,7 +406,7 @@ void main() {
         ),
       ),
     );
-    await tester.tap(find.text('下一步'));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
     await tester.runAsync(() async {
       for (final element in find.byType(Image).evaluate()) {
@@ -462,17 +486,17 @@ void main() {
 
     unawaited(showMeRecordSheet(host, c, MeMetric.energy));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('有力气'));
+    await tester.tap(find.text('Energized'));
     await tester.pumpAndSettle();
     await save('energy');
-    await tester.tap(find.text('保存记录'));
+    await tester.tap(find.text('Save record'));
     await tester.pumpAndSettle();
-    expect(c.latest(MeMetric.energy)?.value, '有力气');
+    expect(c.latest(MeMetric.energy)?.value, 'Energized');
     expect(find.byType(MeRecordSheet), findsNothing);
     unawaited(showMeNotificationSettings(host));
     await tester.pumpAndSettle();
     await save('settings');
-    await tester.tap(find.text('暂不开启'));
+    await tester.tap(find.text('Not now'));
     await tester.pumpAndSettle();
   });
   testWidgets(
@@ -526,9 +550,9 @@ void main() {
         ),
         size: const Size(320, 568),
       );
-      await tester.tap(find.text('下一步'));
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
-      expect(find.text('确认'), findsOneWidget);
+      expect(find.text('Confirm'), findsOneWidget);
       expect(tester.takeException(), isNull);
       c.dispose();
     },

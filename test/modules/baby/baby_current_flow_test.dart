@@ -59,12 +59,23 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
-          expect(find.textContaining('历史'), findsNothing);
-          expect(find.text('查看全部记录'), findsNothing);
-          expect(find.text('睡眠'), findsNothing);
-          expect(find.text('发育观察'), findsNothing);
-          expect(find.text('待记录'), findsAtLeastNWidgets(1));
-          expect(find.text('未记录'), findsNothing);
+          expect(find.textContaining('History'), findsNothing);
+          expect(find.text('View all records'), findsNothing);
+          expect(find.text('Sleep'), findsNothing);
+          expect(find.text('Development'), findsNothing);
+          if (scale > 1) {
+            await tester.scrollUntilVisible(
+              find.text('Not recorded yet'),
+              180,
+              scrollable: find.byType(Scrollable).first,
+            );
+            expect(find.text('Not recorded yet'), findsAtLeastNWidgets(1));
+            await tester.drag(find.byType(ListView), const Offset(0, 4000));
+            await tester.pumpAndSettle();
+          } else {
+            expect(find.text('Not recorded yet'), findsAtLeastNWidgets(1));
+          }
+          expect(find.text('Not recorded'), findsNothing);
           if (scale == 1) {
             await expectLater(
               find.byType(MaterialApp),
@@ -73,19 +84,19 @@ void main() {
           }
           await tester.tap(find.text('Luna'));
           await tester.pumpAndSettle();
-          expect(find.text('Luna  · 当前'), findsOneWidget);
+          expect(find.text('Luna  · Current'), findsOneWidget);
           await tester.tapAt(const Offset(4, 4));
           await tester.pumpAndSettle();
-          expect(find.text('切换宝宝'), findsNothing);
+          expect(find.text('Switch baby'), findsNothing);
           await tester.ensureVisible(find.byType(BabyKnowledgeBanner));
           await tester.tap(find.byType(BabyKnowledgeBanner));
           await tester.pumpAndSettle();
-          expect(find.text('问问 Cozymate'), findsOneWidget);
+          expect(find.text('Ask Momcozy AI'), findsOneWidget);
           expect(find.textContaining('CDC'), findsNothing);
           expect(tester.takeException(), isNull);
           await tester.tapAt(const Offset(4, 4));
           await tester.pumpAndSettle();
-          expect(find.text('问问 Cozymate'), findsNothing);
+          expect(find.text('Ask Momcozy AI'), findsNothing);
           await tester.drag(find.byType(ListView), const Offset(0, -4000));
           await tester.pumpAndSettle();
           final scroll = tester
@@ -153,18 +164,18 @@ void main() {
       FilledButton save() =>
           tester.widget(find.byKey(const ValueKey('baby-save')));
       expect(save().onPressed, isNull);
-      expect(find.text('先选择这次的喂养方式。'), findsNothing);
-      await tester.tap(find.text('瓶喂'));
+      expect(find.text('Select a feeding method first.'), findsNothing);
+      await tester.tap(find.text('Bottle feeding'));
       await tester.pumpAndSettle();
       expect(save().onPressed, isNull);
-      await tester.tap(find.text('母乳'));
+      await tester.tap(find.text('Breast milk'));
       await tester.pump();
       expect(save().onPressed, isNotNull);
-      await tester.tap(find.text('亲喂'));
+      await tester.tap(find.text('Nursing'));
       await tester.pumpAndSettle();
-      expect(find.text('两侧'), findsNothing);
+      expect(find.text('Both sides'), findsNothing);
       expect(save().onPressed, isNull);
-      await tester.tap(find.text('左侧'));
+      await tester.tap(find.text('Left side'));
       await tester.pump();
       expect(save().onPressed, isNotNull);
     },
@@ -188,13 +199,13 @@ void main() {
     );
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('保存'));
+    await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
-    expect(find.text('保存失败，请重试'), findsOneWidget);
-    expect(find.text('保存'), findsOneWidget);
+    expect(find.text('Could not save. Please try again.'), findsOneWidget);
+    expect(find.text('Save'), findsOneWidget);
     expect(c.wetCount, '2');
     expect(c.editable, true);
-    await tester.tap(find.text('保存'));
+    await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
     expect(find.byType(BabyRecordEditor), findsNothing);
     expect(r.values, hasLength(1));
@@ -230,9 +241,9 @@ void main() {
       await tester.pumpAndSettle();
       await tester.enterText(find.byKey(const ValueKey('wet-count')), '2');
       await tester.pump();
-      await tester.tap(find.text('保存'));
+      await tester.tap(find.text('Save'));
       await tester.pump();
-      expect(find.text('正在保存…'), findsOneWidget);
+      expect(find.text('Saving…'), findsOneWidget);
       await tester.tapAt(const Offset(4, 4));
       await tester.pumpAndSettle();
       expect(find.byType(BabyRecordEditor), findsNothing);

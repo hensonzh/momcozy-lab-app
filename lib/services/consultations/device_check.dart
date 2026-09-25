@@ -45,7 +45,7 @@ class ConsultationDeviceCheck extends ChangeNotifier {
         }
         video = track;
       } catch (_) {
-        cameraError = '未能使用摄像头，请检查权限或设备。';
+        cameraError = 'Could not use the camera. Check device permissions or hardware.';
       }
       _notify();
       if (_disposed || generation != _generation) return;
@@ -81,10 +81,10 @@ class ConsultationDeviceCheck extends ChangeNotifier {
         try {
           await visualizer.start();
         } catch (_) {
-          microphoneError = '麦克风已允许使用，当前设备暂不支持显示输入音量。';
+          microphoneError = 'Microphone access is allowed, but this device cannot display the input level.';
         }
       } catch (_) {
-        microphoneError = '未能使用麦克风，请检查权限或设备。';
+        microphoneError = 'Could not use the microphone. Check device permissions or hardware.';
       }
     } finally {
       busy = false;

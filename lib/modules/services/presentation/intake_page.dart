@@ -107,11 +107,11 @@ class _IntakePageState extends State<IntakePage> {
                 : 64,
             leading: TextButton(
               onPressed: controller.busy ? null : _close,
-              child: const Text('返回'),
+              child: const Text('Back'),
             ),
             centerTitle: false,
             title: Text(
-              '信息采集表',
+              'Consultation intake form',
               style: MomHomeTokens.text(22, weight: FontWeight.w700),
             ),
           ),
@@ -129,7 +129,7 @@ class _IntakePageState extends State<IntakePage> {
           MomSettingsCard(
             children: [
               Text(
-                '正在载入',
+                'Loading',
                 style: MomHomeTokens.text(16, weight: FontWeight.w700),
               ),
               const LinearProgressIndicator(),
@@ -166,11 +166,11 @@ class _IntakePageState extends State<IntakePage> {
           MomSettingsCard(
             children: [
               Text(
-                '请先确认预约时间',
+                'Confirm an appointment time first',
                 style: MomHomeTokens.text(18, weight: FontWeight.w700),
               ),
               Text(
-                '信息采集表会与已确认的咨询关联。',
+                'Your intake form will be linked to your confirmed consultation.',
                 style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
               ),
             ],
@@ -181,14 +181,14 @@ class _IntakePageState extends State<IntakePage> {
     if (data.babies.isEmpty) {
       return ProductEmptyView(
         textAlign: TextAlign.start,
-        title: '请先添加宝宝档案',
-        description: '将本次咨询与宝宝关联，方便你和专家查看同一份记录。',
+        title: 'Add a baby profile first',
+        description: 'Link your baby to this consultation so you and your consultant can review the same records.',
         action: FilledButton(
           onPressed: () async {
             await widget.onManageBabies();
             if (mounted) await controller.load();
           },
-          child: const Text('添加宝宝档案'),
+          child: const Text('Add baby profile'),
         ),
       );
     }
@@ -199,7 +199,7 @@ class _IntakePageState extends State<IntakePage> {
           const Padding(
             padding: EdgeInsets.only(bottom: 14),
             child: Text(
-              '已带入上次填写的内容，请核对本次情况并重新确认授权。',
+              'We brought over your previous answers. Check what applies this time and confirm consent again.',
               style: TextStyle(
                 color: MomHomeTokens.secondary,
                 fontSize: MomCozyTypography.captionSize,
@@ -210,20 +210,20 @@ class _IntakePageState extends State<IntakePage> {
         _surface(
           _stack([
             Text(
-              '这次最想解决什么？',
+              'What would you most like help with?',
               style: MomHomeTokens.text(22, weight: FontWeight.w700),
             ),
             Text(
-              '可多选',
+              'Select all that apply',
               style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
             ),
             _symptoms(),
             _text(
               'goal',
-              '希望咨询后有什么变化？',
+              'What would you like to change after this consultation?',
               controller.goal,
               (v) => controller.goal = v,
-              hint: '例如：减少含乳疼痛，找到合适的喂养节奏',
+              hint: 'For example: less pain when latching or a feeding rhythm that works for us',
               lines: 2,
               max: 1000,
             ),
@@ -233,11 +233,11 @@ class _IntakePageState extends State<IntakePage> {
         ),
         const SizedBox(height: 14),
         _disclosure(
-          '补充情况',
-          controller.support.isEmpty ? '可选' : '已填写',
+          'Additional details',
+          controller.support.isEmpty ? 'Optional' : 'Added',
           _stack([
             const Text(
-              '可以补充近期体重、黄疸、用药，或近 24 小时喂养与泵奶情况。',
+              'You can add recent weight, jaundice or medication details, or feeding and pumping from the past 24 hours.',
               style: TextStyle(
                 fontSize: 13,
                 height: 1.5,
@@ -246,7 +246,7 @@ class _IntakePageState extends State<IntakePage> {
             ),
             _text(
               'support',
-              '还想让 IBCLC 知道什么？',
+              'What else should your IBCLC know?',
               controller.support,
               (v) => controller.support = v,
               lines: 3,
@@ -256,8 +256,8 @@ class _IntakePageState extends State<IntakePage> {
         ),
         const SizedBox(height: 14),
         _disclosure(
-          '基础信息',
-          controller.profileReady ? '已预填，可修改' : '需完善',
+          'Basic information',
+          controller.profileReady ? 'Pre-filled · You can edit' : 'Needs attention',
           _profile(),
           key: ValueKey('profile-${controller.draftRevision}'),
           expanded: !controller.profileReady,
@@ -266,10 +266,10 @@ class _IntakePageState extends State<IntakePage> {
         _surface(
           _stack([
             Text(
-              '信息使用',
+              'How your information is used',
               style: MomHomeTokens.text(16, weight: FontWeight.w700),
             ),
-            TextButton(onPressed: _consentInfo, child: const Text('查看说明')),
+            TextButton(onPressed: _consentInfo, child: const Text('Read details')),
             const Divider(height: 1),
             CheckboxListTile(
               key: const ValueKey('intake-consent'),
@@ -282,7 +282,7 @@ class _IntakePageState extends State<IntakePage> {
                         controller.change(() => controller.consent = v ?? false)
                   : null,
               title: const Text(
-                '允许本次服务的 IBCLC 查看此表',
+                'Allow the IBCLC for this service to view this form',
                 style: TextStyle(fontSize: 13, height: 1.5),
               ),
             ),
@@ -310,12 +310,12 @@ class _IntakePageState extends State<IntakePage> {
           onPressed: controller.canSubmit ? _save : null,
           child: Text(
             controller.busy
-                ? '正在保存…'
+                ? 'Saving…'
                 : controller.uncertainSave
-                ? '重试保存'
+                ? 'Try saving again'
                 : controller.saved == null
-                ? '保存信息'
-                : '保存修改',
+                ? 'Save information'
+                : 'Save changes',
           ),
         ),
       ],
@@ -478,9 +478,9 @@ class _IntakePageState extends State<IntakePage> {
 
   String get _postpartumLabel {
     final days = int.tryParse(controller.postpartumDays);
-    if (days == null || days < 0) return '产后天数';
+    if (days == null || days < 0) return 'Postpartum day';
     final parts = formatPostpartumDay(days).split(' · ');
-    return '产后天数${parts.length > 1 ? ' · ${parts.last}' : ''}';
+    return 'Postpartum day${parts.length > 1 ? ' · ${parts.last}' : ''}';
   }
 
   Widget _profile() => LayoutBuilder(
@@ -497,7 +497,7 @@ class _IntakePageState extends State<IntakePage> {
       ).textTheme.bodyMedium?.copyWith(fontSize: 13);
       final fields = [
         _label(
-          '当前所在州',
+          'Current state',
           DropdownButtonFormField<String>(
             initialValue: c.region,
             isExpanded: true,
@@ -526,9 +526,9 @@ class _IntakePageState extends State<IntakePage> {
           (v) => c.postpartumDays = v,
           numeric: true,
         ),
-        _text('baby-name', '宝宝称呼', c.babyName, (v) => c.babyName = v, max: 120),
+        _text('baby-name', 'Baby\'s name', c.babyName, (v) => c.babyName = v, max: 120),
         _label(
-          '宝宝出生日期',
+          'Baby\'s date of birth',
           TextFormField(
             key: ValueKey('birth-${c.babyBirthDate}'),
             initialValue: c.babyBirthDate?.toString() ?? '',
@@ -543,7 +543,7 @@ class _IntakePageState extends State<IntakePage> {
           ),
         ),
         _label(
-          '出生记录性别',
+          'Sex recorded at birth',
           DropdownButtonFormField<BabySex>(
             initialValue: c.babySex,
             isExpanded: true,
@@ -553,10 +553,10 @@ class _IntakePageState extends State<IntakePage> {
               DropdownMenuItem(
                 value: BabySex.unspecified,
                 enabled: false,
-                child: Text('请选择'),
+                child: Text('Please select'),
               ),
-              DropdownMenuItem(value: BabySex.female, child: Text('女宝宝')),
-              DropdownMenuItem(value: BabySex.male, child: Text('男宝宝')),
+              DropdownMenuItem(value: BabySex.female, child: Text('Girl')),
+              DropdownMenuItem(value: BabySex.male, child: Text('Boy')),
             ],
             onChanged: c.canEdit
                 ? (v) => c.change(() => c.babySex = v ?? BabySex.unspecified)
@@ -564,7 +564,7 @@ class _IntakePageState extends State<IntakePage> {
           ),
         ),
         _label(
-          '宝宝月龄',
+          'Baby\'s age',
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 14),
             decoration: BoxDecoration(
@@ -585,7 +585,7 @@ class _IntakePageState extends State<IntakePage> {
       return _stack([
         if (c.data!.babies.length > 1)
           _label(
-            '本次咨询的宝宝',
+            'Baby for this consultation',
             DropdownButtonFormField<String>(
               initialValue: c.babyId,
               isExpanded: true,
@@ -607,7 +607,7 @@ class _IntakePageState extends State<IntakePage> {
           ],
         ),
         _label(
-          '当前喂养方式',
+          'Current feeding method',
           DropdownButtonFormField<FeedingMode>(
             initialValue: c.feedingMode,
             isExpanded: true,
@@ -687,15 +687,15 @@ class _IntakePageState extends State<IntakePage> {
     builder: (context) => Theme(
       data: momSettingsTheme(Theme.of(context)),
       child: MomSettingsFlowDialog(
-        title: '信息使用说明',
-        closeLabel: '关闭信息使用说明',
+        title: 'How your information is used',
+        closeLabel: 'Close information use details',
         maxHeight: 720,
         onClose: () => Navigator.pop(context),
         child: _stack([
           for (final item in {
-            '提供给谁': '本次服务中被分配的 IBCLC',
-            '包含什么': '本页填写内容与确认后的基础信息',
-            '用于什么': '咨询前了解情况与准备咨询',
+            'Who can see it': 'The IBCLC assigned to this service',
+            'What is shared': 'Your answers on this page and confirmed basic information',
+            'Why it is shared': 'To understand your needs and prepare for your consultation',
           }.entries)
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -716,7 +716,7 @@ class _IntakePageState extends State<IntakePage> {
           const SizedBox(height: 14),
           FilledButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('知道了'),
+            child: const Text('Got it'),
           ),
         ], gap: 0),
       ),
@@ -739,8 +739,8 @@ class _IntakePageState extends State<IntakePage> {
       builder: (context) => Theme(
         data: momSettingsTheme(Theme.of(context)),
         child: MomSettingsFlowDialog(
-          title: '信息采集已完成',
-          closeLabel: '关闭信息采集结果',
+          title: 'Intake form complete',
+          closeLabel: 'Close intake result',
           showClose: false,
           onClose: null,
           maxHeight: 720,
@@ -754,7 +754,7 @@ class _IntakePageState extends State<IntakePage> {
             ),
             MomAppointmentSummary(appointment: appointment),
             const Text(
-              'Cozymate 会结合你填写的信息，进一步了解本次咨询重点，并将重点同步给 IBCLC。',
+              'Momcozy AI will use your answers to understand your consultation priorities and share the key points with your IBCLC.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
@@ -764,11 +764,11 @@ class _IntakePageState extends State<IntakePage> {
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('开始预问诊'),
+              child: const Text('Discuss with Momcozy AI'),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('稍后再说，查看预约'),
+              child: const Text('Maybe later · View appointment'),
             ),
           ]),
         ),

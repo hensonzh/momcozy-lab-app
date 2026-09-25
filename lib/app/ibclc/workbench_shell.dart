@@ -28,40 +28,46 @@ class WorkbenchShell extends StatelessWidget {
   final Widget child;
 
   String get _breadcrumb {
-    if (location.endsWith('/intake')) return '今日预约 / 咨询前资料';
-    if (location.startsWith('/ibclc/clients/')) return '我的客户 / 客户资料';
-    if (location.startsWith('/ibclc/followups/')) return '今日跟进 / 专业复核';
+    if (location.endsWith('/intake')) return 'Today\'s appointments / Intake';
+    if (location.startsWith('/ibclc/clients/')) {
+      return 'My clients / Client profile';
+    }
+    if (location.startsWith('/ibclc/followups/')) {
+      return 'Today\'s follow-ups / Clinical review';
+    }
     return destinations
             .where((value) => location.startsWith(value.path))
             .firstOrNull
             ?.label ??
-        '工作台';
+        'Workbench';
   }
 
   Future<void> _account(BuildContext context) => showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('工作账号'),
+      title: const Text('Work account'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              identity.provider.displayName,
+              identity.provider.publicName,
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),
             SelectionArea(child: Text(identity.email)),
             const SizedBox(height: 18),
-            Text('工作时区：${identity.provider.timezone}'),
+            Text('Work time zone: ${identity.provider.timezone}'),
             const SizedBox(height: 8),
-            Text('服务地区：${identity.provider.regions.join('、')}'),
+            Text('Service regions: ${identity.provider.regions.join(', ')}'),
             const SizedBox(height: 8),
-            Text('服务语言：${identity.provider.languages.join('、')}'),
+            Text(
+              'Languages: ${identity.provider.languageLabel.replaceAll(' · ', ', ')}',
+            ),
             const SizedBox(height: 18),
             Text(
-              '两步验证有效至 ${dateInTimezone(identity.mfaExpiresAt, identity.provider.timezone)} ${zonedClock(identity.mfaExpiresAt, identity.provider.timezone)}',
+              'Two-step verification expires ${dateInTimezone(identity.mfaExpiresAt, identity.provider.timezone)} at ${zonedClock(identity.mfaExpiresAt, identity.provider.timezone)}',
               style: const TextStyle(
                 fontSize: 12,
                 color: MomCozyColors.mutedForeground,
@@ -76,11 +82,11 @@ class WorkbenchShell extends StatelessWidget {
             Navigator.pop(context);
             onLogout();
           },
-          child: const Text('退出登录'),
+          child: const Text('Sign out'),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('关闭'),
+          child: const Text('Close'),
         ),
       ],
     ),
@@ -102,7 +108,7 @@ class WorkbenchShell extends StatelessWidget {
                   const MomCozyWordmark(),
                   const SizedBox(height: 8),
                   const Text(
-                    'IBCLC 工作台',
+                    'IBCLC Workbench',
                     style: TextStyle(
                       fontSize: 11,
                       color: MomCozyColors.mutedForeground,
@@ -163,7 +169,7 @@ class WorkbenchShell extends StatelessWidget {
                       backgroundColor: MomCozyColors.roseSoft,
                       foregroundColor: MomCozyColors.primary,
                       child: Text(
-                        identity.provider.displayName.characters.firstOrNull ??
+                        identity.provider.publicName.characters.firstOrNull ??
                             'I',
                         style: const TextStyle(
                           fontSize: 14,
@@ -177,7 +183,7 @@ class WorkbenchShell extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            identity.provider.displayName,
+                            identity.provider.publicName,
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
@@ -244,7 +250,7 @@ class WorkbenchShell extends StatelessWidget {
                             if (!desktop)
                               Builder(
                                 builder: (context) => IconButton(
-                                  tooltip: '打开工作台导航',
+                                  tooltip: 'Open workbench navigation',
                                   onPressed: () =>
                                       Scaffold.of(context).openDrawer(),
                                   icon: const Icon(Icons.menu_rounded),
@@ -253,7 +259,7 @@ class WorkbenchShell extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 desktop
-                                    ? 'IBCLC 工作台  /  $_breadcrumb'
+                                    ? 'IBCLC Workbench / $_breadcrumb'
                                     : _breadcrumb,
                                 style: const TextStyle(
                                   fontSize: 12,
@@ -262,7 +268,7 @@ class WorkbenchShell extends StatelessWidget {
                               ),
                             ),
                             IconButton(
-                              tooltip: '工作账号',
+                              tooltip: 'Work account',
                               onPressed: () => _account(context),
                               icon: const Icon(
                                 Icons.account_circle_outlined,

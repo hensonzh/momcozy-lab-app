@@ -1,0 +1,5 @@
+{
+  "MOMCOZY_ENV": "staging",
+  "MOMCOZY_API_BASE_URL": "https://backend-test.lute-momcozylab.luteos.cloud:8443",
+  "MOMCOZY_AGENT_API_BASE_URL": "https://agent-test.lute-momcozylab.luteos.cloud:8443"
+}

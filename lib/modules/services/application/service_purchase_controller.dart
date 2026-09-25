@@ -63,7 +63,7 @@ class ServicePurchaseController extends ChangeNotifier {
         _createKey = mutationKey();
       }
       if (!eligibility!.eligible) {
-        validationMessage = '当前服务暂未覆盖该州';
+        validationMessage = 'This service is not available in your state yet.';
       } else {
         final result = await repository.createOrder(
           eligibilityId: eligibility!.id,
@@ -114,7 +114,7 @@ class ServicePurchaseController extends ChangeNotifier {
       _ => null,
     };
     if (outcome == null) {
-      validationMessage = '请输入测试卡号：4242 4242 4242 4242';
+      validationMessage = 'Enter the test card number: 4242 4242 4242 4242';
       notifyListeners();
       return;
     }

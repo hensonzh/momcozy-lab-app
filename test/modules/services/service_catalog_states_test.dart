@@ -167,13 +167,13 @@ void main() {
             );
             final button = find.descendant(
               of: card,
-              matching: find.text('查看方案 →'),
+              matching: find.text('View plans →'),
             );
             await tester.ensureVisible(button);
             await tester.pumpAndSettle();
             await tester.tap(button);
             await tester.pumpAndSettle();
-            expect(find.text('${package.name}服务包'), findsOneWidget);
+            expect(find.text('${package.name} package'), findsOneWidget);
             expect(find.text(package.description), findsOneWidget);
             expect(
               find.text('${package.priceLabel} USD').hitTestable(),
@@ -193,9 +193,9 @@ void main() {
               expect(find.text(text).hitTestable(), findsOneWidget);
             }
             await shot('${package.id}-bottom');
-            await tester.tap(find.text('购买'));
+            await tester.tap(find.text('Purchase'));
             await tester.pumpAndSettle();
-            expect(find.text('购买前确认'), findsOneWidget);
+            expect(find.text('Before you purchase'), findsOneWidget);
             expect(
               tester
                   .widget<ServicePurchaseDialog>(
@@ -206,9 +206,9 @@ void main() {
               package.id,
             );
             // Closing the pre-purchase confirmation never creates an order or starts payment.
-            await tester.tap(find.byTooltip('关闭购买'));
+            await tester.tap(find.byTooltip('Close purchase'));
             await tester.pumpAndSettle();
-            await tester.tap(find.text('返回'));
+            await tester.tap(find.text('Back'));
             await tester.pumpAndSettle();
           }
           expect(repo.purchaseReads, 0);
@@ -231,12 +231,15 @@ void main() {
       repo.offline = true;
       await tester.drag(find.byType(ListView), const Offset(0, 500));
       await tester.pumpAndSettle();
-      expect(find.text('网络未连接，请连接后重试'), findsOneWidget);
+      expect(
+        find.text("You're offline. Connect and try again."),
+        findsOneWidget,
+      );
       expect(find.text(repo.data.packages.first.name), findsOneWidget);
       repo.offline = false;
-      await tester.tap(find.text('重试'));
+      await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
-      expect(find.text('网络未连接，请连接后重试'), findsNothing);
+      expect(find.text("You're offline. Connect and try again."), findsNothing);
     },
   );
   testWidgets('catalog with no packages explains empty state', (tester) async {
@@ -247,7 +250,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('暂无可用的服务方案'), findsOneWidget);
+    expect(find.text('No service plans available'), findsOneWidget);
   });
   testWidgets(
     'resuming an order shows busy state, blocks repeats and recovers read failure',
@@ -267,12 +270,12 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('继续付款'));
+      await tester.tap(find.text('Continue to payment'));
       await tester.pump();
-      expect(find.text('正在打开…'), findsOneWidget);
+      expect(find.text('Opening…'), findsOneWidget);
       expect(
         tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, '正在打开…'))
+            .widget<FilledButton>(find.widgetWithText(FilledButton, 'Opening…'))
             .onPressed,
         isNull,
       );
@@ -281,10 +284,15 @@ void main() {
         const ProductFailure(ProductFailureKind.offline),
       );
       await tester.pumpAndSettle();
-      expect(find.text('暂时无法打开订单，请稍后重试'), findsOneWidget);
+      expect(
+        find.text('Could not open the order. Try again later.'),
+        findsOneWidget,
+      );
       expect(
         tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, '继续付款'))
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Continue to payment'),
+            )
             .onPressed,
         isNotNull,
       );

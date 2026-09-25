@@ -59,7 +59,7 @@ class AppointmentDetailCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${appointment.duration.inMinutes} 分钟 · ${appointment.timezone}',
+                    '${appointment.duration.inMinutes} min · ${appointment.timezone}',
                     style: const TextStyle(
                       fontSize: 10,
                       color: MomCozyColors.mutedForeground,
@@ -75,8 +75,8 @@ class AppointmentDetailCard extends StatelessWidget {
           child: Divider(height: 1),
         ),
         ServiceExpertIdentity(
-          name: appointment.providerName,
-          label: '本次咨询专家',
+          name: appointment.publicProviderName,
+          label: 'Your consultant',
           avatarSize: 42,
         ),
         if (action != null) ...[const SizedBox(height: 15), action!],

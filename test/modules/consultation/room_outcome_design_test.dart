@@ -97,22 +97,22 @@ void main() {
         expect(
           find.text(
             outcome == 'technical_failure'
-                ? '视频连接未能继续'
+                ? 'Video connection could not continue'
                 : outcome == 'user_no_show'
-                ? '这次咨询未能开始'
+                ? 'This consultation could not start'
                 : outcome == 'cancelled'
-                ? '预约已取消'
-                : '本次咨询已结束',
+                ? 'Appointment canceled'
+                : 'This consultation has ended',
           ),
           findsOneWidget,
         );
-        expect(find.text('本次预约'), findsOneWidget);
+        expect(find.text('This appointment'), findsOneWidget);
         expect(
-          find.text('返回妈妈主页'),
+          find.text('Back to home'),
           unsuccessful ? findsOneWidget : findsNothing,
         );
         expect(
-          find.textContaining('未扣减咨询次数'),
+          find.textContaining('No consultation was used'),
           unsuccessful ? findsOneWidget : findsNothing,
         );
         await expectLater(
@@ -129,18 +129,18 @@ void main() {
         }
 
         if (unsuccessful) {
-          expect(find.text('查看咨询总结'), findsNothing);
-          await click('重新预约');
-          await click('返回妈妈主页');
+          expect(find.text('View consultation summary'), findsNothing);
+          await click('Book another appointment');
+          await click('Back to home');
           expect(rebook, 1);
           expect(summary, 0);
         } else {
-          await click('查看咨询总结');
+          await click('View consultation summary');
           expect(summary, 1);
           if (outcome == 'completed') {
-            expect(find.text('重新预约'), findsNothing);
+            expect(find.text('Book another appointment'), findsNothing);
           } else {
-            await click('重新预约');
+            await click('Book another appointment');
             expect(rebook, 1);
           }
         }

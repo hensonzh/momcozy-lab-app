@@ -61,8 +61,8 @@ class ClinicalNoteEditor extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     children: [
       DocumentationField(
-        label: 'S · 主观描述',
-        hint: '用户原话',
+        label: 'S · Subjective',
+        hint: 'Client\'s own words',
         value: content.subjective,
         enabled: enabled,
         lines: 4,
@@ -70,8 +70,8 @@ class ClinicalNoteEditor extends StatelessWidget {
         onChanged: (text) => onChanged(content.copyWith(subjective: text)),
       ),
       DocumentationField(
-        label: 'O · 客观观察',
-        hint: '观察',
+        label: 'O · Objective',
+        hint: 'Observations',
         value: content.objective,
         enabled: enabled,
         lines: 3,
@@ -79,8 +79,8 @@ class ClinicalNoteEditor extends StatelessWidget {
         onChanged: (text) => onChanged(content.copyWith(objective: text)),
       ),
       DocumentationField(
-        label: 'A · 专业评估',
-        hint: '评估',
+        label: 'A · Assessment',
+        hint: 'Assessment',
         value: content.assessment,
         enabled: enabled,
         lines: 3,
@@ -88,8 +88,8 @@ class ClinicalNoteEditor extends StatelessWidget {
         onChanged: (text) => onChanged(content.copyWith(assessment: text)),
       ),
       DocumentationField(
-        label: 'P · 行动计划',
-        hint: '下一步',
+        label: 'P · Plan',
+        hint: 'Continue',
         value: content.plan,
         enabled: enabled,
         lines: 3,
@@ -110,7 +110,7 @@ class CarePlanEditor extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DocumentationField(
-          label: '方案标题',
+          label: 'Plan title',
           value: plan.title,
           enabled: controller.editable,
           maxLength: 120,
@@ -118,7 +118,7 @@ class CarePlanEditor extends StatelessWidget {
               controller.changePlan(plan.copyWith(title: text)),
         ),
         DocumentationField(
-          label: '服务目标（每行一项，最多 6 项）',
+          label: 'Care goals (one per line, up to 6)',
           value: plan.goals.join('\n'),
           enabled: controller.editable,
           lines: 3,
@@ -127,7 +127,7 @@ class CarePlanEditor extends StatelessWidget {
           ),
         ),
         DocumentationField(
-          label: '给用户的总结',
+          label: 'Summary for the client',
           value: plan.summary,
           enabled: controller.editable,
           lines: 3,
@@ -141,7 +141,7 @@ class CarePlanEditor extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Text(
-              '行动任务 · ${plan.tasks.length} 项',
+              'Action tasks · ${plan.tasks.length}',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             TextButton.icon(
@@ -156,14 +156,14 @@ class CarePlanEditor extends StatelessWidget {
                     )
                   : null,
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('添加任务'),
+              label: const Text('Add task'),
             ),
           ],
         ),
         if (plan.tasks.isEmpty)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text('添加与用户共同确认的行动任务。'),
+            child: Text('Add action tasks agreed on with the client.'),
           ),
         for (final task in plan.tasks)
           _PlanTaskEditor(
@@ -216,7 +216,7 @@ class _PlanTaskEditor extends StatelessWidget {
       initialDate: DateTime(selected.year, selected.month, selected.day),
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
-      helpText: '安排任务日期',
+      helpText: 'Schedule task date',
     );
     if (result != null && context.mounted) {
       onChanged(task.copyWith(scheduledDate: LocalDate.fromDateTime(result)));
@@ -238,19 +238,19 @@ class _PlanTaskEditor extends StatelessWidget {
           alignment: Alignment.centerRight,
           child: IconButton(
             onPressed: enabled ? onRemove : null,
-            tooltip: '移除这项任务',
+            tooltip: 'Remove this task',
             icon: const Icon(Icons.close, size: 18),
           ),
         ),
         DocumentationField(
-          label: '任务标题',
+          label: 'Task title',
           value: task.title,
           enabled: enabled,
           maxLength: 160,
           onChanged: (text) => onChanged(task.copyWith(title: text)),
         ),
         DocumentationField(
-          label: '具体怎么做',
+          label: 'How to do it',
           value: task.description,
           enabled: enabled,
           lines: 2,
@@ -260,16 +260,16 @@ class _PlanTaskEditor extends StatelessWidget {
         LayoutBuilder(
           builder: (context, constraints) {
             final category = DocumentationField(
-              label: '任务类别',
-              hint: '例如：观察',
+              label: 'Task category',
+              hint: 'For example: observation',
               value: task.category,
               enabled: enabled,
               maxLength: 64,
               onChanged: (text) => onChanged(task.copyWith(category: text)),
             );
             final due = DocumentationField(
-              label: '时间说明',
-              hint: '例如：下一次喂养时',
+              label: 'Timing details',
+              hint: 'For example: at the next feeding',
               value: task.dueLabel,
               enabled: enabled,
               maxLength: 80,
@@ -294,14 +294,14 @@ class _PlanTaskEditor extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: enabled ? () => _date(context) : null,
               icon: const Icon(Icons.calendar_today_outlined, size: 16),
-              label: Text(task.scheduledDate?.toString() ?? '安排日期（可选）'),
+              label: Text(task.scheduledDate?.toString() ?? 'Schedule date (optional)'),
             ),
             if (task.scheduledDate != null)
               TextButton(
                 onPressed: enabled
                     ? () => onChanged(task.copyWith(clearDate: true))
                     : null,
-                child: const Text('清除日期'),
+                child: const Text('Clear date'),
               ),
           ],
         ),

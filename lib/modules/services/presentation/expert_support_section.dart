@@ -93,10 +93,20 @@ class _ExpertSupportSectionState extends State<ExpertSupportSection> {
     animation: controller,
     builder: (context, _) {
       final data = controller.overview;
+      final activeCount =
+          data?.episodes
+              .where(
+                (episode) =>
+                    episode.status == CareEpisodeStatus.active &&
+                    (episode.endsAt == null ||
+                        episode.endsAt!.isAfter(widget.now())),
+              )
+              .length ??
+          0;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const MomHomeSectionHeader(title: '专家陪伴计划'),
+          const MomHomeSectionHeader(title: 'Expert care plans'),
           const SizedBox(height: 7),
           MomExpertPlanEntry(
             onTap: () {
@@ -122,7 +132,7 @@ class _ExpertSupportSectionState extends State<ExpertSupportSection> {
               spacing: 8,
               children: [
                 Text(
-                  '我的陪伴计划',
+                  'My care plan',
                   style: MomHomeTokens.text(
                     14,
                     weight: FontWeight.w700,
@@ -139,7 +149,7 @@ class _ExpertSupportSectionState extends State<ExpertSupportSection> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${data!.episodes.where((e) => e.status == CareEpisodeStatus.active && (e.endsAt == null || e.endsAt!.isAfter(widget.now()))).length} 项服务进行中',
+                    '$activeCount active service${activeCount == 1 ? '' : 's'}',
                     style: MomHomeTokens.text(11, color: MomHomeTokens.rose),
                   ),
                 ),
@@ -203,7 +213,7 @@ class _ExpertSupportSectionState extends State<ExpertSupportSection> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('已购计划资料暂未载入'),
+                        const Text('Purchased plan details could not load'),
                         TextButton(
                           onPressed: () {
                             widget.observability?.recordFeatureEvent(
@@ -212,11 +222,11 @@ class _ExpertSupportSectionState extends State<ExpertSupportSection> {
                             );
                             unawaited(_open(() => widget.onProgress(episode)));
                           },
-                          child: const Text('服务进度 ›'),
+                          child: const Text('Service progress ›'),
                         ),
                         TextButton(
                           onPressed: controller.load,
-                          child: const Text('重新载入计划资料'),
+                          child: const Text('Reload plan details'),
                         ),
                       ],
                     ),
@@ -260,6 +270,7 @@ class ExpertServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    final stackDetails = largeText || MediaQuery.sizeOf(context).width <= 360;
     final instant = now ?? DateTime.now();
     final expired = episode.endsAt != null && !episode.endsAt!.isAfter(instant);
     final days = episode.endsAt == null
@@ -268,13 +279,20 @@ class ExpertServiceCard extends StatelessWidget {
                   Duration.secondsPerDay)
               .ceil()
               .clamp(0, package.durationDays);
+    final supportLabel = '$days day${days == 1 ? '' : 's'} of support';
+    final remaining = episode.remainingSessions;
+    final sessionsLabel =
+        '$remaining consultation${remaining == 1 ? '' : 's'} left';
     final fallback = ColoredBox(
       color: MomHomeTokens.mint,
       child: Center(
         child: Icon(Icons.person_outline, color: MomHomeTokens.teal, size: 24),
       ),
     );
-    final name = appointment?.providerName ?? provider?.displayName ?? '待分配专家';
+    final name =
+        appointment?.publicProviderName ??
+        provider?.publicName ??
+        'Consultant not assigned yet';
     return MomHomeSurface(
       gradient: MomHomeTokens.plan,
       radius: 23,
@@ -298,7 +316,7 @@ class ExpertServiceCard extends StatelessWidget {
               children: [
                 if (largeText) ...[
                   Text(
-                    package.name,
+                    package.publicName,
                     style: MomHomeTokens.text(
                       16,
                       weight: FontWeight.w700,
@@ -314,7 +332,7 @@ class ExpertServiceCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          package.name,
+                          package.publicName,
                           style: MomHomeTokens.text(
                             16,
                             weight: FontWeight.w700,
@@ -362,7 +380,7 @@ class ExpertServiceCard extends StatelessWidget {
                           Text(
                             credential ??
                                 (provider == null && appointment == null
-                                    ? '预约时确认本次专家'
+                                    ? 'Confirm your consultant when booking'
                                     : 'IBCLC'),
                             style: MomHomeTokens.text(
                               10,
@@ -375,21 +393,17 @@ class ExpertServiceCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-                if (largeText) ...[
-                  _benefit(MomCozyLineGlyph.calendar, '$days 天支持', false),
+                if (stackDetails) ...[
+                  _benefit(MomCozyLineGlyph.calendar, supportLabel, false),
                   const SizedBox(height: 8),
-                  _benefit(
-                    MomCozyLineGlyph.consultation,
-                    '剩余 ${episode.remainingSessions} 次咨询',
-                    false,
-                  ),
+                  _benefit(MomCozyLineGlyph.consultation, sessionsLabel, false),
                 ] else
                   Row(
                     children: [
                       Expanded(
                         child: _benefit(
                           MomCozyLineGlyph.calendar,
-                          '$days 天支持',
+                          supportLabel,
                           false,
                         ),
                       ),
@@ -397,7 +411,7 @@ class ExpertServiceCard extends StatelessWidget {
                       Expanded(
                         child: _benefit(
                           MomCozyLineGlyph.consultation,
-                          '剩余 ${episode.remainingSessions} 次咨询',
+                          sessionsLabel,
                           false,
                         ),
                       ),
@@ -413,72 +427,64 @@ class ExpertServiceCard extends StatelessWidget {
                   const SizedBox(height: 10),
                   if (expired)
                     Text(
-                      '服务已到期',
+                      'Service expired',
                       style: MomHomeTokens.text(
                         12,
                         color: MomHomeTokens.secondary,
                       ),
                     )
                   else
-                    _appointmentDetails(largeText),
+                    _appointmentDetails(stackDetails),
                 ],
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        expired
-                            ? '服务已到期'
-                            : episodeStatusLabels[episode.status]!,
-                        style: MomHomeTokens.text(
-                          10,
-                          color: MomHomeTokens.teal,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: FilledButton(
-                          onPressed: appointmentLoading || appointmentFailed
-                              ? null
-                              : appointment != null
-                              ? _appointmentAction
-                              : episode.canBook && !expired
-                              ? onBook
-                              : null,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: MomHomeTokens.expertAction,
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(88, 44),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            textStyle: MomHomeTokens.text(
-                              12,
-                              weight: FontWeight.w600,
-                            ),
-                          ),
-                          child: Text(
-                            appointment == null
-                                ? '预约咨询'
-                                : _appointmentActionLabel,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                _footer(stackDetails, expired),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _footer(bool stacked, bool expired) {
+    final status = Text(
+      expired ? 'Service expired' : episodeStatusLabels[episode.status]!,
+      style: MomHomeTokens.text(10, color: MomHomeTokens.teal),
+    );
+    final action = FilledButton(
+      onPressed: appointmentLoading || appointmentFailed
+          ? null
+          : appointment != null
+          ? _appointmentAction
+          : episode.canBook && !expired
+          ? onBook
+          : null,
+      style: FilledButton.styleFrom(
+        backgroundColor: MomHomeTokens.expertAction,
+        foregroundColor: Colors.white,
+        minimumSize: const Size(88, 44),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: MomHomeTokens.text(12, weight: FontWeight.w600),
+      ),
+      child: Text(
+        appointment == null ? 'Book a consultation' : _appointmentActionLabel,
+      ),
+    );
+    if (stacked) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [status, const SizedBox(height: 8), action],
+      );
+    }
+    return Row(
+      children: [
+        Expanded(child: status),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Align(alignment: Alignment.centerRight, child: action),
+        ),
+      ],
     );
   }
 
@@ -490,7 +496,7 @@ class ExpertServiceCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       textStyle: MomHomeTokens.text(12, weight: FontWeight.w700),
     ),
-    child: const Text('服务进度 ›'),
+    child: const Text('Service progress ›'),
   );
 
   bool get _needsIntake =>
@@ -505,33 +511,33 @@ class ExpertServiceCard extends StatelessWidget {
       ? onJoin
       : onAppointment;
   String get _appointmentActionLabel => _needsIntake
-      ? '填写信息'
+      ? 'Complete intake'
       : _canJoin
-      ? '进入咨询'
+      ? 'Join consultation'
       : appointment!.status == AppointmentStatus.held
-      ? '确认预约'
-      : '查看预约';
+      ? 'Confirm appointment'
+      : 'View appointment';
 
   Widget _appointmentDetails(bool largeText) {
     final value = appointment;
     final showAppointment =
         value != null && !appointmentLoading && !appointmentFailed;
     final copy = appointmentLoading
-        ? '正在读取预约…'
+        ? 'Loading appointment…'
         : appointmentFailed
-        ? '预约暂时未载入，可在服务进度中查看'
+        ? 'Appointment could not load. Check Service Progress.'
         : value != null
         ? '${appointmentDay(value.startsAt, value.timezone)} · ${zonedRange(value.startsAt, value.endsAt, value.timezone)}'
         : episode.canBook
-        ? '可预约下一次咨询'
+        ? 'Your next consultation is ready to book'
         : episode.remainingSessions == 0
-        ? '本服务包的咨询权益已用完'
+        ? 'All consultations in this package have been used'
         : episodeStatusLabels[episode.status]!;
     final detail = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          showAppointment ? '下次咨询' : '下一步',
+          showAppointment ? 'Next consultation' : 'Continue',
           style: const TextStyle(
             fontSize: MomCozyTypography.labelSize,
             height: 1.5,
@@ -582,16 +588,16 @@ class ExpertServiceCard extends StatelessWidget {
   }
 
   String _countdown(CareAppointment value) {
-    if (value.status == AppointmentStatus.inProgress) return '咨询中';
-    if (value.status == AppointmentStatus.held) return '待确认';
+    if (value.status == AppointmentStatus.inProgress) return 'In consultation';
+    if (value.status == AppointmentStatus.held) return 'Awaiting confirmation';
     final instant = now ?? DateTime.now();
-    if (!instant.isBefore(value.endsAt)) return '时间已过';
-    if (!instant.isBefore(value.startsAt)) return '已到预约时间';
+    if (!instant.isBefore(value.endsAt)) return 'Time passed';
+    if (!instant.isBefore(value.startsAt)) return 'Time to join';
     final seconds = value.startsAt.difference(instant).inSeconds;
     String two(int v) => v.toString().padLeft(2, '0');
     final clock = '${two(seconds ~/ 3600 % 24)}:${two(seconds ~/ 60 % 60)}';
     return seconds >= 86400
-        ? '${seconds ~/ 86400}天 $clock'
+        ? '${seconds ~/ 86400} days $clock'
         : '$clock:${two(seconds % 60)}';
   }
 

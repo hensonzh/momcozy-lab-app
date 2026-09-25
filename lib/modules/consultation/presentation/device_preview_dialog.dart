@@ -25,7 +25,7 @@ class _ConsultationDevicePreviewDialogState
     animation: check,
     builder: (context, _) => AlertDialog(
       scrollable: true,
-      title: const Text('摄像头与麦克风检查'),
+      title: const Text('Camera & microphone check'),
       content: SizedBox(
         width: MomCozyLayout.maxAppWidth,
         child: Column(
@@ -33,7 +33,7 @@ class _ConsultationDevicePreviewDialogState
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              '点击开始后，请允许使用摄像头和麦克风。画面与声音仅用于本机检查，不会发送给专家。',
+              'After tapping Start, allow camera and microphone access. This check stays on your device; audio and video are not sent to your consultant.',
               style: TextStyle(
                 fontSize: MomCozyTypography.secondarySize,
                 height: MomCozyTypography.lineHeight,
@@ -64,8 +64,8 @@ class _ConsultationDevicePreviewDialogState
             const SizedBox(height: MomCozySpacing.content),
             Text(
               check.video != null
-                  ? '摄像头已开启，请确认能看到自己的画面。'
-                  : (check.cameraError ?? '摄像头尚未检查'),
+                  ? 'Camera is on. Make sure you can see yourself.'
+                  : (check.cameraError ?? 'Camera not checked yet'),
               style: const TextStyle(fontSize: MomCozyTypography.captionSize),
             ),
             const SizedBox(height: MomCozySpacing.page),
@@ -78,7 +78,7 @@ class _ConsultationDevicePreviewDialogState
                 const SizedBox(width: MomCozySpacing.compact),
                 Expanded(
                   child: Text(
-                    check.microphoneAvailable ? '请说一句话，查看输入音量' : '麦克风尚未检查',
+                    check.microphoneAvailable ? 'Say something to check the input level' : 'Microphone not checked yet',
                     style: const TextStyle(
                       fontSize: MomCozyTypography.secondarySize,
                     ),
@@ -108,11 +108,11 @@ class _ConsultationDevicePreviewDialogState
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('关闭检查'),
+          child: const Text('Close check'),
         ),
         FilledButton(
           onPressed: check.busy ? null : check.start,
-          child: Text(check.busy ? '正在检查…' : '开始检查'),
+          child: Text(check.busy ? 'Checking…' : 'Start check'),
         ),
       ],
     ),

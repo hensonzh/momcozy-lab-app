@@ -85,6 +85,41 @@ void main() {
   });
 
   test(
+    'backend errors from earlier locales never become onboarding UI copy',
+    () async {
+      final transport = _RecordingTransport({
+        onboardingMeEndpoint: const {
+          'http_status': 503,
+          'status_text': 'Service Unavailable',
+          'body': {
+            'error': {
+              'code': 'backend_unavailable',
+              'message': 'Cozymate 暂时无法加载，请稍后重试。',
+            },
+          },
+        },
+      });
+      final runtimeController = _runtimeController(transport);
+      final controller = OnboardingController(
+        runtimeController: runtimeController,
+      );
+
+      await _waitFor(() => controller.phase == OnboardingGatePhase.failure);
+
+      expect(
+        controller.errorMessage,
+        'We could not save that. Please try again.',
+      );
+      expect(
+        transport.responsesByPath[onboardingMeEndpoint]!['body'].toString(),
+        contains('Cozymate'),
+      );
+      controller.dispose();
+      runtimeController.dispose();
+    },
+  );
+
+  test(
     'completed onboarding marks the current release for that user',
     () async {
       final transport = _RecordingTransport(

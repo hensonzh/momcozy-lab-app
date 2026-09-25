@@ -15,7 +15,7 @@
         "navigate": {
           "path": "/",
           "state": {
-            "agentPrefill": "我想调整今天的吸乳排期"
+            "agentPrefill": "I'd like to adjust today's pumping schedule."
           }
         }
       },
@@ -47,7 +47,7 @@
       "type": "OpenAgentHubWithPrefill",
       "path": "/",
       "payload": {
-        "agentPrefill": "我想调整今天的吸乳排期",
+        "agentPrefill": "I'd like to adjust today's pumping schedule.",
         "autoSend": true
       }
     },
@@ -62,7 +62,7 @@
       "type": "OpenAgentHubAndStartWorkFlow",
       "path": "/",
       "payload": {
-        "prompt": "我想制定返工计划"
+        "prompt": "I'd like to plan my return to work."
       }
     }
   ],

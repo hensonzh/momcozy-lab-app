@@ -13,10 +13,10 @@ void main() {
     final semantics = tester.ensureSemantics();
     try {
       await tester.pumpWidget(_app(const ProductLoadingView(), 1));
-      expect(find.bySemanticsLabel('正在载入'), findsOneWidget);
+      expect(find.bySemanticsLabel('Loading'), findsOneWidget);
       expect(
         tester
-            .getSemantics(find.bySemanticsLabel('正在载入'))
+            .getSemantics(find.bySemanticsLabel('Loading'))
             .getSemanticsData()
             .flagsCollection
             .isLiveRegion,
@@ -51,7 +51,7 @@ void main() {
           child: SizedBox(
             width: 280,
             height: 90,
-            child: ProductLoadingView(label: '正在载入记录，请稍候'),
+            child: ProductLoadingView(label: 'Loading records, please wait'),
           ),
         ),
         2,
@@ -59,8 +59,11 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 100));
     expect(tester.takeException(), isNull);
-    await tester.ensureVisible(find.text('正在载入记录，请稍候'));
-    expect(find.text('正在载入记录，请稍候').hitTestable(), findsOneWidget);
+    await tester.ensureVisible(find.text('Loading records, please wait'));
+    expect(
+      find.text('Loading records, please wait').hitTestable(),
+      findsOneWidget,
+    );
   });
   for (final width in [320.0, 390.0, 430.0]) {
     for (final scale in [1.0, 2.0]) {
@@ -72,7 +75,7 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
         await tester.pumpWidget(
-          _app(const ProductLoadingView(label: '正在载入记录'), scale),
+          _app(const ProductLoadingView(label: 'Loading records'), scale),
         );
         await tester.pump(const Duration(milliseconds: 100));
         await _golden('loading', width, scale);
@@ -82,11 +85,11 @@ void main() {
             SingleChildScrollView(
               child: ProductEmptyView(
                 textAlign: TextAlign.start,
-                title: '还没有记录',
-                description: '记录会显示在这里。',
+                title: 'No records yet',
+                description: 'Your records will appear here.',
                 action: TextButton(
                   onPressed: () => actions++,
-                  child: const Text('添加记录'),
+                  child: const Text('Add a record'),
                 ),
               ),
             ),
@@ -95,7 +98,7 @@ void main() {
         );
         await tester.pumpAndSettle();
         await _golden('empty', width, scale);
-        await tester.tap(find.text('添加记录'));
+        await tester.tap(find.text('Add a record'));
         expect(actions, 1);
         for (final kind in ProductFailureKind.values) {
           await tester.pumpWidget(
@@ -114,9 +117,9 @@ void main() {
             ),
           );
           await tester.pumpAndSettle();
-          expect(find.text('这次填写的内容仍然保留。'), findsOneWidget);
+          expect(find.text('Your entries are still here.'), findsOneWidget);
           final retry = find.text(
-            kind == ProductFailureKind.conflict ? '重新载入' : '重试',
+            kind == ProductFailureKind.conflict ? 'Reload' : 'Try again',
           );
           await tester.tap(retry);
           expect(actions, kind.index + 2);
@@ -146,7 +149,7 @@ Widget _app(Widget body, double scale) => MaterialApp(
   home: RepaintBoundary(
     key: const ValueKey('feedback-capture'),
     child: Scaffold(
-      appBar: AppBar(title: const Text('记录')),
+      appBar: AppBar(title: const Text('Records')),
       body: SafeArea(child: body),
     ),
   ),

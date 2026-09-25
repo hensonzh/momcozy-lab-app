@@ -89,7 +89,9 @@ void main() {
         await _capture(tester, 'eligibility', width, scale);
         expect(
           tester
-              .widget<FilledButton>(find.widgetWithText(FilledButton, '确认并继续'))
+              .widget<FilledButton>(
+                find.widgetWithText(FilledButton, 'Confirm and continue'),
+              )
               .onPressed,
           isNull,
         );
@@ -99,21 +101,23 @@ void main() {
         await tester.pumpAndSettle();
         expect(
           tester
-              .widget<FilledButton>(find.widgetWithText(FilledButton, '确认并继续'))
+              .widget<FilledButton>(
+                find.widgetWithText(FilledButton, 'Confirm and continue'),
+              )
               .onPressed,
           isNull,
         );
         expect(repository.createKeys, isEmpty);
         await _capture(tester, 'unavailable', width, scale);
         await _region(tester, 'California (CA)');
-        await _click(tester, '确认并继续');
+        await _click(tester, 'Confirm and continue');
         expect(repository.createKeys, hasLength(1));
         await _capture(tester, 'payment', width, scale);
         await tester.enterText(
           find.byType(TextFormField).first,
           '4000 0000 0000 9995',
         );
-        await _click(tester, '支付 \$219');
+        await _click(tester, 'Pay \$219');
         expect(controller.purchase!.order.status, CareOrderStatus.failed);
         expect(controller.purchase!.episode, isNull);
         await _capture(tester, 'failed', width, scale);
@@ -122,7 +126,7 @@ void main() {
           find.byType(TextFormField).first,
           '4000 0025 0000 3155',
         );
-        await _click(tester, '支付 \$219');
+        await _click(tester, 'Pay \$219');
         expect(
           controller.purchase!.order.status,
           CareOrderStatus.requiresAction,
@@ -132,11 +136,11 @@ void main() {
           isTrue,
         );
         await _capture(tester, 'challenge', width, scale);
-        await _click(tester, '确认验证');
+        await _click(tester, 'Confirm verification');
         expect(controller.purchase!.episode, _episode);
         expect(find.byType(TextFormField), findsNothing);
         await _capture(tester, 'success', width, scale);
-        await _click(tester, '开始预约');
+        await _click(tester, 'Book an appointment');
         expect(result, _episode);
         expect(find.byType(ServicePurchaseDialog), findsNothing);
         expect(repository.outcomes, [
@@ -161,18 +165,28 @@ void main() {
       addTearDown(controller.dispose);
       await _mountPurchase(tester, controller, launcher: launcher);
       expect(find.byType(TextFormField), findsNothing);
-      await _click(tester, '打开 Stripe Checkout');
+      await _click(tester, 'Open Stripe Checkout');
       expect(launcher.opened, hasLength(1));
-      expect(find.text('暂时无法打开支付页面，请重试或查询订单结果。'), findsOneWidget);
+      expect(
+        find.text(
+          'Could not open the payment page. Try again or check your order status.',
+        ),
+        findsOneWidget,
+      );
       await _capture(tester, 'stripe-launch-error', 390, 1);
       repository.failCheckout = true;
-      await _click(tester, '打开 Stripe Checkout');
+      await _click(tester, 'Open Stripe Checkout');
       expect(launcher.opened, hasLength(1));
       expect(controller.checkoutUrl, isNull);
       repository.failCheckout = false;
       launcher.throws = true;
-      await _click(tester, '打开 Stripe Checkout');
-      expect(find.text('暂时无法打开支付页面，请重试或查询订单结果。'), findsOneWidget);
+      await _click(tester, 'Open Stripe Checkout');
+      expect(
+        find.text(
+          'Could not open the payment page. Try again or check your order status.',
+        ),
+        findsOneWidget,
+      );
       repository.current = Purchase(
         order: readCareOrder({
           ..._orderJson(status: 'paid'),
@@ -180,13 +194,18 @@ void main() {
         }),
         episode: _episode,
       );
-      await _click(tester, '我已完成付款，查询结果');
+      await _click(tester, 'I have paid · Check status');
       expect(repository.purchaseCalls, 1);
-      expect(find.text('购买成功'), findsOneWidget);
-      expect(find.text('打开 Stripe Checkout'), findsNothing);
-      expect(find.text('暂时无法打开支付页面，请重试或查询订单结果。'), findsNothing);
+      expect(find.text('Purchase complete'), findsOneWidget);
+      expect(find.text('Open Stripe Checkout'), findsNothing);
+      expect(
+        find.text(
+          'Could not open the payment page. Try again or check your order status.',
+        ),
+        findsNothing,
+      );
       expect(repository.outcomes, isEmpty);
-      await _click(tester, '稍后预约');
+      await _click(tester, 'Book later');
       expect(find.byType(ServicePurchaseDialog), findsNothing);
     },
   );
@@ -212,8 +231,8 @@ void main() {
       tester.view.viewInsets = const FakeViewPadding(bottom: 250);
       addTearDown(tester.view.resetViewInsets);
       await tester.pumpAndSettle();
-      await _click(tester, '支付 \$219');
-      expect(find.text('请填写 16 位测试卡号'), findsOneWidget);
+      await _click(tester, 'Pay \$219');
+      expect(find.text('Enter a 16-digit test card number'), findsOneWidget);
       expect(repository.outcomes, isEmpty);
       expect(tester.takeException(), isNull);
       tester.view.resetViewInsets();
@@ -225,7 +244,7 @@ void main() {
       );
       final pending = Completer<Purchase>();
       repository.nextPayment = pending.future;
-      await _click(tester, '支付 \$219');
+      await _click(tester, 'Pay \$219');
       expect(controller.busy, isTrue);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
@@ -234,7 +253,8 @@ void main() {
         tester
             .widget<IconButton>(
               find.byWidgetPredicate(
-                (widget) => widget is IconButton && widget.tooltip == '关闭购买',
+                (widget) =>
+                    widget is IconButton && widget.tooltip == 'Close purchase',
               ),
             )
             .onPressed,
@@ -252,12 +272,12 @@ void main() {
       );
       expect(field.controller!.text, '4242 4242 4242 4242');
       repository.nextPayment = null;
-      await _click(tester, '重试这笔付款');
+      await _click(tester, 'Try payment again');
       expect(repository.outcomes, [
         SandboxPaymentOutcome.succeeded,
         SandboxPaymentOutcome.succeeded,
       ]);
-      expect(find.text('购买成功'), findsOneWidget);
+      expect(find.text('Purchase complete'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
@@ -279,8 +299,8 @@ void main() {
       addTearDown(controller.dispose);
       await _mountPurchase(tester, controller);
       expect(find.byType(TextFormField), findsNothing);
-      expect(find.text('打开 Stripe Checkout'), findsNothing);
-      await _click(tester, '返回方案');
+      expect(find.text('Open Stripe Checkout'), findsNothing);
+      await _click(tester, 'Back to plan');
       expect(find.byType(ServicePurchaseDialog), findsNothing);
     });
   }
@@ -330,7 +350,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.byType(TextFormField), findsNothing);
-      expect(find.text('查询结果'), findsOneWidget);
+      expect(find.text('Check status'), findsOneWidget);
     },
   );
 
@@ -458,22 +478,25 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byType(CheckboxListTile));
       await tester.pump();
-      await tester.tap(find.text('确认并继续'));
+      await tester.tap(find.text('Confirm and continue'));
       await tester.pumpAndSettle();
-      expect(find.text('测试模式 · 模拟支付，不会产生真实扣款'), findsOneWidget);
+      expect(
+        find.text('Test mode · Simulated payment with no real charge'),
+        findsOneWidget,
+      );
       await tester.enterText(
         find.byType(TextFormField).first,
         '4000 0025 0000 3155',
       );
-      await tester.ensureVisible(find.text('支付 \$219'));
+      await tester.ensureVisible(find.text('Pay \$219'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('支付 \$219'));
+      await tester.tap(find.text('Pay \$219'));
       await tester.pumpAndSettle();
       expect(controller.purchase!.order.status, CareOrderStatus.requiresAction);
-      await tester.tap(find.text('确认验证'));
+      await tester.tap(find.text('Confirm verification'));
       await tester.pumpAndSettle();
-      expect(find.text('购买成功'), findsOneWidget);
-      expect(find.text('开始预约'), findsOneWidget);
+      expect(find.text('Purchase complete'), findsOneWidget);
+      expect(find.text('Book an appointment'), findsOneWidget);
       expect(controller.purchase!.episode!.remainingSessions, 2);
       expect(tester.takeException(), isNull);
     },
@@ -685,7 +708,7 @@ Future<void> _mountPurchase(
                   );
                   onResult?.call(result);
                 },
-                child: const Text('打开购买'),
+                child: const Text('Open purchase'),
               ),
             ),
           ),
@@ -693,7 +716,7 @@ Future<void> _mountPurchase(
       ),
     ),
   );
-  await tester.tap(find.text('打开购买'));
+  await tester.tap(find.text('Open purchase'));
   await tester.pumpAndSettle();
 }
 

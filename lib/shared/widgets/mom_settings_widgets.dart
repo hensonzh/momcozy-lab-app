@@ -130,9 +130,48 @@ class MomSettingsFlowDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewportHeight = MediaQuery.sizeOf(context).height * .92;
+    final headingStyle = MomHomeTokens.text(20, weight: FontWeight.w700);
+    final narrowLargeText =
+        showClose &&
+        MediaQuery.sizeOf(context).width <= 360 &&
+        MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    final rowTitleWidth =
+        MediaQuery.sizeOf(context).width - 2 * (18 + 24) - 44 - 8;
+    final stackedHeader =
+        narrowLargeText &&
+        title.split(RegExp(r'\s+')).any((word) {
+          final painter = TextPainter(
+            text: TextSpan(text: word, style: headingStyle),
+            textDirection: Directionality.of(context),
+            textScaler: MediaQuery.textScalerOf(context),
+          )..layout();
+          // Leave room for font rasterization so the last letter stays whole.
+          final needsRoom = painter.width + 5 > rowTitleWidth;
+          painter.dispose();
+          return needsRoom;
+        });
+    final horizontalPadding = stackedHeader ? 16.0 : 24.0;
+    final heading = Text(title, style: headingStyle);
+    final closeButton = IconButton(
+      tooltip: closeLabel,
+      onPressed: onClose,
+      constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+      padding: const EdgeInsets.all(12),
+      color: MomHomeTokens.rose,
+      style: closeIcon == null
+          ? null
+          : IconButton.styleFrom(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              minimumSize: const Size(44, 44),
+            ),
+      icon: closeIcon ?? const Icon(Icons.close, size: 20),
+    );
     return Dialog(
       alignment: Alignment.bottomCenter,
-      insetPadding: const EdgeInsets.all(18),
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: stackedHeader ? 8 : 18,
+        vertical: 18,
+      ),
       backgroundColor: MomHomeTokens.surface,
       surfaceTintColor: Colors.transparent,
       clipBehavior: Clip.antiAlias,
@@ -146,42 +185,43 @@ class MomSettingsFlowDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: MomHomeTokens.text(20, weight: FontWeight.w700),
-                    ),
-                  ),
-                  if (showClose) ...[
-                    const SizedBox(width: 8),
-                    IconButton(
-                      tooltip: closeLabel,
-                      onPressed: onClose,
-                      constraints: const BoxConstraints(
-                        minWidth: 44,
-                        minHeight: 44,
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      color: MomHomeTokens.rose,
-                      style: closeIcon == null
-                          ? null
-                          : IconButton.styleFrom(
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              minimumSize: const Size(44, 44),
-                            ),
-                      icon: closeIcon ?? const Icon(Icons.close, size: 20),
-                    ),
-                  ],
-                ],
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding,
+                24,
+                horizontalPadding,
+                16,
               ),
+              child: stackedHeader
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: closeButton,
+                        ),
+                        const SizedBox(height: 8),
+                        heading,
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        Expanded(child: heading),
+                        if (showClose) ...[
+                          const SizedBox(width: 8),
+                          closeButton,
+                        ],
+                      ],
+                    ),
             ),
             Flexible(
               child: SingleChildScrollView(
                 controller: scrollController,
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  0,
+                  horizontalPadding,
+                  24,
+                ),
                 child: child,
               ),
             ),

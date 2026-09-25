@@ -52,7 +52,7 @@ class _MediaViewerPageState extends State<MediaViewerPage> {
       routeUri: widget.routeUri,
       routeExtra: widget.routeExtra,
     );
-    final headerTitle = media?.title ?? '媒体';
+    final headerTitle = media?.title ?? 'Media';
 
     return ColoredBox(
       key: ValueKey('route-page-${widget.path}'),
@@ -77,8 +77,8 @@ class _MediaViewerMissingResource extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MediaViewerLoadError(
-      message: '暂时没有可查看的资料',
-      description: '请从资料卡片打开图片、视频或文档。',
+      message: 'No resource to view',
+      description: 'Open an image, video, or document from a resource card.',
       darkBackground: false,
       icon: Icons.description_outlined,
     );
@@ -198,7 +198,7 @@ class _PdfViewerStageState extends State<_PdfViewerStage> {
     final content = _content;
     if (reference == null || content == null) {
       return const MediaViewerLoadError(
-        message: 'PDF 加载失败',
+        message: 'Could not load PDF',
         darkBackground: false,
         icon: Icons.picture_as_pdf_outlined,
       );
@@ -208,13 +208,13 @@ class _PdfViewerStageState extends State<_PdfViewerStage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MediaViewerLoading(
-            label: '加载 PDF…',
+            label: 'Loading PDF…',
             darkBackground: false,
           );
         }
         if (snapshot.hasError) {
           return MediaViewerLoadError(
-            message: 'PDF 加载失败',
+            message: 'Could not load PDF',
             darkBackground: false,
             icon: Icons.picture_as_pdf_outlined,
             onRetry: _retry,
@@ -224,7 +224,10 @@ class _PdfViewerStageState extends State<_PdfViewerStage> {
         if (loaded == null) {
           return const ColoredBox(
             color: MomCozyColors.background,
-            child: MediaViewerLoading(label: '加载 PDF…', darkBackground: false),
+            child: MediaViewerLoading(
+              label: 'Loading PDF…',
+              darkBackground: false,
+            ),
           );
         }
         final revision = _documentRevision;
@@ -261,14 +264,14 @@ class _PdfViewerStageState extends State<_PdfViewerStage> {
                     pageDropShadow: MomCozyShadows.documentPage,
                     loadingBannerBuilder: (context, downloaded, total) {
                       return const MediaViewerLoading(
-                        label: '正在打开 PDF…',
+                        label: 'Opening PDF…',
                         darkBackground: false,
                       );
                     },
                     errorBannerBuilder:
                         (context, error, stackTrace, documentRef) {
                           return MediaViewerLoadError(
-                            message: 'PDF 加载失败',
+                            message: 'Could not load PDF',
                             darkBackground: false,
                             icon: Icons.picture_as_pdf_outlined,
                             onRetry: _retry,
@@ -345,7 +348,7 @@ class _ImageViewerStageState extends State<_ImageViewerStage> {
       title: widget.media.title,
     );
     if (reference == null) {
-      return const MediaViewerLoadError(message: '图片加载失败');
+      return const MediaViewerLoadError(message: 'Could not load image');
     }
     final repository = MomCozyRuntimeScope.maybeOf(
       context,
@@ -359,10 +362,13 @@ class _ImageViewerStageState extends State<_ImageViewerStage> {
         fit: BoxFit.contain,
         semanticLabel: widget.media.title,
         loadingBuilder: (context) {
-          return const MediaViewerLoading(label: '加载图片…');
+          return const MediaViewerLoading(label: 'Loading image…');
         },
         errorBuilder: (context, error, retry) {
-          return MediaViewerLoadError(message: '图片加载失败', onRetry: retry);
+          return MediaViewerLoadError(
+            message: 'Could not load image',
+            onRetry: retry,
+          );
         },
         loadedBuilder: (context, content, image) {
           return GestureDetector(
@@ -406,7 +412,7 @@ class _VideoViewerStage extends StatelessWidget {
     )?.productAssetRepository;
     if (reference == null || repository == null) {
       return const MediaViewerLoadError(
-        message: '视频加载失败',
+        message: 'Could not load video',
         icon: Icons.videocam_off_outlined,
       );
     }
@@ -448,8 +454,33 @@ class _MediaViewerRouteState {
           _stringFromMap(extra, 'title') ?? _stringFromQuery(query, 'title'),
         ) ??
         _defaultTitleForKind(kind);
-    return _MediaViewerRouteState(kind: kind, url: url, title: title);
+    // Use the English half of a bilingual title when present. Otherwise keep
+    // route metadata intact and show the media kind, not untranslated copy.
+    final englishParts = _legacyTitleHan.hasMatch(title)
+        ? title
+              .split(RegExp(r'\s+[·|｜]\s+'))
+              .map((part) => part.trim())
+              .where(
+                (part) =>
+                    !_legacyTitleHan.hasMatch(part) &&
+                    RegExp(r'[A-Za-z]').hasMatch(part),
+              )
+              .toList()
+        : [title];
+    final displayTitle = englishParts.isEmpty
+        ? _defaultTitleForKind(kind)
+        : englishParts.join(' · ').replaceAll(_retiredTitleBrand, 'Momcozy AI');
+    return _MediaViewerRouteState(kind: kind, url: url, title: displayTitle);
   }
+
+  static final _legacyTitleHan = RegExp(
+    r'[\u3400-\u9fff\u{20000}-\u{323af}]',
+    unicode: true,
+  );
+  static final _retiredTitleBrand = RegExp(
+    r'cozy[\s-]*mate',
+    caseSensitive: false,
+  );
 
   static String? _normalizeKind(String? value) {
     final normalized = _nonEmpty(value)?.toLowerCase();
@@ -476,8 +507,8 @@ class _MediaViewerRouteState {
 
   static String _defaultTitleForKind(String kind) {
     return switch (kind) {
-      'image' => '图片',
-      'video' => '视频',
+      'image' => 'Image',
+      'video' => 'Video',
       _ => 'PDF',
     };
   }

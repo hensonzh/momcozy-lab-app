@@ -21,7 +21,7 @@ void main() {
       contains('applicationId = "com.momcozymai.app.flutterpoc"'),
     );
     expect(androidBuild, contains('applicationIdSuffix = ".local"'));
-    expect(androidBuild, contains('applicationIdSuffix = ".unified"'));
+    expect(androidBuild, contains('applicationIdSuffix = ".staging"'));
     expect(androidBuild, isNot(contains('create("test")')));
 
     final xcodeProject = File(
@@ -81,9 +81,9 @@ void main() {
     );
 
     final infoPlist = File('ios/Runner/Info.plist').readAsStringSync();
-    expect(infoPlist, contains('智能体分析'));
-    expect(infoPlist, contains('语音消息'));
-    expect(infoPlist, contains('母婴场景图片'));
+    expect(infoPlist, contains('share with Momcozy AI'));
+    expect(infoPlist, contains('voice messages'));
+    expect(infoPlist, contains('parenting-related image'));
   });
 
   test('MotionPose model provisioning is pinned and works offline', () {

@@ -19,15 +19,21 @@ class AgentConversationSummary {
 
 enum AgentConversationMessageRole { user, assistant }
 
-const _agentSystemFlowTriggerPrefix = '[系统流程触发]';
-const _motionAssessmentCompletionPrompts = {'用户刚完成体态动态评估', '用户刚完成头颈姿态动态评估'};
+const _agentSystemFlowTriggerPrefixes = {'[系统流程触发]', '[System flow trigger]'};
+const _motionAssessmentCompletionPrompts = {
+  '用户刚完成体态动态评估',
+  '用户刚完成头颈姿态动态评估',
+  'The user just completed a posture assessment',
+  'The user just completed a head and neck assessment',
+};
 
 bool isMotionAssessmentCompletionPrompt(String value) {
   final normalized = value.trimLeft();
-  if (!normalized.startsWith(_agentSystemFlowTriggerPrefix)) return false;
-  final body = normalized
-      .substring(_agentSystemFlowTriggerPrefix.length)
-      .trimLeft();
+  final prefix = _agentSystemFlowTriggerPrefixes
+      .where(normalized.startsWith)
+      .firstOrNull;
+  if (prefix == null) return false;
+  final body = normalized.substring(prefix.length).trimLeft();
   return _motionAssessmentCompletionPrompts.any(body.startsWith);
 }
 

@@ -63,11 +63,12 @@ class _WorkbenchFollowupsPageState extends State<WorkbenchFollowupsPage>
       return WorkbenchPageBody(
         children: [
           WorkbenchHeading(
-            title: '今日跟进',
-            subtitle: '查看 AI 每日用户状态报告，核对后给予专业反馈。',
+            title: 'Today\'s follow-ups',
+            subtitle:
+                'Review daily AI client reports and provide clinical feedback.',
             actions: [
               IconButton(
-                tooltip: '刷新今日跟进',
+                tooltip: 'Refresh follow-ups',
                 onPressed: controller.loading ? null : controller.load,
                 icon: const Icon(Icons.refresh_rounded),
               ),
@@ -88,11 +89,11 @@ class _WorkbenchFollowupsPageState extends State<WorkbenchFollowupsPage>
                       selected: controller.filter == filter,
                       label: Text(switch (filter) {
                         WorkbenchFollowupFilter.all =>
-                          '全部${data == null ? '' : ' ${data.allCount}'}',
+                          'All${data == null ? '' : ' ${data.allCount}'}',
                         WorkbenchFollowupFilter.pending =>
-                          '待反馈${data == null ? '' : ' ${data.pendingCount}'}',
+                          'Needs feedback${data == null ? '' : ' ${data.pendingCount}'}',
                         WorkbenchFollowupFilter.completed =>
-                          '已跟进${data == null ? '' : ' ${data.completedCount}'}',
+                          'Followed up${data == null ? '' : ' ${data.completedCount}'}',
                       }),
                       onSelected: (_) {
                         unawaited(controller.setFilter(filter));
@@ -111,7 +112,7 @@ class _WorkbenchFollowupsPageState extends State<WorkbenchFollowupsPage>
                   },
                   onSubmitted: (_) => controller.load(),
                   decoration: const InputDecoration(
-                    labelText: '搜索客户姓名或服务套餐',
+                    labelText: 'Search client or package',
                     prefixIcon: Icon(Icons.search_rounded),
                   ),
                 ),
@@ -131,7 +132,7 @@ class _WorkbenchFollowupsPageState extends State<WorkbenchFollowupsPage>
               ),
             ),
           if (controller.loading)
-            const LinearProgressIndicator(semanticsLabel: '正在读取今日跟进'),
+            const LinearProgressIndicator(semanticsLabel: 'Loading follow-ups'),
           if (controller.failure != null)
             ProductErrorView(
               failure: controller.failure!,
@@ -141,13 +142,17 @@ class _WorkbenchFollowupsPageState extends State<WorkbenchFollowupsPage>
             Card(
               child: ProductEmptyView(
                 title: controller.query.isNotEmpty
-                    ? '未找到匹配的客户'
+                    ? 'No matching clients'
                     : switch (controller.filter) {
-                        WorkbenchFollowupFilter.all => '暂无今日跟进客户',
-                        WorkbenchFollowupFilter.pending => '暂无待反馈客户',
-                        WorkbenchFollowupFilter.completed => '暂无已跟进客户',
+                        WorkbenchFollowupFilter.all =>
+                          'No clients to follow up today',
+                        WorkbenchFollowupFilter.pending =>
+                          'No clients awaiting feedback',
+                        WorkbenchFollowupFilter.completed =>
+                          'No completed follow-ups',
                       },
-                description: '客户的服务与复核状态更新后，会显示在这里。',
+                description:
+                    'Client service and review updates will appear here.',
               ),
             ),
           if (data != null && data.items.isNotEmpty)
@@ -169,17 +174,26 @@ class _WorkbenchFollowupsPageState extends State<WorkbenchFollowupsPage>
                           color: MomCozyColors.muted,
                           child: const Row(
                             children: [
-                              Expanded(flex: 3, child: Text('客户名称')),
+                              Expanded(flex: 3, child: Text('Client name')),
                               Expanded(
                                 flex: 7,
                                 child: Row(
                                   children: [
-                                    Expanded(flex: 5, child: Text('服务套餐')),
-                                    Expanded(flex: 3, child: Text('服务进度')),
+                                    Expanded(
+                                      flex: 5,
+                                      child: Text('Service package'),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text('Service progress'),
+                                    ),
                                   ],
                                 ),
                               ),
-                              Expanded(flex: 2, child: Text('跟进状态')),
+                              Expanded(
+                                flex: 2,
+                                child: Text('Follow-up status'),
+                              ),
                             ],
                           ),
                         ),
@@ -229,7 +243,7 @@ class _ClientRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final status = WorkbenchBadge(
-      item.completed ? '已跟进' : '待反馈',
+      item.completed ? 'Followed up' : 'Needs feedback',
       color: item.completed ? MomCozyColors.care : MomCozyColors.amber,
       background: item.completed
           ? MomCozyColors.careSoft
@@ -248,7 +262,7 @@ class _ClientRow extends StatelessWidget {
                         flex: 5,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 18),
-                          child: Text(value.service.package.name),
+                          child: Text(value.service.package.publicName),
                         ),
                       ),
                       Expanded(
@@ -271,7 +285,7 @@ class _ClientRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        value.service.package.name,
+                        value.service.package.publicName,
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 4),
@@ -289,7 +303,8 @@ class _ClientRow extends StatelessWidget {
     );
     return Semantics(
       button: true,
-      label: '${item.displayName}，${item.completed ? '已跟进' : '待反馈'}，查看今日跟进',
+      label:
+          '${item.displayName}, ${item.completed ? 'Followed up' : 'Needs feedback'}, view today\'s follow-up',
       child: InkWell(
         onTap: onOpen,
         child: Padding(

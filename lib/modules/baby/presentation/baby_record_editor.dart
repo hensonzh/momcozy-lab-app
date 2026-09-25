@@ -61,13 +61,13 @@ class BabyRecordEditor extends StatelessWidget {
       builder: (context, _) {
         final c = controller;
         final title = c.kind == BabyRecordKind.feeding
-            ? '记录喂养'
+            ? 'Log feeding'
             : c.kind == BabyRecordKind.growth
-            ? '生长发育记录'
+            ? 'Growth & development'
             : switch (c.dailyTab) {
-                BabyDailyTab.mental => '记录吃奶后精神状态',
-                BabyDailyTab.wet => '记录尿湿',
-                BabyDailyTab.stool => '记录便便',
+                BabyDailyTab.mental => 'Log mood after feeding',
+                BabyDailyTab.wet => 'Log wet diapers',
+                BabyDailyTab.stool => 'Log dirty diapers',
               };
         return BabySheetBody(
           title: title,
@@ -79,9 +79,9 @@ class BabyRecordEditor extends StatelessWidget {
               if (c.isDaily)
                 BabyChoices(
                   options: const {
-                    BabyDailyTab.mental: '精神状态',
-                    BabyDailyTab.wet: '尿湿',
-                    BabyDailyTab.stool: '便便',
+                    BabyDailyTab.mental: 'Mood',
+                    BabyDailyTab.wet: 'Wet diapers',
+                    BabyDailyTab.stool: 'Dirty diapers',
                   },
                   selected: c.dailyTab,
                   onChanged: c.selectDailyTab,
@@ -114,7 +114,10 @@ class BabyRecordEditor extends StatelessWidget {
                       color: const Color(0xfff6eddc),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Text('保存失败，请重试', style: BabyDesign.text(13)),
+                    child: Text(
+                      'Could not save. Please try again.',
+                      style: BabyDesign.text(13),
+                    ),
                   ),
                 ),
             ],
@@ -137,7 +140,7 @@ class BabyRecordEditor extends StatelessWidget {
                       }
                     }
                   : null,
-              child: BabyAnimatedLabel(c.busy ? '正在保存…' : '保存'),
+              child: BabyAnimatedLabel(c.busy ? 'Saving…' : 'Save'),
             ),
           ),
         );

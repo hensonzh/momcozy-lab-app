@@ -64,7 +64,7 @@ class BabyRecordFields extends StatelessWidget {
       ),
       firstDate: DateTime(earliest.year, earliest.month, earliest.day),
       lastDate: DateTime(today.year, today.month, today.day),
-      helpText: '测量日期',
+      helpText: 'Measurement date',
       theme: BabyDesign.theme(
         Theme.of(context),
         reduceMotion: MediaQuery.disableAnimationsOf(context),
@@ -83,9 +83,12 @@ class BabyRecordFields extends StatelessWidget {
     final fields = <Widget>[];
     if (c.kind == BabyRecordKind.feeding) {
       fields.addAll([
-        const BabyLabel('喂养方式', required: true),
+        const BabyLabel('Feeding method', required: true),
         BabyChoices(
-          options: const {_FeedingType.breast: '亲喂', _FeedingType.bottle: '瓶喂'},
+          options: const {
+            _FeedingType.breast: 'Nursing',
+            _FeedingType.bottle: 'Bottle feeding',
+          },
           selected: bottle
               ? _FeedingType.bottle
               : c.feedingMethod == BabyFeedingMethod.breastfeeding
@@ -100,11 +103,11 @@ class BabyRecordFields extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               spacing: 8,
               children: [
-                const BabyLabel('奶液类型', required: true),
+                const BabyLabel('Milk type', required: true),
                 BabyChoices(
                   options: const {
-                    BabyFeedingMethod.expressedMilk: '母乳',
-                    BabyFeedingMethod.formula: '配方奶',
+                    BabyFeedingMethod.expressedMilk: 'Breast milk',
+                    BabyFeedingMethod.formula: 'Formula',
                   },
                   selected: c.feedingMethod,
                   onChanged: c.setFeedingMethod,
@@ -112,7 +115,7 @@ class BabyRecordFields extends StatelessWidget {
               ],
             ),
           ),
-        const BabyLabel('发生时间', required: true),
+        const BabyLabel('Time', required: true),
         ZonedDateTimeField(
           label: '',
           valueStyle: BabyDesign.text(16),
@@ -144,24 +147,27 @@ class BabyRecordFields extends StatelessWidget {
           },
         ),
         if (c.feedingMethod == BabyFeedingMethod.breastfeeding) ...[
-          const BabyLabel('亲喂侧别'),
+          const BabyLabel('Nursing side'),
           BabyChoices(
-            options: const {FeedingSide.left: '左侧', FeedingSide.right: '右侧'},
+            options: const {
+              FeedingSide.left: 'Left side',
+              FeedingSide.right: 'Right side',
+            },
             selected: c.feedingSide,
             onChanged: c.setSide,
           ),
           _number(
             keyName: 'nursing-duration',
-            label: '亲喂时长',
+            label: 'Nursing duration',
             value: c.duration,
             onChanged: c.setDuration,
-            unit: '分钟',
+            unit: 'Minutes',
             decimal: false,
           ),
         ] else if (bottle)
           _number(
             keyName: 'feeding-volume',
-            label: '实际瓶喂量',
+            label: 'Amount bottle-fed',
             value: c.volume,
             onChanged: c.setVolume,
             unit: 'ml',
@@ -171,7 +177,7 @@ class BabyRecordFields extends StatelessWidget {
       switch (c.dailyTab) {
         case BabyDailyTab.mental:
           fields.addAll([
-            const BabyLabel('吃奶后精神状态', required: true),
+            const BabyLabel('Baby\'s mood after feeding', required: true),
             BabyChoices(
               options: babyMentalLabels,
               selected: c.mentalState,
@@ -182,10 +188,10 @@ class BabyRecordFields extends StatelessWidget {
           fields.add(
             _number(
               keyName: 'wet-count',
-              label: '今日湿尿布数',
+              label: 'Wet diapers today',
               value: c.wetCount,
               onChanged: c.setWetCount,
-              unit: '片',
+              unit: 'diapers',
               decimal: false,
               required: true,
             ),
@@ -194,14 +200,14 @@ class BabyRecordFields extends StatelessWidget {
           fields.addAll([
             _number(
               keyName: 'stool-count',
-              label: '今日便便次数',
+              label: 'Dirty diapers today',
               value: c.stoolCount,
               onChanged: c.setStoolCount,
-              unit: '次',
+              unit: 'diapers',
               decimal: false,
               required: true,
             ),
-            const BabyLabel('便便颜色'),
+            const BabyLabel('Stool color'),
             BabyChoices(
               options: stoolColorLabels,
               selected: c.stoolColor,
@@ -225,7 +231,7 @@ class BabyRecordFields extends StatelessWidget {
                 ),
               ),
             ),
-            const BabyLabel('便便性状'),
+            const BabyLabel('Stool consistency'),
             BabyChoices(
               options: stoolConsistencyLabels,
               selected: c.stoolConsistency,
@@ -236,7 +242,7 @@ class BabyRecordFields extends StatelessWidget {
       }
     } else if (c.kind == BabyRecordKind.growth) {
       fields.addAll([
-        const BabyLabel('测量项目'),
+        const BabyLabel('Measurement'),
         BabyChoices(
           options: {
             for (final m in GrowthMetric.values) m: growthMetricLabel(m),
@@ -247,7 +253,7 @@ class BabyRecordFields extends StatelessWidget {
         ),
         _number(
           keyName: 'growth-${c.growthMetric.name}',
-          label: '${growthMetricLabel(c.growthMetric)}数值',
+          label: '${growthMetricLabel(c.growthMetric)} value',
           value: c.growthValues[c.growthMetric] ?? '',
           onChanged: (v) => c.setGrowthValue(c.growthMetric, v),
           unit: c.growthMetric == GrowthMetric.weight ? 'kg' : 'cm',
@@ -263,7 +269,7 @@ class BabyRecordFields extends StatelessWidget {
           MomSettingsCard(
             borderInside: true,
             children: [
-              const BabyLabel('测量日期'),
+              const BabyLabel('Measurement date'),
               BabyPressFeedback(
                 child: OutlinedButton(
                   onPressed: c.editable ? () => _date(context) : null,

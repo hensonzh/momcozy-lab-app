@@ -146,7 +146,7 @@ void main() {
         find.byKey(const ValueKey('lactation-measurement-pump')),
         '80',
       );
-      await tester.tap(find.text('保存这次记录'));
+      await tester.tap(find.text('Save this record'));
       await tester.pumpAndSettle();
       expect(repository.keys, hasLength(1));
       final menu = find.byKey(
@@ -161,8 +161,8 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('lactation-delete-created')));
       await tester.pumpAndSettle();
       expect(controller.records, hasLength(1));
-      await tester.ensureVisible(find.text('撤销'));
-      await tester.tap(find.text('撤销'));
+      await tester.ensureVisible(find.text('Undo'));
+      await tester.tap(find.text('Undo'));
       await tester.pumpAndSettle();
       expect(controller.records, hasLength(2));
       expect(tester.takeException(), isNull);
@@ -201,13 +201,13 @@ void main() {
                       now: () => now,
                       create: true,
                     ),
-                    child: const Text('记录'),
+                    child: const Text('Open records'),
                   ),
                 ),
               ),
             ),
           );
-          await tester.tap(find.text('记录'));
+          await tester.tap(find.text('Open records'));
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
           if (scale == 1) {
@@ -218,9 +218,16 @@ void main() {
               ),
             );
           }
-          await tester.tap(find.text('亲喂'));
+          if (scale == 2) {
+            await Scrollable.ensureVisible(
+              tester.element(find.text('Nursing')),
+              alignment: .3,
+            );
+            await tester.pumpAndSettle();
+          }
+          await tester.tap(find.text('Nursing'));
           await tester.pumpAndSettle();
-          expect(find.text('左侧时长'), findsOneWidget);
+          expect(find.text('Left side duration'), findsOneWidget);
           if (scale == 1) {
             await expectLater(
               find.byType(MaterialApp),
@@ -239,7 +246,7 @@ void main() {
             '12',
           );
           await tester.pumpAndSettle();
-          await tester.tap(find.text('保存这次记录'));
+          await tester.tap(find.text('Save this record'));
           await tester.pumpAndSettle();
           final saved = repository.records.last.observation;
           expect(saved, isA<NursingObservation>());

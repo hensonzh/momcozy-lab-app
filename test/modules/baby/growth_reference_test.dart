@@ -36,16 +36,16 @@ void main() {
     () {
       final baby = BabyProfile(
         id: 'baby',
-        name: '宝宝',
+        name: 'Baby',
         birthDate: LocalDate(2026, 1, 31),
       );
-      expect(babyAgeLabel(baby, LocalDate(2026, 4, 30)), '3 个月');
+      expect(babyAgeLabel(baby, LocalDate(2026, 4, 30)), '3 mo');
       expect(
         babyAgeLabel(
-          const BabyProfile(id: 'baby', name: '宝宝'),
+          const BabyProfile(id: 'baby', name: 'Baby'),
           LocalDate(2026, 4, 30),
         ),
-        '月龄待完善',
+        'Age not set',
       );
     },
   );

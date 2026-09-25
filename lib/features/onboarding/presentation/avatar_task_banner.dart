@@ -84,7 +84,7 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
       AvatarTaskStatus.queued => 'Preparing your digital companion',
       AvatarTaskStatus.generating => 'Creating your digital companion',
       AvatarTaskStatus.reviewRequired => 'Your 4 companion options are ready',
-      AvatarTaskStatus.failed => 'We couldn’t create your companion',
+      AvatarTaskStatus.failed => 'We couldn\'t create your companion',
       AvatarTaskStatus.completed => 'Your digital companion is set',
       AvatarTaskStatus.hidden => '',
     };

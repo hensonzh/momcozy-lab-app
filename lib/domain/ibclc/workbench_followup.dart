@@ -33,8 +33,8 @@ final class WorkbenchFollowupClient {
   final List<FollowupCareService> services;
   final bool completed;
   String get displayName => services.any((item) => item.service.caseConsent)
-      ? (name?.trim().isNotEmpty == true ? name! : '未填写姓名')
-      : '待授权用户';
+      ? (name?.trim().isNotEmpty == true ? name! : 'Name not provided')
+      : 'Awaiting authorization';
 }
 
 final class WorkbenchFollowups {

@@ -94,16 +94,18 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
               ? _leaveConfirmation(context)
               : AlertDialog(
                   scrollable: true,
-                  title: const Text('暂时离开咨询室？'),
-                  content: const Text('离开不会结束咨询，你可以从预约详情重新进入。'),
+                  title: const Text('Leave the consultation room for now?'),
+                  content: const Text(
+                    'Leaving will not end the consultation. You can rejoin from your appointment details.',
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context, false),
-                      child: const Text('留在房间'),
+                      child: const Text('Stay in room'),
                     ),
                     FilledButton(
                       onPressed: () => Navigator.pop(context, true),
-                      child: const Text('暂时离开'),
+                      child: const Text('Leave for now'),
                     ),
                   ],
                 ),
@@ -139,15 +141,15 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
   Widget _leaveConfirmation(BuildContext context) => Theme(
     data: momSettingsTheme(Theme.of(context)),
     child: MomSettingsFlowDialog(
-      title: '暂时离开咨询室？',
-      closeLabel: '关闭离开确认',
+      title: 'Leave the consultation room for now?',
+      closeLabel: 'Close leave confirmation',
       onClose: () => Navigator.pop(context, false),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '离开不会结束咨询，你可以从预约详情重新进入。',
+            'Leaving will not end the consultation. You can rejoin from your appointment details.',
             style: MomHomeTokens.text(
               13,
               height: 1.55,
@@ -157,12 +159,12 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
           const SizedBox(height: 16),
           FilledButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('留在房间'),
+            child: const Text('Stay in room'),
           ),
           const SizedBox(height: 14),
           OutlinedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('暂时离开'),
+            child: const Text('Leave for now'),
           ),
         ],
       ),
@@ -180,15 +182,21 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
   AppBar _userRoomAppBar() => AppBar(
     backgroundColor: MomHomeTokens.background,
     surfaceTintColor: Colors.transparent,
-    toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.4 ? 72 : 64,
+    toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.4 ? 112 : 64,
     leading: IconButton(
-      tooltip: '返回',
+      tooltip: 'Back',
       onPressed: _back,
       color: MomHomeTokens.rose,
       icon: const Icon(Icons.chevron_left),
     ),
     centerTitle: false,
-    title: Text('视频咨询', style: MomHomeTokens.text(20, weight: FontWeight.w700)),
+    title: Text(
+      'Video consultation',
+      maxLines: 2,
+      softWrap: true,
+      overflow: TextOverflow.visible,
+      style: MomHomeTokens.text(20, weight: FontWeight.w700),
+    ),
   );
 
   @override
@@ -233,7 +241,12 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
                         !controller.inRoom
                   ? null
                   : AppBar(
-                      toolbarHeight: controller.isExpert ? kToolbarHeight : 52,
+                      toolbarHeight:
+                          MediaQuery.textScalerOf(context).scale(1) > 1.4
+                          ? 96
+                          : controller.isExpert
+                          ? kToolbarHeight
+                          : 52,
                       leadingWidth: controller.isExpert
                           ? null
                           : MediaQuery.textScalerOf(context).scale(1) > 1.4
@@ -246,11 +259,14 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
                               style: TextButton.styleFrom(
                                 foregroundColor: MomCozyColors.mutedForeground,
                               ),
-                              child: const Text('返回'),
+                              child: const Text('Back'),
                             ),
                       centerTitle: !controller.isExpert,
                       title: Text(
-                        '视频咨询',
+                        'Video consultation',
+                        maxLines: 2,
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
                         style: controller.isExpert
                             ? null
                             : const TextStyle(
@@ -270,7 +286,7 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
                       actions: [
                         if (controller.isExpert)
                           IconButton(
-                            tooltip: '刷新咨询状态',
+                            tooltip: 'Refresh consultation status',
                             onPressed: controller.busy ? null : controller.load,
                             icon: const Icon(Icons.refresh),
                           ),
@@ -297,8 +313,8 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
   }) => Theme(
     data: momSettingsTheme(Theme.of(context)),
     child: MomSettingsFlowDialog(
-      title: '预约详情',
-      closeLabel: '关闭预约详情',
+      title: 'Appointment details',
+      closeLabel: 'Close appointment details',
       onClose: onClose,
       child: child,
     ),
@@ -313,12 +329,12 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
         if (controller.failure != null)
           TextButton(
             onPressed: controller.busy || _flowOpen ? null : controller.load,
-            child: const Text('刷新咨询状态'),
+            child: const Text('Refresh consultation status'),
           ),
         if (controller.pendingEnd)
           TextButton(
             onPressed: controller.busy ? null : controller.retryEnd,
-            child: const Text('核对结束咨询的结果'),
+            child: const Text('Check consultation outcome'),
           ),
         ConsultationPreparation(
           data: data,
@@ -360,11 +376,11 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
             child: MomSettingsCard(
               children: [
                 Text(
-                  '正在读取咨询信息',
+                  'Loading consultation details',
                   style: MomHomeTokens.text(18, weight: FontWeight.w700),
                 ),
                 Text(
-                  '预约信息载入后，你可以查看咨询前准备。',
+                  'When the appointment details load, you can review how to prepare.',
                   style: MomHomeTokens.text(
                     13,
                     color: MomHomeTokens.secondary,
@@ -424,7 +440,7 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
                 if (controller.pendingEnd) ...[
                   FilledButton(
                     onPressed: controller.busy ? null : controller.retryEnd,
-                    child: const Text('核对结束咨询的结果'),
+                    child: const Text('Check consultation outcome'),
                   ),
                   const SizedBox(height: 14),
                 ],
@@ -451,7 +467,7 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
         if (controller.pendingEnd)
           FilledButton(
             onPressed: controller.busy ? null : controller.retryEnd,
-            child: const Text('核对结束咨询的结果'),
+            child: const Text('Check consultation outcome'),
           ),
         if (data.ended)
           _outcome(data)
@@ -462,11 +478,12 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
           const SizedBox(height: MomCozySpacing.headingGap),
           ConsultationVideoStage(data: data, media: controller.media),
           if (controller.media.error case final error?) _notice(error),
-          if (controller.media.weakNetwork) _notice('网络较弱，音视频可能暂时不流畅。'),
+          if (controller.media.weakNetwork)
+            _notice('Your connection is weak. Audio and video may be choppy.'),
           if (controller.media.audioPlaybackBlocked)
             TextButton(
               onPressed: controller.media.enableAudio,
-              child: const Text('点击开启通话声音'),
+              child: const Text('Tap to enable call audio'),
             ),
           const SizedBox(height: MomCozySpacing.content),
           ConsultationMediaControls(media: controller.media, onLeave: _back),
@@ -475,11 +492,11 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
             const SizedBox(height: MomCozySpacing.content),
             FilledButton(
               onPressed: controller.canEnter ? controller.enter : null,
-              child: const Text('重新连接'),
+              child: const Text('Reconnect'),
             ),
             TextButton(
               onPressed: controller.busy ? null : controller.leave,
-              child: const Text('返回咨询准备'),
+              child: const Text('Back to preparation'),
             ),
           ],
           if (controller.isExpert) _expertActions(data),
@@ -511,8 +528,8 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
                   const SizedBox(height: 14),
                 ],
                 MomServiceExpertIdentity(
-                  name: data.appointment.providerName,
-                  label: '本次咨询专家',
+                  name: data.appointment.publicProviderName,
+                  label: 'Your consultant',
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -533,10 +550,10 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
                     ),
                     child: Text(
                       reconnecting
-                          ? '重新连接'
+                          ? 'Reconnect'
                           : data.active
-                          ? '咨询中'
-                          : '等待室',
+                          ? 'In consultation'
+                          : 'Waiting room',
                       style: MomHomeTokens.text(
                         11,
                         weight: FontWeight.w700,
@@ -553,13 +570,15 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
                   const SizedBox(height: 14),
                 ],
                 if (media.weakNetwork) ...[
-                  _sessionNotice('网络较弱，音视频可能暂时不流畅。'),
+                  _sessionNotice(
+                    'Your connection is weak. Audio and video may be choppy.',
+                  ),
                   const SizedBox(height: 14),
                 ],
                 if (media.audioPlaybackBlocked) ...[
                   OutlinedButton(
                     onPressed: media.busy ? null : media.enableAudio,
-                    child: const Text('点击开启通话声音'),
+                    child: const Text('Tap to enable call audio'),
                   ),
                   const SizedBox(height: 14),
                 ],
@@ -572,11 +591,11 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
                   const SizedBox(height: 14),
                   FilledButton(
                     onPressed: controller.canEnter ? controller.enter : null,
-                    child: const Text('重新连接'),
+                    child: const Text('Reconnect'),
                   ),
                   TextButton(
                     onPressed: controller.busy ? null : controller.leave,
-                    child: const Text('返回咨询准备'),
+                    child: const Text('Back to preparation'),
                   ),
                 ],
               ],
@@ -598,8 +617,12 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
   Widget _leaveFailureNotice() => KeyedSubtree(
     key: _leaveFailureKey,
     child: _isUserRoomContent
-        ? _sessionNotice('暂时无法离开咨询室，请再次点击离开房间重试。')
-        : _notice('暂时无法离开咨询室，请再次点击离开房间重试。'),
+        ? _sessionNotice(
+            'Could not leave the consultation room. Tap Leave Room again to try.',
+          )
+        : _notice(
+            'Could not leave the consultation room. Tap Leave Room again to try.',
+          ),
   );
 
   Widget _notice(String text) => Semantics(
@@ -621,10 +644,13 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AppointmentSummary(appointment: data.appointment, title: '本次咨询'),
+        AppointmentSummary(
+          appointment: data.appointment,
+          title: 'This consultation',
+        ),
         const SizedBox(height: MomCozySpacing.section),
         const Text(
-          '咨询前准备',
+          'Prepare for your consultation',
           style: TextStyle(
             fontSize: MomCozyTypography.headingSize,
             fontWeight: FontWeight.w700,
@@ -632,7 +658,7 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
         ),
         const SizedBox(height: MomCozySpacing.compact),
         const Text(
-          '找一个安静、光线充足的位置，准备好摄像头与麦克风。',
+          'Find a quiet, well-lit place and get your camera and microphone ready.',
           style: TextStyle(
             color: MomCozyColors.mutedForeground,
             height: MomCozyTypography.lineHeight,
@@ -648,21 +674,25 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
                   builder: (context) => const ConsultationDevicePreviewDialog(),
                 ),
           icon: const Icon(Icons.videocam_outlined),
-          label: const Text('检查摄像头与麦克风'),
+          label: const Text('Check camera & microphone'),
         ),
         const SizedBox(height: MomCozySpacing.content),
         if (data.videoProvider == VideoProvider.sandbox)
-          _notice('当前为模拟咨询，可验证双端流程，不传输远程音视频。'),
+          _notice(
+            'This is a simulated consultation to test both sides. Remote audio and video are not transmitted.',
+          ),
         if (data.videoProvider == VideoProvider.disabled)
-          _notice('视频咨询暂未开放，请稍后再试。'),
+          _notice(
+            'Video consultations are not available yet. Try again later.',
+          ),
         if (!open)
           _notice(
             controller.now.isBefore(data.opensAt)
-                ? '咨询室将在 ${appointmentDay(data.opensAt, data.appointment.timezone)} ${zonedClock(data.opensAt, data.appointment.timezone)} 开放（预约前 10 分钟）。'
-                : '本次预约的进入时间已过，可以返回预约页重新安排。',
+                ? 'The consultation room opens ${appointmentDay(data.opensAt, data.appointment.timezone)} at ${zonedClock(data.opensAt, data.appointment.timezone)} (10 minutes before your appointment).'
+                : 'The join window has closed. Return to booking to reschedule.',
           ),
         if (controller.isExpert && !data.videoConsent) ...[
-          _notice('正在等待用户完成视频授权。'),
+          _notice('Waiting for the client to consent to video.'),
           const SizedBox(height: MomCozySpacing.content),
         ],
         const SizedBox(height: MomCozySpacing.card),
@@ -670,23 +700,26 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
             data.consultation?.roomStatus == VideoRoomStatus.creating) ...[
           const LinearProgressIndicator(),
           const SizedBox(height: MomCozySpacing.content),
-          const Text('咨询室正在准备，请稍候。', textAlign: TextAlign.center),
+          const Text(
+            'The consultation room is getting ready. Please wait.',
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: MomCozySpacing.content),
         ],
         FilledButton(
           onPressed: controller.canEnter ? controller.enter : null,
           child: Text(
             controller.busy
-                ? '正在进入…'
+                ? 'Joining…'
                 : data.active
-                ? '重新进入咨询室'
-                : '进入咨询室',
+                ? 'Rejoin consultation room'
+                : 'Join consultation',
           ),
         ),
         if (controller.isExpert && controller.canMarkNoShow)
           TextButton(
             onPressed: () => _end(ConsultationEndReason.userNoShow),
-            child: const Text('标记用户未到场'),
+            child: const Text('Mark client as no-show'),
           ),
       ],
     );
@@ -750,7 +783,7 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${data.appointment.providerName} · IBCLC',
+              '${data.appointment.publicProviderName} · IBCLC',
               style: const TextStyle(
                 fontSize: MomCozyTypography.captionSize,
                 color: MomCozyColors.mutedForeground,
@@ -769,7 +802,7 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
       ),
       const SizedBox(width: MomCozySpacing.compact),
       MomCozyBadge(
-        data.active ? '咨询中' : '等待室',
+        data.active ? 'In consultation' : 'Waiting room',
         color: MomCozyColors.care,
         background: MomCozyColors.careSoft,
       ),
@@ -783,23 +816,23 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
         if (!data.active)
           FilledButton(
             onPressed: controller.canStart ? controller.start : null,
-            child: const Text('开始咨询'),
+            child: const Text('Start consultation'),
           ),
         if (data.active)
           FilledButton(
             onPressed: controller.busy
                 ? null
                 : () => _end(ConsultationEndReason.completed),
-            child: const Text('完成并结束咨询'),
+            child: const Text('Finish consultation'),
           ),
         TextButton(
           onPressed: controller.busy ? null : _interrupted,
-          child: const Text('咨询无法继续'),
+          child: const Text('Cannot continue consultation'),
         ),
         if (controller.canMarkNoShow)
           TextButton(
             onPressed: () => _end(ConsultationEndReason.userNoShow),
-            child: const Text('标记用户未到场'),
+            child: const Text('Mark client as no-show'),
           ),
       ],
     ),
@@ -817,7 +850,7 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
               const Padding(
                 padding: MomCozyInsets.card,
                 child: Text(
-                  '选择结束原因',
+                  'Choose a reason for ending',
                   style: TextStyle(
                     fontSize: MomCozyTypography.sectionSize,
                     fontWeight: FontWeight.w700,
@@ -825,16 +858,20 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
                 ),
               ),
               ListTile(
-                title: const Text('技术或网络故障'),
-                subtitle: const Text('结束本次咨询，不扣减咨询次数'),
+                title: const Text('Technical or network issue'),
+                subtitle: const Text(
+                  'End this consultation without using a session',
+                ),
                 onTap: () => Navigator.pop(
                   context,
                   ConsultationEndReason.technicalFailure,
                 ),
               ),
               ListTile(
-                title: const Text('需要转介或进一步医疗支持'),
-                subtitle: const Text('结束本次咨询，稍后补充专业记录'),
+                title: const Text('Referral or further medical support needed'),
+                subtitle: const Text(
+                  'End this consultation and complete the clinical note later',
+                ),
                 onTap: () => Navigator.pop(
                   context,
                   ConsultationEndReason.safetyEscalation,
@@ -854,20 +891,20 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
       animationStyle: MomCozyMotion.animationStyle(context),
       builder: (context) => AlertDialog(
         scrollable: true,
-        title: const Text('结束本次咨询？'),
+        title: const Text('End this consultation?'),
         content: Text(
           reason == ConsultationEndReason.completed
-              ? '完成后将扣减 1 次咨询，随后请整理咨询记录。'
-              : '本次不扣减咨询次数，结束原因会保存在服务记录中。',
+              ? 'Finishing uses one consultation. Please complete the consultation notes afterward.'
+              : 'This will not use a consultation. The reason will be saved in the service history.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('继续咨询'),
+            child: const Text('Continue consultation'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('确认结束'),
+            child: const Text('End consultation'),
           ),
         ],
       ),
@@ -878,25 +915,28 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
   Widget _outcome(ConsultationRoomContext data) {
     final (title, description) = switch (data.consultation?.endReason) {
       ConsultationEndReason.technicalFailure => (
-        '视频连接未能继续',
-        '本次未扣减咨询次数，可以重新选择合适的时间。',
+        'Video connection could not continue',
+        'No consultation was used. You can book another time.',
       ),
       ConsultationEndReason.userNoShow => (
-        '这次咨询未能开始',
-        '本次未扣减咨询次数，如需继续支持，可以重新预约。',
+        'This consultation could not start',
+        'No consultation was used. Book again if you need more support.',
       ),
       ConsultationEndReason.safetyEscalation => (
-        '本次咨询已结束',
-        '请按专家的建议继续寻求支持，后续记录会出现在服务进度中。',
+        'This consultation has ended',
+        'Follow your consultant\'s guidance for further support. Your follow-up records will appear in Service Progress.',
       ),
       _ =>
         data.appointment.status == AppointmentStatus.cancelled
-            ? ('预约已取消', '如需继续支持，可以重新安排咨询时间。')
+            ? (
+                'Appointment canceled',
+                'You can book another consultation if you need more support.',
+              )
             : (
-                '本次咨询已结束',
+                'This consultation has ended',
                 controller.isExpert
-                    ? '请整理本次咨询记录与后续建议。'
-                    : 'IBCLC 正在整理本次建议，可在服务进度中查看。',
+                    ? 'Please complete the consultation notes and follow-up recommendations.'
+                    : 'Your IBCLC is preparing recommendations. You can view them in Service Progress.',
               ),
     };
     return MomCozySurface(
@@ -908,13 +948,17 @@ class _ConsultationRoomPageState extends State<ConsultationRoomPage>
           children: [
             FilledButton(
               onPressed: () => widget.onProgress(data.appointment),
-              child: Text(controller.isExpert ? '整理咨询记录' : '查看咨询总结'),
+              child: Text(
+                controller.isExpert
+                    ? 'Complete consultation notes'
+                    : 'View consultation summary',
+              ),
             ),
             if (!controller.isExpert &&
                 data.consultation?.endReason != ConsultationEndReason.completed)
               TextButton(
                 onPressed: () => widget.onRebook(data.appointment),
-                child: const Text('重新预约'),
+                child: const Text('Book another appointment'),
               ),
           ],
         ),

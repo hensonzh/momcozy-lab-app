@@ -33,8 +33,8 @@ void main() {
       final input = find.byKey(const ValueKey('agent-composer-input'));
       for (final draft in [
         '',
-        '下一条草稿，先不发送。',
-        'A longer follow-up question about today’s notes.',
+        'Another draft, not sent yet.',
+        'A longer follow-up question about today\'s notes.',
       ]) {
         await tester.enterText(input, draft);
         await tester.pumpAndSettle();

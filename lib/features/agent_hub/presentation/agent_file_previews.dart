@@ -22,7 +22,7 @@ class AgentComposerFileAttachment extends StatelessWidget {
       name: file.name,
       size: file.size,
       removeButtonKey: removeButtonKey,
-      removeLabel: '移除文件',
+      removeLabel: 'Remove file',
       onRemove: onRemove,
       preview: const Center(
         child: MomCozyLineIcon(

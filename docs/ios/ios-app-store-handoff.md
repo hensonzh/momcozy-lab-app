@@ -6,6 +6,11 @@
 >
 > **当前结论：** 本地 iOS Release 无签名构建已经成功，但正式 Bundle ID、Apple 签名、生产 API、登录策略、推送、支付合规、正式图标和商店资料尚未全部就绪，当前绝对不能上传或提交审核。
 
+> **环境工作流更新（2026-09-24）：** local/staging/production 配置、Backend/Agent
+> 发布顺序和统一 App 构建命令以
+> [`../deployment/environment-workflow.md`](../deployment/environment-workflow.md) 为准。
+> 本文继续作为 Apple 账号、Bundle ID、签名和 App Store Connect 的专项交接。
+
 ---
 
 ## 0. 下一位智能体先做什么
@@ -161,9 +166,9 @@ scripts/build-flutter-android-apk.mjs
 scripts/build-flutter-apk-download-site.mjs
 ```
 
-不要为了发布 iOS 而调用这些脚本，也不要把 Android GitHub Release 视为 App Store 发布。当前仓库没有正式的 iOS 自动发布流水线；iOS 第一版应按本文使用 Xcode Archive/Organizer。
+不要为了发布 iOS 而调用这些脚本，也不要把 Android GitHub Release 视为 App Store 发布。仓库已有统一 iOS 构建入口 `scripts/build-mobile-app.mjs`；首次商店上传仍建议使用 Xcode Archive/Organizer，待签名与 App Store Connect 条件稳定后再自动化。
 
-本次没有部署或变更后端。无签名预检只编入了下面两个 test 地址：
+本次没有部署后端。staging 无签名预检使用下面两个现有地址（DNS 名中的 `test` 是历史遗留）：
 
 ```text
 https://backend-test.lute-momcozylab.luteos.cloud:8443
@@ -212,7 +217,7 @@ App Store Connect API Key：未配置
 
 - `ios/Runner/Info.plist`：`CFBundleDisplayName = momcozy AI`
 - `lib/app/momcozy_app.dart`：Flutter title 为 `momcozy AI`
-- Android main/local/unified/production 显示名称为 `momcozy AI`
+- Android main/local/staging/production 显示名称为 `momcozy AI`
 - 构建脚本、下载页和原生配置测试同步
 
 测试文件：
@@ -292,7 +297,7 @@ flutter build ios \
   --no-pub \
   --build-name=1.0.0 \
   --build-number=57 \
-  --dart-define=MOMCOZY_ENV=test \
+  --dart-define=MOMCOZY_ENV=staging \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
@@ -555,12 +560,12 @@ flutter build ipa \
 仓库包含：
 
 ```text
-assets/certificates/momcozy-test-internal-ca.pem
+assets/certificates/momcozy-staging-internal-ca.pem
 ```
 
 代码只在以下条件全部满足时启用该测试 CA：
 
-- `MOMCOZY_ENV=test`；
+- `MOMCOZY_ENV=staging`；
 - HTTPS；
 - 精确匹配两个 test host；
 - 端口 8443。
@@ -1080,7 +1085,7 @@ ios/Runner/Base.lproj/LaunchScreen.storyboard
 ```text
 lib/app/momcozy_api_runtime.dart
 lib/features/agent_hub/agent_hub_runtime.dart
-lib/core/network/test_certificate_trust.dart
+lib/core/network/staging_certificate_trust.dart
 lib/core/auth/google_sign_in_gateway.dart
 lib/features/notifications/data/firebase_push_messaging.dart
 ```

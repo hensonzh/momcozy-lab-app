@@ -49,30 +49,35 @@ class MotionRealtimeGuidanceException implements Exception {
 
 @visibleForTesting
 String motionGuidanceTurnInstructions(String eventType) {
-  const languageRule = '若用户已明确切换语言，使用等义短句并保持相同长度。';
+  const languageRule =
+      'Always speak English. Keep the same meaning and brevity throughout the session.';
   return switch (eventType) {
     'assessment_started' =>
-      '这是通用体态评估的新会话。开场最多两句：第一句只介绍当前开放的头前伸、高低肩和躯干侧倾；'
-          '第二句只问“想测头颈、正面体态，还是全部三项？”。用户也可主动自选，不要另行朗读第四个选项；'
-          '不要介绍未开放项目，不要引导站位。$languageRule',
-    'capture_countdown' => '只说：“请站稳。三、二、一，开始。”不要添加解释、鼓励或结果。$languageRule',
-    'opposite_side_required' ||
-    'change_orientation' => '只说：“请转到另一侧，站稳看前方。”不要解释内部状态。$languageRule',
-    'assessment_review_ready' => '只说：“采集完成。你想结束，还是继续？”说完等待新的语音回复。$languageRule',
+      'This is a new general posture assessment. Use at most two sentences: first mention only the available checks—forward head posture, uneven shoulders, and sideways trunk lean. '
+          'Then ask: “Would you like to check your head and neck, your front view, or all three?” The user may also choose specific checks without hearing a fourth option. '
+          'Do not mention unavailable checks or give positioning guidance yet. $languageRule',
+    'capture_countdown' =>
+      'Say only: “Stand still. Three, two, one, start.” Do not add explanations, encouragement, or results. $languageRule',
+    'opposite_side_required' || 'change_orientation' =>
+      'Say only: “Turn to your other side, stand still, and look forward.” Do not explain internal state. $languageRule',
+    'assessment_review_ready' =>
+      'Say only: “Capture complete. Would you like to finish or continue?” Then wait for a new spoken reply. $languageRule',
     'assessment_plan_updated' =>
-      '最多两句：简短复述 selected_targets，再问“确认开始吗？”。不要开始站位指导。$languageRule',
+      'In at most two sentences, briefly repeat selected_targets and ask: “Ready to begin?” Do not give positioning guidance yet. $languageRule',
     'assessment_plan_confirmed' =>
-      '只用一句短句说明第一个取景方向并请用户站稳，不朗读内部 target。$languageRule',
-    'front_view_required' => '只说：“请正对镜头，双肩放松。”不要要求腿脚完整入镜。$languageRule',
+      'In one short sentence, explain the first required camera view and ask the user to stand still. Do not read internal target identifiers aloud. $languageRule',
+    'front_view_required' =>
+      'Say only: “Face the camera and relax your shoulders.” Do not require the legs or feet to be in frame. $languageRule',
     'assessment_continued' =>
-      '只用一句短句依据 first_required_view 说明站位方向并请用户站稳。$languageRule',
+      'In one short sentence, use first_required_view to explain the required camera direction and ask the user to stand still. $languageRule',
     'assessment_finalizing' =>
-      '只说：“结果正在保存，完成后我会继续为你解读。”不要提模型或角色切换。$languageRule',
-    'command_rejected' => '只用一句短句继续最新步骤，不解释内部状态，不声称评估已结束。$languageRule',
+      'Say only: “Your results are being saved. I will walk you through them when they are ready.” Do not mention models or role changes. $languageRule',
+    'command_rejected' =>
+      'In one short sentence, continue the latest step. Do not explain internal state or claim the assessment is finished. $languageRule',
     _ =>
-      '最新客户端语义事件为 $eventType。动作指导只说一句，尽量不超过 18 个汉字；'
-          '只给一个立即可执行的动作，不说寒暄、原因、检测状态、重复鼓励、流程预告或“请稍等”；'
-          '端侧质量门和状态机结论是权威，不要求触屏或腿脚完整入镜。$languageRule',
+      'The latest client semantic event is $eventType. Give one immediately actionable instruction in under 12 words. '
+          'Do not add a greeting, rationale, detection status, repetitive encouragement, workflow preview, or “please wait.” '
+          'The on-device quality gate and state machine are authoritative. Do not ask for touch interaction or require the legs or feet to be in frame. $languageRule',
   };
 }
 
@@ -562,7 +567,7 @@ class MotionRealtimeVoice extends ChangeNotifier
           'type': 'message',
           'role': 'user',
           'content': [
-            {'type': 'input_text', 'text': '[客户端姿态事件]$content'},
+            {'type': 'input_text', 'text': '[Client posture event]$content'},
           ],
         },
       });
@@ -752,7 +757,7 @@ class MotionRealtimeVoice extends ChangeNotifier
         : DateTime.now().difference(receivedAt).inMilliseconds;
     final instructions =
         snapshot?.toRealtimeInstructions(contextAgeMs: contextAgeMs) ??
-        '自然回应用户刚才的话。当前没有新鲜的端侧姿态事实，不要猜测姿态或推进状态；请等待客户端的新事件。';
+        'Respond naturally in English to the user\'s latest speech. There are no fresh on-device posture facts. Do not guess posture or advance the workflow; wait for the next client event.';
     await _enqueueModelTurn(
       instructions,
       generation,
@@ -816,10 +821,10 @@ class MotionRealtimeVoice extends ChangeNotifier
       if (!_isActive(generation)) return;
       final snapshot = _latestAssessmentContext;
       final instructions = snapshot == null
-          ? '视觉关键帧当前不可用。请自然回答用户刚才的问题，不要猜测她的姿态，也不要让评估中断。'
+          ? 'The visual keyframe is unavailable. Answer the user\'s latest question naturally in English. Do not guess their posture or interrupt the assessment.'
           : '${snapshot.toRealtimeInstructions(contextAgeMs: _latestContextAgeMs())}\n'
-                '${submitted ? '本轮已提交一张稀疏关键帧作为辅助；' : '本轮没有可用关键帧；'}'
-                '端侧语义事实仍然是权威。直接回应用户，不要再次调用 motion_visual_snapshot。';
+                '${submitted ? 'One sparse keyframe was submitted this turn as supporting context; ' : 'No keyframe is available this turn; '}'
+                'on-device semantic facts remain authoritative. Respond directly in English and do not call motion_visual_snapshot again.';
       await _enqueueModelTurn(
         instructions,
         generation,

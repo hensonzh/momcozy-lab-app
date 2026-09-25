@@ -163,10 +163,9 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
   }
 
   Widget _topBar() {
-    final title = controller.target == 'posture_screen' ? '体态动态评估' : '头颈姿态动态评估';
-    final displayTitle = MediaQuery.textScalerOf(context).scale(1) > 1.4
-        ? title.replaceFirst('动态', '\n动态')
-        : title;
+    final title = controller.target == 'posture_screen'
+        ? 'Posture assessment'
+        : 'Head & neck assessment';
     return DecoratedBox(
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: MomHomeTokens.border)),
@@ -182,10 +181,7 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
           children: [
             Expanded(
               child: Text(
-                displayTitle,
-                semanticsLabel: title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                title,
                 style: MomHomeTokens.text(18, weight: FontWeight.w700),
               ),
             ),
@@ -204,7 +200,11 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                 ),
                 minimumSize: const Size(0, MomCozyTapTargets.minimum),
               ),
-              child: const Text('结束评估'),
+              child: Text(
+                MediaQuery.textScalerOf(context).scale(1) > 1.5
+                    ? 'End'
+                    : 'End assessment',
+              ),
             ),
           ],
         ),
@@ -301,7 +301,8 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                     ),
                     const SizedBox(height: MomCozySpacing.headingGap),
                     Text(
-                      controller.errorMessage ?? '评估暂时中断，请重试。',
+                      controller.errorMessage ??
+                          'Assessment interrupted. Try again.',
                       key: const ValueKey('motion-assessment-error'),
                       textAlign: TextAlign.center,
                       style: MomHomeTokens.text(18, weight: FontWeight.w700),
@@ -312,7 +313,7 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                       child: FilledButton(
                         key: const ValueKey('motion-assessment-retry'),
                         onPressed: _retryAfterFailure,
-                        child: const Text('重新尝试'),
+                        child: const Text('Try again'),
                       ),
                     ),
                     const SizedBox(height: MomCozySpacing.compact),
@@ -321,7 +322,7 @@ class _MotionAssessmentPageState extends State<MotionAssessmentPage> {
                       child: OutlinedButton(
                         key: const ValueKey('motion-assessment-exit'),
                         onPressed: _exitAfterFailure,
-                        child: const Text('退出评估'),
+                        child: const Text('Exit assessment'),
                       ),
                     ),
                   ],

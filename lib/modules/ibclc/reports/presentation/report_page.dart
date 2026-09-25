@@ -97,38 +97,43 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
             child: TextButton.icon(
               onPressed: widget.onBack,
               icon: const Icon(Icons.arrow_back_rounded, size: 18),
-              label: const Text('返回今日跟进'),
+              label: const Text('Back to today\'s follow-ups'),
             ),
           ),
           const SizedBox(height: 14),
           WorkbenchHeading(
-            title: client?.displayName ?? '专业跟进',
-            subtitle: 'AI 汇总问题与回答，IBCLC 核对并留下专业意见。',
+            title: client?.displayName ?? 'Clinical follow-up',
+            subtitle:
+                'AI organizes client questions and answers for IBCLC review and feedback.',
             actions: [
               if (client != null)
                 OutlinedButton(
                   onPressed: widget.onClient,
-                  child: const Text('查看客户资料'),
+                  child: const Text('View client profile'),
                 ),
               IconButton(
-                tooltip: '刷新报告',
+                tooltip: 'Refresh report',
                 onPressed: controller.busy ? null : controller.load,
                 icon: const Icon(Icons.refresh_rounded),
               ),
             ],
           ),
           if (controller.busy)
-            const LinearProgressIndicator(semanticsLabel: '正在同步报告'),
+            const LinearProgressIndicator(semanticsLabel: 'Syncing report'),
           if (controller.failure != null) ...[
             if (controller.failure!.code == 'ai_consent_required')
               const ReportSection(
-                title: '等待 AI 授权',
-                child: Text('客户开启本服务的 AI 上下文授权后，才能读取或生成报告。'),
+                title: 'Waiting for AI consent',
+                child: Text(
+                  'The client must enable AI context consent for this service before a report can be read or generated.',
+                ),
               )
             else if (controller.failure!.code == 'care_reports_unavailable')
               const ReportSection(
-                title: 'AI 报告暂不可用',
-                child: Text('报告生成服务尚未就绪，请稍后重试。'),
+                title: 'AI report unavailable',
+                child: Text(
+                  'Report generation is not ready yet. Try again later.',
+                ),
               ),
             ProductErrorView(
               failure: controller.failure!,
@@ -137,14 +142,14 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
           ],
           if (client != null && service != null) ...[
             ReportSection(
-              title: '当前服务',
+              title: 'Current service',
               child: Wrap(
                 spacing: 10,
                 runSpacing: 10,
                 children: [
                   for (final option in client.services)
                     ChoiceChip(
-                      label: Text(option.package.name),
+                      label: Text(option.package.publicName),
                       selected: option.episode.id == service.episode.id,
                       onSelected: controller.saving
                           ? null
@@ -156,14 +161,16 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
             const SizedBox(height: 18),
             if (!service.caseConsent)
               const ReportSection(
-                title: '等待病例授权',
-                child: Text('客户尚未授权查看这项服务的病例资料。'),
+                title: 'Waiting for case consent',
+                child: Text(
+                  'The client has not consented to case access for this service.',
+                ),
               ),
             if (data != null) ...[
               ReportSection(
                 title: service.episode.startsAt == null
-                    ? '咨询准备'
-                    : '${service.package.durationDays} 天服务周期',
+                    ? 'Consultation preparation'
+                    : '${service.package.durationDays}-day service period',
                 action: WorkbenchBadge(
                   serviceDayLabel(
                     service,
@@ -175,7 +182,7 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      '已使用 ${service.episode.totalSessions - service.episode.remainingSessions}/${service.episode.totalSessions} 次咨询${service.episode.endsAt == null ? '' : ' · ${dateInTimezone(service.episode.endsAt!, data.timezone)} 结束'}',
+                      '${service.episode.totalSessions - service.episode.remainingSessions} of ${service.episode.totalSessions} consultations used${service.episode.endsAt == null ? '' : ' · ${dateInTimezone(service.episode.endsAt!, data.timezone)} ended'}',
                       style: const TextStyle(
                         color: MomCozyColors.mutedForeground,
                         fontSize: 13,
@@ -191,8 +198,8 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
               const SizedBox(height: 18),
               ReportSection(
                 title: data.purpose == CareReportPurpose.preparation
-                    ? '咨询前整理'
-                    : '${data.date} · 每日跟进',
+                    ? 'Pre-consultation summary'
+                    : '${data.date} · Daily follow-up',
                 action: WorkbenchBadge(
                   reportStatusLabel(data.state, report?.review?.decision),
                 ),
@@ -201,7 +208,7 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                   children: [
                     if (report?.asOf != null)
                       Text(
-                        '资料截至 ${dateInTimezone(report!.asOf!, data.timezone)} ${zonedClock(report.asOf!, data.timezone)} · ${data.timezone} · 第 ${report.version} 版',
+                        'Information through ${dateInTimezone(report!.asOf!, data.timezone)} ${zonedClock(report.asOf!, data.timezone)} · ${data.timezone} · Version ${report.version}',
                         style: const TextStyle(
                           color: MomCozyColors.mutedForeground,
                           fontSize: 12,
@@ -211,23 +218,25 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                     if (data.state != CareReportState.ready)
                       Text(switch (data.state) {
                         CareReportState.notGenerated =>
-                          '尚未生成这一天的报告，可汇总已授权的服务资料。',
+                          'No report has been generated for this day. You can summarize authorized service information.',
                         CareReportState.waitingForRecord =>
-                          '这个日期暂无可汇总的日常记录或完整服务对话。新增记录后可更新报告。',
-                        CareReportState.queued ||
-                        CareReportState.running => '报告正在处理中，完成后会自动更新。',
-                        CareReportState.failed => '本次生成未完成，请重新生成后再复核。',
-                        CareReportState.cancelled => '来源或授权发生变化，请重新生成后再复核。',
-                        _ => '请检查这项服务的授权。',
+                          'No daily records or complete service conversations are available for this date. You can update the report after new records arrive.',
+                        CareReportState.queued || CareReportState.running =>
+                          'The report is being prepared and will update automatically when ready.',
+                        CareReportState.failed =>
+                          'Generation did not finish. Regenerate before reviewing.',
+                        CareReportState.cancelled =>
+                          'Sources or consent changed. Regenerate before reviewing.',
+                        _ => 'Check consent for this service.',
                       }),
                     if (report != null && report.omittedCount > 0)
                       Text(
-                        '有 ${report.omittedCount} 条来源未纳入本次摘要，覆盖范围不完整。',
+                        '${report.omittedCount} sources were omitted from this summary, so coverage is incomplete.',
                         style: const TextStyle(color: MomCozyColors.amber),
                       ),
                     if (data.state == CareReportState.ready)
                       const Text(
-                        'AI 内容供专业核对。确认或修改意见会保存为专业复核记录。',
+                        'AI content is for professional review. Confirmation or suggested changes will be saved as a clinical review record.',
                         style: TextStyle(
                           color: MomCozyColors.mutedForeground,
                           fontSize: 13,
@@ -238,7 +247,9 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                         !report.reviewable)
                       const Padding(
                         padding: EdgeInsets.only(top: 12),
-                        child: Text('分配或授权已变化，重新生成后可进行复核。'),
+                        child: Text(
+                          'Assignment or consent has changed. Regenerate before reviewing.',
+                        ),
                       ),
                     const SizedBox(height: 16),
                     Align(
@@ -255,8 +266,8 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                         icon: const Icon(Icons.auto_awesome_outlined, size: 18),
                         label: Text(
                           data.state == CareReportState.notGenerated
-                              ? '生成报告'
-                              : '更新报告',
+                              ? 'Generate report'
+                              : 'Update report',
                         ),
                       ),
                     ),
@@ -273,39 +284,39 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     ReportSection(
-                      title: '智能体整理',
+                      title: 'AI summary',
                       child: ReportFindings(
                         report: report!,
                         items: report.content!.summary,
-                        empty: '暂无可归纳的事实。',
+                        empty: 'No facts to summarize yet.',
                       ),
                     ),
                     const SizedBox(height: 18),
                     ReportSection(
-                      title: '用户自述',
+                      title: 'Client\'s own words',
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const Text(
-                            '当前情绪',
+                            'Current mood',
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 10),
                           ReportFindings(
                             report: report,
                             items: report.content!.emotionalState,
-                            empty: '暂无明确的情绪自述。',
+                            empty: 'No clear mood statements yet.',
                           ),
                           const SizedBox(height: 24),
                           const Text(
-                            '沟通偏好',
+                            'Communication preferences',
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 10),
                           ReportFindings(
                             report: report,
                             items: report.content!.communicationPreferences,
-                            empty: '暂无明确的沟通偏好自述。',
+                            empty: 'No clear communication preferences yet.',
                           ),
                         ],
                       ),
@@ -313,19 +324,19 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                   ],
                 );
                 final right = ReportSection(
-                  title: '辅诊核对',
+                  title: 'Clinical review',
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       ReportFindings(
                         report: report,
                         items: report.content!.checks,
-                        empty: '暂无额外的待核对项。',
+                        empty: 'No additional items to review.',
                       ),
                       if (report.content!.dataGaps.isNotEmpty) ...[
                         const SizedBox(height: 22),
                         const Text(
-                          '资料缺口',
+                          'Information gaps',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 10),
@@ -362,12 +373,12 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
             ),
             const SizedBox(height: 18),
             ReportSection(
-              title: '服务对话',
+              title: 'Service conversations',
               child: ReportDialogueList(report: report!),
             ),
             const SizedBox(height: 18),
             ReportSection(
-              title: '专业复核',
+              title: 'Clinical review',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -388,8 +399,8 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                           Text(
                             report.review!.decision ==
                                     CareReportReviewDecision.confirmed
-                                ? '已确认：认可这份报告及所含回答。'
-                                : '已反馈：建议修改以下内容。',
+                                ? 'Confirmed: This report and its included responses were approved.'
+                                : 'Feedback submitted: Changes suggested below.',
                             style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
                           if (report.review!.feedback.isNotEmpty)
@@ -401,7 +412,7 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                             ),
                           const SizedBox(height: 8),
                           Text(
-                            '${dateInTimezone(report.review!.createdAt, report.timezone)} ${zonedClock(report.review!.createdAt, report.timezone)} · 复核第 ${report.review!.version} 版',
+                            '${dateInTimezone(report.review!.createdAt, report.timezone)} ${zonedClock(report.review!.createdAt, report.timezone)} · Review version ${report.review!.version}',
                             style: const TextStyle(
                               fontSize: 12,
                               color: MomCozyColors.mutedForeground,
@@ -412,7 +423,7 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                     ),
                   const SizedBox(height: 16),
                   const Text(
-                    '确认表示认可报告；反馈修改需提供具体意见。',
+                    'Confirm to approve the report, or provide specific feedback to suggest changes.',
                     style: TextStyle(
                       fontSize: 13,
                       color: MomCozyColors.mutedForeground,
@@ -430,13 +441,13 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                                 report,
                                 CareReportReviewDecision.confirmed,
                               ),
-                        child: const Text('确认回答'),
+                        child: const Text('Confirm responses'),
                       ),
                       FilledButton(
                         onPressed: controller.busy || !report.reviewable
                             ? null
                             : () => _feedback(report),
-                        child: const Text('反馈修改'),
+                        child: const Text('Suggest changes'),
                       ),
                     ],
                   ),
@@ -465,7 +476,7 @@ class _WorkbenchReportPageState extends State<WorkbenchReportPage>
                   .where((value) => value.date == date)
                   .firstOrNull;
               final label = record == null
-                  ? (future ? '待开始' : '待汇总')
+                  ? (future ? 'Not started' : 'Not generated')
                   : reportStatusLabel(record.state, record.reviewDecision);
               return ChoiceChip(
                 selected: data.date == date,

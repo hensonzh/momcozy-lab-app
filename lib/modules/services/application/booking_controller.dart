@@ -159,9 +159,9 @@ class BookingController extends ChangeNotifier {
         date = today;
       } else {
         message = switch (result.reason) {
-          'emergency_help' => '请先联系当地急救服务',
-          'service_unsuitable' => '请确认本次需要的是哺乳或喂养支持',
-          _ => '当前服务暂未覆盖该州，请稍后再查看',
+          'emergency_help' => 'Contact local emergency services first.',
+          'service_unsuitable' => 'Confirm that you need lactation or feeding support.',
+          _ => 'This service is not available in your state yet. Check again later.',
         };
       }
     } catch (error) {
@@ -286,7 +286,7 @@ class BookingController extends ChangeNotifier {
       ];
       _pending = null;
       if (result.status == AppointmentStatus.expired) {
-        message = '所选时段的保留时间已到，请重新选择';
+        message = 'Your selected time is no longer on hold. Choose another time.';
       }
     } catch (error) {
       if (_disposed) return;
@@ -298,12 +298,12 @@ class BookingController extends ChangeNotifier {
         _pending = null;
       }
       message = switch (failure!.code) {
-        'slot_unavailable' => '这个时段刚被占用，请刷新后选择其他时间',
-        'hold_expired' => '所选时段的保留时间已到，请重新选择',
-        'eligibility_required' => '预约前确认已过期，请重新确认',
-        'region_unavailable' => '这位专家暂时无法在当前州提供服务',
-        'service_not_bookable' => '该服务当前没有可用的咨询次数，请刷新服务信息',
-        'appointment_exists' => '已存在预约，请刷新查看',
+        'slot_unavailable' => 'That time was just booked. Refresh and choose another.',
+        'hold_expired' => 'Your selected time is no longer on hold. Choose another time.',
+        'eligibility_required' => 'Your booking eligibility check has expired. Confirm again.',
+        'region_unavailable' => 'This consultant is not available in your state right now.',
+        'service_not_bookable' => 'No consultations are available for this service. Refresh your service details.',
+        'appointment_exists' => 'An appointment already exists. Refresh to view it.',
         _ => null,
       };
       if (failure!.code == 'eligibility_required') eligibility = null;

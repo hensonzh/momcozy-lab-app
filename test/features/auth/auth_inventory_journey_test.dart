@@ -282,7 +282,7 @@ void main() {
       'Successful login saves session; guard restores More',
     );
     transport.responsesByPath['/v1/auth/me'] = _error('unavailable', 503);
-    await tap(tester, find.text('账号设置'));
+    await tap(tester, find.text('Account settings'));
     expect(find.text('Retry'), findsOneWidget);
     await capture(
       tester,
@@ -430,7 +430,7 @@ void main() {
       '/more',
       'Valid verification → session saved → intended More route',
     );
-    await tap(tester, find.text('账号设置'));
+    await tap(tester, find.text('Account settings'));
     await tap(tester, find.byKey(const ValueKey('account-sign-out')));
     expect(await store.readSession(), isNull);
     await capture(

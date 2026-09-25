@@ -50,11 +50,11 @@ void main() {
     );
     expect(
       tester.getRect(find.byType(MomExpertPlanEntry)),
-      const Rect.fromLTWH(16, 494, 361, 88),
+      const Rect.fromLTWH(16, 494, 361, 94),
     );
     expect(
       tester.getRect(find.byKey(const ValueKey('more-logout'))),
-      const Rect.fromLTWH(16, 596, 361, 44),
+      const Rect.fromLTWH(16, 602, 361, 44),
     );
     expect(
       tester.getRect(find.byKey(const ValueKey('bottom-nav-chrome'))),
@@ -63,7 +63,7 @@ void main() {
     for (final entry in {
       'me': 45.7,
       'baby': 121.1,
-      'cozymate': 196.5,
+      'momcozy ai': 196.5,
       'schedule': 271.9,
       'more': 347.3,
     }.entries) {
@@ -73,13 +73,13 @@ void main() {
       );
     }
     for (final entry in {
-      '更多': 33.0,
-      '日常管理': 223.0,
-      '专家陪伴': 450.0,
-      '专家支持': 514.0,
-      '退出登录': 610.0,
+      'More': 33.0,
+      'Everyday settings': 223.0,
+      'Expert care': 450.0,
+      'Expert support': 510.0,
+      'Sign out': 616.0,
     }.entries) {
-      expect(tester.getTopLeft(find.text(entry.key)).dy, entry.value);
+      expect(tester.getTopLeft(find.text(entry.key).first).dy, entry.value);
     }
     await expectLater(
       find.byType(MaterialApp),
@@ -105,7 +105,7 @@ void main() {
     );
     await _decodeImages(tester);
     final logout = find.byKey(const ValueKey('more-logout'));
-    expect(find.text('正在加载账号…'), findsOneWidget);
+    expect(find.text('Loading account…'), findsOneWidget);
     expect(tester.widget<TextButton>(logout).onPressed, isNull);
     await tester.tap(logout);
     expect(exits, 0);
@@ -116,7 +116,7 @@ void main() {
     );
     pending.reply.completeError(StateError('offline'));
     await tester.pumpAndSettle();
-    expect(find.text('管理你的账号信息'), findsOneWidget);
+    expect(find.text('Manage your account information'), findsOneWidget);
     expect(tester.widget<TextButton>(logout).onPressed, isNotNull);
     await tester.tap(logout);
     await tester.pumpAndSettle();

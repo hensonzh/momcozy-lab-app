@@ -209,7 +209,7 @@ void main() {
   Future<void> toggle(WidgetTester tester, CareConsentScope value) =>
       tap(tester, scope(value));
   Future<void> entry(WidgetTester tester) async {
-    await tap(tester, find.text('隐私'));
+    await tap(tester, find.text('Privacy'));
     expect(router.state.uri.path, '/privacy');
   }
 
@@ -220,7 +220,7 @@ void main() {
       reopened ? 'service-picker-reopened' : 'service-picker',
       'Tap service picker → list of owned services',
     );
-    await tap(tester, find.textContaining('专家支持服务').last);
+    await tap(tester, find.textContaining('Expert support service').last);
   }
 
   Future<void> finish(WidgetTester tester) async {
@@ -243,11 +243,11 @@ void main() {
         await capture(
           tester,
           'optional-dirty',
-          'Turn off Cozymate context → unsaved draft',
+          'Turn off Momcozy AI context → unsaved draft',
         );
-        await tap(tester, find.text('保存更改'));
+        await tap(tester, find.text('Save changes'));
         expect(transport.consentWrites.single['scope'], 'ai_context');
-        expect(find.text('隐私设置已保存'), findsOneWidget);
+        expect(find.text('Privacy settings saved'), findsOneWidget);
         await capture(
           tester,
           'optional-saved',
@@ -255,28 +255,28 @@ void main() {
         );
         await toggle(tester, CareConsentScope.ibclcCase);
         await toggle(tester, CareConsentScope.video);
-        await tap(tester, find.text('保存更改'));
+        await tap(tester, find.text('Save changes'));
         await capture(
           tester,
           'revoke-confirm',
           'Disable case and video → save requests required-scope confirmation',
         );
-        await tap(tester, find.text('继续保留'));
+        await tap(tester, find.text('Keep access'));
         expect(transport.consentWrites, hasLength(1));
         await capture(
           tester,
           'revoke-kept',
           'Keep authorization → dialog closes; toggled draft remains unsaved',
         );
-        await tap(tester, find.text('保存更改'));
-        await tap(tester, find.byTooltip('关闭'));
+        await tap(tester, find.text('Save changes'));
+        await tap(tester, find.byTooltip('Close'));
         await capture(
           tester,
           'revoke-closed',
           'Close confirmation icon → draft remains, no write',
         );
-        await tap(tester, find.text('保存更改'));
-        await tap(tester, find.text('确认关闭'));
+        await tap(tester, find.text('Save changes'));
+        await tap(tester, find.text('Turn off access'));
         expect(transport.consentWrites.map((e) => e['scope']), [
           'ai_context',
           'ibclc_case',
@@ -290,22 +290,22 @@ void main() {
         await toggle(tester, CareConsentScope.ibclcCase);
         await toggle(tester, CareConsentScope.video);
         await toggle(tester, CareConsentScope.aiContext);
-        await tap(tester, find.text('保存更改'));
-        expect(find.text('确认关闭服务授权？'), findsNothing);
+        await tap(tester, find.text('Save changes'));
+        expect(find.text('Turn off service access?'), findsNothing);
         await capture(
           tester,
           'granted',
           'Re-enable three permissions → save without revocation confirmation',
         );
         await toggle(tester, CareConsentScope.aiContext);
-        await tap(tester, find.text('管理通知与提醒'));
+        await tap(tester, find.text('Manage notifications & reminders'));
         await capture(
           tester,
           'notification-settings',
           'Manage reminders → actual notification settings route with privacy draft underneath',
           route: '/notifications/settings',
         );
-        await tap(tester, find.byTooltip('返回'));
+        await tap(tester, find.byTooltip('Back'));
         await tester.pumpAndSettle();
         expect(
           tester.widget<Switch>(scope(CareConsentScope.aiContext)).value,
@@ -316,20 +316,20 @@ void main() {
           'notifications-return',
           'Back from notification settings → unsaved privacy draft retained',
         );
-        await tap(tester, find.text('返回'));
+        await tap(tester, find.text('Back'));
         await capture(
           tester,
           'leave-confirm',
           'Back with draft → discard confirmation',
         );
-        await tap(tester, find.text('继续查看'));
+        await tap(tester, find.text('Keep reviewing'));
         await capture(
           tester,
           'leave-kept',
           'Continue viewing → draft retained',
         );
-        await tap(tester, find.text('返回'));
-        await tap(tester, find.text('放弃并离开'));
+        await tap(tester, find.text('Back'));
+        await tap(tester, find.text('Discard and leave'));
         await capture(
           tester,
           'leave-discarded',
@@ -362,7 +362,7 @@ void main() {
           'switch-confirm',
           'Select another service with dirty draft → discard confirmation',
         );
-        await tap(tester, find.text('继续查看'));
+        await tap(tester, find.text('Keep reviewing'));
         expect(
           tester.state<FormFieldState<String>>(picker).value,
           'service-episode',
@@ -373,7 +373,7 @@ void main() {
           'Keep draft → picker rolls back to original service',
         );
         await chooseOther(tester, reopened: true);
-        await tap(tester, find.text('放弃并离开'));
+        await tap(tester, find.text('Discard and leave'));
         expect(
           tester.state<FormFieldState<String>>(picker).value,
           'other-episode',
@@ -385,7 +385,7 @@ void main() {
           'Discard previous draft → second service permissions loaded',
         );
         await toggle(tester, CareConsentScope.aiContext);
-        await tap(tester, find.text('保存更改'));
+        await tap(tester, find.text('Save changes'));
         expect(transport.consentWrites.single['episode_id'], 'other-episode');
         expect(
           transport.byEpisode['service-episode']!['ai_context']!['active'],
@@ -410,15 +410,15 @@ void main() {
         transport.failScope = 'ai_context';
         transport.writeStatus = 503;
         transport.consentGate = Completer<void>();
-        await tap(tester, find.text('保存更改'));
-        await tap(tester, find.text('确认关闭'));
+        await tap(tester, find.text('Save changes'));
+        await tap(tester, find.text('Turn off access'));
         expect(
           tester.widget<Switch>(scope(CareConsentScope.video)).onChanged,
           isNull,
         );
         expect(
           tester
-              .widget<TextButton>(find.widgetWithText(TextButton, '返回'))
+              .widget<TextButton>(find.widgetWithText(TextButton, 'Back'))
               .onPressed,
           isNull,
         );
@@ -443,16 +443,16 @@ void main() {
           'partial-uncertain',
           'Required revocation succeeds; optional write 503 → unresolved change and retry',
         );
-        await tap(tester, find.text('返回'));
+        await tap(tester, find.text('Back'));
         await capture(
           tester,
           'uncertain-leave-confirm',
           'Back while result uncertain → explanation to re-read on return',
         );
-        await tap(tester, find.text('继续查看'));
+        await tap(tester, find.text('Keep reviewing'));
         transport.writeStatus = null;
         transport.consentGate = null;
-        await tap(tester, find.text('重试保存'));
+        await tap(tester, find.text('Try saving again'));
         expect(transport.consentWrites, hasLength(3));
         expect(transport.consentWrites[1], transport.consentWrites[2]);
         expect(
@@ -492,14 +492,14 @@ void main() {
     );
     transport.failingReads.clear();
     transport.emptyEpisodes = true;
-    await tap(tester, find.text('重试'));
+    await tap(tester, find.text('Try again'));
     expect(find.byType(Switch), findsNothing);
     await capture(
       tester,
       'empty-services',
       'Retry with no owned services → empty state and no editable defaults',
     );
-    await tap(tester, find.text('返回'));
+    await tap(tester, find.text('Back'));
     await capture(
       tester,
       'empty-back',
@@ -532,7 +532,7 @@ void main() {
       'Consent read fails → retry, no fake unchecked controls',
     );
     transport.failingReads.clear();
-    await tap(tester, find.text('重试'));
+    await tap(tester, find.text('Try again'));
     await capture(
       tester,
       'consent-read-retried',
@@ -540,14 +540,14 @@ void main() {
     );
     await toggle(tester, CareConsentScope.aiContext);
     transport.writeStatus = 503;
-    await tap(tester, find.text('保存更改'));
+    await tap(tester, find.text('Save changes'));
     await capture(
       tester,
       'optional-uncertain',
       'Optional write HTTP failure → uncertain state',
     );
     transport.writeStatus = null;
-    await tap(tester, find.text('重新读取授权'));
+    await tap(tester, find.text('Reload consent'));
     expect(transport.consentWrites, hasLength(1));
     expect(
       tester.widget<Switch>(scope(CareConsentScope.aiContext)).value,
@@ -568,7 +568,7 @@ void main() {
     await entry(tester);
     await toggle(tester, CareConsentScope.aiContext);
     transport.writeStatus = 409;
-    await tap(tester, find.text('保存更改'));
+    await tap(tester, find.text('Save changes'));
     expect(
       tester.widget<Switch>(scope(CareConsentScope.aiContext)).onChanged,
       isNull,
@@ -579,14 +579,14 @@ void main() {
       'Consent write 409 → reload required and switches locked',
     );
     transport.writeStatus = null;
-    await tap(tester, find.text('重新载入'));
+    await tap(tester, find.text('Reload'));
     await capture(
       tester,
       'conflict-reloaded',
       'Reload latest consent versions → editing unlocked',
     );
     await toggle(tester, CareConsentScope.aiContext);
-    await tap(tester, find.text('保存更改'));
+    await tap(tester, find.text('Save changes'));
     await capture(
       tester,
       'conflict-resaved',

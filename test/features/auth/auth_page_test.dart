@@ -40,7 +40,7 @@ void main() {
       find.byKey(const ValueKey('auth-invite-code-field')),
       findsOneWidget,
     );
-    expect(find.text('邀请码登录'), findsOneWidget);
+    expect(find.text('Sign in with code'), findsOneWidget);
     expect(find.byKey(const ValueKey('auth-email-field')), findsNothing);
     expect(find.byKey(const ValueKey('auth-password-field')), findsNothing);
     expect(find.byKey(const ValueKey('auth-display-name-field')), findsNothing);
@@ -78,7 +78,7 @@ void main() {
     final errorText = tester.widget<Text>(
       find.byKey(const ValueKey('auth-error-text')),
     );
-    expect(errorText.data, '请输入邀请码');
+    expect(errorText.data, 'Enter your invitation code');
     expect(transport.lastPath, isNull);
     expect(await store.readSession(), isNull);
 
@@ -111,7 +111,7 @@ void main() {
     final field = tester.widget<TextField>(
       find.byKey(const ValueKey('auth-invite-code-field')),
     );
-    expect(field.decoration?.hintText, '请输入邀请码');
+    expect(field.decoration?.hintText, 'Enter your invitation code');
     expect(
       field.decoration?.floatingLabelBehavior,
       FloatingLabelBehavior.always,
@@ -275,7 +275,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(transport.lastPath, authInviteLoginEndpoint);
-      expect(find.text('账号认证已通过，但无法保存本机登录状态。请重启 App 后重试。'), findsOneWidget);
+      expect(
+        find.text(
+          'Your account was verified, but we could not save your sign-in on this device. Restart the app and try again.',
+        ),
+        findsOneWidget,
+      );
       expect(controller.currentSession.isAuthenticated, isFalse);
       expect(lastInviteCodeStore.value, 'MCZ-LAST-0001');
       final event = telemetry.events.singleWhere(
@@ -292,6 +297,49 @@ void main() {
       router.dispose();
     },
   );
+
+  testWidgets('invite login does not show an untranslated server error', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransport(
+      _httpError(
+        503,
+        code: 'backend_unavailable',
+        message: 'Cozymate 服务暂时不可用。',
+      ),
+    );
+    final controller = MomCozyRuntimeController(
+      MomCozyApiRuntime(
+        jsonTransport: transport,
+        userId: 'demo-user',
+        babyId: 'demo-baby',
+        locale: 'en-US',
+      ),
+    );
+    final store = MemoryMomCozySessionStore();
+    final router = _authRouter(
+      controller: controller,
+      store: store,
+      deviceId: 'flutter-device-002',
+    );
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-invite-code-field')),
+      'MCZ-ABCD-2345',
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Could not verify your account. Please try again later.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Cozymate'), findsNothing);
+    expect(find.textContaining('暂时'), findsNothing);
+    expect(await store.readSession(), isNull);
+    controller.dispose();
+    router.dispose();
+  });
 
   testWidgets('invite login shows bound-device message on permission denied', (
     tester,
@@ -330,7 +378,12 @@ void main() {
 
     expect(transport.lastPath, authInviteLoginEndpoint);
     expect(find.byKey(const ValueKey('auth-error-text')), findsOneWidget);
-    expect(find.text('邀请码已在其他设备使用过'), findsOneWidget);
+    expect(
+      find.text(
+        'This invitation code has already been used on another device.',
+      ),
+      findsOneWidget,
+    );
     expect(find.text('home'), findsNothing);
     expect(await store.readSession(), isNull);
     expect(lastInviteCodeStore.value, 'MCZ-LAST-0001');

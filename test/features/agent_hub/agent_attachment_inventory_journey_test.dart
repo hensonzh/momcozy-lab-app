@@ -149,7 +149,7 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Cozymate'));
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-momcozy ai')));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
@@ -228,7 +228,7 @@ void main() {
       'previous_source': previous,
       'route': route,
       'trigger': action,
-      'root_entry': 'Authenticated More → tap Cozymate bottom navigation',
+      'root_entry': 'Authenticated More → tap Momcozy AI bottom navigation',
       'evidence':
           'Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.',
       'test':
@@ -323,14 +323,14 @@ void main() {
         'image-ready',
         'Upload succeeds → removable local image preview',
       );
-      await tap(tester, find.text('More'));
+      await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
       await capture(
         tester,
         'image-tab-away',
         'More tab with unsent image and text draft',
         route: '/more',
       );
-      await tap(tester, find.text('Cozymate'));
+      await tap(tester, find.byKey(const ValueKey('bottom-nav-momcozy ai')));
       expect(
         tester.widget<TextField>(input).controller!.text,
         'Keep this unsent draft',
@@ -342,7 +342,7 @@ void main() {
       await capture(
         tester,
         'image-tab-return',
-        'Return to Cozymate → unsent image and draft retained',
+        'Return to Momcozy AI → unsent image and draft retained',
       );
       final deleteGate = Completer<void>();
       transport.deleteGate = deleteGate;
@@ -535,7 +535,7 @@ void main() {
     transport.cancelPick = false;
     transport.failPick = true;
     await choose(tester, 'camera');
-    expect(find.text('图片上传失败，请重试。'), findsOneWidget);
+    expect(find.text('Image upload failed. Try again.'), findsOneWidget);
     await capture(
       tester,
       'camera-pick-failed',
@@ -543,7 +543,7 @@ void main() {
     );
     await dismissNotice(tester, 'camera-failure-dismissed');
     await choose(tester, 'file');
-    expect(find.text('文件上传失败，请重试。'), findsOneWidget);
+    expect(find.text('File upload failed. Try again.'), findsOneWidget);
     await capture(
       tester,
       'file-pick-failed',
@@ -562,10 +562,13 @@ void main() {
         await frame(tester);
         expect(transport.uploads, isEmpty);
         if (mode == 'unsupported') {
-          expect(find.text('暂仅支持 PDF 文件。'), findsOneWidget);
+          expect(
+            find.text('Only PDF files are supported for now.'),
+            findsOneWidget,
+          );
         }
         if (mode == 'oversized') {
-          expect(find.text('文件不能超过 10MB。'), findsOneWidget);
+          expect(find.text('Files must be 10 MB or smaller.'), findsOneWidget);
         }
         await capture(
           tester,
@@ -597,7 +600,7 @@ void main() {
         'Select PDF again → successful upload',
       );
       await tap(tester, sendButton);
-      expect(transport.requests.single.message, '请查看这个文件');
+      expect(transport.requests.single.message, 'Please review this file');
       expect(transport.requests.single.files.length, 1);
       await finish(tester, 0, 'The isolated PDF request is complete.');
       await capture(
@@ -614,7 +617,7 @@ void main() {
     await mount(tester);
     transport.failUpload = true;
     await choose(tester, 'photo');
-    expect(find.text('图片上传失败，请重试。'), findsOneWidget);
+    expect(find.text('Image upload failed. Try again.'), findsOneWidget);
     await capture(
       tester,
       'image-upload-failed',
@@ -631,7 +634,7 @@ void main() {
       'Uploaded image cannot decode locally → fallback thumbnail',
     );
     await tap(tester, sendButton);
-    expect(transport.requests.single.message, '请看这张图片');
+    expect(transport.requests.single.message, 'Please look at this image');
     await finish(tester, 0, 'The isolated image request is complete.');
     await tap(tester, find.byKey(const ValueKey('agent-sent-image-0')));
     await decodeImages(tester);

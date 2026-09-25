@@ -209,37 +209,31 @@ void main() {
       'Authenticated More entry',
       route: '/more',
     );
-    await tap(tester, find.text('Me'));
-    await capture(
-      tester,
-      'booking-mom',
-      'More bottom Me → mother home',
-      route: '/me',
-    );
     await tap(tester, find.byType(MomExpertPlanEntry));
     await capture(
       tester,
       'booking-catalog',
-      'Expert plan entry → service catalog',
+      'More Expert support → service catalog',
       route: '/services',
     );
-    await tap(tester, find.text('查看我的服务'));
+    await tap(tester, find.text('View my services'));
     await capture(
       tester,
       'booking-package',
       'My service → purchased package details',
       route: '/services/feeding-confidence',
     );
-    await tap(tester, find.text('开始预约'));
+    await tap(tester, find.text('Book an appointment'));
     expect(router.state.uri.path, bookingRoute);
   }
 
   Future<void> inboxEntry(WidgetTester tester) async {
-    await tap(tester, find.text('通知'));
+    await tap(tester, find.text('Notifications'));
     expect(router.state.uri.path, '/notifications');
   }
 
-  Finder reminderSwitch() => find.widgetWithText(SwitchListTile, '预约提醒');
+  Finder reminderSwitch() =>
+      find.widgetWithText(SwitchListTile, 'Appointment reminder');
   Future<void> dismissSnackbar(WidgetTester tester) async {
     await tester.pump(const Duration(seconds: 5));
     await tester.pumpAndSettle();
@@ -418,7 +412,7 @@ void main() {
       'Refresh → device registered and service notifications available',
       route: settingsRoute,
     );
-    await tap(tester, find.byTooltip('返回'));
+    await tap(tester, find.byTooltip('Back'));
     await capture(tester, 'settings-inbox-return', 'Settings back → inbox');
     await tap(tester, find.byKey(const ValueKey('notifications-back')));
     await capture(

@@ -139,7 +139,7 @@ void main() {
 
     await tester.tap(find.text('Choose date'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('确定'));
+    await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
     final deliveryContinue = find.byKey(
       const ValueKey('onboarding-postpartum-delivery-continue'),

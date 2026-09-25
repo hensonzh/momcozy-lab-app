@@ -89,7 +89,7 @@ void main() {
     await tester.pump();
     final dialog = find.byType(AlertDialog);
     expect(ModalRoute.of(tester.element(dialog))!.animation!.value, 1);
-    await tester.tap(find.text('继续填写'));
+    await tester.tap(find.text('Keep editing'));
     await tester.pump();
     await tester.pump();
     expect(result, false);

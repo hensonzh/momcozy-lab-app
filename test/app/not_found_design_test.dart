@@ -42,10 +42,10 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.text('页面未找到'), findsOneWidget);
+        expect(find.text('Page not found'), findsOneWidget);
         expect(find.textContaining('Flutter route map'), findsNothing);
         expect(find.textContaining('missing-page'), findsNothing);
-        expect(find.text('返回首页').hitTestable(), findsOneWidget);
+        expect(find.text('Back to home').hitTestable(), findsOneWidget);
         expect(tester.takeException(), isNull);
         if (scale == 1) {
           await expectLater(
@@ -61,7 +61,7 @@ void main() {
             matchesGoldenFile('../goldens/design_system/not-found-320-2x.png'),
           );
         }
-        await tester.tap(find.text('返回首页'));
+        await tester.tap(find.text('Back to home'));
         await tester.pumpAndSettle();
         expect(router.routeInformationProvider.value.uri.path, '/me');
         expect(find.byType(MomCozyNotFoundPage), findsNothing);
@@ -85,8 +85,8 @@ void main() {
       MaterialApp.router(theme: momCozyTheme(), routerConfig: router),
     );
     await tester.pumpAndSettle();
-    if (find.text('返回首页').evaluate().isNotEmpty) {
-      await tester.tap(find.text('返回首页'));
+    if (find.text('Back to home').evaluate().isNotEmpty) {
+      await tester.tap(find.text('Back to home'));
       await tester.pumpAndSettle();
     }
     expect(router.routeInformationProvider.value.uri.path, '/login');

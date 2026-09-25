@@ -77,9 +77,13 @@ class ZonedDateTimeField extends StatelessWidget {
       timezone,
     );
     if (candidates.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('这一天有时钟调整，所选时间不存在。请重新选择。')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'The clocks change on this day, so that time does not exist. Choose another time.',
+          ),
+        ),
+      );
       return;
     }
     DateTime? selected = candidates.first;
@@ -89,11 +93,13 @@ class ZonedDateTimeField extends StatelessWidget {
         animationStyle: MomCozyMotion.animationStyle(context),
         builder: (context) {
           final dialog = SimpleDialog(
-            title: const Text('请选择这次发生的时间'),
+            title: const Text('When did this happen?'),
             children: [
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                child: Text('这一天时钟回拨，同一时间出现了两次。'),
+                child: Text(
+                  'The clocks turn back on this day, so this time occurs twice.',
+                ),
               ),
               for (final instant in candidates)
                 SimpleDialogOption(
@@ -163,7 +169,7 @@ class ZonedDateTimeField extends StatelessWidget {
               Expanded(
                 child: Text(
                   value == null
-                      ? '尚未填写'
+                      ? 'Not set'
                       : '${dateInTimezone(value!, timezone)} ${zonedClock(value!, timezone)} ${inTimezone(value!, timezone).timeZoneName}',
                 ),
               ),
@@ -180,7 +186,7 @@ class ZonedDateTimeField extends StatelessWidget {
           title: Text(label),
           subtitle: Text(
             value == null
-                ? '尚未填写'
+                ? 'Not set'
                 : '${dateInTimezone(value!, timezone)} ${zonedClock(value!, timezone)} ${inTimezone(value!, timezone).timeZoneName}',
           ),
           trailing: const Icon(Icons.schedule_outlined),
@@ -191,7 +197,7 @@ class ZonedDateTimeField extends StatelessWidget {
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: enabled ? () => onChanged(null) : null,
-            child: const Text('清除时间'),
+            child: const Text('Clear time'),
           ),
         ),
     ],

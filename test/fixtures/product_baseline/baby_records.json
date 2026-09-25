@@ -6,7 +6,7 @@
       "version": 1,
       "observation": {
         "occurred_at": "2026-09-01T08:00:00Z",
-        "note": "合成测试记录",
+        "note": "Synthetic test record",
         "kind": "feeding",
         "method": "expressed_milk",
         "side": null,
@@ -58,7 +58,7 @@
         "kind": "development",
         "item_id": "looks-at-face",
         "status": "observed",
-        "label": "看向靠近的脸"
+        "label": "Looks at a face up close"
       },
       "deleted_at": null,
       "created_at": "2026-09-01T12:00:00Z",

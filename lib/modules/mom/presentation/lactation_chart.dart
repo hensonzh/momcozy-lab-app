@@ -57,14 +57,14 @@ class _LactationTrendChartState extends State<LactationTrendChart> {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: Text('$period天'),
+              child: Text('$period days'),
             ),
           ),
         ],
       ],
     );
     final title = Text(
-      '奶量趋势',
+      'Milk supply trends',
       style: MomHomeTokens.text(16, weight: FontWeight.w700),
     );
     return MomSettingsCard(
@@ -85,12 +85,12 @@ class _LactationTrendChartState extends State<LactationTrendChart> {
           style: MomHomeTokens.text(36, weight: FontWeight.w700),
         ),
         Text(
-          '今日泵奶量',
+          'Pumped milk today',
           style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
         ),
         Semantics(
           label:
-              '$_days天泵奶量趋势。${List.generate(days.length, (index) => '${days[index].month}月${days[index].day}日：${values[index] == null ? '未记录' : '${_number(values[index]!)}毫升'}').join('；')}',
+              'Pumped milk over $_days days. ${List.generate(days.length, (index) => '${days[index].month}/${days[index].day}: ${values[index] == null ? 'Not recorded' : '${_number(values[index]!)} ml'}').join('; ')}',
           child: ExcludeSemantics(
             child: AspectRatio(
               aspectRatio: 320 / 192,
@@ -100,10 +100,10 @@ class _LactationTrendChartState extends State<LactationTrendChart> {
         ),
         Text(
           measured == 0
-              ? '暂无泵奶量记录，添加后即可查看趋势'
+              ? 'No pumping records yet. Add one to see trends.'
               : measured == 1
-              ? '目前仅有一天数据，连续记录后可查看曲线'
-              : '仅展示已记录的泵奶量，未记录日期留空',
+              ? 'Only one day recorded so far. Keep tracking to see a trend.'
+              : 'Only recorded pumping amounts are shown. Unrecorded days are left blank.',
           style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
         ),
       ],
@@ -180,7 +180,7 @@ class _TrendPainter extends CustomPainter {
           }
           _label(
             canvas,
-            '今日 ${_number(value)} ml',
+            'Today: ${_number(value)} ml',
             pointX,
             pointY - 24,
             MomHomeTokens.secondary,
@@ -200,7 +200,7 @@ class _TrendPainter extends CustomPainter {
         _label(
           canvas,
           index == days.length - 1
-              ? '今日'
+              ? 'Today'
               : '${days[index].month}/${days[index].day}',
           pointX,
           166,

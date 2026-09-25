@@ -66,10 +66,12 @@ class _ServiceCatalogPageState extends State<ServiceCatalogPage> {
           .where((provider) => provider.id == episode?.assignedIbclcId)
           .firstOrNull,
       action: pending
-          ? '继续付款'
+          ? package.hasEnglishPurchaseDetails
+                ? 'Continue to payment'
+                : 'Review plan'
           : episode != null
-          ? '查看我的服务'
-          : '查看方案 →',
+          ? 'View my services'
+          : 'View plans →',
       onSelect: () => widget.onSelect(package),
     );
   }
@@ -81,10 +83,18 @@ class _ServiceCatalogPageState extends State<ServiceCatalogPage> {
       appBar: AppBar(
         leadingWidth: MediaQuery.textScalerOf(context).scale(1) > 1.3 ? 88 : 72,
         toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.3
-            ? 96
+            ? 112
             : 56,
-        leading: TextButton(onPressed: widget.onBack, child: const Text('返回')),
-        title: const Text('专家陪伴'),
+        leading: TextButton(
+          onPressed: widget.onBack,
+          child: const Text('Back'),
+        ),
+        title: const Text(
+          'Expert support',
+          maxLines: 2,
+          softWrap: true,
+          overflow: TextOverflow.visible,
+        ),
       ),
       body: ClipRect(
         child: MomCozyPageBody(
@@ -102,7 +112,7 @@ class _ServiceCatalogPageState extends State<ServiceCatalogPage> {
                       : MomSettingsCard(
                           children: [
                             Text(
-                              '正在加载服务方案…',
+                              'Loading service plans…',
                               style: MomHomeTokens.text(
                                 16,
                                 weight: FontWeight.w700,
@@ -135,7 +145,7 @@ class _ServiceCatalogPageState extends State<ServiceCatalogPage> {
                       ),
                     MomProviderTeamCard(providers: catalog.providers),
                     if (pending.isNotEmpty) ...[
-                      const _CatalogHeading('待完成订单'),
+                      const _CatalogHeading('Pending orders'),
                       for (final package in pending)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 14),
@@ -143,7 +153,7 @@ class _ServiceCatalogPageState extends State<ServiceCatalogPage> {
                         ),
                     ],
                     if (ongoing.isNotEmpty) ...[
-                      const _CatalogHeading('我的陪伴计划'),
+                      const _CatalogHeading('My care plan'),
                       for (final package in ongoing)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 14),
@@ -155,11 +165,11 @@ class _ServiceCatalogPageState extends State<ServiceCatalogPage> {
                     if (available.isNotEmpty || catalog.packages.isEmpty) ...[
                       _CatalogHeading(
                         pending.isNotEmpty || ongoing.isNotEmpty
-                            ? '更多陪伴方案'
-                            : '找到适合你的支持',
+                            ? 'More care plans'
+                            : 'Find support that fits you',
                       ),
                       Text(
-                        '真人 IBCLC 专家支持，AI 与 App 持续陪伴和跟进。',
+                        'Personalized IBCLC support, with ongoing guidance through AI and the app.',
                         style: MomHomeTokens.text(
                           12,
                           color: MomHomeTokens.secondary,
@@ -172,14 +182,14 @@ class _ServiceCatalogPageState extends State<ServiceCatalogPage> {
                       MomSettingsCard(
                         children: [
                           Text(
-                            '暂无可用的服务方案',
+                            'No service plans available',
                             style: MomHomeTokens.text(
                               16,
                               weight: FontWeight.w700,
                             ),
                           ),
                           Text(
-                            '新的方案开放后会显示在这里。',
+                            'New plans will appear here when available.',
                             style: MomHomeTokens.text(
                               13,
                               color: MomHomeTokens.secondary,
@@ -224,50 +234,52 @@ class _ServiceDirections extends StatelessWidget {
   const _ServiceDirections({required this.count});
   final int count;
   @override
-  Widget build(BuildContext context) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    spacing: 10,
-    children: [
-      for (final active in [true, false])
-        Expanded(
-          child: Semantics(
-            selected: active,
-            enabled: active,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: active
-                    ? const Color(0xfff8e8ec)
-                    : MomHomeTokens.neutralSurface,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: 4,
-                children: [
-                  Text(
-                    active ? '泌乳支持' : '产后康复',
-                    style: MomHomeTokens.text(
-                      14,
-                      weight: FontWeight.w700,
-                      color: active
-                          ? MomHomeTokens.rose
-                          : MomHomeTokens.secondary,
-                    ),
-                  ),
-                  Text(
-                    active ? '$count 个方案' : '陆续开放',
-                    style: MomHomeTokens.text(
-                      11,
-                      color: MomHomeTokens.secondary,
-                    ),
-                  ),
-                ],
-              ),
+  Widget build(BuildContext context) {
+    if (MediaQuery.textScalerOf(context).scale(1) > 1.3) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 10,
+        children: [_direction(true), _direction(false)],
+      );
+    }
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 10,
+      children: [
+        Expanded(child: _direction(true)),
+        Expanded(child: _direction(false)),
+      ],
+    );
+  }
+
+  Widget _direction(bool active) => Semantics(
+    selected: active,
+    enabled: active,
+    child: Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: active ? const Color(0xfff8e8ec) : MomHomeTokens.neutralSurface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 4,
+        children: [
+          Text(
+            active ? 'Lactation support' : 'Postpartum recovery',
+            style: MomHomeTokens.text(
+              14,
+              weight: FontWeight.w700,
+              color: active ? MomHomeTokens.rose : MomHomeTokens.secondary,
             ),
           ),
-        ),
-    ],
+          Text(
+            active ? '$count plans' : 'Coming soon',
+            style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
+          ),
+        ],
+      ),
+    ),
   );
 }
 
@@ -300,12 +312,12 @@ class _PackageCard extends StatelessWidget {
           : MomHomeTokens.surface,
       children: [
         Text(
-          package.name,
+          package.publicName,
           style: MomHomeTokens.text(20, weight: FontWeight.w700),
         ),
-        if (package.subtitle.isNotEmpty)
+        if (package.publicSubtitle.isNotEmpty)
           Text(
-            package.subtitle,
+            package.publicSubtitle,
             style: MomHomeTokens.text(
               11,
               color: MomHomeTokens.secondary,
@@ -322,16 +334,16 @@ class _PackageCard extends StatelessWidget {
             ),
           ),
           Text(
-            '当前阶段 · ${careStageLabels[e.stage]}',
+            'Current stage · ${careStageLabels[e.stage]}',
             style: MomHomeTokens.text(13, color: MomHomeTokens.teal),
           ),
           MomProviderIdentity(provider: provider),
           Text(
-            '${package.durationDays} 天支持',
+            '${package.durationDays} days of support',
             style: MomHomeTokens.text(12, color: MomHomeTokens.teal),
           ),
           Text(
-            '剩余 ${e.remainingSessions} / ${e.totalSessions} 次咨询',
+            '${e.remainingSessions} of ${e.totalSessions} consultations left',
             style: MomHomeTokens.text(
               16,
               weight: FontWeight.w700,
@@ -339,7 +351,7 @@ class _PackageCard extends StatelessWidget {
             ),
           ),
           Text(
-            package.description,
+            package.publicDescription,
             style: MomHomeTokens.text(
               12,
               color: MomHomeTokens.secondary,
@@ -347,13 +359,15 @@ class _PackageCard extends StatelessWidget {
             ),
           ),
           Text(
-            '方案价格 · ${package.priceLabel}${package.currency == 'USD' ? ' USD' : ''}',
+            'Plan price · ${package.priceLabel}${package.currency == 'USD' ? ' USD' : ''}',
             style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
           ),
           FilledButton(onPressed: onSelect, child: Text(action)),
         ] else if (pending) ...[
           Text(
-            '订单尚未完成，可继续查看付款。',
+            package.hasEnglishPurchaseDetails
+                ? 'Your order is not complete yet. Continue to payment.'
+                : 'This plan needs English details before payment can continue.',
             style: MomHomeTokens.text(
               13,
               color: MomHomeTokens.secondary,
@@ -361,7 +375,7 @@ class _PackageCard extends StatelessWidget {
             ),
           ),
           Text(
-            package.description,
+            package.publicDescription,
             style: MomHomeTokens.text(
               13,
               color: MomHomeTokens.secondary,
@@ -374,11 +388,11 @@ class _PackageCard extends StatelessWidget {
         ] else ...[
           if (purchased)
             Text(
-              '已购买',
+              'Purchased',
               style: MomHomeTokens.text(12, color: MomHomeTokens.teal),
             ),
           Text(
-            package.description,
+            package.publicDescription,
             style: MomHomeTokens.text(
               13,
               color: MomHomeTokens.secondary,
@@ -424,7 +438,7 @@ class ServicePackageFacts extends StatelessWidget {
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              '真人 IBCLC 专家支持  |  ${package.sessions} 次 IBCLC 在线咨询',
+              'IBCLC expert support  |  ${package.sessions} online consultations',
               style: const TextStyle(
                 fontSize: 10,
                 height: 1.4,
@@ -447,7 +461,7 @@ class ServicePackageFacts extends StatelessWidget {
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              '${package.durationDays} 天  |  AI 与 App 持续陪伴和跟进',
+              '${package.durationDays} days  |  Ongoing AI and app support',
               style: const TextStyle(
                 fontSize: 10,
                 height: 1.4,
@@ -522,7 +536,7 @@ class ProviderTeamTile extends StatelessWidget {
             const SizedBox(width: 10),
             const Expanded(
               child: Text(
-                'IBCLC 专家团队服务',
+                'Meet the IBCLC team',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -532,7 +546,7 @@ class ProviderTeamTile extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             const Text(
-              '了解团队',
+              'Learn about the team',
               style: TextStyle(
                 fontSize: 10,
                 color: MomCozyColors.serviceTeamInk,
@@ -581,7 +595,7 @@ class _ProviderTeamDialog extends StatelessWidget {
                 children: [
                   const Expanded(
                     child: Text(
-                      'IBCLC 专家团队',
+                      'IBCLC team',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -590,7 +604,7 @@ class _ProviderTeamDialog extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('关闭'),
+                    child: const Text('Close'),
                   ),
                 ],
               ),
@@ -601,7 +615,7 @@ class _ProviderTeamDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Text(
-                        '服务包不会预先绑定某一位专家。购买后，我们会结合你的问题和可预约时间，提供可选的专家。',
+                        'Your package is not assigned to a consultant in advance. After purchase, you can choose from consultants based on your needs and available times.',
                         style: TextStyle(
                           fontSize: 11,
                           height: 1.55,
@@ -612,7 +626,9 @@ class _ProviderTeamDialog extends StatelessWidget {
                       if (providers.isEmpty)
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Text('当前暂无可预约专家，请稍后再来查看。'),
+                          child: Text(
+                            'No consultants are available to book right now. Check back later.',
+                          ),
                         ),
                       for (final provider in providers)
                         Padding(
@@ -644,7 +660,7 @@ class _ProviderTeamDialog extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        provider.displayName,
+                                        provider.publicName,
                                         style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
@@ -659,7 +675,7 @@ class _ProviderTeamDialog extends StatelessWidget {
                                         ),
                                       ),
                                       Text(
-                                        provider.languages.join(' · '),
+                                        provider.languageLabel,
                                         style: const TextStyle(
                                           fontSize: 9,
                                           color: MomCozyColors.mutedForeground,
@@ -667,7 +683,7 @@ class _ProviderTeamDialog extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        provider.bio,
+                                        provider.publicBio,
                                         style: const TextStyle(
                                           fontSize: 10,
                                           height: 1.45,
@@ -699,7 +715,7 @@ class _ProviderTeamDialog extends StatelessWidget {
                             SizedBox(width: 7),
                             Expanded(
                               child: Text(
-                                '预约确认前，你会看到并确认本次具体专家。',
+                                'You will see and confirm your consultant before booking.',
                                 style: TextStyle(
                                   fontSize: 10,
                                   height: 1.45,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/mom_bottom_navigation.dart';
@@ -12,7 +13,7 @@ void main() {
     testWidgets('navigation reference at $width with all selected states', (
       tester,
     ) async {
-      tester.view.physicalSize = Size(width, 500);
+      tester.view.physicalSize = Size(width, width < 360 ? 650 : 500);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
@@ -36,13 +37,25 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        for (final element in find.byType(Image).evaluate()) {
+          await precacheImage((element.widget as Image).image, element);
+        }
+      });
+      await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       final bars = find.byKey(const ValueKey('bottom-nav-chrome'));
       for (var index = 0; index < 5; index++) {
-        expect(tester.getSize(bars.at(index)), Size(width, 82));
+        final navigationSize = tester.getSize(
+          find.byType(MomCozyBottomNavigation).at(index),
+        );
+        expect(
+          tester.getSize(bars.at(index)),
+          Size(width, navigationSize.height - 18),
+        );
         final navigation = find.byType(MomCozyBottomNavigation).at(index);
         final origin = tester.getTopLeft(navigation);
-        for (final label in ['me', 'baby', 'cozymate', 'schedule', 'more']) {
+        for (final label in ['me', 'baby', 'momcozy ai', 'schedule', 'more']) {
           final destination = find.descendant(
             of: navigation,
             matching: find.byKey(ValueKey('bottom-nav-$label')),
@@ -62,6 +75,10 @@ void main() {
                 ),
           );
         }
+      }
+      for (final element in find.text('Momcozy AI').evaluate()) {
+        final paragraph = element.renderObject! as RenderParagraph;
+        expect(paragraph.didExceedMaxLines, isFalse);
       }
       await expectLater(
         find.byKey(const ValueKey('navigation-reference')),
@@ -95,6 +112,7 @@ void main() {
         addTearDown(router.dispose);
         await tester.pumpWidget(
           MaterialApp.router(
+            debugShowCheckedModeBanner: false,
             theme: momCozyTheme(),
             routerConfig: router,
             builder: (context, child) => MediaQuery(
@@ -116,16 +134,58 @@ void main() {
         await tester.tapAt(Offset(avatar.center.dx, avatar.top + 3));
         await tester.pumpAndSettle();
         expect(find.text('Page: /'), findsOneWidget);
+        expect(
+          tester.getSize(find.text('Momcozy AI')).width,
+          greaterThan(100),
+          reason: 'The full selected destination needs room at 2x text.',
+        );
+        expect(
+          find.byKey(const ValueKey('bottom-nav-selected-label')),
+          findsOneWidget,
+        );
+        for (final label in ['Me', 'Baby', 'Momcozy AI', 'Schedule', 'More']) {
+          expect(
+            tester
+                .getSemantics(
+                  find.byKey(ValueKey('bottom-nav-${label.toLowerCase()}')),
+                )
+                .label,
+            label,
+          );
+        }
+        expect(
+          tester
+              .renderObject<RenderParagraph>(find.text('Momcozy AI'))
+              .didExceedMaxLines,
+          isFalse,
+        );
+        if (width == 320) {
+          await expectLater(
+            find.byType(MaterialApp),
+            matchesGoldenFile(
+              '../goldens/design_system/navigation-compact-320-2x.png',
+            ),
+          );
+        }
         for (final entry in {
           'Baby': '/baby',
-          'Cozymate': '/',
+          'Momcozy AI': '/',
           'Schedule': '/schedule',
           'More': '/more',
           'Me': '/me',
         }.entries) {
-          await tester.tap(find.text(entry.key));
+          await tester.tap(
+            find.byKey(ValueKey('bottom-nav-${entry.key.toLowerCase()}')),
+          );
           await tester.pumpAndSettle();
           expect(find.text('Page: ${entry.value}'), findsOneWidget);
+          expect(find.text(entry.key), findsOneWidget);
+          expect(
+            tester
+                .renderObject<RenderParagraph>(find.text(entry.key))
+                .didExceedMaxLines,
+            isFalse,
+          );
           expect(
             tester.getRect(find.byKey(const ValueKey('bottom-nav-chrome'))),
             initialBar,

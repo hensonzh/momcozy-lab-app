@@ -10,7 +10,6 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/modules/mom/presentation/lactation_panel.dart';
-import 'package:momcozy_flutter_app/modules/mom/presentation/mom_home_sections.dart';
 import 'package:momcozy_flutter_app/modules/mom/application/lactation_controller.dart';
 import '../../support/mom_inventory_transport.dart';
 import '../../support/fixture_api_transport.dart';
@@ -91,14 +90,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -132,7 +130,7 @@ void main() {
     WidgetTester tester,
     String state,
     String action, {
-    String route = '/me',
+    String route = '/me/lactation',
   }) async {
     // Commit edits and finish the input hint's fade without settling spinners.
     await tester.pump();
@@ -152,7 +150,7 @@ void main() {
       'previous_source': previous,
       'route': route,
       'trigger': action,
-      'root_entry': 'Authenticated More → tap Me bottom navigation',
+      'root_entry': 'Authenticated More → existing lactation deep link',
       'evidence':
           'Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone',
       'test': 'test/modules/mom/mom_milk_validation_inventory_test.dart',
@@ -171,7 +169,7 @@ void main() {
   }
 
   Future<void> closePanel(WidgetTester tester) async {
-    final close = find.byTooltip('关闭泌乳记录');
+    final close = find.byTooltip('Close feeding and pumping records');
     if (close.evaluate().isEmpty) {
       await tester.scrollUntilVisible(
         close,
@@ -212,14 +210,9 @@ void main() {
       tester,
     ) async {
       await mount(tester, width: narrow ? 320 : 393, scale: narrow ? 2 : 1);
-      await capture(tester, 'home-entry', 'More → Me');
-      await tap(
-        tester,
-        find.descendant(
-          of: find.byType(MomLactationCard),
-          matching: find.byType(FilledButton),
-        ),
-      );
+      await capture(tester, 'home-entry', 'Authenticated More', route: '/more');
+      router.push('/me/lactation?create=1');
+      await tester.pumpAndSettle();
       await capture(tester, 'empty', 'Home record milk → empty pump form');
       for (final item in [
         ('negative', '-1', 'volume_ml', 'out_of_range'),
@@ -229,7 +222,7 @@ void main() {
       ]) {
         await input(tester, measurement(LactationMethod.pump), item.$2);
         expect(controller(tester).validationErrors, isEmpty);
-        await tap(tester, find.text('保存这次记录'));
+        await tap(tester, find.text('Save this record'));
         expect(controller(tester).validationErrors, {item.$3: item.$4});
         expect(transport.records, isEmpty);
         await capture(
@@ -244,7 +237,7 @@ void main() {
         'pump-zero-filled',
         'Correct pump to lower boundary 0 → error clears',
       );
-      await tap(tester, find.text('保存这次记录'));
+      await tap(tester, find.text('Save this record'));
       expect((transport.records.single['observation'] as Map)['volume_ml'], 0);
       await capture(
         tester,
@@ -258,7 +251,7 @@ void main() {
         'pump-limit-filled',
         'Edit pump → upper boundary 2000',
       );
-      await tap(tester, find.text('保存修改'));
+      await tap(tester, find.text('Save changes'));
       expect(
         (transport.records.single['observation'] as Map)['volume_ml'],
         2000,
@@ -270,7 +263,7 @@ void main() {
         'Save pump 2000 ml → version 2',
       );
       await editSaved(tester);
-      await tap(tester, find.text('亲喂'));
+      await tap(tester, find.text('Nursing'));
       expect(draft(tester).measurement, isEmpty);
       await capture(
         tester,
@@ -283,7 +276,7 @@ void main() {
         ('fraction', '1.5', 'measurement', 'invalid_number'),
       ]) {
         await input(tester, measurement(LactationMethod.nurse), item.$2);
-        await tap(tester, find.text('保存修改'));
+        await tap(tester, find.text('Save changes'));
         expect(controller(tester).validationErrors, {item.$3: item.$4});
         expect(transport.records.single['version'], 2);
         await capture(
@@ -298,7 +291,7 @@ void main() {
         'nurse-limit-filled',
         'Correct nursing to upper boundary 240',
       );
-      await tap(tester, find.text('保存修改'));
+      await tap(tester, find.text('Save changes'));
       expect(
         (transport.records.single['observation'] as Map)['duration_minutes'],
         240,
@@ -316,7 +309,7 @@ void main() {
         'nurse-zero-filled',
         'Edit nursing → lower boundary 0',
       );
-      await tap(tester, find.text('保存修改'));
+      await tap(tester, find.text('Save changes'));
       expect(
         (transport.records.single['observation'] as Map)['duration_minutes'],
         0,
@@ -367,7 +360,7 @@ void main() {
         'future-time-accepted',
         'Accept valid clock 17:00 → record draft has future time',
       );
-      await tap(tester, find.text('保存修改'));
+      await tap(tester, find.text('Save changes'));
       expect(controller(tester).validationErrors, {
         'occurred_at': 'future_time',
       });
@@ -406,7 +399,7 @@ void main() {
         'past-time-accepted',
         'Accept 08:00 → future error clears',
       );
-      await tap(tester, find.text('保存修改'));
+      await tap(tester, find.text('Save changes'));
       expect(transport.records.single['version'], 5);
       await capture(
         tester,
@@ -414,21 +407,21 @@ void main() {
         'Save corrected past time → version 5',
       );
       await editSaved(tester);
-      await tap(tester, find.text('返回记录'));
+      await tap(tester, find.text('Back to records'));
       await capture(
         tester,
         'return-record-confirm',
         'Tap top Return records → discard confirmation',
       );
-      await tap(tester, find.text('继续填写'));
+      await tap(tester, find.text('Keep editing'));
       expect(controller(tester).draft, isNotNull);
       await capture(
         tester,
         'return-record-stay',
         'Continue editing → same draft',
       );
-      await tap(tester, find.text('返回记录'));
-      await tap(tester, find.text('离开'));
+      await tap(tester, find.text('Back to records'));
+      await tap(tester, find.text('Leave'));
       expect(controller(tester).draft, isNull);
       expect(transport.records.single['version'], 5);
       await capture(
@@ -449,19 +442,30 @@ void main() {
         'back-confirm',
         'Dispatch platform back → discard confirmation',
       );
-      await tap(tester, find.text('离开'));
+      await tap(tester, find.text('Leave'));
       expect(transport.records.single['version'], 5);
       await capture(
         tester,
         'back-left',
         'Confirm platform back → preserve saved record',
+        route: '/more',
       );
       if (find.byType(LactationPanel).evaluate().isNotEmpty) {
         await closePanel(tester);
       }
-      await capture(tester, 'home-return', 'Close remaining panel → home');
-      await tap(tester, find.text('More'));
-      await capture(tester, 'more-return', 'Me → More', route: '/more');
+      await capture(
+        tester,
+        'home-return',
+        'Close lactation route → More',
+        route: '/more',
+      );
+      await tester.pumpAndSettle();
+      await capture(
+        tester,
+        'more-return',
+        'More remains available after lactation',
+        route: '/more',
+      );
     });
   }
 }

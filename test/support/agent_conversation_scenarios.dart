@@ -63,7 +63,9 @@ Future<void> verifyAgentConversation(
   );
   Future<void> captureConversation(String state) async {
     final messages = tester
-        .widget<AgentHubHistorySliver>(find.byType(AgentHubHistorySliver))
+        .widget<AgentHubHistorySliver>(
+          find.byType(AgentHubHistorySliver, skipOffstage: false),
+        )
         .messages;
     expect(messages.first.role, AgentHubHistoryRole.assistant);
     expect(messages.first.content, welcome);
@@ -73,7 +75,7 @@ Future<void> verifyAgentConversation(
       hasLength(1),
     );
     expect(messages[1].role, AgentHubHistoryRole.user);
-    expect(messages[1].content, '这是一条仅用于本地视觉检查的消息。');
+    expect(messages[1].content, 'This is a message for visual testing only.');
     await capture(state);
   }
 
@@ -95,11 +97,14 @@ Future<void> verifyAgentConversation(
     await tester.pumpAndSettle();
   }
 
-  await send('这是一条仅用于本地视觉检查的消息。');
+  await send('This is a message for visual testing only.');
   expect(client.requests, hasLength(1));
   client.fail(0);
   await tester.pumpAndSettle();
-  expect(tester.widget<TextField>(input).controller!.text, '这是一条仅用于本地视觉检查的消息。');
+  expect(
+    tester.widget<TextField>(input).controller!.text,
+    'This is a message for visual testing only.',
+  );
   expect(
     find.byKey(const ValueKey('agent-run-failure-fallback')),
     findsOneWidget,
@@ -113,15 +118,19 @@ Future<void> verifyAgentConversation(
   expect(client.requests[1].runId, isNull);
   expect(tester.widget<TextField>(input).controller!.text, isEmpty);
   client.emit(1, 'run.started', 1, {});
-  client.emit(1, 'message.delta', 2, {'text': '这是本地视觉测试回复，不包含健康判断。'});
+  client.emit(1, 'message.delta', 2, {
+    'text': 'This is a visual test reply, not a health assessment.',
+  });
   await frame();
   await captureConversation('streaming');
-  client.emit(1, 'message.completed', 3, {'text': '这是本地视觉测试回复，不包含健康判断。'});
+  client.emit(1, 'message.completed', 3, {
+    'text': 'This is a visual test reply, not a health assessment.',
+  });
   client.emit(1, 'run.completed', 4, {});
   await tester.pumpAndSettle();
   expect(retry, findsNothing);
   await captureConversation('reply');
-  await send('再检查一次失败后的输入。');
+  await send('Check the input again after a failure.');
   expect(client.requests, hasLength(3));
   client.emit(2, 'run.failed', 1, {
     'code': 'runtime_error',
@@ -135,22 +144,33 @@ Future<void> verifyAgentConversation(
   expect(find.textContaining('internal fixture secret'), findsNothing);
   expect(retry, findsNothing);
   expect(tester.widget<TextField>(input).enabled, isNot(false));
-  expect(tester.widget<TextField>(input).controller!.text, '再检查一次失败后的输入。');
+  expect(
+    tester.widget<TextField>(input).controller!.text,
+    'Check the input again after a failure.',
+  );
   await captureConversation('terminal-error');
-  await send('继续检查断线恢复。');
+  await send('Continue checking recovery after disconnection.');
   expect(client.requests, hasLength(4));
   expect(client.requests.last.runId, isNull);
   client.emit(3, 'run.started', 1, {});
-  client.emit(3, 'message.delta', 2, {'text': '保留这段已收到的回复。'});
+  client.emit(3, 'message.delta', 2, {
+    'text': 'Keep the received reply visible.',
+  });
   await frame();
   await tester.tap(input);
   await tester.pumpAndSettle();
-  await tester.enterText(input, '下一条草稿，先不发送。');
+  await tester.enterText(input, 'Another draft, not sent yet.');
   await frame();
-  expect(tester.widget<TextField>(input).controller!.text, '下一条草稿，先不发送。');
+  expect(
+    tester.widget<TextField>(input).controller!.text,
+    'Another draft, not sent yet.',
+  );
   client.fail(3);
   await tester.pumpAndSettle();
-  expect(tester.widget<TextField>(input).controller!.text, '下一条草稿，先不发送。');
+  expect(
+    tester.widget<TextField>(input).controller!.text,
+    'Another draft, not sent yet.',
+  );
   expect(
     find.descendant(
       of: find.byType(AgentRunTranscript).last,
@@ -174,9 +194,13 @@ Future<void> verifyAgentConversation(
   expect(client.requests, hasLength(5));
   expect(client.requests.last.runId, 'conversation-run-3');
   expect(client.requests.last.afterSequence, 2);
-  expect(tester.widget<TextField>(input).controller!.text, '下一条草稿，先不发送。');
+  expect(
+    tester.widget<TextField>(input).controller!.text,
+    'Another draft, not sent yet.',
+  );
   client.emit(4, 'message.completed', 3, {
-    'text': '保留这段已收到的回复。恢复后继续显示完整内容。',
+    'text':
+        'Keep the received reply visible. Show the full text after recovery.',
   }, run: 3);
   client.emit(4, 'run.completed', 4, {}, run: 3);
   await tester.pumpAndSettle();

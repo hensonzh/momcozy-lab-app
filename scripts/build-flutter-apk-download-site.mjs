@@ -29,7 +29,7 @@ Environment:
                                 Default: ${defaultBaseUrl}
   MOMCOZY_GITHUB_RELEASE_REPO   Public GitHub repository used for APK release assets,
                                 e.g. hensonzh/momcozy-lab-releases.
-  MOMCOZY_APK_FLAVOR            local | unified | production. Default: unified
+  MOMCOZY_APK_FLAVOR            local | staging | production. Default: staging
   MOMCOZY_APK_MODE              debug | release. Default: release
   MOMCOZY_API_BASE_URL          Product Backend API URL. Required outside local.
   MOMCOZY_AGENT_API_BASE_URL    Agent Runtime API URL. Required outside local.
@@ -43,9 +43,9 @@ Environment:
   process.exit(0);
 }
 
-const flavor = envText("MOMCOZY_APK_FLAVOR", "unified");
+const flavor = envText("MOMCOZY_APK_FLAVOR", "staging");
 const mode = envText("MOMCOZY_APK_MODE", "release");
-const runtimeEnvironment = flavor === "unified" ? "test" : flavor;
+const runtimeEnvironment = flavor;
 let dartDefines;
 try {
   assertMode(mode);
@@ -92,14 +92,14 @@ const skipBuild = envFlag("MOMCOZY_SKIP_APK_BUILD");
 const buildApkPath =
   apkInput || path.join(flutterAppDir, "build", "app", "outputs", "flutter-apk", `app-${flavor}-${mode}.apk`);
 const artifactName =
-  flavor === "unified"
-    ? `momcozy-unified-android-test-${version.versionName}-${version.buildNumber}.apk`
+  flavor === "staging"
+    ? `momcozy-staging-android-${version.versionName}-${version.buildNumber}.apk`
     : `momcozy-android-${flavor}-${version.versionName}-${version.buildNumber}.apk`;
 const artifactPath = path.join(releaseDir, artifactName);
 const provenanceFile = `${artifactName}.provenance.json`;
 const githubReleaseTag =
-  flavor === "unified"
-    ? `unified-android-v${version.versionName}-${version.buildNumber}`
+  flavor === "staging"
+    ? `staging-android-v${version.versionName}-${version.buildNumber}`
     : `android-v${version.versionName}-${version.buildNumber}`;
 const sourceServices = {
   productBackend: releaseServiceIdentity("MOMCOZY_BACKEND"),
@@ -462,7 +462,7 @@ function assertMode(value) {
 }
 
 function assertFlavor(value) {
-  if (!["local", "unified", "production"].includes(value)) {
+  if (!["local", "staging", "production"].includes(value)) {
     throw new Error(`Unsupported MOMCOZY_APK_FLAVOR: ${value}`);
   }
 }

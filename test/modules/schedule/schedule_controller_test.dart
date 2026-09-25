@@ -137,7 +137,7 @@ final _catalog = ServiceCatalog(
   packages: [
     const ServicePackage(
       id: 'feeding-confidence',
-      name: '喂养安心',
+      name: 'Feeding Confidence',
       subtitle: '',
       description: '',
       durationDays: 7,

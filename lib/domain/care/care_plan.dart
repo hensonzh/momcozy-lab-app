@@ -2,6 +2,23 @@ import '../shared/local_date.dart';
 
 enum CareTaskStatus { pending, inProgress, completed, skipped }
 
+// Patient-facing plans require an expert-reviewed English version before
+// publication. Drafts and private clinical notes keep their original text.
+final _unreviewedPlanCopy = RegExp(
+  r'[\u3400-\u9fff\u{20000}-\u{323af}\u3040-\u30ff\u31f0-\u31ff\uac00-\ud7af\u0400-\u052f\u0600-\u06ff\u0900-\u097f]|cozy[\s-]*mate',
+  caseSensitive: false,
+  unicode: true,
+);
+
+final _retiredPlanBrand = RegExp(r'cozy[\s-]*mate', caseSensitive: false);
+
+String _englishTaskMetadata(String raw, String fallback) {
+  final display = raw.replaceAll(_retiredPlanBrand, 'Momcozy AI');
+  return display.trim().isEmpty || _unreviewedPlanCopy.hasMatch(display)
+      ? fallback
+      : display;
+}
+
 final class CarePlanTaskContent {
   const CarePlanTaskContent({
     required this.sourceKey,
@@ -13,6 +30,13 @@ final class CarePlanTaskContent {
   });
   final String sourceKey, title, description, category, dueLabel;
   final LocalDate? scheduledDate;
+
+  String get displayCategory => category == '\u89c2\u5bdf'
+      ? 'Observation'
+      : _englishTaskMetadata(category, 'Care task');
+  String get displayDueLabel => dueLabel == '\u4eca\u5929'
+      ? 'Originally marked “Today”'
+      : _englishTaskMetadata(dueLabel, 'Ask your consultant about timing');
   bool get complete => [
     title,
     description,
@@ -59,6 +83,17 @@ final class CarePlanContent {
       goals.every((value) => value.trim().isNotEmpty) &&
       tasks.isNotEmpty &&
       tasks.every((value) => value.complete);
+  bool get englishClientCopy => ![
+    title,
+    summary,
+    ...goals,
+    for (final task in tasks) ...[
+      task.title,
+      task.description,
+      task.category,
+      task.dueLabel,
+    ],
+  ].any(_unreviewedPlanCopy.hasMatch);
   bool get withinLimits =>
       title.trim().length <= 120 &&
       summary.trim().length <= 3000 &&

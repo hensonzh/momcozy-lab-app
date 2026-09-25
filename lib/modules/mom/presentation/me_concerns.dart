@@ -131,14 +131,14 @@ class _MeConcernFlowState extends State<MeConcernFlow>
       if (!p) back();
     },
     child: MePage(
-      title: '选择想改善的事',
+      title: 'Choose what you\'d like to work on',
       onBack: back,
       trailing: Text(
         confirmation ? '2 / 2' : '1 / 2',
         style: MeDesign.text(14, color: MeDesign.muted),
       ),
       footer: MeButton(
-        confirmation ? '确认' : '下一步',
+        confirmation ? 'Confirm' : 'Continue',
         busy: busy,
         onPressed: selected.isEmpty
             ? null
@@ -153,7 +153,7 @@ class _MeConcernFlowState extends State<MeConcernFlow>
           children: [
             if (!confirmation) ...[
               Text(
-                '先选最接近的情况，可以多选。',
+                'Choose the concerns that fit best. You can select more than one.',
                 style: MeDesign.text(14, color: MeDesign.muted, line: 22),
               ),
               const SizedBox(height: 20),
@@ -178,7 +178,9 @@ class _MeConcernFlowState extends State<MeConcernFlow>
                     controller: note,
                     maxLength: 200,
                     maxLines: 3,
-                    decoration: const InputDecoration(hintText: '写下你的困扰（选填）'),
+                    decoration: const InputDecoration(
+                      hintText: 'Tell us more (optional)',
+                    ),
                   ),
                 ),
             ] else ...[
@@ -189,7 +191,7 @@ class _MeConcernFlowState extends State<MeConcernFlow>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      '你想改善的事',
+                      'What you\'d like to work on',
                       style: MeDesign.text(11, color: MeDesign.rose, line: 18),
                     ),
                     const SizedBox(height: 10),
@@ -209,12 +211,12 @@ class _MeConcernFlowState extends State<MeConcernFlow>
               ),
               const SizedBox(height: 22),
               Text(
-                '为你搭配的记录项',
+                'Suggested records for you',
                 style: MeDesign.text(16, weight: FontWeight.w700, line: 24),
               ),
               const SizedBox(height: 6),
               Text(
-                '帮助了解当前变化',
+                'Track changes over time',
                 style: MeDesign.text(12, color: MeDesign.muted, line: 18),
               ),
               const SizedBox(height: 14),
@@ -232,12 +234,12 @@ class _MeConcernFlowState extends State<MeConcernFlow>
                   children: [
                     Expanded(
                       child: Text(
-                        '提醒我记录',
+                        'Remind me to log',
                         style: MeDesign.text(14, weight: FontWeight.w500),
                       ),
                     ),
                     Text(
-                      reminder ? '开启' : '关闭',
+                      reminder ? 'On' : 'Close',
                       style: MeDesign.text(12, color: MeDesign.muted),
                     ),
                     const SizedBox(width: 12),
@@ -263,93 +265,90 @@ class _MeConcernFlowState extends State<MeConcernFlow>
   );
 }
 
-Future<bool?> showMeNotificationSettings(BuildContext context) =>
-    showModalBottomSheet<bool>(
-      context: context,
-      useRootNavigator: true,
-      isScrollControlled: true,
-      backgroundColor: MeDesign.surface,
-      barrierColor: const Color(0xff27222b).withValues(alpha: .38),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (context) => SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 10, 24, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+Future<bool?> showMeNotificationSettings(
+  BuildContext context,
+) => showModalBottomSheet<bool>(
+  context: context,
+  useRootNavigator: true,
+  isScrollControlled: true,
+  backgroundColor: MeDesign.surface,
+  barrierColor: const Color(0xff27222b).withValues(alpha: .38),
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+  ),
+  builder: (context) => SafeArea(
+    top: false,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(24, 10, 24, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: MeDesign.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 22),
+          Row(
             children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: MeDesign.border,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 22),
-              Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    padding: const EdgeInsets.all(9),
-                    decoration: BoxDecoration(
-                      color: const Color(0xfff6eaf1),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: MeDesign.asset(
-                      'IconBell.svg',
-                      width: 26,
-                      height: 26,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      '开启系统通知',
-                      style: MeDesign.text(20, weight: FontWeight.w700),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '在系统设置中允许 MomCozy 发送通知，\n按你的设置接收记录提醒。',
-                style: MeDesign.text(14, color: MeDesign.muted, line: 23),
-              ),
-              const SizedBox(height: 22),
-              SizedBox(
-                height: 48,
-                child: MeButton(
-                  '去设置',
-                  fontSize: 15,
-                  onPressed: () => Navigator.pop(context, true),
-                ),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
+              Container(
+                width: 44,
                 height: 44,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text(
-                    '暂不开启',
-                    style: MeDesign.text(14, color: MeDesign.muted),
-                  ),
+                padding: const EdgeInsets.all(9),
+                decoration: BoxDecoration(
+                  color: const Color(0xfff6eaf1),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: MeDesign.asset('IconBell.svg', width: 26, height: 26),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  'Turn on notifications',
+                  style: MeDesign.text(20, weight: FontWeight.w700),
                 ),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: 16),
+          Text(
+            'Allow Momcozy notifications in your device settings\nto receive the reminders you choose.',
+            style: MeDesign.text(14, color: MeDesign.muted, line: 23),
+          ),
+          const SizedBox(height: 22),
+          SizedBox(
+            height: 48,
+            child: MeButton(
+              'Open settings',
+              fontSize: 15,
+              onPressed: () => Navigator.pop(context, true),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 44,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(
+                'Not now',
+                style: MeDesign.text(14, color: MeDesign.muted),
+              ),
+            ),
+          ),
+        ],
       ),
-    );
+    ),
+  ),
+);
 
 class MeConcernsPage extends StatelessWidget {
   const MeConcernsPage({
@@ -370,7 +369,7 @@ class MeConcernsPage extends StatelessWidget {
     builder: (context, _) {
       final all = controller.state!.concerns;
       return MePage(
-        title: '我的关注',
+        title: 'My focus',
         body: all.isEmpty
             ? Column(
                 children: [
@@ -455,17 +454,20 @@ class MeConcernsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
                   Text(
-                    '最近想改善什么？',
+                    'What would you like to work on?',
                     style: MeDesign.text(24, weight: FontWeight.w700),
                   ),
                   const SizedBox(height: 13),
                   Text(
-                    '从喂养不适、奶量担忧或返工安排开始，\n把这一阶段需要的记录放在一起。',
+                    'Start with feeding discomfort, milk supply concerns, or planning a return to work.\nKeep the records you need for this stage together.',
                     textAlign: TextAlign.center,
                     style: MeDesign.text(13, color: MeDesign.muted, line: 22),
                   ),
                   const SizedBox(height: 37),
-                  MeButton('选择想改善的事', onPressed: () => add(context)),
+                  MeButton(
+                    'Choose what you\'d like to work on',
+                    onPressed: () => add(context),
+                  ),
                 ],
               )
             : Column(
@@ -497,7 +499,7 @@ class MeConcernsPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                concern.ended ? '已结束' : '正在关注',
+                                concern.ended ? 'Ended' : 'In progress',
                                 style: MeDesign.text(11, color: MeDesign.rose),
                               ),
                               const SizedBox(height: 8),
@@ -513,7 +515,10 @@ class MeConcernsPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                  MeButton('选择想改善的事', onPressed: () => add(context)),
+                  MeButton(
+                    'Choose what you\'d like to work on',
+                    onPressed: () => add(context),
+                  ),
                 ],
               ),
       );
@@ -548,7 +553,7 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            for (final text in ['调整关注', '结束关注', '取消'])
+            for (final text in ['Edit focus', 'End focus', 'Cancel'])
               ListTile(
                 title: Text(text, textAlign: TextAlign.center),
                 onTap: () => Navigator.pop(context, text),
@@ -558,27 +563,29 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
       ),
     );
     if (!mounted) return;
-    if (choice == '调整关注') {
+    if (choice == 'Edit focus') {
       final done = await showMeConcernFlow(
         context,
         widget.controller,
         initial: concern,
       );
       if (done == true && mounted) Navigator.pop(context, true);
-    } else if (choice == '结束关注') {
+    } else if (choice == 'End focus') {
       final end = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('结束这项关注？'),
-          content: const Text('已有记录会保留，你仍可以继续记录。'),
+          title: const Text('End this focus?'),
+          content: const Text(
+            'Your existing records will stay, and you can keep logging.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('结束关注'),
+              child: const Text('End focus'),
             ),
           ],
         ),
@@ -614,7 +621,7 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
         (m) => observations.where((r) => r.kind == m).length >= 2,
       );
       return MePage(
-        title: '关注详情',
+        title: 'Focus details',
         background: MeDesign.profileBackground,
         bodyPadding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
         trailing: concern.ended
@@ -624,7 +631,7 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
                 child: TextButton(
                   onPressed: busy ? null : menu,
                   child: Text(
-                    '调整',
+                    'Edit',
                     style: MeDesign.text(
                       13,
                       color: MeDesign.rose,
@@ -634,7 +641,7 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
                 ),
               ),
         footer: MeButton(
-          '去记录',
+          'Log now',
           fontSize: 13,
           weight: FontWeight.w500,
           onPressed: () => widget.onRecord(metrics.first),
@@ -650,15 +657,15 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    concern.ended ? '已结束' : '正在关注',
+                    concern.ended ? 'Ended' : 'In progress',
                     style: MeDesign.text(11, color: MeDesign.rose, line: 18),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     concern.issues.length == 1 &&
                             concern.issues.single == MeIssue.comfort
-                        ? '关注喂奶或泵奶时的不适'
-                        : '这一阶段想改善的事',
+                        ? 'Discomfort during nursing or pumping'
+                        : 'What you\'d like to work on right now',
                     style: MeDesign.text(18, weight: FontWeight.w700, line: 28),
                   ),
                   const SizedBox(height: 9),
@@ -675,7 +682,7 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
             ),
             const SizedBox(height: 20),
             Text(
-              '最近的变化',
+              'Recent changes',
               style: MeDesign.text(17, weight: FontWeight.w700, line: 26),
             ),
             const SizedBox(height: 10),
@@ -687,14 +694,16 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    comparable ? '结合记录了解变化' : '还没有可比较的记录',
+                    comparable
+                        ? 'Review changes alongside your records'
+                        : 'Not enough records to compare yet',
                     style: MeDesign.text(16, weight: FontWeight.w700, line: 24),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     comparable
-                        ? '已记录 ${observations.length} 次当前状态。\n可以结合记录时间回顾变化。'
-                        : '这项关注刚刚开始。\n记录后，可以结合时间查看变化。',
+                        ? 'You have logged ${observations.length} check-ins.\nReview them over time to see what has changed.'
+                        : 'You just started this focus.\nAdd records to see changes over time.',
                     style: MeDesign.text(
                       12,
                       color: const Color(0xff70636b),
@@ -706,7 +715,7 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
             ),
             const SizedBox(height: 16),
             Text(
-              '相关记录',
+              'Related records',
               style: MeDesign.text(17, weight: FontWeight.w700, line: 26),
             ),
             const SizedBox(height: 10),
@@ -748,8 +757,10 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.controller.latest(metric)?.value ??
-                                        '待记录',
+                                    widget.controller
+                                            .latest(metric)
+                                            ?.displayValue ??
+                                        'Not recorded yet',
                                     style: MeDesign.text(
                                       16,
                                       weight: FontWeight.w700,
@@ -764,7 +775,7 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
                                   if (widget.controller.latest(metric)
                                       case final record?)
                                     Text(
-                                      '今天 ${record.occurredAt.hour.toString().padLeft(2, '0')}:${record.occurredAt.minute.toString().padLeft(2, '0')}',
+                                      'Today ${record.occurredAt.hour.toString().padLeft(2, '0')}:${record.occurredAt.minute.toString().padLeft(2, '0')}',
                                       style: MeDesign.text(
                                         11,
                                         color: const Color(0xff70636b),
@@ -783,12 +794,12 @@ class _MeConcernDetailState extends State<MeConcernDetail> {
             ),
             const SizedBox(height: 24),
             Text(
-              '接下来可以做什么',
+              'What you can do next',
               style: MeDesign.text(17, weight: FontWeight.w700, line: 26),
             ),
             const SizedBox(height: 10),
             Text(
-              '从首页的相关记录开始，按需要记下当前状态。',
+              'Start with the related records on your home page and log how things are going.',
               style: MeDesign.text(
                 12,
                 color: const Color(0xff70636b),

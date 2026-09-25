@@ -59,12 +59,12 @@ void main() {
                             runSpacing: 8,
                             children: [
                               MomCozyBadge(
-                                '已保存',
+                                'Saved',
                                 color: MomCozyColors.care,
                                 background: MomCozyColors.careSoft,
                               ),
                               MomCozyBadge(
-                                '待确认',
+                                'Awaiting confirmation',
                                 color: MomCozyColors.amber,
                                 background: MomCozyColors.amberSoft,
                               ),
@@ -78,7 +78,7 @@ void main() {
                     const TextField(
                       decoration: InputDecoration(
                         labelText: '补充感受',
-                        hintText: '选填',
+                        hintText: 'optional',
                       ),
                     ),
                     const SizedBox(height: MomCozySpacing.content),
@@ -101,7 +101,7 @@ void main() {
                     const SizedBox(height: MomCozySpacing.section),
                     MomCozyPrimaryButton(
                       onPressed: () => presses++,
-                      child: const Text('保存这次记录'),
+                      child: const Text('Save this record'),
                     ),
                     const SizedBox(height: MomCozySpacing.compact),
                     OutlinedButton(

@@ -66,7 +66,7 @@ class MomCozyColors {
   static const timelineMuted = Color(0xff777b76);
   const MomCozyColors._();
 
-  // Cozymate palette from the approved me-agent.css reference.
+  // Momcozy AI palette from the approved me-agent.css reference.
   static const warmEditorHeader = Color(0xff3b2c23);
   static const warmEditorInk = Color(0xff49392f);
   static const warmEditorMuted = Color(0xff826f5e);

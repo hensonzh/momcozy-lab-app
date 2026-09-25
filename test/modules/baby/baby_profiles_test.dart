@@ -43,7 +43,7 @@ void main() {
       final transport = FixtureApiJsonTransport(row());
       final repo = BabyProfilesApiRepository(transport: transport);
       await repo.save(
-        const BabyProfile(id: '', name: '宝宝'),
+        const BabyProfile(id: '', name: 'Baby'),
         timezone: 'Asia/Shanghai',
         idempotencyKey: 'profile-once',
       );

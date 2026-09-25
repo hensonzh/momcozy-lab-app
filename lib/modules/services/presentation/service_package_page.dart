@@ -47,7 +47,7 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
   }
 
   Future<void> _purchase(ServicePackage package) async {
-    if (_opening) return;
+    if (_opening || !package.hasEnglishPurchaseDetails) return;
     setState(() => _opening = true);
     final existing = controller.overview!.orders
         .where((order) => order.packageId == package.id && order.canResume)
@@ -69,9 +69,11 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
       if (episode != null && mounted) widget.onBook(episode);
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('暂时无法打开订单，请稍后重试')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open the order. Try again later.'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _opening = false);
@@ -84,11 +86,19 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
     child: Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.3
-            ? 96
+            ? 112
             : 56,
         leadingWidth: MediaQuery.textScalerOf(context).scale(1) > 1.3 ? 88 : 72,
-        leading: TextButton(onPressed: widget.onBack, child: const Text('返回')),
-        title: const Text('专家支持方案'),
+        leading: TextButton(
+          onPressed: widget.onBack,
+          child: const Text('Back'),
+        ),
+        title: const Text(
+          'Expert support',
+          maxLines: 2,
+          softWrap: true,
+          overflow: TextOverflow.visible,
+        ),
       ),
       body: ClipRect(
         child: MomCozyPageBody(
@@ -106,7 +116,7 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
                       : MomSettingsCard(
                           children: [
                             Text(
-                              '正在加载服务方案…',
+                              'Loading service plan…',
                               style: MomHomeTokens.text(
                                 16,
                                 weight: FontWeight.w700,
@@ -126,7 +136,7 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
                   child: MomSettingsCard(
                     children: [
                       Text(
-                        '没有找到这个服务方案',
+                        'Could not find this service plan',
                         style: MomHomeTokens.text(16, weight: FontWeight.w700),
                       ),
                     ],
@@ -160,7 +170,7 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 14),
                             child: Text(
-                              '我的陪伴计划',
+                              'My care plan',
                               style: MomHomeTokens.text(
                                 18,
                                 weight: FontWeight.w700,
@@ -174,15 +184,15 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
                               : MomHomeTokens.mint,
                           children: [
                             Text(
-                              '${package.name}服务包',
+                              '${package.publicName} package',
                               style: MomHomeTokens.text(
                                 24,
                                 weight: FontWeight.w700,
                               ),
                             ),
-                            if (package.subtitle.isNotEmpty)
+                            if (package.publicSubtitle.isNotEmpty)
                               Text(
-                                package.subtitle,
+                                package.publicSubtitle,
                                 style: MomHomeTokens.text(
                                   11,
                                   color: MomHomeTokens.secondary,
@@ -199,7 +209,7 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
                                 ),
                               ),
                               Text(
-                                '当前阶段 · ${careStageLabels[episode.stage]}',
+                                'Current stage · ${careStageLabels[episode.stage]}',
                                 style: MomHomeTokens.text(
                                   13,
                                   color: MomHomeTokens.teal,
@@ -207,7 +217,7 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
                               ),
                               MomProviderIdentity(provider: provider),
                               Text(
-                                '剩余 ${episode.remainingSessions} / ${episode.totalSessions} 次咨询',
+                                '${episode.remainingSessions} of ${episode.totalSessions} consultations left',
                                 style: MomHomeTokens.text(
                                   16,
                                   weight: FontWeight.w700,
@@ -216,11 +226,11 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
                               ),
                               OutlinedButton(
                                 onPressed: () => widget.onProgress(episode),
-                                child: const Text('查看我的服务进度'),
+                                child: const Text('View service progress'),
                               ),
                             ],
                             Text(
-                              package.description,
+                              package.publicDescription,
                               style: MomHomeTokens.text(
                                 13,
                                 color: MomHomeTokens.secondary,
@@ -234,17 +244,33 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
                         MomProviderTeamCard(
                           providers: controller.catalog!.providers,
                         ),
+                        if (!package.hasEnglishPurchaseDetails) ...[
+                          const SizedBox(height: 14),
+                          const MomSettingsCard(
+                            color: MomHomeTokens.neutralSurface,
+                            children: [
+                              Text(
+                                'Plan details need English review',
+                                style: TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                              Text(
+                                'Purchase is paused until the included services are available in English.',
+                                style: TextStyle(height: 1.5),
+                              ),
+                            ],
+                          ),
+                        ],
                         const SizedBox(height: 14),
                         _DeliveryList(
-                          title: 'IBCLC 服务',
+                          title: 'IBCLC support',
                           icon: MomCozyLineGlyph.consultation,
-                          items: package.expertServices,
+                          items: package.publicExpertServices,
                         ),
                         const SizedBox(height: 14),
                         _DeliveryList(
-                          title: 'AI / App 持续服务',
+                          title: 'Ongoing AI & app support',
                           icon: MomCozyLineGlyph.calendar,
-                          items: package.continuousServices,
+                          items: package.publicContinuousServices,
                         ),
                       ],
                     ),
@@ -271,20 +297,21 @@ class _ServicePackagePageState extends State<ServicePackagePage> {
                                 : episode != null
                                 ? () => widget.onBook(episode)
                                 : controller.catalog!.paymentMode ==
-                                      PaymentMode.disabled
+                                          PaymentMode.disabled ||
+                                      !package.hasEnglishPurchaseDetails
                                 ? null
                                 : () => _purchase(package),
                             child: Text(
                               _opening
-                                  ? '正在打开…'
+                                  ? 'Opening…'
                                   : episode != null
-                                  ? '开始预约'
+                                  ? 'Book an appointment'
                                   : pending
-                                  ? '继续付款'
+                                  ? 'Continue to payment'
                                   : controller.catalog!.paymentMode ==
                                         PaymentMode.disabled
-                                  ? '暂未开放购买'
-                                  : '购买',
+                                  ? 'Not available to purchase yet'
+                                  : 'Purchase',
                             ),
                           );
                           if (MediaQuery.textScalerOf(context).scale(1) > 1.3) {

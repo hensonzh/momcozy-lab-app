@@ -29,7 +29,7 @@ class UserConsultationVideoStage extends StatelessWidget {
         connected &&
         data.participant(ConsultationRole.ibclc)?.presence ==
             ParticipantPresence.joined;
-    final initials = data.appointment.providerName
+    final initials = data.appointment.publicProviderName
         .trim()
         .split(RegExp(r'\s+'))
         .where((s) => s.isNotEmpty)
@@ -38,15 +38,15 @@ class UserConsultationVideoStage extends StatelessWidget {
         .join()
         .toUpperCase();
     final status = media.sandbox
-        ? '模拟咨询 · 无远程音视频'
+        ? 'Simulated consultation · No remote audio or video'
         : switch (media.state) {
-            ConsultationMediaState.connected => '媒体已连接',
-            ConsultationMediaState.connecting => '正在连接视频',
-            ConsultationMediaState.reconnecting => '正在恢复连接',
-            ConsultationMediaState.disconnected => '媒体连接已断开',
+            ConsultationMediaState.connected => 'Media connected',
+            ConsultationMediaState.connecting => 'Connecting video',
+            ConsultationMediaState.reconnecting => 'Reconnecting',
+            ConsultationMediaState.disconnected => 'Media disconnected',
           };
     return Semantics(
-      label: '咨询视频画面',
+      label: 'Consultation video',
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
@@ -179,7 +179,9 @@ class UserConsultationVideoStage extends StatelessWidget {
                             : const SizedBox.shrink(),
                       ),
                       Semantics(
-                        label: media.cameraOn ? '你的画面，摄像头已开启' : '你的摄像头已关闭',
+                        label: media.cameraOn
+                            ? 'Your video, camera on'
+                            : 'Your camera is off',
                         child: Container(
                           width: 80,
                           height: 96,
@@ -212,7 +214,7 @@ class UserConsultationVideoStage extends StatelessWidget {
                                 right: 8,
                                 bottom: 8,
                                 child: Text(
-                                  '你',
+                                  'You',
                                   textAlign: TextAlign.center,
                                   style:
                                       MomHomeTokens.text(

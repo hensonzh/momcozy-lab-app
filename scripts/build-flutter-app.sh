@@ -25,7 +25,7 @@ Environment overrides:
   MOMCOZY_AGENT_API_BASE_URL     Agent Runtime API compiled into the Flutter App.
   MOMCOZY_DOWNLOAD_BASE_URL      Public GitHub Pages URL for the download page.
   MOMCOZY_GITHUB_RELEASE_REPO    Public owner/repository for Releases and Pages.
-  MOMCOZY_APK_FLAVOR             local | unified | production (default: unified).
+  MOMCOZY_APK_FLAVOR             local | staging | production (default: staging).
   MOMCOZY_APK_MODE               debug | release (default: release).
   MOMCOZY_EXTRA_DART_DEFINES     Extra comma-separated KEY=VALUE definitions;
                                   the two API URL keys are reserved.
@@ -63,10 +63,10 @@ cd "${PROJECT_ROOT}"
 check_config="${check_config:-0}"
 download_base_url="${MOMCOZY_DOWNLOAD_BASE_URL:-${DEFAULT_DOWNLOAD_BASE_URL}}"
 github_release_repo="${MOMCOZY_GITHUB_RELEASE_REPO:-${DEFAULT_GITHUB_RELEASE_REPO}}"
-apk_flavor="${MOMCOZY_APK_FLAVOR:-unified}"
+apk_flavor="${MOMCOZY_APK_FLAVOR:-staging}"
 apk_mode="${MOMCOZY_APK_MODE:-release}"
 skip_upload="${MOMCOZY_SKIP_UPLOAD:-0}"
-pages_namespace="unified"
+pages_namespace="staging"
 
 if [[ "${apk_flavor}" == "local" ]]; then
   api_base_url="${MOMCOZY_API_BASE_URL:-${DEFAULT_LOCAL_API_BASE_URL}}"
@@ -81,12 +81,12 @@ if [[ "${skip_upload}" != "0" && "${skip_upload}" != "1" ]]; then
   exit 2
 fi
 
-if [[ "${check_config}" != "1" && "${skip_upload}" == "0" && "${apk_flavor}" != "unified" ]]; then
-  printf 'Only the unified flavor may be published. Set MOMCOZY_SKIP_UPLOAD=1 for other flavors.\n' >&2
+if [[ "${check_config}" != "1" && "${skip_upload}" == "0" && "${apk_flavor}" != "staging" ]]; then
+  printf 'Only the staging flavor may be published. Set MOMCOZY_SKIP_UPLOAD=1 for other flavors.\n' >&2
   exit 2
 fi
 
-if [[ "${apk_flavor}" == "unified" && "${download_base_url%/}" != */"${pages_namespace}" ]]; then
+if [[ "${apk_flavor}" == "staging" && "${download_base_url%/}" != */"${pages_namespace}" ]]; then
   download_base_url="${download_base_url%/}/${pages_namespace}"
 fi
 

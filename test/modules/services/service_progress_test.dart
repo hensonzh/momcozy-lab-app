@@ -48,7 +48,8 @@ class _Repository extends Fake implements CareRepository {
                 ).readAsStringSync(),
               )
               as Map<String, dynamic>;
-      (json['packages'] as List).first['name'] = '持续喂养支持与个性化泌乳陪伴计划';
+      (json['packages'] as List).first['name'] =
+          'Personalized Feeding and Lactation Support for Your Growing Family';
       return readServiceCatalog(json);
     }
     return _data;
@@ -204,15 +205,20 @@ void main() {
         height: 568,
         scale: 2,
       );
-      await tester.tap(find.text('↑ 查看更早记录'));
+      await tester.tap(find.text('↑ Earlier records'));
       await tester.pumpAndSettle();
-      expect(find.text('持续喂养支持与个性化泌乳陪伴计划'), findsOneWidget);
+      expect(
+        find.text(
+          'Personalized Feeding and Lactation Support for Your Growing Family',
+        ),
+        findsOneWidget,
+      );
       await shot(tester, 'long-name', 320, 2);
-      await tester.tap(find.text('↓ 回到最近记录'));
+      await tester.tap(find.text('↓ Back to latest records'));
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('预约咨询'));
+      await tester.ensureVisible(find.text('Book consultation'));
       await tester.pumpAndSettle();
-      expect(find.text('预约咨询').hitTestable(), findsOneWidget);
+      expect(find.text('Book consultation').hitTestable(), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
@@ -229,7 +235,7 @@ void main() {
         scale: 2,
         settle: false,
       );
-      expect(find.text('正在加载服务进度…'), findsOneWidget);
+      expect(find.text('Loading service progress…'), findsOneWidget);
       await shot(tester, 'initial-loading', 320, 2);
       care.offline = true;
       care.pending!.complete();
@@ -237,22 +243,22 @@ void main() {
       expect(appointments.calls, 0);
       await shot(tester, 'initial-error', 320, 2);
       care.offline = false;
-      await tester.tap(find.text('重试'));
+      await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
       expect(appointments.calls, 1);
-      expect(find.text('已预约咨询'), findsOneWidget);
+      expect(find.text('Consultation booked'), findsOneWidget);
       care.offline = true;
       await tester
           .widget<RefreshIndicator>(find.byType(RefreshIndicator))
           .onRefresh();
       await tester.pumpAndSettle();
-      expect(find.text('重试'), findsOneWidget);
+      expect(find.text('Try again'), findsOneWidget);
       expect(appointments.calls, 1);
       care.offline = false;
-      await tester.tap(find.text('重试'));
+      await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
       expect(appointments.calls, 2);
-      expect(find.text('已预约咨询'), findsOneWidget);
+      expect(find.text('Consultation booked'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
@@ -271,28 +277,28 @@ void main() {
           onOpen: (a) => opened = a,
         );
         expect(repo.calls, 1);
-        expect(find.text('2 次已使用 · 剩余 0/2 次咨询'), findsNothing);
-        expect(find.text('0 次已使用 · 剩余 2/2 次咨询'), findsOneWidget);
-        expect(find.text('咨询时段待确认'), findsNothing);
-        expect(find.text('预约已过期'), findsOneWidget);
+        expect(find.text('2 used · 0/2 consultations left'), findsNothing);
+        expect(find.text('0 used · 2/2 consultations left'), findsOneWidget);
+        expect(find.text('Appointment time pending'), findsNothing);
+        expect(find.text('Appointment expired'), findsOneWidget);
         await shot(tester, 'latest', width, scale);
-        await tester.ensureVisible(find.text('查看预约'));
+        await tester.ensureVisible(find.text('View appointment'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('查看预约'));
+        await tester.tap(find.text('View appointment'));
         expect(opened?.id, 'appointment-confirmed');
-        await tester.tap(find.text('↑ 查看更早记录'));
+        await tester.tap(find.text('↑ Earlier records'));
         await tester.pumpAndSettle();
         await shot(tester, 'earlier', width, scale);
-        await tester.ensureVisible(find.text('查看咨询总结'));
+        await tester.ensureVisible(find.text('View consultation summary'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('查看咨询总结'));
+        await tester.tap(find.text('View consultation summary'));
         expect(opened?.id, 'appointment-completed');
-        await tester.tap(find.text('↑ 查看更早记录'));
+        await tester.tap(find.text('↑ Earlier records'));
         await tester.pumpAndSettle();
-        if (find.text('↓ 回到最近记录').evaluate().isNotEmpty) {
-          await tester.tap(find.text('↓ 回到最近记录'));
+        if (find.text('↓ Back to latest records').evaluate().isNotEmpty) {
+          await tester.tap(find.text('↓ Back to latest records'));
           await tester.pumpAndSettle();
-          expect(find.text('↓ 回到最近记录'), findsNothing);
+          expect(find.text('↓ Back to latest records'), findsNothing);
         }
         expect(tester.takeException(), isNull);
       });
@@ -304,20 +310,20 @@ void main() {
       final repo = Appointments()..offline = true;
       await mount(tester, repo);
       await shot(tester, 'offline', 390, 1);
-      expect(find.text('服务包已购买'), findsOneWidget);
+      expect(find.text('Package purchased'), findsOneWidget);
       repo.offline = false;
-      await tester.tap(find.text('重试读取预约'));
+      await tester.tap(find.text('Reload appointments'));
       await tester.pumpAndSettle();
       expect(repo.calls, 2);
-      expect(find.text('已预约咨询'), findsOneWidget);
+      expect(find.text('Consultation booked'), findsOneWidget);
       repo.values = [appt('completed', 15)];
       await tester
           .widget<RefreshIndicator>(find.byType(RefreshIndicator))
           .onRefresh();
       await tester.pumpAndSettle();
       expect(repo.calls, 3);
-      expect(find.text('已预约咨询'), findsNothing);
-      expect(find.text('咨询已结束'), findsOneWidget);
+      expect(find.text('Consultation booked'), findsNothing);
+      expect(find.text('Consultation ended'), findsOneWidget);
     },
   );
   for (final status in CareEpisodeStatus.values) {
@@ -330,9 +336,9 @@ void main() {
         repo,
         care: _Repository(active: true, status: status, remaining: 1),
       );
-      expect(find.text('1 次已使用 · 剩余 1/2 次咨询'), findsOneWidget);
+      expect(find.text('1 used · 1/2 consultations left'), findsOneWidget);
       expect(
-        find.text('预约咨询'),
+        find.text('Book consultation'),
         status == CareEpisodeStatus.active ? findsOneWidget : findsNothing,
       );
       expect(tester.takeException(), isNull);
@@ -352,10 +358,10 @@ void main() {
       ),
       onRenew: () => opened = true,
     );
-    expect(find.text('预约咨询'), findsNothing);
-    await tester.ensureVisible(find.text('继续支持'));
+    expect(find.text('Book consultation'), findsNothing);
+    await tester.ensureVisible(find.text('Continue care'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('继续支持'));
+    await tester.tap(find.text('Continue care'));
     expect(opened, isTrue);
     await shot(tester, 'completed-renewal', 390, 1);
   });
@@ -363,10 +369,10 @@ void main() {
     tester,
   ) async {
     await mount(tester, Appointments(), width: 320, height: 568, scale: 2);
-    await tester.tap(find.text('↑ 查看更早记录'));
+    await tester.tap(find.text('↑ Earlier records'));
     await tester.pumpAndSettle();
     await shot(tester, 'short', 320, 2);
-    await tester.ensureVisible(find.text('查看预约'));
+    await tester.ensureVisible(find.text('View appointment'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
@@ -387,7 +393,7 @@ void main() {
   testWidgets('missing service has recoverable empty state', (tester) async {
     final repo = Appointments();
     await mount(tester, repo, care: _Repository());
-    expect(find.text('暂时找不到这个服务包'), findsOneWidget);
+    expect(find.text('Could not find this package'), findsOneWidget);
     expect(repo.calls, 0);
     await shot(tester, 'empty', 390, 1);
   });

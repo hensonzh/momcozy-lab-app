@@ -96,7 +96,7 @@ void main() {
         }
         expect(find.text('Mia Chen'), findsOneWidget);
         expect(find.text('mia@example.test'), findsOneWidget);
-        final privacy = find.text('隐私');
+        final privacy = find.text('Privacy');
         await tester.scrollUntilVisible(privacy, 240);
         await tester.pumpAndSettle();
         await tester.tap(privacy);
@@ -106,13 +106,13 @@ void main() {
         router.go('/more');
         await tester.pumpAndSettle();
         for (final entry in {
-          '账号设置': '/account',
-          '通知': '/notifications',
-          '专家支持': '/services',
+          'Account settings': '/account',
+          'Notifications': '/notifications',
+          'Expert support': '/services',
         }.entries) {
           await tester.scrollUntilVisible(
             find.text(entry.key),
-            entry.key == '账号设置' ? -240 : 240,
+            entry.key == 'Account settings' ? -240 : 240,
           );
           await tester.pumpAndSettle();
           await tester.tap(find.text(entry.key));

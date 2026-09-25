@@ -52,13 +52,13 @@ matches(
 );
 notMatches(
   "android/app/build.gradle.kts",
-  /create\("(?:test|staging)"\)/,
-  "Flutter keeps test as runtime metadata instead of a redundant install flavor",
+  /create\("(?:test|unified)"\)/,
+  "Flutter uses canonical environment flavor names",
 );
 matches(
   "android/app/build.gradle.kts",
-  /create\("unified"\)[\s\S]*applicationIdSuffix = "\.unified"/,
-  "Flutter unified release flavor keeps its own install identity",
+  /create\("staging"\)[\s\S]*applicationIdSuffix = "\.staging"/,
+  "Flutter staging release flavor keeps its own install identity",
 );
 contains(
   "android/app/build.gradle.kts",
@@ -118,17 +118,17 @@ contains(
 contains(
   "android/app/src/local/res/values/strings.xml",
   "<string name=\"app_name\">momcozy AI</string>",
-  "Flutter local label matches current unified branding",
+  "Flutter local label matches current staging branding",
 );
 contains(
-  "android/app/src/unified/res/values/strings.xml",
+  "android/app/src/staging/res/values/strings.xml",
   "<string name=\"app_name\">momcozy AI</string>",
-  "Flutter unified label matches current unified branding",
+  "Flutter staging label matches current staging branding",
 );
 contains(
   "android/app/src/production/res/values/strings.xml",
   "<string name=\"app_name\">momcozy AI</string>",
-  "Flutter production-shaped label matches current unified branding",
+  "Flutter production-shaped label matches current staging branding",
 );
 
 notMatches(

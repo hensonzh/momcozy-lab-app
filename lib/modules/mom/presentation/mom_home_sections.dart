@@ -197,7 +197,7 @@ class MomLactationCard extends StatelessWidget {
                     shape: const StadiumBorder(),
                     textStyle: MomHomeTokens.text(14, weight: FontWeight.w700),
                   ),
-                  child: const Text('＋ 记录一次泌乳'),
+                  child: const Text('+ Log a feeding or pumping session'),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -221,7 +221,7 @@ class MomHomeSkeleton extends StatelessWidget {
   const MomHomeSkeleton({super.key});
   @override
   Widget build(BuildContext context) => Semantics(
-    label: '正在加载妈妈首页',
+    label: 'Loading your home page',
     child: ListView(
       padding: MomHomeTokens.padding,
       children: [

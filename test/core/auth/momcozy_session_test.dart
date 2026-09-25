@@ -69,6 +69,40 @@ void main() {
     });
 
     test(
+      'legacy stored locale is upgraded without losing credentials',
+      () async {
+        final store = MemoryMomCozySessionStore(
+          const MomCozySession(
+            status: MomCozySessionStatus.authenticated,
+            userId: 'existing-user',
+            babyId: 'existing-baby',
+            locale: 'zh-CN',
+            accessToken: 'existing-access',
+            refreshToken: 'existing-refresh',
+          ),
+        );
+        final manager = MomCozySessionManager(
+          store: store,
+          environmentSession: MomCozySession.fromEnvironment(
+            accessToken: '',
+            refreshToken: '',
+            userId: 'demo-user',
+            babyId: 'demo-baby',
+            locale: 'en-US',
+          ),
+        );
+
+        final session = await manager.bootstrap();
+
+        expect(session.locale, 'en-US');
+        expect(session.userId, 'existing-user');
+        expect(session.babyId, 'existing-baby');
+        expect(session.accessToken, 'existing-access');
+        expect(session.refreshToken, 'existing-refresh');
+      },
+    );
+
+    test(
       'logout clears stored secrets and returns anonymous session',
       () async {
         final operations = <String>[];

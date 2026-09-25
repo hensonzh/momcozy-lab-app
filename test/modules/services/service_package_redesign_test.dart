@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/domain/care/care_episode.dart';
 import 'package:momcozy_flutter_app/domain/care/care_order.dart';
@@ -54,6 +55,17 @@ void main() {
 
     Future<void> shot(WidgetTester tester, String state) async {
       expect(tester.takeException(), isNull);
+      final title =
+          (tester.widget<AppBar>(find.byType(AppBar)).title! as Text).data!;
+      final titleFinder = find.descendant(
+        of: find.byType(AppBar),
+        matching: find.text(title),
+      );
+      expect(
+        tester.renderObject<RenderParagraph>(titleFinder).didExceedMaxLines,
+        isFalse,
+        reason: 'The service title must not ellipsize at $suffix',
+      );
       await expectLater(
         find.byType(MaterialApp),
         matchesGoldenFile(
@@ -67,7 +79,7 @@ void main() {
     ) async {
       final repo = _Repository()..gate = Completer<void>();
       await mount(tester, repo);
-      expect(find.text('购买'), findsNothing);
+      expect(find.text('Purchase'), findsNothing);
       await shot(tester, 'loading');
       repo.offline = true;
       repo.gate!.complete();
@@ -75,10 +87,10 @@ void main() {
       await shot(tester, 'error');
       repo.offline = false;
       repo.empty = true;
-      await tester.tap(find.text('重试'));
+      await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
-      expect(find.text('没有找到这个服务方案'), findsOneWidget);
-      expect(find.text('购买'), findsNothing);
+      expect(find.text('Could not find this service plan'), findsOneWidget);
+      expect(find.text('Purchase'), findsNothing);
       await shot(tester, 'missing');
       expect(repo.createCalls, 0);
     });
@@ -107,12 +119,12 @@ void main() {
           onProgress: (e) => progress = e,
         );
         await tester.pumpAndSettle();
-        expect(find.text('我的陪伴计划'), findsOneWidget);
-        expect(find.text('继续付款'), findsNothing);
+        expect(find.text('My care plan'), findsOneWidget);
+        expect(find.text('Continue to payment'), findsNothing);
         await shot(tester, 'owned-top');
-        await tester.tap(find.text('开始预约'));
+        await tester.tap(find.text('Book an appointment'));
         expect(booked, same(episode));
-        final action = find.text('查看我的服务进度');
+        final action = find.text('View service progress');
         for (
           var i = 0;
           i < 20 && action.hitTestable().evaluate().isEmpty;
@@ -123,7 +135,7 @@ void main() {
         }
         await tester.ensureVisible(action);
         await tester.pumpAndSettle();
-        expect(find.text('剩余 1 / 3 次咨询'), findsOneWidget);
+        expect(find.text('1 of 3 consultations left'), findsOneWidget);
         await shot(tester, 'owned-progress');
         await tester.tap(action);
         expect(progress, same(episode));
