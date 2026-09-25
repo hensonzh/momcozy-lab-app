@@ -45,6 +45,7 @@ void main() {
             ),
             home: OnboardingPage(
               controller: controller,
+              now: () => DateTime(2026, 9, 24),
               pickPortrait: picker ?? (_) async => null,
               avatarThumbnailLoader: thumbnailLoader ?? (_) async => portrait,
             ),
@@ -101,7 +102,7 @@ void main() {
         await capture(tester, 'basics');
         await tap(tester, find.widgetWithText(FilledButton, 'Continue'));
         expect(
-          find.text('Enter the name you’d like us to use.'),
+          find.text('Enter the name you\'d like us to use.'),
           findsOneWidget,
         );
         await tester.enterText(
@@ -418,7 +419,7 @@ void main() {
         await capture(tester, 'loading');
         transport.ready.complete();
         await tester.pumpAndSettle();
-        expect(find.text('We couldn’t load your setup'), findsOneWidget);
+        expect(find.text('We couldn\'t load your setup'), findsOneWidget);
         await capture(tester, 'load-error');
         responses['/v1/onboarding/me'] = {
           'status': 'required',
@@ -486,6 +487,36 @@ void main() {
         await tester.pumpWidget(const SizedBox());
         await tester.pump(const Duration(seconds: 4));
       });
+      if (width == 320 && scale == 2) {
+        testWidgets('untranslated photo picker error stays out of the UI', (
+          tester,
+        ) async {
+          final transport = FixtureApiJsonTransportByPath({
+            '/v1/onboarding/me': _state('required'),
+          });
+          final runtime = _runtime(transport);
+          final controller = OnboardingController(runtimeController: runtime);
+          addTearDown(runtime.dispose);
+          addTearDown(controller.dispose);
+          await mount(
+            tester,
+            controller,
+            picker: (_) async =>
+                throw const FormatException('Cozymate 无法读取这张照片。'),
+          );
+          await tap(
+            tester,
+            find.widgetWithText(FilledButton, 'Upload a photo'),
+          );
+          await tap(tester, find.text('Take a photo'));
+          expect(
+            find.text('We couldn\'t open that photo. Please try another one.'),
+            findsOneWidget,
+          );
+          expect(find.textContaining('Cozymate'), findsNothing);
+          expect(find.textContaining('无法读取'), findsNothing);
+        });
+      }
       testWidgets(
         'avatar photo failure and default confirmation at $width / $scale',
         (tester) async {
@@ -519,7 +550,7 @@ void main() {
           );
           await tap(tester, find.text('Take a photo'));
           expect(
-            find.text('We couldn’t open that photo. Please try another one.'),
+            find.text('We couldn\'t open that photo. Please try another one.'),
             findsOneWidget,
           );
           await capture(tester, 'photo-error');

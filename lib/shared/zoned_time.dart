@@ -64,6 +64,6 @@ String zonedRange(DateTime start, DateTime end, String timezone) {
 
 String appointmentDay(DateTime instant, String timezone) {
   final value = inTimezone(instant, timezone);
-  const weekdays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-  return '${value.month}月${value.day}日 ${weekdays[value.weekday - 1]}';
+  const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  return '${value.month}/${value.day} ${weekdays[value.weekday - 1]}';
 }

@@ -279,7 +279,7 @@ void main() {
         _message(
           id: 'message-latest-user',
           runId: 'run-latest',
-          text: '继续',
+          text: 'Continue',
           sequence: 2,
         ),
       ],

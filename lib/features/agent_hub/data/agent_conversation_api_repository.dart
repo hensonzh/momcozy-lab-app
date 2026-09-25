@@ -214,7 +214,7 @@ AgentConversationSummary? _conversationFromValue(Object? value) {
   final title = _string(map['title']).trim();
   return AgentConversationSummary(
     id: id,
-    title: title.isEmpty ? '未命名会话' : title,
+    title: title.isEmpty ? 'Untitled conversation' : title,
     status: _string(map['status']).trim(),
     createdAt: createdAt,
     updatedAt: updatedAt,

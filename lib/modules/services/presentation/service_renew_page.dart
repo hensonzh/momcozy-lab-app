@@ -62,6 +62,10 @@ class _ServiceRenewPageState extends State<ServiceRenewPage> {
       if (mounted) setState(() => _opening = false);
       return;
     }
+    if (!package.hasEnglishPurchaseDetails) {
+      if (mounted) setState(() => _opening = false);
+      return;
+    }
     try {
       final pending = controller.overview!.orders
           .where((o) => o.packageId == package.id && o.canResume)
@@ -81,7 +85,12 @@ class _ServiceRenewPageState extends State<ServiceRenewPage> {
       await controller.load();
       if (mounted && episode != null) widget.onBook(episode);
     } catch (_) {
-      if (mounted) setState(() => _openError = '暂时无法打开订单，请重新选择方案重试。');
+      if (mounted) {
+        setState(
+          () => _openError =
+              'Could not open the order. Select a plan and try again.',
+        );
+      }
     } finally {
       if (mounted) setState(() => _opening = false);
     }
@@ -96,13 +105,13 @@ class _ServiceRenewPageState extends State<ServiceRenewPage> {
             ? 72
             : 64,
         leading: IconButton(
-          tooltip: '返回',
+          tooltip: 'Back',
           onPressed: widget.onBack,
           color: MomHomeTokens.rose,
           icon: const Icon(Icons.chevron_left, size: 24),
         ),
         title: Text(
-          '继续支持',
+          'Continue care',
           style: MomHomeTokens.text(20, weight: FontWeight.w700),
         ),
       ),
@@ -135,7 +144,7 @@ class _ServiceRenewPageState extends State<ServiceRenewPage> {
                     const _RenewCatalogState(loading: true)
                   else ...[
                     Text(
-                      '选择适合当前需要的陪伴方案',
+                      'Choose the support that fits your needs now',
                       style: MomHomeTokens.text(
                         13,
                         color: MomHomeTokens.secondary,
@@ -160,7 +169,8 @@ class _ServiceRenewPageState extends State<ServiceRenewPage> {
                         enabled:
                             !_opening &&
                             !controller.loading &&
-                            (catalog.paymentMode != PaymentMode.disabled ||
+                            ((catalog.paymentMode != PaymentMode.disabled &&
+                                    package.hasEnglishPurchaseDetails) ||
                                 controller.overview!.episodes.any(
                                   (e) => e.packageId == package.id && e.ongoing,
                                 )),
@@ -168,14 +178,16 @@ class _ServiceRenewPageState extends State<ServiceRenewPage> {
                             controller.overview!.episodes.any(
                               (e) => e.packageId == package.id && e.ongoing,
                             )
-                            ? '查看我的服务'
+                            ? 'View my services'
                             : catalog.paymentMode == PaymentMode.disabled
-                            ? '暂未开放购买'
+                            ? 'Not available to purchase yet'
+                            : !package.hasEnglishPurchaseDetails
+                            ? 'English details pending'
                             : controller.overview!.orders.any(
                                 (o) => o.packageId == package.id && o.canResume,
                               )
-                            ? '继续付款'
-                            : '选择',
+                            ? 'Continue to payment'
+                            : 'Select',
                         onSelect: () => _select(package),
                       ),
                   ],
@@ -226,7 +238,7 @@ class _RenewPackageCard extends StatelessWidget {
             color: e == null ? MomHomeTokens.surface : MomHomeTokens.mint,
             children: [
               Text(
-                package.name,
+                package.publicName,
                 style: MomHomeTokens.text(20, weight: FontWeight.w700),
               ),
               if (e != null) ...[
@@ -239,7 +251,7 @@ class _RenewPackageCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '当前阶段 · ${careStageLabels[e.stage]}',
+                  'Current stage · ${careStageLabels[e.stage]}',
                   style: MomHomeTokens.text(13, color: MomHomeTokens.teal),
                 ),
                 MomProviderIdentity(
@@ -248,7 +260,7 @@ class _RenewPackageCard extends StatelessWidget {
                       .firstOrNull,
                 ),
                 Text(
-                  '剩余 ${e.remainingSessions} / ${e.totalSessions} 次咨询',
+                  '${e.remainingSessions} of ${e.totalSessions} consultations left',
                   style: MomHomeTokens.text(
                     16,
                     weight: FontWeight.w700,
@@ -256,7 +268,7 @@ class _RenewPackageCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  package.description,
+                  package.publicDescription,
                   style: MomHomeTokens.text(
                     12,
                     color: MomHomeTokens.secondary,
@@ -264,13 +276,13 @@ class _RenewPackageCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '方案价格 · ${package.priceLabel}${package.currency == 'USD' ? ' USD' : ''}',
+                  'Plan price · ${package.priceLabel}${package.currency == 'USD' ? ' USD' : ''}',
                   style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
                 ),
               ] else ...[
-                if (label == '继续付款')
+                if (label == 'Continue to payment')
                   Text(
-                    '订单尚未完成，可继续查看付款。',
+                    'Your order is not complete yet. Continue to payment.',
                     style: MomHomeTokens.text(
                       13,
                       color: MomHomeTokens.secondary,
@@ -278,13 +290,22 @@ class _RenewPackageCard extends StatelessWidget {
                     ),
                   ),
                 Text(
-                  package.description,
+                  package.publicDescription,
                   style: MomHomeTokens.text(
                     13,
                     color: MomHomeTokens.secondary,
                     height: 1.55,
                   ),
                 ),
+                if (!package.hasEnglishPurchaseDetails)
+                  Text(
+                    'Plan details need English review before purchase.',
+                    style: MomHomeTokens.text(
+                      12,
+                      color: MomHomeTokens.secondary,
+                      height: 1.55,
+                    ),
+                  ),
                 MomServicePackageFacts(package: package),
                 MomServicePrice(package: package),
               ],
@@ -328,11 +349,13 @@ class _RenewCatalogState extends StatelessWidget {
     child: MomSettingsCard(
       children: [
         Text(
-          loading ? '正在读取支持方案' : '暂无可选的支持方案',
+          loading ? 'Loading care plans' : 'No care plans available',
           style: MomHomeTokens.text(18, weight: FontWeight.w700),
         ),
         Text(
-          loading ? '请稍候，不需要重复操作。' : '稍后再来看看，已有服务记录仍可查看。',
+          loading
+              ? 'Please wait. You do not need to repeat this action.'
+              : 'Check back later. You can still view your existing service records.',
           style: MomHomeTokens.text(
             13,
             color: MomHomeTokens.secondary,
@@ -342,7 +365,7 @@ class _RenewCatalogState extends StatelessWidget {
         if (loading)
           const LinearProgressIndicator(minHeight: 4)
         else
-          TextButton(onPressed: onRefresh, child: const Text('刷新方案')),
+          TextButton(onPressed: onRefresh, child: const Text('Refresh plans')),
       ],
     ),
   );

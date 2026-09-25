@@ -79,24 +79,27 @@ class _WorkbenchRemindersPageState extends State<WorkbenchRemindersPage>
       return WorkbenchPageBody(
         children: [
           WorkbenchHeading(
-            title: '工作提醒',
-            subtitle: '只显示需要你处理的预约、病例和服务事项。',
+            title: 'Work reminders',
+            subtitle:
+                'Only appointments, cases, and service items that need your attention are shown.',
             actions: [
               if (data != null)
                 WorkbenchBadge(
-                  '${data.unreadCount} 条未读',
+                  '${data.unreadCount} unread',
                   color: MomCozyColors.primary,
                   background: MomCozyColors.roseSoft,
                 ),
               IconButton(
-                tooltip: '刷新工作提醒',
+                tooltip: 'Refresh work reminders',
                 onPressed: controller.busy ? null : controller.load,
                 icon: const Icon(Icons.refresh_rounded),
               ),
             ],
           ),
           if (controller.loading)
-            const LinearProgressIndicator(semanticsLabel: '正在读取工作提醒'),
+            const LinearProgressIndicator(
+              semanticsLabel: 'Loading work reminders',
+            ),
           if (controller.failure != null)
             ProductErrorView(
               failure: controller.failure!,
@@ -107,8 +110,9 @@ class _WorkbenchRemindersPageState extends State<WorkbenchRemindersPage>
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 36, horizontal: 20),
                 child: ProductEmptyView(
-                  title: '暂无工作提醒',
-                  description: '当前没有需要处理的预约变更、病例复核或服务跟进。',
+                  title: 'No work reminders',
+                  description:
+                      'No appointment changes, case reviews, or service follow-ups need your attention right now.',
                 ),
               ),
             ),
@@ -116,7 +120,7 @@ class _WorkbenchRemindersPageState extends State<WorkbenchRemindersPage>
             const Padding(
               padding: EdgeInsets.only(bottom: 14),
               child: Text(
-                '预约提醒',
+                'Appointment reminder',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ),
@@ -126,7 +130,7 @@ class _WorkbenchRemindersPageState extends State<WorkbenchRemindersPage>
             const Padding(
               padding: EdgeInsets.only(top: 16, bottom: 14),
               child: Text(
-                '病例与服务',
+                'Cases & services',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ),
@@ -201,10 +205,10 @@ class _WorkbenchRemindersPageState extends State<WorkbenchRemindersPage>
                           ),
                           WorkbenchBadge(
                             reading
-                                ? '正在保存'
+                                ? 'Saving'
                                 : unread
-                                ? '未读'
-                                : '已读',
+                                ? 'Unread'
+                                : 'Read',
                             color: unread
                                 ? MomCozyColors.primary
                                 : MomCozyColors.mutedForeground,
@@ -216,7 +220,7 @@ class _WorkbenchRemindersPageState extends State<WorkbenchRemindersPage>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${item.displayName} · ${item.packageName}',
+                        '${item.displayName} · ${item.publicPackageName}',
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -266,7 +270,7 @@ class _WorkbenchRemindersPageState extends State<WorkbenchRemindersPage>
                               onPressed: controller.busy
                                   ? null
                                   : () => controller.markRead(item),
-                              child: const Text('标记已读'),
+                              child: const Text('Mark as read'),
                             ),
                         ],
                       ),

@@ -161,9 +161,9 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".local"
         }
-        create("unified") {
+        create("staging") {
             dimension = "environment"
-            applicationIdSuffix = ".unified"
+            applicationIdSuffix = ".staging"
         }
         create("production") {
             dimension = "environment"

@@ -10,8 +10,7 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/modules/mom/presentation/mom_home_sections.dart';
-import 'package:momcozy_flutter_app/modules/services/presentation/expert_support_section.dart';
+import 'package:momcozy_flutter_app/shared/widgets/mom_companion_widgets.dart';
 import '../../support/mom_inventory_transport.dart';
 import '../../support/fixture_api_transport.dart';
 import '../../support/momcozy_test_fonts.dart';
@@ -126,7 +125,7 @@ void main() {
     WidgetTester tester,
     String state,
     String action, {
-    String route = '/me',
+    String route = '/me/lactation',
   }) async {
     // Commit edits and finish the input hint's fade without settling spinners.
     await tester.pump();
@@ -168,15 +167,11 @@ void main() {
       await capture(
         tester,
         'initial-home',
-        'More → Me with no diary or milk records',
+        'More → Me with no records',
+        route: '/me',
       );
-      await tap(
-        tester,
-        find.descendant(
-          of: find.byType(MomLactationCard),
-          matching: find.byType(FilledButton),
-        ),
-      );
+      router.push('/me/lactation?create=1');
+      await tester.pumpAndSettle();
       await capture(
         tester,
         'milk-new-pump',
@@ -186,7 +181,7 @@ void main() {
         const ValueKey('lactation-measurement-pump'),
       );
       await tester.enterText(measurement, '2001');
-      await tap(tester, find.text('保存这次记录'));
+      await tap(tester, find.text('Save this record'));
       expect(transport.records, isEmpty);
       await capture(
         tester,
@@ -194,32 +189,37 @@ void main() {
         'Submit out of range pump volume → validation',
       );
       await tester.enterText(measurement, '80');
-      await tap(tester, find.text('右侧'));
+      await tap(tester, find.text('Right side'));
       await capture(tester, 'milk-filled', 'Enter 80 ml and select right side');
       transport.failWrite = true;
-      await tap(tester, find.text('保存这次记录'));
-      expect(find.text('保存结果还未确认，请重试这次保存。'), findsOneWidget);
+      await tap(tester, find.text('Save this record'));
+      expect(
+        find.text('Your save has not been confirmed. Please try again.'),
+        findsOneWidget,
+      );
       await capture(
         tester,
         'milk-save-error',
         'Save → HTTP failure, draft locked pending retry',
       );
       transport.failWrite = false;
-      await tap(tester, find.text('重试保存'));
+      await tap(tester, find.text('Try saving again'));
       expect(transport.records, hasLength(1));
-      expect(find.text('这次记录已保存。'), findsOneWidget);
+      expect(find.text('Record saved.'), findsOneWidget);
       await capture(
         tester,
         'milk-modal-saved',
         'Retry save → actual record list and saved feedback',
       );
-      await tap(tester, find.byTooltip('关闭泌乳记录'));
+      await tap(tester, find.byTooltip('Close feeding and pumping records'));
       await capture(
         tester,
         'milk-home-refreshed',
-        'Close saved panel → home displays 80 ml',
+        'Close saved panel → redesigned Me home',
+        route: '/me',
       );
-      await tap(tester, find.text('查看记录 ›'));
+      router.push('/me/lactation');
+      await tester.pumpAndSettle();
       const milkRoute = '/me/lactation';
       await capture(
         tester,
@@ -238,7 +238,7 @@ void main() {
         route: milkRoute,
       );
       await tester.enterText(measurement, '95');
-      await tap(tester, find.text('保存修改'));
+      await tap(tester, find.text('Save changes'));
       expect((transport.records.single['observation'] as Map)['volume_ml'], 95);
       await capture(
         tester,
@@ -258,7 +258,7 @@ void main() {
         route: milkRoute,
       );
       transport.failWrite = true;
-      await tap(tester, find.text('撤销'));
+      await tap(tester, find.text('Undo'));
       await capture(
         tester,
         'milk-restore-error',
@@ -266,7 +266,7 @@ void main() {
         route: milkRoute,
       );
       transport.failWrite = false;
-      await tap(tester, find.text('撤销'));
+      await tap(tester, find.text('Undo'));
       expect(transport.records, hasLength(1));
       await capture(
         tester,
@@ -274,42 +274,47 @@ void main() {
         'Retry undo → record restored',
         route: milkRoute,
       );
-      await tap(tester, find.byTooltip('关闭泌乳记录'));
+      await tap(tester, find.byTooltip('Close feeding and pumping records'));
       await capture(
         tester,
         'milk-return-home',
-        'Close history → original home refreshes 95 ml',
+        'Close history → redesigned Me home',
+        route: '/me',
       );
       await tester.pumpWidget(const SizedBox());
     },
   );
 
-  testWidgets('inventory Mom AI card to Cozymate draft and service catalog', (
+  testWidgets('inventory Mom AI card to Momcozy AI draft and service catalog', (
     tester,
   ) async {
     await mount(tester);
-    await tap(tester, find.byType(MomAiInsightCard));
+    await tap(tester, find.text('Chat with Momcozy AI'));
     await capture(
       tester,
       'ai-context-draft',
-      'Home AI card → Cozymate with prefilled prompt, not sent',
+      'Me AI card → Momcozy AI with prefilled prompt, not sent',
       route: '/',
     );
     expect(transport.postedBodies, isEmpty);
-    expect(find.text('我想聊聊今天的喂养和恢复情况。'), findsOneWidget);
-    await tap(tester, find.text('Me'));
+    expect(
+      find.text('I\'d like to talk about feeding and recovery today.'),
+      findsOneWidget,
+    );
+    await tap(tester, find.text('More').last);
     await tap(tester, find.byType(MomExpertPlanEntry));
     await capture(
       tester,
       'service-catalog',
-      'Home expert companionship entry → real service catalog',
+      'More Expert support → real service catalog',
       route: '/services',
     );
-    await tap(tester, find.text('返回'));
+    await tap(tester, find.text('Back'));
     await capture(
       tester,
       'service-return-home',
-      'Service catalog Back → Mom home',
+      'Service catalog Back → More',
+      route: '/more',
     );
     await tester.pumpWidget(const SizedBox());
   });
@@ -317,7 +322,8 @@ void main() {
     tester,
   ) async {
     await mount(tester);
-    await tap(tester, find.text('查看记录 ›'));
+    router.push('/me/lactation');
+    await tester.pumpAndSettle();
     const route = '/me/lactation';
     await capture(
       tester,
@@ -325,8 +331,8 @@ void main() {
       'Home View records → empty standalone lactation history',
       route: route,
     );
-    await tap(tester, find.text('添加一条'));
-    await tap(tester, find.text('亲喂'));
+    await tap(tester, find.text('Add a record'));
+    await tap(tester, find.text('Nursing'));
     await capture(
       tester,
       'nursing-empty',
@@ -335,7 +341,7 @@ void main() {
     );
     final measure = find.byKey(const ValueKey('lactation-measurement-nurse'));
     await tester.enterText(measure, '241');
-    await tap(tester, find.text('保存这次记录'));
+    await tap(tester, find.text('Save this record'));
     await capture(
       tester,
       'nursing-duration-invalid',
@@ -343,11 +349,11 @@ void main() {
       route: route,
     );
     await tester.enterText(measure, '12');
-    await tap(tester, find.text('补充感受与备注'));
-    await tap(tester, find.text('胀满'));
+    await tap(tester, find.text('Feelings and notes'));
+    await tap(tester, find.text('Full'));
     await tester.enterText(
-      find.widgetWithText(TextFormField, '备注（可选）'),
-      '先记录这次感受',
+      find.widgetWithText(TextFormField, 'Notes (optional)'),
+      'I want to remember how this feeding felt.',
     );
     await capture(
       tester,
@@ -394,14 +400,14 @@ void main() {
         matching: find.text(strings.cancelButtonLabel),
       ),
     );
-    await tap(tester, find.text('取消'));
+    await tap(tester, find.text('Cancel'));
     await capture(
       tester,
       'nursing-cancel-confirm',
       'Cancel record → discard confirmation',
       route: route,
     );
-    await tap(tester, find.text('继续填写'));
+    await tap(tester, find.text('Keep editing'));
     await capture(
       tester,
       'nursing-cancel-retained',
@@ -409,7 +415,7 @@ void main() {
       route: route,
     );
     transport.writeGate = Completer<void>();
-    await tester.tap(find.text('保存这次记录'));
+    await tester.tap(find.text('Save this record'));
     await tester.pump();
     await capture(
       tester,
@@ -430,9 +436,9 @@ void main() {
       'Response received → saved nursing history',
       route: route,
     );
-    await tap(tester, find.text('添加一条'));
-    await tap(tester, find.text('取消'));
-    await tap(tester, find.text('离开'));
+    await tap(tester, find.text('Add a record'));
+    await tap(tester, find.text('Cancel'));
+    await tap(tester, find.text('Leave'));
     await capture(
       tester,
       'nursing-new-discarded',
@@ -462,32 +468,34 @@ void main() {
         },
       );
       const route = '/me/lactation';
-      await tap(tester, find.text('查看记录 ›'));
+      router.push('/me/lactation');
+      await tester.pumpAndSettle();
       await capture(
         tester,
         'trend-seven-days',
         'Home history → seven-day measured curve with gaps',
         route: route,
       );
-      await tap(tester, find.text('30天'));
+      await tap(tester, find.text('30 days'));
       await capture(
         tester,
         'trend-thirty-days',
         'Select 30 days → expanded period and older measurements',
         route: route,
       );
-      await tap(tester, find.text('7天'));
+      await tap(tester, find.text('7 days'));
       await capture(
         tester,
         'trend-seven-days-return',
         'Return to 7 days → shorter curve',
         route: route,
       );
-      await tap(tester, find.byTooltip('关闭泌乳记录'));
+      await tap(tester, find.byTooltip('Close feeding and pumping records'));
       await capture(
         tester,
         'trend-return-home',
-        'Close trend → today total independent of historical measurements',
+        'Close trend → redesigned Me home',
+        route: '/me',
       );
       expect(transport.mutationPaths, isEmpty);
       await tester.pumpWidget(const SizedBox());
@@ -507,7 +515,8 @@ void main() {
       }),
     );
     const route = '/me/lactation';
-    await tap(tester, find.text('查看记录 ›'));
+    router.push('/me/lactation');
+    await tester.pumpAndSettle();
     await tap(
       tester,
       find.byKey(const ValueKey('lactation-edit-inventory-milk-1')),
@@ -518,21 +527,21 @@ void main() {
     );
     transport.failWrite = true;
     transport.failureStatus = 409;
-    await tap(tester, find.text('保存修改'));
+    await tap(tester, find.text('Save changes'));
     await capture(
       tester,
       'milk-conflict',
       'Edit saved milk and receive conflict → draft preserved',
       route: route,
     );
-    await tap(tester, find.text('重新载入'));
+    await tap(tester, find.text('Reload'));
     await capture(
       tester,
       'milk-conflict-reload-confirm',
       'Reload conflicted milk → discard confirmation',
       route: route,
     );
-    await tap(tester, find.text('离开'));
+    await tap(tester, find.text('Leave'));
     await capture(
       tester,
       'milk-conflict-reloaded',
@@ -551,28 +560,28 @@ void main() {
       route: route,
     );
     transport.failureStatus = 503;
-    await tap(tester, find.text('添加一条'));
+    await tap(tester, find.text('Add a record'));
     await tester.enterText(
       find.byKey(const ValueKey('lactation-measurement-pump')),
       '50',
     );
-    await tap(tester, find.text('保存这次记录'));
+    await tap(tester, find.text('Save this record'));
     await capture(
       tester,
       'milk-uncertain-save',
       'Unavailable create response → uncertain result and retry controls',
       route: route,
     );
-    await tap(tester, find.byTooltip('关闭泌乳记录'));
+    await tap(tester, find.byTooltip('Close feeding and pumping records'));
     await capture(
       tester,
       'milk-uncertain-leave-confirm',
       'Close uncertain record → reconciliation warning',
       route: route,
     );
-    await tap(tester, find.text('继续填写'));
+    await tap(tester, find.text('Keep editing'));
     transport.failWrite = false;
-    await tap(tester, find.text('重试保存'));
+    await tap(tester, find.text('Try saving again'));
     expect(transport.records, hasLength(2));
     await capture(
       tester,
@@ -580,11 +589,12 @@ void main() {
       'Retry same pending save → saved list',
       route: route,
     );
-    await tap(tester, find.byTooltip('关闭泌乳记录'));
+    await tap(tester, find.byTooltip('Close feeding and pumping records'));
     await capture(
       tester,
       'milk-uncertain-return-home',
-      'Return from reconciled save → updated home total',
+      'Return from reconciled save → Me home',
+      route: '/me',
     );
     await tester.pumpWidget(const SizedBox());
   });
@@ -593,50 +603,49 @@ void main() {
     'inventory Mom purchased home service progress and booking entry',
     (tester) async {
       await mount(tester, prepare: (t) => t.seedPlan());
-      await tester.scrollUntilVisible(
-        find.byType(ExpertServiceCard),
-        300,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.pumpAndSettle();
-      expect(find.byType(MomExpertPlanEntry), findsOneWidget);
       await capture(
         tester,
         'purchased-home',
-        'Me with active plan → both catalog entry and owned service card',
+        'Me with active plan; expert care is accessed from More',
+        route: '/me',
       );
-      await tap(tester, find.text('服务进度 ›'));
+      await tap(tester, find.text('More'));
+      await tap(tester, find.byType(MomExpertPlanEntry));
+      await tap(tester, find.text('View my services'));
+      await tap(tester, find.text('View service progress'));
       await capture(
         tester,
         'purchased-progress',
         'Owned plan → actual service timeline route',
         route: '/services/episodes/inventory-episode',
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'purchased-progress-return',
-        'Timeline back → owned plan on home',
+        'Timeline back → owned service plan',
+        route: '/services/feeding-confidence',
       );
-      await tap(tester, find.text('预约咨询'));
+      await tap(tester, find.text('Book an appointment'));
       await capture(
         tester,
         'purchased-booking-precheck',
         'Book from home → actual booking route and suitability dialog',
         route: '/services/episodes/inventory-episode/booking',
       );
-      await tap(tester, find.byTooltip('关闭预约前确认'));
+      await tap(tester, find.byTooltip('Close booking check'));
       await capture(
         tester,
         'purchased-booking-cancel-precheck',
         'Cancel suitability check → booking page',
         route: '/services/episodes/inventory-episode/booking',
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'purchased-booking-return',
-        'Booking back → active plan unchanged',
+        'Booking back → active service plan unchanged',
+        route: '/services/feeding-confidence',
       );
       expect(transport.mutationPaths, isEmpty);
       await tester.pumpWidget(const SizedBox());

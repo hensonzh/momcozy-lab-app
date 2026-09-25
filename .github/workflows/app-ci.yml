@@ -14,9 +14,6 @@ jobs:
   quality-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 35
-    env:
-      MOMCOZY_API_BASE_URL: https://backend-test.lute-momcozylab.luteos.cloud:8443
-      MOMCOZY_AGENT_API_BASE_URL: https://agent-test.lute-momcozylab.luteos.cloud:8443
     steps:
       - uses: actions/checkout@v4
 
@@ -67,20 +64,19 @@ jobs:
       - name: Test
         run: flutter test --no-pub --exclude-tags=golden
 
-      - name: Build a test-shaped unified smoke APK
-        run: |
-          node scripts/build-flutter-android-apk.mjs \
-            --mode debug \
-            --flavor unified \
-            --dart-define=MOMCOZY_ENV=test \
-            --dart-define=MOMCOZY_API_BASE_URL="${MOMCOZY_API_BASE_URL}" \
-            --dart-define=MOMCOZY_AGENT_API_BASE_URL="${MOMCOZY_AGENT_API_BASE_URL}"
+      - name: Build the local debug APK
+        run: >-
+          node scripts/build-mobile-app.mjs
+          --platform android
+          --environment local
+          --mode debug
+          --format apk
 
       - name: Upload the verified APK
         uses: actions/upload-artifact@v4
         with:
-          name: momcozy-unified-smoke-${{ github.sha }}
-          path: build/app/outputs/flutter-apk/app-unified-debug.apk
+          name: momcozy-local-debug-${{ github.sha }}
+          path: build/app/outputs/flutter-apk/app-local-debug.apk
           if-no-files-found: error
           retention-days: 7
 

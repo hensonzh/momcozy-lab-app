@@ -11,8 +11,8 @@ const read = (relativePath) =>
   readFileSync(path.join(projectRoot, relativePath), "utf8");
 
 const failures = [];
-const testCaPath = "assets/certificates/momcozy-test-internal-ca.pem";
-const testCaFingerprint =
+const stagingCaPath = "assets/certificates/momcozy-staging-internal-ca.pem";
+const stagingCaFingerprint =
   "B2:1B:37:43:4D:40:47:DC:83:FE:B9:E0:DB:E7:F7:D7:C2:55:81:E9:4A:AB:0B:18:AE:63:AF:1C:E5:D1:9F:78";
 
 const requireContains = (relativePath, needle, description) => {
@@ -58,40 +58,40 @@ requireContains(
   "Log redactor must redact free-form message content",
 );
 requireContains(
-  "lib/core/network/test_certificate_trust.dart",
+  "lib/core/network/staging_certificate_trust.dart",
   "backend-test.lute-momcozylab.luteos.cloud",
-  "Test trust must allow the Product Backend SNI host",
+  "Staging trust must allow the Product Backend SNI host",
 );
 requireContains(
-  "lib/core/network/test_certificate_trust.dart",
+  "lib/core/network/staging_certificate_trust.dart",
   "agent-test.lute-momcozylab.luteos.cloud",
-  "Test trust must allow the Agent Runtime SNI host",
+  "Staging trust must allow the Agent Runtime SNI host",
 );
 requireContains(
-  "lib/core/network/test_certificate_trust.dart",
-  testCaPath,
-  "Test trust must load the internal CA asset",
+  "lib/core/network/staging_certificate_trust.dart",
+  stagingCaPath,
+  "Staging trust must load the internal CA asset",
 );
 forbidContains(
-  "lib/core/network/test_certificate_trust.dart",
+  "lib/core/network/staging_certificate_trust.dart",
   "lute-momcozylab-test.pem",
-  "Test trust must not load the retired leaf certificate",
+  "Staging trust must not load the retired leaf certificate",
 );
 forbidContains(
-  "lib/core/network/test_certificate_trust.dart",
+  "lib/core/network/staging_certificate_trust.dart",
   "lute-momcozylab-staging.pem",
-  "Test trust must not retain the legacy retired leaf certificate",
+  "Staging trust must not retain the legacy retired leaf certificate",
 );
 
-const testCa = new X509Certificate(read(testCaPath));
-if (!testCa.ca) {
-  failures.push(`${testCaPath} must be a CA certificate`);
+const stagingCa = new X509Certificate(read(stagingCaPath));
+if (!stagingCa.ca) {
+  failures.push(`${stagingCaPath} must be a CA certificate`);
 }
-if (testCa.fingerprint256 !== testCaFingerprint) {
-  failures.push(`${testCaPath} fingerprint does not match the reviewed CA`);
+if (stagingCa.fingerprint256 !== stagingCaFingerprint) {
+  failures.push(`${stagingCaPath} fingerprint does not match the reviewed CA`);
 }
-if (Date.parse(testCa.validTo) <= Date.now()) {
-  failures.push(`${testCaPath} is expired`);
+if (Date.parse(stagingCa.validTo) <= Date.now()) {
+  failures.push(`${stagingCaPath} is expired`);
 }
 
 if (failures.length > 0) {

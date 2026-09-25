@@ -79,7 +79,7 @@ class AgentComposerImageAttachment extends StatelessWidget {
       name: image.name,
       size: image.size,
       removeButtonKey: removeButtonKey,
-      removeLabel: '移除图片',
+      removeLabel: 'Remove image',
       onRemove: onRemove,
       preview: _AgentDataUrlImage(
         image: image,
@@ -167,7 +167,7 @@ class _AgentFullScreenImageState extends State<_AgentFullScreenImage> {
   });
 
   Widget _error() => MediaViewerLoadError(
-    message: _canReload ? '图片加载失败' : '图片无法显示，请返回后重新选择',
+    message: _canReload ? 'Could not load image' : 'Could not display this image. Go back and choose it again.',
     onRetry: _canReload ? _retry : null,
   );
 
@@ -182,7 +182,7 @@ class _AgentFullScreenImageState extends State<_AgentFullScreenImage> {
     future: _content,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return const MediaViewerLoading(label: '加载图片…');
+        return const MediaViewerLoading(label: 'Loading image…');
       }
       final bytes = snapshot.data;
       if (snapshot.hasError || bytes == null || bytes.isEmpty) return _error();
@@ -194,7 +194,7 @@ class _AgentFullScreenImageState extends State<_AgentFullScreenImage> {
         errorBuilder: (_, _, _) => _error(),
         frameBuilder: (context, image, frame, wasSynchronouslyLoaded) {
           if (frame == null && !wasSynchronouslyLoaded) {
-            return const MediaViewerLoading(label: '加载图片…');
+            return const MediaViewerLoading(label: 'Loading image…');
           }
           return InteractiveViewer(
             key: const ValueKey('agent-image-stage'),

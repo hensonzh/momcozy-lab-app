@@ -230,7 +230,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(_scroll(tester).offset, closeTo(offset, 1));
-      expect(find.text('回到最新消息'), findsOneWidget);
+      expect(find.text('Jump to latest message'), findsOneWidget);
       expect(find.text('有新回复 · 回到最新'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-first-unread-marker')),
@@ -275,7 +275,7 @@ void main() {
       expect(messages.first.id, 'message-1');
       expect(messages.map((message) => message.id).toSet().length, 41);
       expect(_scroll(tester).offset, closeTo(offset, 1));
-      expect(find.text('回到最新消息'), findsOneWidget);
+      expect(find.text('Jump to latest message'), findsOneWidget);
       expect(find.text('有新回复 · 回到最新'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-first-unread-marker')),
@@ -360,14 +360,15 @@ AgentStreamRunState _state(int index) => AgentStreamRunState(
 );
 
 String _text(int index) => switch (index) {
-  1 => '昨天的记录已经记好了，今天还想接着补充。',
-  2 => '好的，我们已保留上次的记录。',
-  3 => '今天也想继续记一下宝宝的喂养情况，需要准备什么？',
-  4 => '可以先告诉我今天喂养的大致时间、方式，以及你观察到的变化。我们接着上次的记录一起整理。',
+  1 => 'I saved yesterday’s notes and would like to add more today.',
+  2 => 'Your earlier notes are saved. We can continue here.',
+  3 => 'I want to track feeding again today. What should I note?',
+  4 =>
+    'Start with the feeding time, method, and what you noticed today. We can compare it with your earlier notes.',
   _ =>
     index.isOdd
-        ? '第 $index 条记录：今天的情况和上次差不多，还想继续补充。'
-        : '已收到第 $index 条记录。${List.filled(index % 3 + 1, '我们可以接着整理时间、方式和观察到的变化。').join()}',
+        ? 'Entry $index: Today feels similar to last time. I have another note to add.'
+        : 'Entry $index received. ${List.filled(index % 3 + 1, 'We can review the time, feeding method, and what changed.').join()}',
 };
 
 AgentConversationHistory _history(int first, int last, {int? cursor}) =>

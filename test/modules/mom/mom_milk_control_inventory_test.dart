@@ -10,7 +10,6 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/modules/mom/presentation/lactation_panel.dart';
-import 'package:momcozy_flutter_app/modules/mom/presentation/mom_home_sections.dart';
 import 'package:momcozy_flutter_app/modules/mom/application/lactation_controller.dart';
 import 'package:momcozy_flutter_app/domain/lactation/lactation_record.dart';
 import '../../support/mom_inventory_transport.dart';
@@ -92,14 +91,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -133,7 +131,7 @@ void main() {
     WidgetTester tester,
     String state,
     String action, {
-    String route = '/me',
+    String route = '/me/lactation',
   }) async {
     // Commit edits and finish the input hint's fade without settling spinners.
     await tester.pump();
@@ -153,7 +151,7 @@ void main() {
       'previous_source': previous,
       'route': route,
       'trigger': action,
-      'root_entry': 'Authenticated More → tap Me bottom navigation',
+      'root_entry': 'Authenticated More → existing lactation deep link',
       'evidence':
           'Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone',
       'test': 'test/modules/mom/mom_milk_control_inventory_test.dart',
@@ -172,7 +170,7 @@ void main() {
   }
 
   Future<void> closePanel(WidgetTester tester) async {
-    final close = find.byTooltip('关闭泌乳记录');
+    final close = find.byTooltip('Close feeding and pumping records');
     if (close.evaluate().isEmpty) {
       await tester.scrollUntilVisible(
         close,
@@ -206,23 +204,18 @@ void main() {
       tester,
     ) async {
       await mount(tester, width: narrow ? 320 : 393, scale: narrow ? 2 : 1);
-      await capture(tester, 'home-entry', 'More → Me → initial home');
-      await tap(
-        tester,
-        find.descendant(
-          of: find.byType(MomLactationCard),
-          matching: find.byType(FilledButton),
-        ),
-      );
+      await capture(tester, 'home-entry', 'Authenticated More', route: '/more');
+      router.push('/me/lactation?create=1');
+      await tester.pumpAndSettle();
       await capture(tester, 'pump-empty', 'Home record once → pump editor');
-      await tap(tester, find.text('右侧'));
+      await tap(tester, find.text('Right side'));
       expect(draft(tester).side, BreastSide.right);
       await capture(
         tester,
         'side-right',
         'Select right breast → right volume label',
       );
-      await tap(tester, find.text('左侧'));
+      await tap(tester, find.text('Left side'));
       expect(draft(tester).side, BreastSide.left);
       await capture(
         tester,
@@ -235,7 +228,7 @@ void main() {
         'pump-decimal',
         'Enter decimal pump volume 80.5 ml',
       );
-      await tap(tester, find.text('亲喂'));
+      await tap(tester, find.text('Nursing'));
       expect(draft(tester).method, LactationMethod.nurse);
       expect(draft(tester).measurement, isEmpty);
       await capture(
@@ -249,7 +242,7 @@ void main() {
         'nurse-duration',
         'Enter nursing duration 12 minutes',
       );
-      await tap(tester, find.text('泵奶'));
+      await tap(tester, find.text('Pumping'));
       expect(draft(tester).measurement, isEmpty);
       await capture(
         tester,
@@ -257,7 +250,7 @@ void main() {
         'Switch back to pump → nursing number cleared',
       );
       await input(tester, measurement(LactationMethod.pump), '80.5');
-      await tap(tester, find.text('补充感受与备注'));
+      await tap(tester, find.text('Feelings and notes'));
       await capture(tester, 'optional-open', 'Expand breast comfort and note');
       for (final option in breastComfortLabels.entries) {
         await tap(tester, find.text(option.value));
@@ -275,21 +268,21 @@ void main() {
           'Tap ${option.value} again → comfort cleared',
         );
       }
-      await tap(tester, find.text('舒服'));
+      await tap(tester, find.text('Comfortable'));
       await capture(
         tester,
         'comfort-restored',
         'Restore comfortable breast feeling',
       );
-      final note = find.widgetWithText(TextFormField, '备注（可选）');
-      await input(tester, note, '这次记录左侧感受');
-      expect(draft(tester).note, '这次记录左侧感受');
+      final note = find.widgetWithText(TextFormField, 'Notes (optional)');
+      await input(tester, note, 'Left side feels comfortable this time.');
+      expect(draft(tester).note, 'Left side feels comfortable this time.');
       await capture(tester, 'note-filled', 'Enter optional note');
       await input(tester, note, '');
       expect(draft(tester).note, isEmpty);
       await capture(tester, 'note-cleared', 'Clear optional note');
-      await input(tester, note, '这次记录左侧感受');
-      await tap(tester, find.text('补充感受与备注'));
+      await input(tester, note, 'Left side feels comfortable this time.');
+      await tap(tester, find.text('Feelings and notes'));
       await capture(
         tester,
         'optional-collapsed',
@@ -352,9 +345,9 @@ void main() {
         'Cancel picker → accepted time unchanged',
       );
       expect(transport.records, isEmpty);
-      await tap(tester, find.text('保存这次记录'));
+      await tap(tester, find.text('Save this record'));
       expect(transport.records, hasLength(1));
-      expect(find.text('这次记录已保存。'), findsOneWidget);
+      expect(find.text('Record saved.'), findsOneWidget);
       await capture(
         tester,
         'pump-saved',
@@ -369,7 +362,7 @@ void main() {
       expect(saved.side, BreastSide.left);
       expect(double.parse(saved.measurement), 80.5);
       expect(saved.feeling, BreastComfort.comfortable);
-      expect(saved.note, '这次记录左侧感受');
+      expect(saved.note, 'Left side feels comfortable this time.');
       expect(saved.occurredAt.hour, 12);
       expect(saved.occurredAt.minute, 34);
       await capture(
@@ -377,7 +370,7 @@ void main() {
         'pump-reopened',
         'Edit saved pump → all fields retained and optional section expanded',
       );
-      await tap(tester, find.text('亲喂'));
+      await tap(tester, find.text('Nursing'));
       expect(draft(tester).measurement, isEmpty);
       expect(draft(tester).feeling, BreastComfort.comfortable);
       expect(draft(tester).note, saved.note);
@@ -386,14 +379,14 @@ void main() {
         'saved-switch-to-nurse',
         'Switch saved pump to nursing → clear numeric value, preserve side, note and comfort',
       );
-      await tap(tester, find.text('保存修改'));
+      await tap(tester, find.text('Save changes'));
       expect(transport.records, hasLength(1));
       expect(transport.records.single['version'], 2);
       expect(
         (transport.records.single['observation'] as Map)['duration_minutes'],
         isNull,
       );
-      expect(find.text('这次记录已更新。'), findsOneWidget);
+      expect(find.text('Record updated.'), findsOneWidget);
       await capture(
         tester,
         'nurse-no-duration-saved',
@@ -403,9 +396,11 @@ void main() {
       await capture(
         tester,
         'home-nursing-only',
-        'Close saved nursing → home count without invented milk amount',
+        'Close saved nursing → More, without inventing milk amount',
+        route: '/more',
       );
-      await tap(tester, find.text('查看记录 ›'));
+      router.push('/me/lactation');
+      await tester.pumpAndSettle();
       const route = '/me/lactation';
       await capture(
         tester,
@@ -426,14 +421,14 @@ void main() {
         'History Edit → saved nursing with empty duration and retained note',
         route: route,
       );
-      await tap(tester, find.text('取消'));
+      await tap(tester, find.text('Cancel'));
       await capture(
         tester,
         'cancel-confirm',
         'Cancel unchanged lactation editor → confirmation still shown',
         route: route,
       );
-      await tap(tester, find.text('离开'));
+      await tap(tester, find.text('Leave'));
       expect(transport.records.single['version'], 2);
       await capture(
         tester,
@@ -442,8 +437,13 @@ void main() {
         route: route,
       );
       await closePanel(tester);
-      await capture(tester, 'home-return', 'History close → home');
-      await tap(tester, find.text('More'));
+      await capture(
+        tester,
+        'home-return',
+        'History close → More',
+        route: '/more',
+      );
+      await tester.pumpAndSettle();
       await capture(
         tester,
         'more-return',

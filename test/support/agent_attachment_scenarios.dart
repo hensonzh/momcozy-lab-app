@@ -27,7 +27,7 @@ Future<void> verifyAgentAttachments(
         child: child!,
       ),
       home: Scaffold(
-        appBar: AppBar(title: const Text('Cozymate')),
+        appBar: AppBar(title: const Text('Momcozy AI')),
         body: StatefulBuilder(
           builder: (context, setState) {
             update = setState;
@@ -96,8 +96,8 @@ Future<void> verifyAgentAttachments(
     tester.widget<EditableText>(find.byType(EditableText)).focusNode.hasFocus,
     isFalse,
   );
-  expect(find.text('拍摄一张照片'), findsOneWidget);
-  expect(find.text('PDF · 最大 10 MB'), findsOneWidget);
+  expect(find.text('Take a photo'), findsOneWidget);
+  expect(find.text('PDF · Up to 10 MB'), findsOneWidget);
   expect(find.textContaining('Word'), findsNothing);
   expect(
     tester
@@ -187,7 +187,7 @@ Future<void> verifyAgentSentFiles(
         child: child!,
       ),
       home: Scaffold(
-        appBar: AppBar(title: const Text('Cozymate')),
+        appBar: AppBar(title: const Text('Momcozy AI')),
         body: const SingleChildScrollView(
           padding: EdgeInsets.all(16),
           child: AgentSentFiles(

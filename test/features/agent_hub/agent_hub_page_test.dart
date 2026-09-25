@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
@@ -74,7 +75,7 @@ void main() {
     },
   );
 
-  testWidgets('Cozymate keeps the idle conversation free of service menus', (
+  testWidgets('Momcozy AI keeps the idle conversation free of service menus', (
     tester,
   ) async {
     await tester.pumpWidget(_host(const AgentHubPage()));
@@ -112,28 +113,30 @@ void main() {
     );
   });
 
-  testWidgets(
-    'design shortcuts send through the existing conversation runner',
-    (tester) async {
-      final client = _ControllableAgentStreamClient();
-      addTearDown(client.dispose);
-      await tester.pumpWidget(
-        _host(AgentHubPage(runner: AgentStreamRunner(client))),
-      );
-      await tester.tap(find.text('奶量分析'));
-      await tester.pump();
-      expect(client.requests.single.message, '我想了解奶量和喂养情况，请先问我最重要的问题。');
-      expect(find.text(client.requests.single.message), findsOneWidget);
-      final recovery = tester.widget<OutlinedButton>(
-        find.ancestor(
-          of: find.text('产后康复评估'),
-          matching: find.byType(OutlinedButton),
-        ),
-      );
-      expect(recovery.onPressed, isNull);
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
+  testWidgets('design shortcuts send through the existing conversation runner', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+    await tester.tap(find.text('Milk supply insights'));
+    await tester.pump();
+    expect(
+      client.requests.single.message,
+      'I would like to understand my milk supply and feeding. Start by asking me the most important question.',
+    );
+    expect(find.text(client.requests.single.message), findsOneWidget);
+    final recovery = tester.widget<OutlinedButton>(
+      find.ancestor(
+        of: find.text('Postpartum recovery check-in'),
+        matching: find.byType(OutlinedButton),
+      ),
+    );
+    expect(recovery.onPressed, isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
 
   testWidgets(
     'phase one ignores legacy action previews and keeps the composer usable',
@@ -155,7 +158,7 @@ void main() {
                       'title': '删除下午 2 点吸奶任务',
                       'target': '吸奶任务',
                       'before': '2026-08-07 14:00',
-                      'after': '删除',
+                      'after': 'Delete',
                       'date': '2026-08-07',
                       'timezone': 'Asia/Shanghai',
                       'impact_scope': '仅此任务',
@@ -170,7 +173,12 @@ void main() {
 
       expect(find.text('日程删除'), findsNothing);
       expect(find.text('删除下午 2 点吸奶任务'), findsNothing);
-      expect(find.text('当前版本暂不支持此操作，请继续提问。'), findsWidgets);
+      expect(
+        find.text(
+          'This action is not supported in this version. You can keep asking questions.',
+        ),
+        findsWidgets,
+      );
       final composer = find.byKey(const ValueKey('agent-composer-input'));
       expect(tester.widget<TextField>(composer).enabled, isTrue);
       await tester.enterText(composer, '继续聊聊');
@@ -189,7 +197,7 @@ void main() {
             events: [
               AgentStreamEvent({
                 'type': 'run.progress',
-                'payload': {'label': '我想一下'},
+                'payload': {'label': 'Let me think…'},
               }),
             ],
           ),
@@ -254,7 +262,7 @@ void main() {
       find.byKey(const ValueKey('agent-chat-scroll-view')),
     );
     final greetingRect = tester.getRect(
-      find.textContaining('初次见面，很高兴认识你，我是 Cozymate'),
+      find.textContaining("Hi, I'm Momcozy AI."),
     );
 
     expect(greetingRect.top - chatRect.top, lessThan(120));
@@ -321,9 +329,12 @@ void main() {
       ),
     );
 
-    expect(find.text('这次没有拿到回复。'), findsOneWidget);
-    expect(find.text('服务执行失败，请稍后重试'), findsOneWidget);
-    expect(find.textContaining('连接中断'), findsNothing);
+    expect(find.text('No response this time.'), findsOneWidget);
+    expect(
+      find.text('Could not complete the request. Please try again later.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Connection lost'), findsNothing);
   });
 
   testWidgets('Agent Hub marks active assistant avatar as thinking', (
@@ -435,7 +446,7 @@ void main() {
         runState: AgentStreamRunState(
           phase: AgentStreamRunPhase.finished,
           threadId: 'thread-motion-feedback',
-          textContent: '你的头颈姿态评估反馈已经生成。',
+          textContent: 'Your head and neck assessment feedback is ready.',
         ),
         historyMessages: [
           AgentHubHistorySnapshot(
@@ -453,7 +464,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.textContaining('[系统流程触发]'), findsNothing);
-    expect(find.text('你的头颈姿态评估反馈已经生成。', findRichText: true), findsOneWidget);
+    expect(
+      find.text(
+        'Your head and neck assessment feedback is ready.',
+        findRichText: true,
+      ),
+      findsOneWidget,
+    );
     expect(store.snapshot?.historyMessages, isEmpty);
   });
 
@@ -625,7 +642,7 @@ void main() {
     await tester.pumpWidget(
       _host(
         AgentQuickRepliesBar(
-          replies: const ['继续聊这个', '给我更多细节', '换个方向'],
+          replies: const ['Keep talking', 'Tell me more', 'Try another topic'],
           onSelected: selected.add,
         ),
       ),
@@ -642,14 +659,59 @@ void main() {
       ),
       const Size(16, 1),
     );
-    expect(find.text('猜你想说'), findsOneWidget);
+    expect(find.text('You might ask'), findsOneWidget);
     expect(find.byIcon(Icons.chevron_right_rounded), findsNWidgets(3));
     expect(find.byType(InkWell), findsNWidgets(3));
 
     await tester.tap(find.byKey(const ValueKey('agent-quick-reply-1')));
     await tester.pump();
 
-    expect(selected, ['给我更多细节']);
+    expect(selected, ['Tell me more']);
+  });
+
+  testWidgets('long English quick replies wrap at 320px and 2x', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    const longReply =
+        'Could we discuss how to make pumping more comfortable during my return to work?';
+    final selected = <String>[];
+
+    await tester.pumpWidget(
+      _host(
+        SingleChildScrollView(
+          child: AgentQuickRepliesBar(
+            replies: const [
+              longReply,
+              'Review feeding notes',
+              'Ask another question',
+            ],
+            onSelected: selected.add,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final text = find.descendant(
+      of: find.byKey(const ValueKey('agent-quick-reply-0')),
+      matching: find.text(longReply),
+    );
+    final paragraph = tester.renderObject<RenderParagraph>(
+      find.descendant(of: text, matching: find.byType(RichText)),
+    );
+    expect(paragraph.didExceedMaxLines, isFalse);
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('agent-quick-reply-0')),
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-quick-reply-0')));
+    expect(selected, [longReply]);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets(
@@ -658,14 +720,14 @@ void main() {
       await tester.pumpWidget(
         _host(
           AgentQuickRepliesBar(
-            replies: const ['继续聊这个', '给我更多细节'],
+            replies: const ['Keep talking', 'Tell me more'],
             onSelected: (_) {},
           ),
         ),
       );
 
       expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
-      expect(find.text('猜你想说'), findsNothing);
+      expect(find.text('You might ask'), findsNothing);
       expect(find.byIcon(Icons.chevron_right_rounded), findsNothing);
     },
   );
@@ -683,7 +745,7 @@ void main() {
         'sequence': 1,
         'payload': {
           'role': 'assistant',
-          'text': '我整理好了。',
+          'text': 'I have finished organizing the notes.',
           'workflow_reply': {
             'workflow_state_id': '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
             'workflow_type': 'lactation_support',
@@ -727,10 +789,10 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('我整理好了。'), findsOneWidget);
+    expect(find.text('I have finished organizing the notes.'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
     expect(find.byKey(const ValueKey('agent-quick-reply-0')), findsNothing);
-    expect(find.text('猜你想说'), findsNothing);
+    expect(find.text('You might ask'), findsNothing);
     expect(find.text('继续聊这个'), findsNothing);
     expect(client.requests, hasLength(1));
     expect(recordedClientEvents, isEmpty);
@@ -820,18 +882,25 @@ void main() {
             .text,
         'nihao',
       );
-      expect(find.textContaining('初次见面，很高兴认识你，我是 Cozymate'), findsOneWidget);
-      expect(find.textContaining('这次没有拿到回复'), findsOneWidget);
-      expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
+      expect(find.textContaining("Hi, I'm Momcozy AI."), findsOneWidget);
+      expect(find.textContaining('No response this time.'), findsOneWidget);
+      expect(
+        find.text(
+          'No network connection. Check your connection and try again.',
+        ),
+        findsOneWidget,
+      );
 
       final chatRect = tester.getRect(
         find.byKey(const ValueKey('agent-chat-scroll-view')),
       );
       final greetingRect = tester.getRect(
-        find.textContaining('初次见面，很高兴认识你，我是 Cozymate'),
+        find.textContaining("Hi, I'm Momcozy AI."),
       );
       final userRect = tester.getRect(sentText);
-      final errorRect = tester.getRect(find.textContaining('这次没有拿到回复'));
+      final errorRect = tester.getRect(
+        find.textContaining('No response this time.'),
+      );
       final retryRect = tester.getRect(
         find.byKey(const ValueKey('agent-retry-button')),
       );
@@ -904,9 +973,9 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('agent-attachment-menu')), findsOneWidget);
-    expect(find.text('相机'), findsOneWidget);
-    expect(find.text('照片'), findsOneWidget);
-    expect(find.text('文件'), findsOneWidget);
+    expect(find.text('Camera'), findsOneWidget);
+    expect(find.text('Photos'), findsOneWidget);
+    expect(find.text('Files'), findsOneWidget);
     expect(find.text('拍照'), findsNothing);
     expect(find.text('上传'), findsNothing);
     expect(
@@ -1013,7 +1082,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
 
-    expect(client.requests.single.message, '请查看这个文件');
+    expect(client.requests.single.message, 'Please review this file');
     expect(client.requests.single.images, isEmpty);
     expect(client.requests.single.files, hasLength(1));
     expect(client.requests.single.files.single.name, 'checkup-report.pdf');
@@ -1357,7 +1426,7 @@ void main() {
 
     expect(client.requests, hasLength(1));
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
+    expect(find.text('I have your message.'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-stop-button')), findsOneWidget);
 
     await tester.pumpWidget(_host(const SizedBox.shrink()));
@@ -1375,7 +1444,10 @@ void main() {
 
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
-    expect(find.text('连接暂时中断，可重试'), findsOneWidget);
+    expect(
+      find.text('Connection interrupted. You can try again.'),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
   });
 
@@ -1411,7 +1483,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(client.requests.single.message, '请看这张图片');
+    expect(client.requests.single.message, 'Please look at this image');
     expect(client.requests.single.images.single.name, 'only-image.png');
   });
 
@@ -1538,13 +1610,14 @@ void main() {
         phase: AgentStreamRunPhase.finished,
         threadId: 'thread-source',
         runId: 'run-source',
-        textContent: '我们开始评估吧。',
+        textContent: 'Let’s begin the assessment.',
       );
       const feedbackState = AgentStreamRunState(
         phase: AgentStreamRunPhase.finished,
         threadId: 'thread-source',
         runId: 'run-feedback',
-        textContent: '这次头颈姿态整体稳定，建议每天做一次轻柔放松。',
+        textContent:
+            'Your head and neck posture looked steady during this assessment. Consider a gentle relaxation break each day.',
       );
       final repository = _SequencedConversationRepository([
         _conversationHistory(sourceState),
@@ -1589,13 +1662,13 @@ void main() {
         phase: AgentStreamRunPhase.finished,
         threadId: 'thread-source',
         runId: 'run-source',
-        textContent: '我们开始评估吧。',
+        textContent: 'Let’s begin the assessment.',
       );
       const feedbackState = AgentStreamRunState(
         phase: AgentStreamRunPhase.finished,
         threadId: 'thread-source',
         runId: 'run-feedback',
-        textContent: '评估反馈已经生成。',
+        textContent: 'Your assessment feedback is ready.',
       );
       final repository = _SequencedConversationRepository([
         _conversationHistory(sourceState),
@@ -1650,13 +1723,13 @@ void main() {
     );
 
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('正在组织答案～'), findsOneWidget);
+    expect(find.text('Putting together a response…'), findsOneWidget);
     expect(find.text('Partial answer'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
 
-    expect(find.text('已停止本次回复'), findsOneWidget);
+    expect(find.text('Response stopped'), findsOneWidget);
   });
 
   testWidgets(
@@ -1690,7 +1763,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('这次没有拿到回复。'), findsOneWidget);
+      expect(find.text('No response this time.'), findsOneWidget);
       expect(find.byKey(const ValueKey('agent-retry-button')), findsNothing);
 
       await tester.enterText(
@@ -1785,8 +1858,8 @@ void main() {
     await tester.pump();
     await cancelConnector.called.future;
 
-    expect(find.text('正在请求服务端停止'), findsOneWidget);
-    expect(find.text('已停止本次回复'), findsNothing);
+    expect(find.text('Requesting server cancellation'), findsOneWidget);
+    expect(find.text('Response stopped'), findsNothing);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsNothing);
 
     await tester.enterText(
@@ -1889,8 +1962,11 @@ void main() {
     await cancelConnector.called.future;
     await _pumpFrames(tester, 4);
 
-    expect(find.text('本地已停止，服务端取消未确认'), findsOneWidget);
-    expect(find.text('已停止本次回复'), findsNothing);
+    expect(
+      find.text('Stopped on this device. Server cancellation not confirmed'),
+      findsOneWidget,
+    );
+    expect(find.text('Response stopped'), findsNothing);
   });
 
   testWidgets(
@@ -2196,7 +2272,7 @@ void main() {
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('agent-send-button')));
       await tester.pump();
-      const answer = '你好，今天想从哪件事情开始聊起呢？';
+      const answer = 'Hello. What would you like to talk about today?';
       client.emit(
         0,
         AgentStreamEvent(const {
@@ -2208,7 +2284,7 @@ void main() {
       );
       await tester.pump();
       expect(find.text(answer), findsNothing);
-      expect(find.text('你'), findsOneWidget);
+      expect(find.text('H'), findsOneWidget);
       expect(
         tester
             .widget<AgentRunTranscript>(find.byType(AgentRunTranscript))
@@ -2379,14 +2455,14 @@ void main() {
     );
 
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('正在组织答案～'), findsOneWidget);
+    expect(find.text('Putting together a response…'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
     await cancelConnector.called.future;
 
     final body = jsonDecode(cancelConnector.body!) as Map<String, Object?>;
-    expect(find.text('已停止本次回复'), findsOneWidget);
+    expect(find.text('Response stopped'), findsOneWidget);
     expect(cancelConnector.uri!.path, '/v1/agent/runs/run-demo/cancel');
     expect(body['reason'], 'user_cancelled');
     expect(body.containsKey('user_id'), isFalse);
@@ -2410,7 +2486,10 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('连接暂时中断，可重试'), findsOneWidget);
+    expect(
+      find.text('Connection interrupted. You can try again.'),
+      findsOneWidget,
+    );
     expect(find.textContaining('socket closed'), findsNothing);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
 
@@ -2444,7 +2523,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('请求超时，请稍后重试'), findsOneWidget);
+    expect(find.text('Request timed out. Try again later.'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
     expect(find.textContaining('TimeoutException'), findsNothing);
     expect(find.textContaining('agent request timeout'), findsNothing);
@@ -2470,7 +2549,7 @@ void main() {
       expect(client.requests, hasLength(1));
       expect(client.requests.single.runId, isNull);
       expect(client.requests.single.idempotencyKey, isNotEmpty);
-      expect(find.text('请求超时，请稍后重试'), findsOneWidget);
+      expect(find.text('Request timed out. Try again later.'), findsOneWidget);
       expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
 
       await tester.tap(find.byKey(const ValueKey('agent-retry-button')));
@@ -2482,7 +2561,7 @@ void main() {
         client.requests.last.idempotencyKey,
         client.requests.first.idempotencyKey,
       );
-      expect(find.text('泌乳支持信息表已打开。'), findsOneWidget);
+      expect(find.text('Your lactation support form is open.'), findsOneWidget);
     },
   );
 
@@ -2505,7 +2584,10 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
+    expect(
+      find.text('No network connection. Check your connection and try again.'),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
     expect(find.textContaining('SocketException'), findsNothing);
     expect(find.textContaining('api.momcozy.test'), findsNothing);
@@ -2662,7 +2744,7 @@ void main() {
           phase: AgentStreamRunPhase.waitingForConfirmation,
           threadId: 'thread-restore',
           runId: 'run-restore',
-          textContent: '请确认是否提交给人工支持。',
+          textContent: 'Please confirm before sending this to expert support.',
           lastSequence: 4,
           events: [
             AgentStreamEvent(const {
@@ -2704,9 +2786,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('请确认是否提交给人工支持。'), findsOneWidget);
+    expect(
+      find.text('Please confirm before sending this to expert support.'),
+      findsOneWidget,
+    );
     expect(find.text('等待确认后继续'), findsNothing);
-    expect(find.text('当前版本暂不支持此操作，请继续提问。'), findsWidgets);
+    expect(
+      find.text(
+        'This action is not supported in this version. You can keep asking questions.',
+      ),
+      findsWidgets,
+    );
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
@@ -2726,7 +2816,7 @@ void main() {
       AgentHubInteractionSnapshot(
         runState: AgentStreamRunState.fromMap({
           'phase': 'finished',
-          'textContent': '动作已经直接执行。',
+          'textContent': 'The action has already been completed.',
           'events': [
             {
               'event_id': 'evt-replay-applied-only',
@@ -2746,7 +2836,7 @@ void main() {
     await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
     await tester.pumpAndSettle();
 
-    expect(find.text('动作已经直接执行。'), findsOneWidget);
+    expect(find.text('The action has already been completed.'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-action-panel')), findsNothing);
     expect(find.text('不应恢复的动作卡'), findsNothing);
     expect(find.text('已应用'), findsNothing);
@@ -2778,7 +2868,7 @@ void main() {
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
-      '继续',
+      'Continue',
     );
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
@@ -2853,7 +2943,7 @@ void main() {
 
     final longText = List.filled(
       6,
-      '今天的泵奶记录很多，我需要把左右侧奶量、舒适度、间隔和宝宝喂养情况一起整理给你。',
+      'There are several pumping notes today. We can review the amounts from each side, comfort, timing, and your baby’s feeding together.',
     ).join();
     final artifactEvent = AgentStreamEvent({
       'type': 'artifact.created',
@@ -2868,7 +2958,7 @@ void main() {
           'content': longText,
           'card': [
             {
-              'title': '下一步',
+              'title': 'Continue',
               'content': [
                 {
                   'title': '观察重点',
@@ -2895,7 +2985,10 @@ void main() {
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    expect(find.textContaining('今天的泵奶记录很多'), findsWidgets);
+    expect(
+      find.textContaining('There are several pumping notes today'),
+      findsWidgets,
+    );
     expect(find.text('长内容建议'), findsNothing);
 
     await tester.drag(
@@ -2923,7 +3016,10 @@ void main() {
     );
 
     expect(find.text('Partial answer'), findsOneWidget);
-    expect(find.text('连接暂时中断，可重试'), findsOneWidget);
+    expect(
+      find.text('Connection interrupted. You can try again.'),
+      findsOneWidget,
+    );
     expect(find.text('socket closed'), findsNothing);
     expect(find.textContaining('WebSocket'), findsNothing);
     expect(find.textContaining('SSE'), findsNothing);
@@ -2947,7 +3043,7 @@ void main() {
         find.byKey(const ValueKey('agent-run-status-line')),
         findsOneWidget,
       );
-      expect(find.text('正在组织答案～'), findsOneWidget);
+      expect(find.text('Putting together a response…'), findsOneWidget);
       expect(find.text('I can help'), findsOneWidget);
 
       await tester.pumpWidget(
@@ -2962,7 +3058,7 @@ void main() {
         find.byKey(const ValueKey('agent-run-status-line')),
         findsOneWidget,
       );
-      expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
+      expect(find.text('I have your message.'), findsOneWidget);
 
       await tester.pumpWidget(
         _host(
@@ -2984,26 +3080,26 @@ void main() {
     tester,
   ) async {
     const markdown = '''
-## 产后恢复的几个关键方面
+## A few ways to support postpartum recovery
 
-### 1. 身体恢复
-- **恶露观察**：产后 4-6 周内会持续
-- **休息充足**：尽量在宝宝睡觉时一起休息
+### 1. Physical recovery
+- **Notice changes in bleeding**: Ask your clinician about any concerns.
+- **Rest when you can**: Try to rest while your baby sleeps.
 
-1. 先记录今天的状态
-2. 再查看[护理建议](https://example.com/care)
+1. Note how you feel today.
+2. Review [care suggestions](https://example.com/care).
 
-> 记录几天后，我可以帮你回顾变化。
+> After a few days of notes, we can look at what has changed.
 
-`体温` 也可以一起记录。
+You can also track your `temperature`.
 
 ```text
 milk_total: 120ml
 ```
 
-| 项目 | 状态 |
+| Item | Status |
 | --- | --- |
-| 睡眠 | 待记录 |
+| Sleep | Not recorded |
 ''';
 
     await tester.pumpWidget(
@@ -3020,7 +3116,13 @@ milk_total: 120ml
     expect(find.textContaining('##'), findsNothing);
     expect(find.textContaining('**'), findsNothing);
     expect(find.byType(MarkdownBody), findsOneWidget);
-    expect(find.text('产后恢复的几个关键方面', findRichText: true), findsOneWidget);
+    expect(
+      find.text(
+        'A few ways to support postpartum recovery',
+        findRichText: true,
+      ),
+      findsOneWidget,
+    );
     final markdownStyles = tester
         .widget<MarkdownBody>(find.byType(MarkdownBody))
         .styleSheet!;
@@ -3028,22 +3130,44 @@ milk_total: 120ml
     expect(markdownStyles.h2!.fontSize, 18);
     expect(markdownStyles.h2!.height, 1.4);
     expect(markdownStyles.a!.decoration, TextDecoration.underline);
-    expect(find.text('1. 身体恢复', findRichText: true), findsOneWidget);
-    expect(find.textContaining('恶露观察', findRichText: true), findsOneWidget);
-    expect(find.textContaining('休息充足', findRichText: true), findsOneWidget);
-    expect(find.textContaining('先记录今天的状态', findRichText: true), findsOneWidget);
-    expect(find.textContaining('护理建议', findRichText: true), findsOneWidget);
-    expect(find.textContaining('记录几天后', findRichText: true), findsOneWidget);
-    expect(find.textContaining('体温', findRichText: true), findsOneWidget);
+    expect(
+      find.text('1. Physical recovery', findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Notice changes in bleeding', findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Rest when you can', findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Note how you feel today', findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('care suggestions', findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('After a few days of notes', findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('temperature', findRichText: true),
+      findsOneWidget,
+    );
     expect(find.textContaining('milk_total: 120ml'), findsOneWidget);
-    expect(find.text('项目'), findsOneWidget);
-    expect(find.text('睡眠'), findsOneWidget);
+    expect(find.text('Item'), findsOneWidget);
+    expect(find.text('Sleep'), findsOneWidget);
   });
 
   testWidgets('Agent Hub keeps markdown rendering stable while streaming', (
     tester,
   ) async {
-    const markdown = '## 正在整理\n- **重点**：先等我写完';
+    const markdown =
+        '## Preparing your notes\n- **Important**: Please wait for the full answer.';
 
     await tester.pumpWidget(
       _host(
@@ -3059,8 +3183,14 @@ milk_total: 120ml
     expect(find.byType(MarkdownBody), findsOneWidget);
     expect(find.textContaining('##'), findsNothing);
     expect(find.textContaining('**'), findsNothing);
-    expect(find.text('正在整理', findRichText: true), findsOneWidget);
-    expect(find.textContaining('重点', findRichText: true), findsOneWidget);
+    expect(
+      find.text('Preparing your notes', findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Important', findRichText: true),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Agent Hub status line uses progress events before final text', (
@@ -3071,7 +3201,7 @@ milk_total: 120ml
       events: [
         AgentStreamEvent({
           'type': 'run.progress',
-          'payload': {'label': '我在帮你检查今天的记录～'},
+          'payload': {'label': "Checking today's records…"},
         }),
       ],
     );
@@ -3082,7 +3212,7 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('我在帮你检查今天的记录～'),
+        matching: find.text("Checking today's records…"),
       ),
       findsOneWidget,
     );
@@ -3090,6 +3220,26 @@ milk_total: 120ml
       find.byKey(const ValueKey('agent-run-status-title-sweep')),
       findsOneWidget,
     );
+  });
+
+  testWidgets('legacy Chinese progress text never reaches the status line', (
+    tester,
+  ) async {
+    final state = AgentStreamRunState(
+      phase: AgentStreamRunPhase.streaming,
+      events: [
+        AgentStreamEvent({'type': 'run.started'}),
+        AgentStreamEvent({
+          'type': 'run.progress',
+          'payload': {'label': '正在处理请求'},
+        }),
+      ],
+    );
+
+    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+
+    expect(find.text('正在处理请求'), findsNothing);
+    expect(find.text('I have your message.'), findsOneWidget);
   });
 
   testWidgets('Agent Hub uses the approved context-ready fallback copy', (
@@ -3111,7 +3261,7 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('我先理解一下你的需求～'),
+        matching: find.text('Let me understand what you need…'),
       ),
       findsOneWidget,
     );
@@ -3128,7 +3278,10 @@ milk_total: 120ml
           'type': 'run.progress',
           'payload': {
             'label': '正在处理请求。',
-            'semantic': {'label': '我在组织回复～', 'surface': 'status_bar'},
+            'semantic': {
+              'label': 'Putting together a response…',
+              'surface': 'status_bar',
+            },
           },
         }),
       ],
@@ -3136,7 +3289,7 @@ milk_total: 120ml
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
-    expect(find.text('我在组织回复～'), findsOneWidget);
+    expect(find.text('Putting together a response…'), findsOneWidget);
     expect(find.text('正在处理请求。'), findsNothing);
   });
 
@@ -3159,7 +3312,7 @@ milk_total: 120ml
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
     expect(find.text('不应通过旧字段展示'), findsNothing);
-    expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
+    expect(find.text('I have your message.'), findsOneWidget);
   });
 
   testWidgets('Agent Hub keeps thinking note semantic out of status line', (
@@ -3172,8 +3325,8 @@ milk_total: 120ml
         AgentStreamEvent({
           'type': 'run.progress',
           'payload': {
-            'label': '我想一下',
-            'semantic': {'label': '我想一下', 'surface': 'thinking_note'},
+            'label': 'Let me think…',
+            'semantic': {'label': 'Let me think…', 'surface': 'thinking_note'},
           },
         }),
       ],
@@ -3184,14 +3337,14 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('我已经收到你的消息啦～'),
+        matching: find.text('I have your message.'),
       ),
       findsOneWidget,
     );
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-thinking-note')),
-        matching: find.text('我想一下'),
+        matching: find.text('Let me think…'),
       ),
       findsOneWidget,
     );
@@ -3217,7 +3370,7 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('我已经收到你的消息啦～'),
+        matching: find.text('I have your message.'),
       ),
       findsOneWidget,
     );
@@ -3225,7 +3378,7 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-thinking-note')),
-        matching: find.text('我想一下'),
+        matching: find.text('Let me think…'),
       ),
       findsOneWidget,
     );
@@ -3256,7 +3409,7 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('我在组织回复～'),
+        matching: find.text('Putting together a response…'),
       ),
       findsOneWidget,
     );
@@ -3276,7 +3429,7 @@ milk_total: 120ml
               'tool_name': 'records.milk_status.read',
               'label': '奶量状态',
               'semantic': {
-                'label': '我先看看今天的奶量状态～',
+                'label': 'Checking your milk supply records…',
                 'surface': 'work_item',
                 'lifecycle': 'running',
               },
@@ -3290,7 +3443,7 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('我先看看今天的奶量状态～'),
+        matching: find.text('Checking your milk supply records…'),
       ),
       findsOneWidget,
     );
@@ -3312,7 +3465,7 @@ milk_total: 120ml
             'payload': {
               'tool_call_id': 'tool-milk-status',
               'semantic': {
-                'label': '我看好今天的奶量状态啦',
+                'label': "I've checked your milk supply records.",
                 'surface': 'work_item',
                 'lifecycle': 'completed',
                 'merge_key': 'tool:tool-milk-status',
@@ -3325,7 +3478,7 @@ milk_total: 120ml
             'created_at': now.toIso8601String(),
             'payload': {
               'semantic': {
-                'label': '我接着处理下一步',
+                'label': 'Working on the next step…',
                 'surface': 'status_bar',
                 'lifecycle': 'running',
                 'merge_key': 'progress:model_followup',
@@ -3338,8 +3491,11 @@ milk_total: 120ml
 
       await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
-      expect(find.text('我看好今天的奶量状态啦'), findsOneWidget);
-      expect(find.text('我接着处理下一步'), findsNothing);
+      expect(
+        find.text("I've checked your milk supply records."),
+        findsOneWidget,
+      );
+      expect(find.text('Working on the next step…'), findsNothing);
     },
   );
 
@@ -3351,8 +3507,8 @@ milk_total: 120ml
         const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AgentRunStatusLine(title: '我已经收到你的消息啦～'),
-            AgentThinkingNote(title: '我想一下'),
+            AgentRunStatusLine(title: 'I have your message.'),
+            AgentThinkingNote(title: 'Let me think…'),
           ],
         ),
       ),
@@ -3369,8 +3525,10 @@ milk_total: 120ml
           )
           .first,
     );
-    final statusTextLeft = tester.getTopLeft(find.text('我已经收到你的消息啦～')).dx;
-    final thinkingTextLeft = tester.getTopLeft(find.text('我想一下')).dx;
+    final statusTextLeft = tester
+        .getTopLeft(find.text('I have your message.'))
+        .dx;
+    final thinkingTextLeft = tester.getTopLeft(find.text('Let me think…')).dx;
 
     expect(statusLine.padding, const EdgeInsets.symmetric(vertical: 4));
     expect(
@@ -3404,10 +3562,10 @@ milk_total: 120ml
         final avatar = tester.getRect(
           find.byKey(const ValueKey('agent-assistant-avatar')),
         );
-        final title = tester.getRect(find.text('正在组织答案～'));
+        final title = tester.getRect(find.text('Putting together a response…'));
         expect(title.top, greaterThanOrEqualTo(avatar.top));
         expect(title.bottom, lessThanOrEqualTo(avatar.bottom));
-        expect(title.center.dy, closeTo(avatar.center.dy, 0.1));
+        expect(title.center.dy, closeTo(avatar.center.dy, 2.1));
         await tester.pumpWidget(
           _host(
             const AgentHubPage(
@@ -3450,7 +3608,10 @@ milk_total: 120ml
               AgentStreamEvent({'type': 'run.started'}),
               AgentStreamEvent({
                 'type': 'run.progress',
-                'payload': {'phase': 'model_reasoning', 'label': '我想一下'},
+                'payload': {
+                  'phase': 'model_reasoning',
+                  'label': 'Let me think…',
+                },
               }),
             ],
           ),
@@ -3495,7 +3656,7 @@ milk_total: 120ml
         ),
       );
 
-      expect(find.text('我接着处理下一步'), findsNothing);
+      expect(find.text('Working on the next step…'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-run-status-line')),
         findsOneWidget,
@@ -3503,7 +3664,7 @@ milk_total: 120ml
       expect(
         find.descendant(
           of: find.byKey(const ValueKey('agent-run-status-line')),
-          matching: find.text('我已经收到你的消息啦～'),
+          matching: find.text('I have your message.'),
         ),
         findsOneWidget,
       );
@@ -3521,16 +3682,19 @@ milk_total: 120ml
           'type': 'run.progress',
           'payload': {
             'phase': 'model_followup',
-            'label': '我接着处理下一步',
-            'semantic': {'label': '我接着处理下一步', 'surface': 'status_bar'},
+            'label': 'Working on the next step…',
+            'semantic': {
+              'label': 'Working on the next step…',
+              'surface': 'status_bar',
+            },
           },
         }),
         AgentStreamEvent({
           'type': 'run.progress',
           'payload': {
             'phase': 'model_reasoning_after_tool',
-            'label': '我想一下',
-            'semantic': {'label': '我想一下', 'surface': 'thinking_note'},
+            'label': 'Let me think…',
+            'semantic': {'label': 'Let me think…', 'surface': 'thinking_note'},
           },
         }),
       ],
@@ -3541,14 +3705,14 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('我接着处理下一步'),
+        matching: find.text('Working on the next step…'),
       ),
       findsOneWidget,
     );
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-thinking-note')),
-        matching: find.text('我想一下'),
+        matching: find.text('Let me think…'),
       ),
       findsOneWidget,
     );
@@ -3573,7 +3737,10 @@ milk_total: 120ml
             AgentStreamEvent({
               'type': 'artifact.created',
               'payload': {
-                'semantic': {'label': '泌乳支持计划已经生成啦', 'surface': 'artifact'},
+                'semantic': {
+                  'label': 'Your lactation support plan is ready.',
+                  'surface': 'artifact',
+                },
               },
             }),
           ),
@@ -3581,7 +3748,7 @@ milk_total: 120ml
       ),
     );
 
-    expect(find.text('泌乳支持计划已经生成啦'), findsOneWidget);
+    expect(find.text('Your lactation support plan is ready.'), findsOneWidget);
 
     await tester.pumpWidget(
       _host(
@@ -3590,7 +3757,10 @@ milk_total: 120ml
             AgentStreamEvent({
               'type': 'action.confirmation_required',
               'payload': {
-                'semantic': {'label': '我需要你确认一下，再继续处理', 'surface': 'action'},
+                'semantic': {
+                  'label': 'Please confirm before I continue.',
+                  'surface': 'action',
+                },
               },
             }),
           ),
@@ -3598,7 +3768,7 @@ milk_total: 120ml
       ),
     );
 
-    expect(find.text('我需要你确认一下，再继续处理'), findsOneWidget);
+    expect(find.text('Please confirm before I continue.'), findsOneWidget);
   });
 
   testWidgets('Agent Hub does not render failed semantic status', (
@@ -3624,7 +3794,7 @@ milk_total: 120ml
 
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     expect(find.text('这轮暂时没处理好'), findsNothing);
-    expect(find.text('这次没有拿到回复。'), findsOneWidget);
+    expect(find.text('No response this time.'), findsOneWidget);
   });
 
   testWidgets('Agent Hub treats hidden semantic as authoritative', (
@@ -3648,7 +3818,7 @@ milk_total: 120ml
 
     expect(find.text('这段载荷文案不应展示'), findsNothing);
     expect(find.text('内部完成事件'), findsNothing);
-    expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
+    expect(find.text('I have your message.'), findsOneWidget);
   });
 
   testWidgets('Agent Hub clears thinking note on later labeled progress', (
@@ -3664,7 +3834,7 @@ milk_total: 120ml
         }),
         AgentStreamEvent({
           'type': 'run.progress',
-          'payload': {'label': '我正在整理回复～'},
+          'payload': {'label': 'Putting together a response…'},
         }),
       ],
     );
@@ -3676,7 +3846,7 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('我正在整理回复～'),
+        matching: find.text('Putting together a response…'),
       ),
       findsOneWidget,
     );
@@ -3687,7 +3857,7 @@ milk_total: 120ml
   ) async {
     final state = AgentStreamRunState(
       phase: AgentStreamRunPhase.streaming,
-      textContent: '好的，我先给你一个方向。',
+      textContent: 'I can suggest a first step.',
       events: [
         AgentStreamEvent({'type': 'run.started'}),
         AgentStreamEvent({
@@ -3699,10 +3869,10 @@ milk_total: 120ml
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
-    expect(find.text('好的，我先给你一个方向。'), findsOneWidget);
+    expect(find.text('I can suggest a first step.'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('正在组织答案～'), findsOneWidget);
+    expect(find.text('Putting together a response…'), findsOneWidget);
   });
 
   testWidgets(
@@ -3731,7 +3901,7 @@ milk_total: 120ml
           'thread_id': 'thread-progress',
           'run_id': 'run-progress',
           'sequence': 1,
-          'payload': {'label': '我已经收到你的消息啦～'},
+          'payload': {'label': 'I have your message.'},
         }),
       );
       await tester.pump();
@@ -3740,7 +3910,7 @@ milk_total: 120ml
         find.byKey(const ValueKey('agent-run-status-line')),
         findsOneWidget,
       );
-      expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
+      expect(find.text('I have your message.'), findsOneWidget);
 
       client.emit(
         0,
@@ -3760,7 +3930,7 @@ milk_total: 120ml
         find.byKey(const ValueKey('agent-run-status-line')),
         findsOneWidget,
       );
-      expect(find.text('我已经收到你的消息啦～'), findsOneWidget);
+      expect(find.text('I have your message.'), findsOneWidget);
 
       client.emit(
         0,
@@ -3770,12 +3940,16 @@ milk_total: 120ml
           'thread_id': 'thread-progress',
           'run_id': 'run-progress',
           'sequence': 3,
-          'payload': {'label': '正在生成泌乳支持信息采集表单'},
+          'payload': {'label': 'Preparing your lactation intake form…'},
         }),
       );
       await tester.pump();
+      await tester.pump();
 
-      expect(find.text('正在生成泌乳支持信息采集表单'), findsOneWidget);
+      expect(
+        find.text('Preparing your lactation intake form…'),
+        findsOneWidget,
+      );
 
       client.emit(
         0,
@@ -3786,18 +3960,18 @@ milk_total: 120ml
           'run_id': 'run-progress',
           'message_id': 'msg-progress',
           'sequence': 4,
-          'payload': {'text': '好的'},
+          'payload': {'text': 'I can help'},
         }),
       );
       await tester.pump();
       await tester.pump();
 
-      expect(find.text('好的'), findsOneWidget);
+      expect(find.text('I can help'), findsOneWidget);
       expect(
         find.byKey(const ValueKey('agent-run-status-line')),
         findsOneWidget,
       );
-      expect(find.text('正在组织答案～'), findsOneWidget);
+      expect(find.text('Putting together a response…'), findsOneWidget);
 
       client.emit(
         0,
@@ -3808,13 +3982,19 @@ milk_total: 120ml
           'run_id': 'run-progress',
           'message_id': 'msg-progress',
           'sequence': 5,
-          'payload': {'role': 'assistant', 'text': '好的，我已经整理好了。'},
+          'payload': {
+            'role': 'assistant',
+            'text': 'I can help. I have organized the notes.',
+          },
         }),
       );
       await tester.pump();
       await tester.pump();
 
-      expect(find.text('好的，我已经整理好了。'), findsOneWidget);
+      expect(
+        find.text('I can help. I have organized the notes.'),
+        findsOneWidget,
+      );
       expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     },
   );
@@ -3839,7 +4019,7 @@ milk_total: 120ml
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('我已经收到你的消息啦～'),
+        matching: find.text('I have your message.'),
       ),
       findsOneWidget,
     );
@@ -4140,7 +4320,7 @@ class _RetryBeforeRunCreatedAgentStreamClient implements AgentStreamClient {
       'thread_id': 'thread-created',
       'run_id': 'run-created',
       'sequence': 1,
-      'payload': {'label': '我已经收到你的消息啦～'},
+      'payload': {'label': 'I have your message.'},
     });
     yield AgentStreamEvent(const {
       'event_id': 'evt-run-created-2',
@@ -4149,7 +4329,10 @@ class _RetryBeforeRunCreatedAgentStreamClient implements AgentStreamClient {
       'run_id': 'run-created',
       'message_id': 'msg-created',
       'sequence': 2,
-      'payload': {'role': 'assistant', 'text': '泌乳支持信息表已打开。'},
+      'payload': {
+        'role': 'assistant',
+        'text': 'Your lactation support form is open.',
+      },
     });
     yield AgentStreamEvent(const {
       'event_id': 'evt-run-created-3',

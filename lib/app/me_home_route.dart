@@ -86,7 +86,7 @@ class _MeHomeRouteState extends State<MeHomeRoute> {
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('加载失败，请重试')));
+        ).showSnackBar(const SnackBar(content: Text('Could not load. Please try again.')));
       }
     }
   }

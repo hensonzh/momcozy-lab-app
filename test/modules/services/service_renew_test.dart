@@ -227,11 +227,18 @@ void main() {
           final repo = _Repository();
           await _mount(tester, repo, width: width, scale: scale);
           await shot(tester, 'list', width, scale);
-          await click(tester, '选择');
-          expect(find.text('购买前确认'), findsOneWidget);
+          await click(tester, 'Select');
+          expect(find.text('Before you purchase'), findsOneWidget);
+          if (width == 320 && scale == 2) {
+            expect(
+              tester.getSize(find.text('Before you purchase')).width,
+              greaterThan(200),
+              reason: 'The dialog heading needs full-width room at 2x text.',
+            );
+          }
           expect(repo.createKeys, isEmpty);
           await shot(tester, 'eligibility', width, scale);
-          await tester.tap(find.byTooltip('关闭购买'));
+          await tester.tap(find.byTooltip('Close purchase'));
           await tester.pumpAndSettle();
           await shot(tester, 'selected', width, scale);
           expect(repo.createKeys, isEmpty);
@@ -245,7 +252,7 @@ void main() {
     final repo = _Repository();
     CareEpisode? booked;
     await _mount(tester, repo, onBook: (e) => booked = e);
-    await click(tester, '选择');
+    await click(tester, 'Select');
     await tester.tap(find.byType(DropdownButtonFormField<String>));
     await tester.pumpAndSettle();
     await tester.tap(find.text('California (CA)').last);
@@ -254,11 +261,11 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byType(CheckboxListTile));
     await tester.pumpAndSettle();
-    await click(tester, '确认并继续');
+    await click(tester, 'Confirm and continue');
     expect(repo.createKeys, hasLength(1));
-    await click(tester, '支付 \$219');
+    await click(tester, 'Pay \$219');
     expect(repo.outcomes, [SandboxPaymentOutcome.succeeded]);
-    await click(tester, '开始预约');
+    await click(tester, 'Book an appointment');
     expect(booked, _episode);
   });
   testWidgets(
@@ -269,15 +276,18 @@ void main() {
         ..failRead = true;
       await _mount(tester, repo);
       await shot(tester, 'pending-listed', 390, 1);
-      await click(tester, '继续付款');
+      await click(tester, 'Continue to payment');
       expect(repo.purchaseCalls, 1);
-      expect(find.text('暂时无法打开订单，请重新选择方案重试。'), findsOneWidget);
+      expect(
+        find.text('Could not open the order. Select a plan and try again.'),
+        findsOneWidget,
+      );
       await shot(tester, 'order-error', 390, 1);
       repo.failRead = false;
       repo.pendingRead = Completer<void>();
-      await tester.ensureVisible(find.text('继续付款'));
+      await tester.ensureVisible(find.text('Continue to payment'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('继续付款'));
+      await tester.tap(find.text('Continue to payment'));
       await tester.pump();
       for (final button in tester.widgetList<FilledButton>(
         find.byType(FilledButton),
@@ -288,18 +298,18 @@ void main() {
       await shot(tester, 'order-loading', 390, 1);
       repo.pendingRead!.complete();
       await tester.pumpAndSettle();
-      expect(find.text('支付 \$219'), findsOneWidget);
+      expect(find.text('Pay \$219'), findsOneWidget);
       expect(repo.createKeys, isEmpty);
-      await tester.tap(find.byTooltip('关闭购买'));
+      await tester.tap(find.byTooltip('Close purchase'));
       await tester.pumpAndSettle();
       // Returning from the payment sheet retains the list's previous offset.
       // The matching first package can be above the current lazy viewport.
       await tester.scrollUntilVisible(
-        find.text('继续付款'),
+        find.text('Continue to payment'),
         -250,
         scrollable: find.byType(Scrollable).first,
       );
-      expect(find.text('继续付款'), findsOneWidget);
+      expect(find.text('Continue to payment'), findsOneWidget);
       expect(repo.createKeys, isEmpty);
     },
   );
@@ -315,7 +325,7 @@ void main() {
     CareEpisode? opened;
     await _mount(tester, repo, onProgress: (e) => opened = e);
     await shot(tester, 'ongoing', 390, 1);
-    await click(tester, '查看我的服务');
+    await click(tester, 'View my services');
     expect(opened, _episode);
     expect(repo.createKeys, isEmpty);
     expect(repo.purchaseCalls, 0);
@@ -336,10 +346,10 @@ void main() {
         .widget<RefreshIndicator>(find.byType(RefreshIndicator))
         .onRefresh();
     await tester.pumpAndSettle();
-    expect(find.text('暂无可选的支持方案'), findsOneWidget);
+    expect(find.text('No care plans available'), findsOneWidget);
     await shot(tester, 'empty', 390, 1);
     repo.offline = true;
-    await click(tester, '刷新方案');
+    await click(tester, 'Refresh plans');
     await shot(tester, 'offline', 390, 1);
     repo.offline = false;
     repo.empty = false;
@@ -348,7 +358,7 @@ void main() {
         .widget<RefreshIndicator>(find.byType(RefreshIndicator))
         .onRefresh();
     await tester.pumpAndSettle();
-    expect(find.text('选择'), findsWidgets);
+    expect(find.text('Select'), findsWidgets);
   });
   testWidgets(
     'short large catalog loads, scrolls and returns without ordering',
@@ -364,19 +374,19 @@ void main() {
         settle: false,
         onBack: () => backed = true,
       );
-      expect(find.text('正在读取支持方案'), findsOneWidget);
+      expect(find.text('Loading care plans'), findsOneWidget);
       await shot(tester, 'short-loading', 320, 2);
       repo.pendingCatalog!.complete();
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
-        find.text('舒适哺乳支持'),
+        find.text('Comfortable Feeding'),
         300,
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       await shot(tester, 'short-last-package', 320, 2);
-      await tester.tap(find.byTooltip('返回'));
+      await tester.tap(find.byTooltip('Back'));
       expect(backed, isTrue);
       expect(repo.createKeys, isEmpty);
     },
@@ -416,12 +426,16 @@ void main() {
           onProgress: (e) => opened = e,
         );
         expect(
-          find.text(status == CareEpisodeStatus.paused ? '服务已暂停' : '已购服务'),
+          find.text(
+            status == CareEpisodeStatus.paused
+                ? 'Care paused'
+                : 'Service purchased',
+          ),
           findsOneWidget,
         );
         expect(find.text(_provider.displayName), findsOneWidget);
-        expect(find.text('剩余 1 / 2 次咨询'), findsOneWidget);
-        await click(tester, '查看我的服务');
+        expect(find.text('1 of 2 consultations left'), findsOneWidget);
+        await click(tester, 'View my services');
         expect(opened, same(e));
         expect(repo.purchaseCalls, 0);
         expect(repo.createKeys, isEmpty);
@@ -449,8 +463,8 @@ void main() {
     repo.pendingCatalog!.complete();
     await refresh;
     await tester.pumpAndSettle();
-    await click(tester, '选择');
-    expect(find.text('购买前确认'), findsOneWidget);
+    await click(tester, 'Select');
+    expect(find.text('Before you purchase'), findsOneWidget);
     expect(repo.createKeys, isEmpty);
   });
 }

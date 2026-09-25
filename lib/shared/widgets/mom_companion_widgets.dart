@@ -125,7 +125,7 @@ class MomExpertPlanEntry extends StatelessWidget {
   const MomExpertPlanEntry({
     super.key,
     required this.onTap,
-    this.title = '让专业的人，陪你把问题解决',
+    this.title = 'Expert support, every step of the way',
     this.trailingGap = 5,
     this.settingsLayout = false,
   });
@@ -195,7 +195,7 @@ class MomExpertPlanEntry extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '专家 + AI 持续服务，从分析问题到跟进改善，全程有人陪',
+                        'Ongoing expert and AI support, from understanding your concerns to following up on your progress',
                         style: MomHomeTokens.text(
                           10,
                           color: settingsLayout

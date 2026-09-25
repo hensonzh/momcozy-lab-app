@@ -99,7 +99,7 @@ class BabyLabel extends StatelessWidget {
   final bool required;
   @override
   Widget build(BuildContext context) => Semantics(
-    label: required ? '$text，必填' : text,
+    label: required ? '$text, required' : text,
     excludeSemantics: true,
     child: Row(
       mainAxisSize: MainAxisSize.min,
@@ -361,7 +361,7 @@ class BabySheetBody extends StatelessWidget {
                       width: 44,
                       height: style == BabySheetStyle.switcher ? 34 : 44,
                       child: IconButton(
-                        tooltip: '关闭',
+                        tooltip: 'Close',
                         padding: EdgeInsets.zero,
                         onPressed: onClose ?? () => Navigator.pop(context),
                         icon: knowledge

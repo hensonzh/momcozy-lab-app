@@ -24,9 +24,9 @@ enum ProductAssetKind {
   String get routeValue => name;
 
   String get defaultTitle => switch (this) {
-    ProductAssetKind.image => '图片',
+    ProductAssetKind.image => 'Image',
     ProductAssetKind.pdf => 'PDF',
-    ProductAssetKind.video => '视频',
+    ProductAssetKind.video => 'Video',
   };
 
   String get acceptHeader => switch (this) {

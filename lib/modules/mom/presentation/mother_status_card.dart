@@ -26,9 +26,9 @@ class MotherStatusCard extends StatelessWidget {
       MotherCardKind.mood => MomCozyGradients.mood,
       MotherCardKind.lactation => MomCozyGradients.lactation,
     };
-    final measured = RegExp(r'^(.*?)\s*(小时|ml|分钟|次)$').firstMatch(value);
+    final measured = RegExp(r'^(.*?)\s*(hr|ml|min|times)$').firstMatch(value);
     return Semantics(
-      label: '$label，$value${detail == null ? '' : '，$detail'}',
+      label: '$label, $value${detail == null ? '' : ', $detail'}',
       button: true,
       onTap: onTap,
       child: ExcludeSemantics(

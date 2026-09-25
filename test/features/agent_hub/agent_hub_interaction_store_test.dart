@@ -34,6 +34,20 @@ void main() {
     }
   });
 
+  test('restored legacy retry requests use the English app locale', () {
+    final snapshot = AgentHubInteractionSnapshot.fromMap({
+      'activeRequest': {
+        'message': 'Help me',
+        'threadId': 'existing-thread',
+        'locale': 'zh-CN',
+      },
+    });
+
+    expect(snapshot.activeRequest?.locale, 'en-US');
+    expect(snapshot.activeRequest?.threadId, 'existing-thread');
+    expect(snapshot.activeRequest?.message, 'Help me');
+  });
+
   test('cleanup intent persists without conversation or image bytes', () {
     const snapshot = AgentHubInteractionSnapshot(
       pendingAttachmentCleanupIds: ['abandoned-file'],
@@ -282,7 +296,10 @@ void main() {
         historyMessages: [
           AgentHubHistorySnapshot(role: 'user', content: '', images: [image]),
         ],
-        activeRequest: AgentStreamRequest(message: '请看这张图片', images: [image]),
+        activeRequest: AgentStreamRequest(
+          message: 'Please look at this image',
+          images: [image],
+        ),
       );
 
       final encoded = jsonEncode(snapshot.toMap(includeImageData: false));
@@ -333,7 +350,10 @@ void main() {
       historyMessages: [
         AgentHubHistorySnapshot(role: 'user', content: '', files: [file]),
       ],
-      activeRequest: AgentStreamRequest(message: '请查看这个文件', files: [file]),
+      activeRequest: AgentStreamRequest(
+        message: 'Please review this file',
+        files: [file],
+      ),
     );
 
     final encoded = jsonEncode(snapshot.toMap(includeImageData: false));

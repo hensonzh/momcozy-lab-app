@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../domain/care/appointment.dart';
 import '../../../domain/care/care_plan.dart';
+import '../../../domain/care/service_package.dart';
 import '../../../domain/care/consultation_room.dart';
 import '../../../domain/care/documentation.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
@@ -57,22 +58,26 @@ class ConsultationSummaryContent extends StatelessWidget {
       final ended = data.appointment.status == AppointmentStatus.completed;
       return SummaryStateCard(
         title: failed
-            ? '本次咨询未完成'
+            ? 'This consultation was not completed'
             : ended
-            ? '${data.appointment.providerName} 正在整理本次建议'
-            : '还没有可查看的总结',
+            ? '${data.appointment.publicProviderName} is preparing your recommendations'
+            : 'No summary available yet',
         description: failed
-            ? '可返回服务进度查看后续安排。'
+            ? 'Return to Service Progress to see what comes next.'
             : ended
-            ? '专家发布后，这里会显示行动建议、观察重点和后续安排。'
-            : '咨询结束后，经 IBCLC 确认的建议会显示在这里。',
+            ? 'Once your consultant publishes it, you will see recommended actions, what to watch for, and next steps here.'
+            : 'After your consultation, recommendations confirmed by your IBCLC will appear here.',
         pending: ended && !failed,
         action: OutlinedButton(
           onPressed: onProgress,
-          child: const Text('查看服务进度'),
+          child: const Text('View service progress'),
         ),
       );
     }
+    final publisherName = englishCareExpertName(
+      plan.publisherName,
+      providerId: data.appointment.providerId,
+    );
     final primary =
         plan.tasks
             .where(
@@ -90,13 +95,13 @@ class ConsultationSummaryContent extends StatelessWidget {
           gradient: MomHomeTokens.plan,
           children: [
             MomServiceExpertIdentity(
-              name: plan.publisherName,
-              label: '给你的咨询总结',
+              name: publisherName,
+              label: 'Your consultation summary',
             ),
             _text(plan.title, 20, weight: FontWeight.w700, height: 1.4),
             _text(plan.summary, 14),
             _text(
-              '${appointmentDay(plan.publishedAt, data.appointment.timezone)} 已确认',
+              'Confirmed ${appointmentDay(plan.publishedAt, data.appointment.timezone)}',
               11,
               color: MomHomeTokens.secondary,
             ),
@@ -108,7 +113,7 @@ class ConsultationSummaryContent extends StatelessWidget {
             color: MomHomeTokens.milk.colors.first,
             children: [
               _text(
-                '今天先做这一件事',
+                'One thing to try today',
                 12,
                 weight: FontWeight.w700,
                 color: MomHomeTokens.rose,
@@ -126,14 +131,14 @@ class ConsultationSummaryContent extends StatelessWidget {
               ),
               FilledButton(
                 onPressed: () => onTask(primary.content.sourceKey),
-                child: const Text('查看怎么做'),
+                child: const Text('See how'),
               ),
             ],
           ),
         ],
         if (next.isNotEmpty) ...[
           const SizedBox(height: 14),
-          _heading('接下来几天', '一次只做一小步'),
+          _heading('Over the next few days', 'One small step at a time'),
           for (final task in next) ...[
             const SizedBox(height: 10),
             Semantics(
@@ -143,7 +148,11 @@ class ConsultationSummaryContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
                 child: MomSettingsCard(
                   children: [
-                    _text(task.content.dueLabel, 12, color: MomHomeTokens.rose),
+                    _text(
+                      task.content.displayDueLabel,
+                      12,
+                      color: MomHomeTokens.rose,
+                    ),
                     _text(task.content.title, 14, weight: FontWeight.w700),
                     _text(
                       task.content.description,
@@ -157,10 +166,10 @@ class ConsultationSummaryContent extends StatelessWidget {
           ],
         ],
         const SizedBox(height: 14),
-        _heading('留意这些变化', '不用记得很完整'),
+        _heading('Changes to notice', 'Notice what you can'),
         const SizedBox(height: 10),
         _text(
-          '留意下一次喂养时的真实感受，看看是否更接近我们共同确认的目标。',
+          'Notice how the next feeding feels and whether it brings you closer to the goal you agreed on together.',
           13,
           color: MomHomeTokens.secondary,
         ),
@@ -189,19 +198,22 @@ class ConsultationSummaryContent extends StatelessWidget {
             ),
           ),
         if (onPlan != null)
-          TextButton(onPressed: onPlan, child: const Text('查看完整行动计划 →')),
+          TextButton(
+            onPressed: onPlan,
+            child: const Text('View full care plan →'),
+          ),
         const SizedBox(height: 14),
         MomSettingsCard(
           color: MomHomeTokens.mint,
           children: [
             _text(
-              '需要更多帮助时',
+              'If you need more help',
               14,
               weight: FontWeight.w700,
               color: MomHomeTokens.teal,
             ),
             _text(
-              '如果执行后仍不舒服或有新的担心，先记录下变化，下次跟进时告诉 ${plan.publisherName}。紧急情况请联系当地急救服务。',
+              'If you still feel uncomfortable or have new concerns, note any changes and tell $publisherName at your next follow-up. For emergencies, contact local emergency services.',
               13,
               color: MomHomeTokens.secondary,
             ),
@@ -215,9 +227,13 @@ class ConsultationSummaryContent extends StatelessWidget {
               tilePadding: const EdgeInsets.all(16),
               shape: const Border(),
               collapsedShape: const Border(),
-              title: _text('咨询与服务信息', 14, weight: FontWeight.w700),
+              title: _text(
+                'Consultation & service details',
+                14,
+                weight: FontWeight.w700,
+              ),
               subtitle: _text(
-                '${appointmentDay(data.appointment.startsAt, data.appointment.timezone)} · ${plan.publisherName}',
+                '${appointmentDay(data.appointment.startsAt, data.appointment.timezone)} · $publisherName',
                 12,
                 color: MomHomeTokens.secondary,
               ),
@@ -228,7 +244,7 @@ class ConsultationSummaryContent extends StatelessWidget {
                   builder: (context, constraints) {
                     final cells = [
                       (
-                        '本次咨询',
+                        'This consultation',
                         zonedRange(
                           data.appointment.startsAt,
                           data.appointment.endsAt,
@@ -236,14 +252,17 @@ class ConsultationSummaryContent extends StatelessWidget {
                         ),
                       ),
                       (
-                        '服务周期',
+                        'Service period',
                         data.episode.endsAt == null
-                            ? '待确认'
-                            : '至 ${appointmentDay(data.episode.endsAt!, data.appointment.timezone)}',
+                            ? 'Awaiting confirmation'
+                            : 'Until ${appointmentDay(data.episode.endsAt!, data.appointment.timezone)}',
                       ),
-                      ('剩余咨询', '${data.episode.remainingSessions} 次'),
                       (
-                        '发布确认',
+                        'Consultations left',
+                        '${data.episode.remainingSessions}',
+                      ),
+                      (
+                        'Published by',
                         appointmentDay(
                           plan.publishedAt,
                           data.appointment.timezone,
@@ -281,7 +300,7 @@ class ConsultationSummaryContent extends StatelessWidget {
                   width: double.infinity,
                   child: TextButton(
                     onPressed: onProgress,
-                    child: const Text('查看服务进度'),
+                    child: const Text('View service progress'),
                   ),
                 ),
               ],
@@ -330,7 +349,7 @@ class SummaryStateCard extends StatelessWidget {
       ),
       if (pending)
         Text(
-          '总结整理中',
+          'Summary in progress',
           style: MomHomeTokens.text(
             12,
             weight: FontWeight.w700,

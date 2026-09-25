@@ -6,19 +6,19 @@ void main() {
   test('bounds routine assessment guidance to short spoken turns', () {
     expect(
       motionGuidanceTurnInstructions('assessment_started'),
-      contains('开场最多两句'),
+      contains('at most two sentences'),
     );
     expect(
       motionGuidanceTurnInstructions('capture_countdown'),
-      contains('只说：“请站稳。三、二、一，开始。”'),
+      contains('Stand still. Three, two, one, start.'),
     );
     expect(
       motionGuidanceTurnInstructions('front_view_required'),
-      contains('只说：“请正对镜头，双肩放松。”'),
+      contains('Face the camera and relax your shoulders.'),
     );
     expect(
       motionGuidanceTurnInstructions('framing_incomplete'),
-      contains('尽量不超过 18 个汉字'),
+      contains('under 12 words'),
     );
   });
 
@@ -123,12 +123,12 @@ void main() {
       _instructions(events.single),
       contains('motion_assessment.context.v3'),
     );
-    expect(_instructions(events.single), contains('默认使用简体中文'));
-    expect(_instructions(events.single), contains('用户明确要求'));
-    expect(_instructions(events.single), isNot(contains('请只说下面这句')));
+    expect(_instructions(events.single), contains('Use English for every response'));
+    expect(_instructions(events.single), contains('even if the user asks for another language'));
+    expect(_instructions(events.single), isNot(contains('Say only the following line')));
   });
 
-  test('keeps every Realtime response in the CozyMate identity', () async {
+  test('keeps every Realtime response in the Momcozy AI identity', () async {
     final events = <Map<String, Object?>>[];
     final queue = MotionRealtimeResponseQueue(
       sendEvent: (event) async => events.add(event),
@@ -137,10 +137,10 @@ void main() {
     await queue.enqueueModelTurn('回答用户刚才的问题');
 
     final instructions = _instructions(events.single);
-    expect(instructions, contains('始终以 CozyMate 的同一身份'));
-    expect(instructions, contains('延续 App 主对话'));
-    expect(instructions, contains('不要自称独立教练'));
-    expect(instructions, contains('不要提及内部模型'));
+    expect(instructions, contains('the same Momcozy AI identity'));
+    expect(instructions, contains('main app conversation'));
+    expect(instructions, contains('Do not introduce yourself as a separate coach'));
+    expect(instructions, contains('mention internal models'));
   });
 
   test(
@@ -244,8 +244,8 @@ void main() {
 
     await queue.enqueue('请自然侧身并目视前方');
 
-    expect(_instructions(events.single), contains('自然、简短'));
-    expect(_instructions(events.single), isNot(contains('请只说下面这句')));
+    expect(_instructions(events.single), contains('natural, concise English'));
+    expect(_instructions(events.single), isNot(contains('Say only the following line')));
   });
 
   test(

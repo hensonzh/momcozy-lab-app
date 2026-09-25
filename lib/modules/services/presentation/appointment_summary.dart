@@ -55,7 +55,7 @@ class AppointmentSummary extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${appointment.duration.inMinutes} 分钟 · ${appointment.timezone}',
+                    '${appointment.duration.inMinutes} min · ${appointment.timezone}',
                     style: const TextStyle(
                       fontSize: MomCozyTypography.labelSize,
                       color: MomCozyColors.mutedForeground,
@@ -83,11 +83,11 @@ class AppointmentSummary extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    appointment.providerName,
+                    appointment.publicProviderName,
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   const Text(
-                    'IBCLC · 哺乳顾问',
+                    'IBCLC · Lactation Consultant',
                     style: TextStyle(
                       color: MomCozyColors.mutedForeground,
                       fontSize: MomCozyTypography.captionSize,

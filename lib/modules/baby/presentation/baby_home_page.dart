@@ -72,7 +72,11 @@ class _BabyHomePageState extends State<BabyHomePage>
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('当前宝宝已切换，但尚未记住此选择。下次打开时请核对宝宝。')),
+          const SnackBar(
+            content: Text(
+              'Baby switched, but we could not save your selection. Check which baby is selected next time you open the app.',
+            ),
+          ),
         );
       }
     }
@@ -125,7 +129,7 @@ class _BabyHomePageState extends State<BabyHomePage>
       context,
       Builder(
         builder: (sheetContext) => BabySheetBody(
-          title: '切换宝宝',
+          title: 'Switch baby',
           style: BabySheetStyle.switcher,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -160,12 +164,12 @@ class _BabyHomePageState extends State<BabyHomePage>
                       ),
                     ),
                     child: Text(
-                      '${profile.name}${profile.id == selected.id ? '  · 当前' : ''}',
+                      '${profile.name}${profile.id == selected.id ? '  · Current' : ''}',
                     ),
                   ),
                 ),
               Text(
-                '每个宝宝的喂养、吃奶后精神状态、尿便和生长发育数据会分开保存。',
+                'Feeding, after-feeding mood, diapers, growth, and development records are saved separately for each baby.',
                 style: BabyDesign.text(
                   13,
                   line: 18,
@@ -188,7 +192,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                     ),
                   ),
                   onPressed: () => Navigator.pop(sheetContext, 'edit'),
-                  child: const Text('编辑当前宝宝资料'),
+                  child: const Text('Edit this baby\'s profile'),
                 ),
               ),
               BabyPressFeedback(
@@ -207,7 +211,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                     ),
                   ),
                   onPressed: () => Navigator.pop(sheetContext, 'add'),
-                  child: const Text('添加宝宝'),
+                  child: const Text('Add a baby'),
                 ),
               ),
             ],
@@ -277,7 +281,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                 padding: const EdgeInsets.fromLTRB(16, 20, 16, 36),
                 children: [
                   Text(
-                    '宝宝',
+                    'Baby',
                     style: BabyDesign.text(26, weight: FontWeight.w700),
                   ),
                   const SizedBox(height: 26),
@@ -298,11 +302,11 @@ class _BabyHomePageState extends State<BabyHomePage>
                       padding: const EdgeInsets.all(24),
                       children: [
                         Text(
-                          '添加宝宝，开始记录',
+                          'Add your baby to get started',
                           style: BabyDesign.text(18, weight: FontWeight.w700),
                         ),
                         Text(
-                          '先填写宝宝称呼，之后可以逐步完善资料。',
+                          'Start with a name for your baby. You can add more details later.',
                           style: BabyDesign.text(
                             14,
                             color: MomHomeTokens.secondary,
@@ -315,7 +319,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                             ),
                             onPressed: _profile,
                             icon: const Icon(Icons.add),
-                            label: const Text('添加宝宝'),
+                            label: const Text('Add a baby'),
                           ),
                         ),
                       ],
@@ -326,10 +330,10 @@ class _BabyHomePageState extends State<BabyHomePage>
           }
           final summary = c.summary, zone = c.timezone!;
           final missing = c.recentRecords.loading && !c.recentRecords.hasValue
-              ? '载入中…'
+              ? 'Loading…'
               : c.recentRecords.failure != null && !c.recentRecords.hasValue
-              ? '暂未载入'
-              : '待记录';
+              ? 'Not loaded yet'
+              : 'Not recorded yet';
           final article =
               babyKnowledgeArticles[selectBabyKnowledge(
                 now: c.now(),
@@ -339,11 +343,11 @@ class _BabyHomePageState extends State<BabyHomePage>
               )]!;
           final feedingFacts = [
             if (summary?.latestFeeding != null)
-              '最近 ${zonedClock(summary!.latestFeeding!.occurredAt, zone)}',
+              'Latest: ${zonedClock(summary!.latestFeeding!.occurredAt, zone)}',
             if (summary?.measuredIntakeMl != null)
-              '已记录瓶喂 ${babyNumber(summary!.measuredIntakeMl!)} ml',
+              'Bottle-fed: ${babyNumber(summary!.measuredIntakeMl!)} ml recorded',
             if (summary?.nursingMinutes != null)
-              '已记录亲喂 ${summary!.nursingMinutes} 分钟',
+              'Nursing: ${summary!.nursingMinutes} min recorded',
           ];
           return RefreshIndicator(
             onRefresh: _load,
@@ -353,7 +357,8 @@ class _BabyHomePageState extends State<BabyHomePage>
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 36),
               children: [
                 Semantics(
-                  label: '当前宝宝 ${baby.name}，${babySexLabel(baby.sex)}，切换宝宝',
+                  label:
+                      'Current baby: ${baby.name}, ${babySexLabel(baby.sex)}. Switch baby',
                   container: true,
                   button: true,
                   excludeSemantics: true,
@@ -383,8 +388,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                             children: [
                               Text(
                                 baby.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                softWrap: true,
                                 style: BabyDesign.text(
                                   22,
                                   line: 36,
@@ -419,7 +423,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                 ),
                 const SizedBox(height: 14),
                 BabySectionHeader(
-                  title: '今日吃奶',
+                  title: 'Feeding today',
                   onTap: () => _record(BabyRecordKind.feeding),
                 ),
                 const SizedBox(height: 14),
@@ -427,17 +431,17 @@ class _BabyHomePageState extends State<BabyHomePage>
                   child: BabyFeedingSummary(
                     hasRecord: summary != null && summary.feedingCount > 0,
                     value: summary != null && summary.feedingCount > 0
-                        ? '${summary.feedingCount} 次'
+                        ? '${summary.feedingCount} ${summary.feedingCount == 1 ? 'feeding' : 'feedings'}'
                         : missing,
                     detail: feedingFacts.isEmpty
-                        ? '每次喂养记一条'
+                        ? 'Log each feeding as it happens'
                         : feedingFacts.join(' · '),
                     onTap: () => _record(BabyRecordKind.feeding),
                   ),
                 ),
                 const SizedBox(height: 14),
                 BabySectionHeader(
-                  title: '今日状态',
+                  title: "Today's check-in",
                   onTap: () => _record(BabyRecordKind.dailyStatus),
                 ),
                 const SizedBox(height: 14),
@@ -453,13 +457,14 @@ class _BabyHomePageState extends State<BabyHomePage>
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final stack =
-                        MediaQuery.textScalerOf(context).scale(1) > 1.35;
+                        MediaQuery.textScalerOf(context).scale(1) > 1.35 ||
+                        constraints.maxWidth < 380;
                     final cards = [
                       BabyPressFeedback(
                         child: BabyStatusCard(
                           hasRecord: summary?.latestMentalState != null,
                           artwork: 'mental',
-                          label: '吃奶后精神状态',
+                          label: 'Baby\'s mood after feeding',
                           asset: 'IconMentalState',
                           icon: MomCozyLineGlyph.status,
                           gradient: MomHomeTokens.sleep,
@@ -467,7 +472,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                               ? babyMentalLabels[summary!.latestMentalState]!
                               : missing,
                           detail: summary?.latestMentalState != null
-                              ? '最近'
+                              ? 'Latest'
                               : '',
                           onTap: () => _record(BabyRecordKind.dailyStatus),
                         ),
@@ -477,13 +482,13 @@ class _BabyHomePageState extends State<BabyHomePage>
                           hasRecord: summary != null && summary.wetCount > 0,
                           artwork: 'wet',
                           asset: 'IconDrop1',
-                          label: '尿湿',
+                          label: 'Wet diapers',
                           icon: MomCozyLineGlyph.drop,
                           gradient: MomHomeTokens.body,
                           value: summary != null && summary.wetCount > 0
-                              ? '${summary.wetCount} 次'
+                              ? '${summary.wetCount}'
                               : missing,
-                          detail: '今日湿尿布数',
+                          detail: 'Wet diapers today',
                           onTap: () => _record(
                             BabyRecordKind.dailyStatus,
                             diaper: DiaperKind.wet,
@@ -495,13 +500,13 @@ class _BabyHomePageState extends State<BabyHomePage>
                           hasRecord: summary != null && summary.dirtyCount > 0,
                           artwork: 'stool',
                           asset: 'IconNote',
-                          label: '便便',
+                          label: 'Dirty diapers',
                           icon: MomCozyLineGlyph.note,
                           gradient: MomHomeTokens.mood,
                           value: summary != null && summary.dirtyCount > 0
-                              ? '${summary.dirtyCount} 次'
+                              ? '${summary.dirtyCount}'
                               : missing,
-                          detail: '今日便便次数',
+                          detail: 'Dirty diapers today',
                           onTap: () => _record(
                             BabyRecordKind.dailyStatus,
                             diaper: DiaperKind.dirty,
@@ -511,6 +516,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                     ];
                     return stack
                         ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               for (final card in cards)
                                 Padding(
@@ -543,7 +549,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                 ),
                 const SizedBox(height: 14),
                 BabySectionHeader(
-                  title: '生长发育记录',
+                  title: 'Growth & development',
                   onTap: () => _record(BabyRecordKind.growth),
                 ),
                 const SizedBox(height: 14),

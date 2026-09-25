@@ -1,0 +1,5 @@
+{
+  "MOMCOZY_ENV": "production",
+  "MOMCOZY_API_BASE_URL": "https://product-api.example.com",
+  "MOMCOZY_AGENT_API_BASE_URL": "https://agent-api.example.com"
+}

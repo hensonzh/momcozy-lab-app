@@ -151,7 +151,7 @@ class _DefaultProductAssetImageError extends StatelessWidget {
       key: const ValueKey('product-asset-image-error'),
       child: IconButton(
         key: const ValueKey('product-asset-image-retry'),
-        tooltip: '重新加载',
+        tooltip: 'Reload',
         onPressed: onRetry,
         icon: const Icon(Icons.refresh_rounded),
       ),

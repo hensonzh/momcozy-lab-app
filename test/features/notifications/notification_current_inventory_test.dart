@@ -227,7 +227,7 @@ void main() {
       route: '/more',
     );
 
-    await tap(tester, find.text('通知'));
+    await tap(tester, find.text('Notifications'));
     expect(router.state.uri.path, '/notifications');
   }
 
@@ -380,14 +380,14 @@ void main() {
         await tap(tester, find.text('Service update 2'));
         const route =
             '/services/appointments/$inventoryNotificationAppointment';
-        expect(find.text('预约详情'), findsOneWidget);
+        expect(find.text('Appointment details'), findsOneWidget);
         await capture(
           tester,
           'notification-to-appointment',
           'Open available update → validated UUID appointment route',
           route: route,
         );
-        await tap(tester, find.text('返回'));
+        await tap(tester, find.text('Back'));
         await capture(
           tester,
           'appointment-to-inbox',
@@ -632,7 +632,7 @@ void main() {
         'Unavailable platform and SDK → delivery unavailable',
         route: settingsRoute,
       );
-      await tap(tester, find.byTooltip('返回'));
+      await tap(tester, find.byTooltip('Back'));
       await capture(tester, 'settings-return', 'Settings Back → inbox');
       await tap(tester, find.byTooltip('Back'));
       await capture(

@@ -46,19 +46,26 @@ void main() {
     );
     await tester.pump();
     await tester.pump();
-    expect(find.text('正在读取预约…'), findsOneWidget);
+    expect(find.text('Loading appointment…'), findsOneWidget);
     expect(
       tester
-          .widget<FilledButton>(find.widgetWithText(FilledButton, '预约咨询'))
+          .widget<FilledButton>(
+            find.widgetWithText(FilledButton, 'Book a consultation'),
+          )
           .onPressed,
       isNull,
     );
     pending.completeError(StateError('offline'));
     await tester.pumpAndSettle();
-    expect(find.text('预约暂时未载入，可在服务进度中查看'), findsOneWidget);
+    expect(
+      find.text('Appointment could not load. Check Service Progress.'),
+      findsOneWidget,
+    );
     expect(
       tester
-          .widget<FilledButton>(find.widgetWithText(FilledButton, '预约咨询'))
+          .widget<FilledButton>(
+            find.widgetWithText(FilledButton, 'Book a consultation'),
+          )
           .onPressed,
       isNull,
     );
@@ -108,7 +115,7 @@ void main() {
           await tester.pumpAndSettle();
           expect(find.text('Test IBCLC'), findsOneWidget);
           expect(find.text('00:30:00'), findsOneWidget);
-          expect(find.text('预约咨询'), findsNothing);
+          expect(find.text('Book a consultation'), findsNothing);
           expect(tester.takeException(), isNull);
           if (scale == 1) {
             await expectLater(
@@ -118,8 +125,8 @@ void main() {
               ),
             );
           }
-          await tester.ensureVisible(find.text('查看预约'));
-          await tester.tap(find.text('查看预约'));
+          await tester.ensureVisible(find.text('View appointment'));
+          await tester.tap(find.text('View appointment'));
           await tester.pumpAndSettle();
           expect(opened?.id, _Appointments().value.id);
           expect(booked, isFalse);
@@ -176,8 +183,11 @@ void main() {
           );
         }
         for (final entry in {
-          (appointment.intakeVersion > 0 ? '查看信息采集表' : '填写信息采集表'): 'intake',
-          '咨询前准备': 'room',
+          (appointment.intakeVersion > 0
+                  ? 'View intake form'
+                  : 'Complete intake form'):
+              'intake',
+          'Prepare for your consultation': 'room',
         }.entries) {
           await tester.scrollUntilVisible(find.text(entry.key), 240);
           await tester.pumpAndSettle();
@@ -229,18 +239,21 @@ void main() {
               );
             }
             if (progressPage) {
-              await tester.scrollUntilVisible(find.text('预约咨询'), 240);
+              await tester.scrollUntilVisible(
+                find.text('Book consultation'),
+                240,
+              );
               await tester.pumpAndSettle();
-              await tester.tap(find.text('预约咨询'));
+              await tester.tap(find.text('Book consultation'));
               expect(booked, isTrue);
             } else {
-              await tester.tap(find.text('购买'));
+              await tester.tap(find.text('Purchase'));
               await tester.pumpAndSettle();
-              expect(find.text('购买前确认'), findsOneWidget);
+              expect(find.text('Before you purchase'), findsOneWidget);
               expect(tester.takeException(), isNull);
-              await tester.tap(find.byTooltip('关闭购买'));
+              await tester.tap(find.byTooltip('Close purchase'));
               await tester.pumpAndSettle();
-              expect(find.text('购买前确认'), findsNothing);
+              expect(find.text('Before you purchase'), findsNothing);
             }
           },
         );
@@ -271,7 +284,9 @@ void main() {
             ),
           );
           await tester.pumpAndSettle();
-          final action = find.text(pending ? '继续付款' : '查看我的服务');
+          final action = find.text(
+            pending ? 'Continue to payment' : 'View my services',
+          );
           // Large text makes the service summary taller than one viewport.
           // Exercise the same scrolling path as a user before tapping it.
           for (
@@ -295,15 +310,15 @@ void main() {
             );
           }
           await tester.scrollUntilVisible(
-            find.text('了解团队'),
+            find.text('Meet the team'),
             -250,
             scrollable: find.byType(Scrollable).first,
           );
           await tester.pumpAndSettle();
-          await tester.tap(find.text('了解团队'));
+          await tester.tap(find.text('Meet the team'));
           await tester.pumpAndSettle();
           expect(find.text('Test IBCLC'), findsOneWidget);
-          expect(find.text('English · 中文'), findsOneWidget);
+          expect(find.text('English · Chinese'), findsOneWidget);
           expect(tester.takeException(), isNull);
           if (!pending && scale == 1) {
             await expectLater(
@@ -313,7 +328,7 @@ void main() {
               ),
             );
           }
-          await tester.tap(find.text('关闭'));
+          await tester.tap(find.text('Close'));
           await tester.pumpAndSettle();
           expect(find.text('Test IBCLC'), findsNothing);
         }
@@ -346,10 +361,10 @@ void main() {
             ),
           );
         }
-        await tester.tap(find.text('了解团队'));
+        await tester.tap(find.text('Meet the team'));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(find.text('IBCLC 专家团队'), findsOneWidget);
+        expect(find.text('IBCLC team'), findsOneWidget);
         if (scale == 1) {
           await expectLater(
             find.byType(MaterialApp),
@@ -359,14 +374,20 @@ void main() {
           );
         }
 
-        await tester.tap(find.text('关闭'));
+        await tester.tap(find.text('Close'));
         await tester.pumpAndSettle();
-        final choose = find.text('查看方案 →').first;
-        await tester.ensureVisible(choose);
-        await tester.pumpAndSettle();
+        for (
+          var i = 0;
+          i < 30 && find.text('View plans →').hitTestable().evaluate().isEmpty;
+          i++
+        ) {
+          await tester.drag(find.byType(ListView), const Offset(0, -240));
+          await tester.pumpAndSettle();
+        }
+        final choose = find.text('View plans →').hitTestable().first;
         await tester.tap(choose);
         expect(selected?.id, repository.data.packages.first.id);
-        await tester.tap(find.text('返回'));
+        await tester.tap(find.text('Back'));
         expect(back, isTrue);
       });
       testWidgets('active expert support at $width / $scale', (tester) async {
@@ -411,12 +432,12 @@ void main() {
             ),
           );
         }
-        await tester.ensureVisible(find.text('服务进度 ›'));
+        await tester.ensureVisible(find.text('Service progress ›'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('服务进度 ›'));
-        await tester.ensureVisible(find.text('预约咨询'));
+        await tester.tap(find.text('Service progress ›'));
+        await tester.ensureVisible(find.text('Book a consultation'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('预约咨询'));
+        await tester.tap(find.text('Book a consultation'));
         expect(progress && booked, isTrue);
       });
     }
@@ -460,7 +481,8 @@ class _Repository extends Fake implements CareRepository {
               timezone: 'America/Los_Angeles',
               regions: ['CA'],
               languages: ['English', '中文'],
-              bio: '支持含乳调整与喂养节奏，结合连续记录提供跟进。',
+              bio:
+                  'Support with latch and feeding routines, with follow-up based on ongoing records.',
               sandbox: true,
             ),
           ]

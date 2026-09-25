@@ -61,12 +61,12 @@ Future<void> verifyMotionPreference(
   );
   body.value = AvatarTaskBanner(controller: task, onOpen: () => opened++);
   await tester.pumpAndSettle();
-  expect(find.text('We couldn’t create your companion'), findsOneWidget);
+  expect(find.text('We couldn\'t create your companion'), findsOneWidget);
   responses['/v1/onboarding/me'] = _avatarState('review');
   await onboarding.load();
   await tester.pump();
   await tester.pump();
-  expect(find.text('We couldn’t create your companion'), findsNothing);
+  expect(find.text('We couldn\'t create your companion'), findsNothing);
   expect(find.text('Your 4 companion options are ready'), findsOneWidget);
   await capture('banner');
   await tester.tap(find.byKey(const ValueKey('avatar-task-banner')));

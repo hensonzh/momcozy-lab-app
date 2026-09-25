@@ -10,16 +10,16 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 
 const agentMarkdownSample = '''
-## 今天的记录
+## Today’s notes
 
-这是一段用于核对排版的文字。**重点内容**与普通文字使用一致的阅读行高，换行后仍然清晰。
+A paragraph for checking readability. **Key details** keep the same line spacing as the rest of the text, even when they wrap.
 
-- 查看已经保存的记录
-- 按自己的节奏继续
+- Review saved records
+- Continue at your own pace
 
-[查看排版说明](https://example.com/notes)
+[Read the layout notes](https://example.com/notes)
 
-最后一段说明：链接、列表和段落保留各自的作用，正文不因格式标记而变得拥挤。
+Links, lists, and paragraphs each have a clear purpose without crowding the reading area.
 ''';
 
 TextStyle _effectiveStyle(RenderParagraph paragraph, String text) {
@@ -79,26 +79,29 @@ Future<void> verifyAgentMarkdown(
     ),
   );
   await tester.pumpAndSettle();
-  final heading = find.text('今天的记录', findRichText: true);
+  final heading = find.text('Today’s notes', findRichText: true);
   await tester.ensureVisible(heading);
   await tester.pumpAndSettle();
   final headingStyle = _effectiveStyle(
     tester.renderObject<RenderParagraph>(heading),
-    '今天的记录',
+    'Today’s notes',
   );
   expect(headingStyle.fontSize, 18);
   expect(headingStyle.fontFamily, 'NotoSansSCHome');
   expect(headingStyle.height, 1.4);
-  final paragraph = find.textContaining('这是一段用于核对排版', findRichText: true);
+  final paragraph = find.textContaining(
+    'A paragraph for checking readability',
+    findRichText: true,
+  );
   final readingStyle = _effectiveStyle(
     tester.renderObject<RenderParagraph>(paragraph),
-    '这是一段用于核对排版',
+    'A paragraph for checking readability',
   );
   expect(readingStyle.fontSize, 16);
   expect(readingStyle.height, 1.65);
   expect(readingStyle.color, MomHomeTokens.ink);
   await capture('top');
-  final link = find.text('查看排版说明', findRichText: true);
+  final link = find.text('Read the layout notes', findRichText: true);
   await tester.ensureVisible(link);
   await tester.pumpAndSettle();
   await capture('link');

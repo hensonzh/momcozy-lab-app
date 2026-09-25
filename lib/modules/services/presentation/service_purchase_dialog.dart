@@ -19,6 +19,7 @@ Future<CareEpisode?> showServicePurchase(
   required ServiceCatalog catalog,
   Purchase? purchase,
 }) async {
+  if (!package.hasEnglishPurchaseDetails) return null;
   final controller = ServicePurchaseController(
     repository: repository,
     packageId: package.id,
@@ -109,10 +110,18 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
       if (!mounted) return;
       final url = c.checkoutUrl;
       if (url != null && !await widget.urlLauncher.open(url) && mounted) {
-        setState(() => _launchError = '暂时无法打开支付页面，请重试或查询订单结果。');
+        setState(
+          () => _launchError =
+              'Could not open the payment page. Try again or check your order status.',
+        );
       }
     } catch (_) {
-      if (mounted) setState(() => _launchError = '暂时无法打开支付页面，请重试或查询订单结果。');
+      if (mounted) {
+        setState(
+          () => _launchError =
+              'Could not open the payment page. Try again or check your order status.',
+        );
+      }
     } finally {
       if (mounted) setState(() => _openingCheckout = false);
     }
@@ -176,11 +185,11 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
     gradient: MomHomeTokens.milk,
     children: [
       Text(
-        eligibility ? '当前方案' : '购买方案',
+        eligibility ? 'Current plan' : 'Purchase plan',
         style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
       ),
       Text(
-        '${widget.package.name}服务包',
+        '${widget.package.publicName} package',
         style: MomHomeTokens.text(18, weight: FontWeight.w700),
       ),
       Text(
@@ -197,14 +206,14 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
   List<Widget> _eligibility() => [
     _summary(eligibility: true),
     const Text(
-      '当前所在州',
+      'Current state',
       style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
     ),
     DropdownButtonFormField<String>(
       isExpanded: true,
       itemHeight: null,
       initialValue: c.region,
-      hint: const Text('请选择当前所在州'),
+      hint: const Text('Select your current state'),
       style: MomHomeTokens.text(13),
       items: {'CA', 'NY', 'TX', ...widget.catalog.availableRegions}
           .map(
@@ -223,7 +232,7 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
     ),
     if (c.region != null && !widget.catalog.availableRegions.contains(c.region))
       _notice(
-        '当前服务暂未覆盖该州',
+        'This service is not available in your state yet',
         '',
         color: MomCozyColors.amber,
         surface: MomCozyColors.amberSoft,
@@ -235,7 +244,7 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
       controlAffinity: ListTileControlAffinity.leading,
       contentPadding: EdgeInsets.zero,
       title: const Text(
-        '我确认所在州正确，并了解这不是紧急医疗服务。',
+        'I confirm my state is correct and understand that this is not an emergency medical service.',
         style: TextStyle(fontSize: 12, height: 1.5),
       ),
     ),
@@ -246,7 +255,7 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
               widget.catalog.availableRegions.contains(c.region)
           ? () => _act(c.confirmEligibility, top: true)
           : null,
-      child: Text(_busy ? '正在确认…' : '确认并继续'),
+      child: Text(_busy ? 'Confirming…' : 'Confirm and continue'),
     ),
   ];
   Widget _field(
@@ -308,41 +317,41 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
                   ),
                   SizedBox(width: 7),
                   Text(
-                    '银行卡',
+                    'Card',
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
               const Text(
-                '仅模拟验证，不发送卡信息',
+                'For testing only. Card details are not sent.',
                 style: TextStyle(fontSize: 10, color: MomHomeTokens.secondary),
               ),
             ],
           ),
           const Divider(height: 1),
           _field(
-            '测试卡号',
+            'Test card number',
             _number,
             (v) => v?.replaceAll(RegExp(r'\D'), '').length == 16
                 ? null
-                : '请填写 16 位测试卡号',
+                : 'Enter a 16-digit test card number',
           ),
           LayoutBuilder(
             builder: (context, box) {
               final fields = [
                 _field(
-                  '有效期',
+                  'Expiration date',
                   _expiry,
                   (v) => RegExp(r'^(0[1-9]|1[0-2])/\d{2}$').hasMatch(v ?? '')
                       ? null
-                      : '格式为 MM/YY',
+                      : 'Use MM/YY format',
                 ),
                 _field(
-                  '安全码',
+                  'Security code',
                   _cvc,
                   (v) => RegExp(r'^\d{3,4}$').hasMatch(v ?? '')
                       ? null
-                      : '填写 3–4 位数字',
+                      : 'Enter 3–4 digits',
                   obscure: true,
                 ),
               ];
@@ -361,9 +370,9 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
             },
           ),
           _field(
-            '账单邮编',
+            'Billing ZIP code',
             _postal,
-            (v) => (v ?? '').trim().length >= 3 ? null : '请填写邮编',
+            (v) => (v ?? '').trim().length >= 3 ? null : 'Enter a ZIP code',
           ),
         ], gap: 11),
       ),
@@ -393,8 +402,8 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
         ),
         child: Text(
           stripe
-              ? 'Stripe Checkout · 安全跳转到 Stripe 完成付款'
-              : '测试模式 · 模拟支付，不会产生真实扣款',
+              ? 'Stripe Checkout · Securely complete payment with Stripe'
+              : 'Test mode · Simulated payment with no real charge',
           style: const TextStyle(
             fontSize: 11,
             height: 1.5,
@@ -411,64 +420,70 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
               status == CareOrderStatus.requiresAction,
         ),
       if (paid) ...[
-        _notice('购买成功', '服务包已加入你的账户，可以现在或稍后开始预约。'),
-        _button('开始预约', () => Navigator.pop(context, purchase.episode)),
+        _notice(
+          'Purchase complete',
+          'Your service package is now in your account. You can book now or later.',
+        ),
+        _button(
+          'Book an appointment',
+          () => Navigator.pop(context, purchase.episode),
+        ),
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('稍后预约'),
+          child: const Text('Book later'),
         ),
       ] else if (status == CareOrderStatus.cancelled) ...[
         _notice(
-          '付款已取消',
-          '没有创建服务权益。',
+          'Payment canceled',
+          'No service benefits were added.',
           color: MomHomeTokens.secondary,
           surface: MomHomeTokens.neutralSurface,
           icon: Icons.info_outline,
         ),
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('返回方案'),
+          child: const Text('Back to plan'),
         ),
       ] else if (reconciling) ...[
         _notice(
-          '正在确认付款结果',
+          'Confirming payment',
           status == CareOrderStatus.paid
-              ? '付款已确认，正在同步服务权益，请稍后查询。'
-              : '请先查询这笔订单，避免重复付款。',
+              ? 'Payment confirmed. We are updating your service benefits. Please check again shortly.'
+              : 'Check this order before trying to pay again to avoid a duplicate charge.',
           color: MomCozyColors.amber,
           surface: MomCozyColors.amberSoft,
           icon: Icons.schedule,
         ),
-        _button('查询结果', () => _act(c.refreshPurchase)),
+        _button('Check status', () => _act(c.refreshPurchase)),
         if (!stripe && status != CareOrderStatus.paid)
           TextButton(
             onPressed: _busy
                 ? null
                 : () => _act(() => c.pay(SandboxPaymentOutcome.succeeded)),
-            child: const Text('完成模拟付款'),
+            child: const Text('Complete simulated payment'),
           ),
       ] else if (stripe) ...[
         if (status == CareOrderStatus.failed)
           _notice(
-            '付款未完成',
-            '可以重新打开支付页面，或先查询订单结果。',
+            'Payment not completed',
+            'You can reopen the payment page or check your order status first.',
             color: MomCozyColors.danger,
             surface: MomCozyColors.recordValidationSurface,
             icon: Icons.info_outline,
           ),
         const Text(
-          '使用 Stripe Checkout 完成一次性付款。',
+          'Make a one-time payment through Stripe Checkout.',
           style: TextStyle(fontSize: 12, height: 1.5),
         ),
-        _button(_busy ? '正在准备…' : '打开 Stripe Checkout', _openCheckout),
+        _button(_busy ? 'Preparing…' : 'Open Stripe Checkout', _openCheckout),
         TextButton(
           onPressed: _busy ? null : () => _act(c.refreshPurchase),
-          child: const Text('我已完成付款，查询结果'),
+          child: const Text('I have paid · Check status'),
         ),
       ] else if (status == CareOrderStatus.requiresAction) ...[
         _notice(
-          '银行需要验证此付款',
-          '模拟 3D Secure 验证。完成验证后才会确认这笔付款。',
+          'Your bank needs to verify this payment',
+          'This test simulates 3D Secure verification. Payment will be confirmed after verification.',
           color: MomCozyColors.violet,
           surface: MomCozyColors.violetSoft,
           icon: Icons.shield_outlined,
@@ -481,14 +496,14 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
                 onPressed: _busy
                     ? null
                     : () => _act(() => c.pay(SandboxPaymentOutcome.cancelled)),
-                child: const Text('取消付款'),
+                child: const Text('Cancel payment'),
               ),
               FilledButton(
                 onPressed: _busy
                     ? null
                     : () => _act(() => c.pay(SandboxPaymentOutcome.succeeded)),
                 style: FilledButton.styleFrom(minimumSize: const Size(88, 44)),
-                child: Text(_busy ? '正在处理…' : '确认验证'),
+                child: Text(_busy ? 'Processing…' : 'Confirm verification'),
               ),
             ],
           ),
@@ -496,18 +511,18 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
       ] else ...[
         if (status == CareOrderStatus.failed && c.failure == null)
           _notice(
-            '付款未完成',
-            '测试卡被拒绝，没有创建服务权益。可以更换测试卡后重试。',
+            'Payment not completed',
+            'The test card was declined. No service benefits were added. Try another test card.',
             color: MomCozyColors.danger,
             surface: MomCozyColors.recordValidationSurface,
             icon: Icons.schedule,
           ),
         _button(
           _busy
-              ? '正在处理…'
+              ? 'Processing…'
               : c.uncertainPayment
-              ? '重试这笔付款'
-              : '支付 ${purchase.order.priceLabel}',
+              ? 'Try payment again'
+              : 'Pay ${purchase.order.priceLabel}',
           () {
             if (_form.currentState?.validate() == true) {
               _submittedCard = true;
@@ -519,12 +534,14 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
           onPressed: _busy || c.uncertainPayment
               ? null
               : () => _act(() => c.pay(SandboxPaymentOutcome.cancelled)),
-          child: const Text('取消付款'),
+          child: const Text('Cancel payment'),
         ),
       ],
       if (!paid && status != CareOrderStatus.cancelled)
         Text(
-          stripe ? '提交即表示你同意购买该服务包。付款由 Stripe 处理。' : '仅用于本地测试，不会产生真实扣款。',
+          stripe
+              ? 'By submitting, you agree to purchase this package. Stripe processes your payment.'
+              : 'Local test only. No real charge will be made.',
           textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 10,
@@ -545,8 +562,10 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
         return PopScope(
           canPop: !_busy,
           child: MomSettingsFlowDialog(
-            title: c.purchase == null ? '购买前确认' : '安全支付',
-            closeLabel: '关闭购买',
+            title: c.purchase == null
+                ? 'Before you purchase'
+                : 'Secure payment',
+            closeLabel: 'Close purchase',
             onClose: _busy ? null : () => Navigator.pop(context),
             maxHeight: c.purchase == null ? 560 : 720,
             scrollController: _scroll,
@@ -562,13 +581,18 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
                 ),
               if (c.failure case final failure?)
                 _notice(
-                  '暂时无法确认订单',
+                  'Could not confirm your order',
                   switch (failure.kind) {
-                    ProductFailureKind.unauthenticated => '登录已过期，请重新登录后继续。',
-                    ProductFailureKind.forbidden => '当前账号无法操作这笔订单。',
-                    ProductFailureKind.conflict => '订单状态已更新，请查询最新结果后继续。',
-                    ProductFailureKind.invalid => '请核对填写的信息后重试。',
-                    _ => '请检查网络后重试。已有订单会继续保留。',
+                    ProductFailureKind.unauthenticated =>
+                      'Your session has expired. Sign in again to continue.',
+                    ProductFailureKind.forbidden =>
+                      'This account cannot access this order.',
+                    ProductFailureKind.conflict =>
+                      'The order status has changed. Check the latest status before continuing.',
+                    ProductFailureKind.invalid =>
+                      'Check your information and try again.',
+                    _ =>
+                      'Check your connection and try again. Your existing order will remain.',
                   },
                   color: MomCozyColors.amber,
                   surface: MomCozyColors.amberSoft,
@@ -581,12 +605,14 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
                                 ? c.confirmEligibility
                                 : c.refreshPurchase,
                           ),
-                    child: Text(c.purchase == null ? '重试' : '查询结果'),
+                    child: Text(
+                      c.purchase == null ? 'Try again' : 'Check status',
+                    ),
                   ),
                 ),
               if (_launchError != null)
                 _notice(
-                  '未打开支付页面',
+                  'Payment page did not open',
                   _launchError!,
                   color: MomCozyColors.amber,
                   surface: MomCozyColors.amberSoft,
@@ -594,7 +620,7 @@ class _ServicePurchaseDialogState extends State<ServicePurchaseDialog> {
                 ),
               if (c.uncertainPayment)
                 const Text(
-                  '付款结果未确认，订单仍然保留。请查询结果或重试这笔付款。',
+                  'Payment has not been confirmed. Your order is still available. Check its status or try paying again.',
                   style: TextStyle(
                     fontSize: 11,
                     height: 1.5,

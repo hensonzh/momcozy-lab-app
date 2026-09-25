@@ -290,10 +290,10 @@ void main() {
         home: Scaffold(body: BabyRecordEditor(controller: c)),
       ),
     );
-    await tester.tap(find.text('尿湿'));
+    await tester.tap(find.text('Wet diapers'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const ValueKey('wet-count')), '2');
-    await tester.tap(find.text('精神状态'));
+    await tester.tap(find.text('Mood'));
     await tester.pumpAndSettle();
     expect(
       tester
@@ -301,7 +301,7 @@ void main() {
           .onPressed,
       isNotNull,
     );
-    await tester.tap(find.text('尿湿'));
+    await tester.tap(find.text('Wet diapers'));
     await tester.pumpAndSettle();
     expect(find.text('2'), findsOneWidget);
   });
@@ -318,13 +318,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(home: BabyProfileEditor(controller: c)),
       );
-      expect(find.text('清除日期'), findsNothing);
+      expect(find.text('Clear date'), findsNothing);
       expect(find.text('目前喂养方式'), findsNothing);
       await tester.enterText(find.byType(TextField), 'Luna 宝贝');
       await tester.pump();
-      await tester.tap(find.text('保存宝宝资料'));
+      await tester.tap(find.text('Save baby profile'));
       await tester.pumpAndSettle();
-      expect(find.text('已保存'), findsOneWidget);
+      expect(find.text('Saved'), findsOneWidget);
       expect(
         tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
         isNull,

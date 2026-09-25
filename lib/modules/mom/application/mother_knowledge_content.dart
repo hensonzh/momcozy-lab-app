@@ -5,39 +5,39 @@ enum MotherKnowledgeTopic { body, rest, mood, lactation }
 // Approved editorial content from the product design, not generated clinical advice.
 const motherKnowledgeArticles = <MotherKnowledgeTopic, KnowledgeArticle>{
   MotherKnowledgeTopic.body: KnowledgeArticle(
-    title: "恢复不是直线，变化本身也值得被看见",
-    summary: "体力、不适部位和对日常照护的影响可能每天不同。连续记录这些变化，比要求自己尽快“恢复正常”更能帮你理解身体。",
+    title: "Recovery is not a straight line",
+    summary: "Your energy, discomfort, and daily needs may change from day to day. Tracking them over time can help you understand your body without pressure to “bounce back.”",
     points: [
-      "先写下今天实际感受到的部位、程度，以及是否影响走路、休息或照护宝宝。",
-      "把今天和昨天放在一起看，通常比孤立的一次感受更容易看见恢复过程。",
-      "如果不适突然加重、妨碍照顾自己或让你担心，请及时联系医疗专业人员。",
+      "Note where you feel discomfort, how strong it is, and whether it affects walking, resting, or caring for your baby.",
+      "Comparing today with yesterday may tell you more about recovery than one isolated check-in.",
+      "If discomfort suddenly worsens, gets in the way of caring for yourself, or worries you, contact a healthcare professional promptly.",
     ],
   ),
   MotherKnowledgeTopic.rest: KnowledgeArticle(
-    title: "休息不只看时长，也要看身体有没有缓过来",
-    summary: "同样的睡眠时长，被打断次数、最长连续休息和醒来后的恢复感不同，身体的负担也可能不同。",
+    title: "Rest is more than a number of hours",
+    summary: "Even with the same total sleep time, interruptions, longest stretch, and how rested you feel may vary.",
     points: [
-      "总时长、被打断次数和最长连续休息，描述的是不同维度，不需要合成一个分数。",
-      "醒来后的恢复感能补充数字没有说出的部分，也值得和睡眠时长一起记录。",
-      "如果持续疲惫已经影响日常生活，可以把连续记录带给医疗专业人员一起讨论。",
+      "Total hours, interruptions, and longest stretch describe different aspects of rest. They do not need to become a single score.",
+      "How rested you feel when you wake up adds context to the numbers and is worth noting.",
+      "If ongoing fatigue affects daily life, share your records with a healthcare professional.",
     ],
   ),
   MotherKnowledgeTopic.mood: KnowledgeArticle(
-    title: "情绪不是成绩，它也在告诉你需要什么",
-    summary: "紧绷、低落或容易被触发，并不代表你做得不好。连续记录情绪、压力来源和日常影响，有助于更早看见自己的需要。",
+    title: "Your feelings are not a score",
+    summary: "Feeling tense, low, or easily overwhelmed does not mean you are doing anything wrong. Tracking your mood and what affects it may help you see what you need.",
     points: [
-      "记录当下最接近的感受即可，不需要把复杂情绪压缩成“好”或“不好”。",
-      "压力来自哪里、是否影响睡眠或日常事情，往往比一次情绪标签更有信息。",
-      "如果低落或焦虑持续、加重，或已经影响日常生活，请尽早和医疗专业人员沟通。",
+      "Choose the feeling that fits best right now. You do not need to reduce a complex day to “good” or “bad.”",
+      "What is causing stress and whether it affects sleep or daily life may tell you more than a single mood label.",
+      "If low mood or anxiety persists, worsens, or affects daily life, talk with a healthcare professional soon.",
     ],
   ),
   MotherKnowledgeTopic.lactation: KnowledgeArticle(
-    title: "一次泌乳记录，不定义你的身体",
-    summary: "单次泵奶量会受到时间、间隔和当时状态影响；连续记录适合用来回看变化，不等于你的总产奶量或喂养能力。",
+    title: "One pumping session does not define your body",
+    summary: "The amount you pump can vary with time, intervals, and how you feel. Records show change over time, not your total milk production or ability to feed your baby.",
     points: [
-      "按实际发生的时间、方式和侧别记录，不需要用一次结果评价自己。",
-      "泵奶量和亲喂时长是不同口径，不能直接相互换算，也不必合成一个数字。",
-      "如果持续疼痛或对喂养有担心，可以把连续记录带给医疗或泌乳专业人员。",
+      "Record the time, method, and side as they happened. One session does not measure your worth.",
+      "Pumped milk amounts and nursing duration measure different things. They cannot be converted directly or combined into one number.",
+      "If pain persists or you have feeding concerns, share your records with a healthcare or lactation professional.",
     ],
   ),
 };

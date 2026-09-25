@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/widgets/mom_companion_widgets.dart';
 import '../../support/mom_inventory_transport.dart';
 import '../../support/consultation_inventory_transport.dart';
 import '../../support/fixture_api_transport.dart';
@@ -92,14 +93,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       expect(devices.calls, isNot(contains('getUserMedia')));
       for (final gate in transport.readGates.values) {
@@ -142,7 +142,7 @@ void main() {
     WidgetTester tester,
     String state,
     String action, {
-    String route = '/me',
+    String route = '/services/appointments/service-appointment/room',
   }) async {
     // Commit edits and finish the input hint's fade without settling spinners.
     await tester.pump();
@@ -164,7 +164,7 @@ void main() {
       'previous_source': previous,
       'route': route,
       'trigger': action,
-      'root_entry': 'Authenticated More → tap Me bottom navigation',
+      'root_entry': 'Authenticated More → Expert support → owned service',
       'evidence':
           'Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media',
       'test':
@@ -184,9 +184,18 @@ void main() {
   }
 
   Future<void> homeEntry(WidgetTester tester) async {
-    await tap(tester, find.text('查看预约'));
-    expect(router.state.uri.path, '/me');
-    expect(find.byTooltip('关闭预约详情'), findsOneWidget);
+    await tap(tester, find.byType(MomExpertPlanEntry));
+    await tap(tester, find.text('View my services'));
+    await tap(tester, find.text('Book an appointment'));
+    await tap(
+      tester,
+      find.widgetWithText(OutlinedButton, 'Prepare for your consultation'),
+    );
+    expect(
+      router.state.uri.path,
+      '/services/appointments/service-appointment/room',
+    );
+    expect(find.byTooltip('Close appointment details'), findsOneWidget);
   }
 
   testWidgets('inventory home expired consultation window', (tester) async {
@@ -203,13 +212,13 @@ void main() {
       },
     );
     await homeEntry(tester);
-    expect(find.text('重新预约'), findsOneWidget);
+    expect(find.text('Book another appointment'), findsOneWidget);
     await capture(
       tester,
       'window-expired',
-      'Home view appointment → expired entry window in actual over-home dialog',
+      'Expert support appointment → expired entry window in preparation',
     );
-    await tap(tester, find.text('重新预约'));
+    await tap(tester, find.text('Book another appointment'));
     expect(router.state.uri.path, '/services/episodes/service-episode/booking');
     await tester.pumpWidget(const SizedBox.shrink());
   });
@@ -223,28 +232,28 @@ void main() {
           width: narrow ? 320 : 393,
           textScale: narrow ? 2 : 1,
         );
-        await tap(tester, find.text('查看预约'));
+        await homeEntry(tester);
         await capture(
           tester,
           'preparation',
-          'Mom owned plan → View appointment → actual preparation dialog over home',
+          'Owned service → appointment preparation',
         );
         await tester.tapAt(const Offset(2, 20));
         await tester.pumpAndSettle();
-        expect(find.byTooltip('关闭预约详情'), findsOneWidget);
+        expect(find.byTooltip('Close appointment details'), findsOneWidget);
         await capture(
           tester,
           'outside-dismiss-blocked',
           'Tap outside appointment dialog → modal remains open',
         );
-        await tap(tester, find.text('取消预约'));
+        await tap(tester, find.text('Cancel appointment'));
         await capture(
           tester,
           'cancel-confirm',
           'Cancel appointment → nested confirmation dialog',
         );
-        await tap(tester, find.text('保留预约'));
-        expect(find.byTooltip('关闭预约详情'), findsNothing);
+        await tap(tester, find.text('Keep appointment'));
+        expect(find.byTooltip('Close appointment details'), findsOneWidget);
         expect(
           transport.mutationPaths.where((p) => p.endsWith('/cancel')),
           isEmpty,
@@ -254,17 +263,28 @@ void main() {
           'cancel-kept-home',
           'Keep appointment → nested dialog and preparation close; no cancellation mutation',
         );
-        await homeEntry(tester);
+        await tap(tester, find.byTooltip('Close appointment details'));
+        await capture(
+          tester,
+          'cancel-kept-booking',
+          'Leave preparation without canceling',
+          route: '/services/episodes/service-episode/booking',
+        );
+        await tap(
+          tester,
+          find.widgetWithText(OutlinedButton, 'Prepare for your consultation'),
+        );
         await capture(
           tester,
           'reopened',
           'View appointment again → preparation reopens',
         );
-        await tap(tester, find.byTooltip('关闭预约详情'));
+        await tap(tester, find.byTooltip('Close appointment details'));
         await capture(
           tester,
           'closed-home',
-          'Close preparation → original Mom page',
+          'Close preparation → booking page',
+          route: '/services/episodes/service-episode/booking',
         );
       },
     );
@@ -284,7 +304,7 @@ void main() {
           'intake-required',
           'Home preparation room context requires intake before joining',
         );
-        await tap(tester, find.text('查看信息采集表'));
+        await tap(tester, find.text('View intake form'));
         const route = '/services/appointments/service-appointment/intake';
         expect(router.state.uri.path, route);
         await capture(
@@ -293,26 +313,24 @@ void main() {
           'Preparation View intake → dismiss home modal then push actual intake page',
           route: route,
         );
-        await tap(tester, find.text('返回'));
+        await tap(tester, find.text('Back'));
         await capture(
           tester,
           'intake-return-home',
-          'Close intake → Mom home; preparation does not auto-reopen',
+          'Close intake → appointment preparation',
         );
       },
     );
   }
   testWidgets('inventory home consultation load failure retry', (tester) async {
     await mount(tester);
-    // Reveal the real home CTA before holding its room-context request.
-    final button = find.text('查看预约');
-    await tester.scrollUntilVisible(
-      button,
-      200,
-      scrollable: find.byType(Scrollable).first,
+    await tap(tester, find.byType(MomExpertPlanEntry));
+    await tap(tester, find.text('View my services'));
+    await tap(tester, find.text('Book an appointment'));
+    final button = find.widgetWithText(
+      OutlinedButton,
+      'Prepare for your consultation',
     );
-    await tester.ensureVisible(button);
-    await tester.pumpAndSettle();
     const path = '/v1/care/appointments/service-appointment/room';
     final gate = Completer<void>();
     transport.readGates[path] = gate;
@@ -333,18 +351,19 @@ void main() {
       'Room context fails → error and retry within home modal',
     );
     transport.failingReads.clear();
-    await tap(tester, find.text('重试'));
-    expect(find.text('开始咨询'), findsOneWidget);
+    await tap(tester, find.text('Try again'));
+    expect(find.text('Start consultation'), findsOneWidget);
     await capture(
       tester,
       'load-recovered',
       'Retry room context → appointment preparation',
     );
-    await tap(tester, find.byTooltip('关闭预约详情'));
+    await tap(tester, find.byTooltip('Close appointment details'));
     await capture(
       tester,
       'load-return-home',
-      'Close recovered modal → same home scroll position',
+      'Close recovered preparation → booking page',
+      route: '/services/episodes/service-episode/booking',
     );
   });
 }

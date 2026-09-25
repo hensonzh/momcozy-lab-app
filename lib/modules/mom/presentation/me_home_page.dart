@@ -96,10 +96,10 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
             ? null
             : DateTime(now.year, now.month, now.day).difference(birth).inDays;
         final greeting = now.hour < 12
-            ? '上午好'
+            ? 'Good morning'
             : now.hour < 18
-            ? '下午好'
-            : '晚上好';
+            ? 'Good afternoon'
+            : 'Good evening';
         final active = state.active;
         final concern = active.firstOrNull;
         return RefreshIndicator(
@@ -110,16 +110,17 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
             children: [
               ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: 58),
-                child: Row(
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  runSpacing: 4,
                   children: [
-                    Expanded(
-                      child: Text(
-                        '$greeting${name.isEmpty ? '' : '，$name'}',
-                        style: MeDesign.text(
-                          20,
-                          weight: FontWeight.w700,
-                          line: 34,
-                        ),
+                    Text(
+                      '$greeting${name.isEmpty ? '' : ', $name'}',
+                      style: MeDesign.text(
+                        20,
+                        weight: FontWeight.w700,
+                        line: 34,
                       ),
                     ),
                     TextButton(
@@ -130,7 +131,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '个人档案 ›',
+                            'My profile ›',
                             style: MeDesign.text(
                               12,
                               color: MeDesign.rose,
@@ -169,7 +170,9 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                       children: [
                         Expanded(
                           child: Text(
-                            concern == null ? '这一阶段的关注' : '正在关注',
+                            concern == null
+                                ? 'Your focus right now'
+                                : 'In progress',
                             style: MeDesign.text(
                               12,
                               weight: FontWeight.w700,
@@ -184,7 +187,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                               MeConcernsPage(controller: c, onRecord: record),
                             ),
                             child: Text(
-                              '我的关注 ›',
+                              'My focus ›',
                               style: MeDesign.text(12, color: MeDesign.rose),
                             ),
                           ),
@@ -192,7 +195,9 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      concern == null ? '最近想改善什么？' : concern.labels.first,
+                      concern == null
+                          ? 'What would you like to work on?'
+                          : concern.labels.first,
                       style: MeDesign.text(
                         22,
                         weight: FontWeight.w700,
@@ -202,10 +207,10 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                     const SizedBox(height: 8),
                     Text(
                       concern == null
-                          ? '从当下的困扰开始，找到这一阶段的关注。\n喂奶不舒服、担心奶不够，或正在准备返工。'
+                          ? 'Start with what\'s on your mind now.\nMaybe feeding hurts, you\'re concerned about milk supply, or you\'re preparing to return to work.'
                           : concern.labels.length > 1
-                          ? concern.labels.skip(1).join('、')
-                          : '把这一阶段需要的记录放在一起。',
+                          ? concern.labels.skip(1).join(', ')
+                          : 'Keep the records that matter to you in one place.',
                       style: MeDesign.text(
                         12,
                         color: const Color(0xff70636b),
@@ -214,7 +219,9 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                     ),
                     const SizedBox(height: 14),
                     MeButton(
-                      concern == null ? '选择想改善的事' : '查看记录与变化',
+                      concern == null
+                          ? 'Choose what you\'d like to work on'
+                          : 'View records and trends',
                       fontSize: 13,
                       weight: FontWeight.w500,
                       onPressed: () => concern == null
@@ -233,7 +240,9 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
               const SizedBox(height: 16),
               InkWell(
                 borderRadius: BorderRadius.circular(22),
-                onTap: () => widget.onAsk('我想聊聊今天的喂养和恢复情况。'),
+                onTap: () => widget.onAsk(
+                  'I\'d like to talk about feeding and recovery today.',
+                ),
                 child: Container(
                   constraints: const BoxConstraints(minHeight: 74),
                   decoration: MeDesign.card(),
@@ -256,7 +265,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '和 Cozymate 聊聊',
+                              'Chat with Momcozy AI',
                               style: MeDesign.text(
                                 14,
                                 weight: FontWeight.w700,
@@ -265,7 +274,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '身体感受、喂养困惑，都可以聊',
+                              'Talk about how you feel or any feeding questions.',
                               style: MeDesign.text(
                                 11,
                                 color: const Color(0xff665d6e),
@@ -286,10 +295,11 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
               ),
               const SizedBox(height: 18),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Text(
-                      '今日记录',
+                      'Today\'s records',
                       style: MeDesign.text(
                         18,
                         weight: FontWeight.w700,
@@ -297,8 +307,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 27,
+                  Flexible(
                     child: TextButton(
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
@@ -307,7 +316,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                       ),
                       onPressed: () => page(MeManageRecords(controller: c)),
                       child: Text(
-                        '管理记录 ›',
+                        'Manage records ›',
                         style: MeDesign.text(
                           12,
                           color: MeDesign.rose,
@@ -320,7 +329,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
               ),
               const SizedBox(height: 7),
               Text(
-                '记录越完善，Cozymate 越了解你',
+                'The more you record, the better Momcozy AI can support you',
                 style: MeDesign.text(
                   11,
                   color: const Color(0xff70636b),
@@ -356,13 +365,15 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                 const SizedBox(height: 12),
                 TextButton(
                   onPressed: c.load,
-                  child: const Text('部分记录加载失败，点击重试'),
+                  child: const Text(
+                    'Some records could not load. Tap to try again.',
+                  ),
                 ),
               ],
               if (c.error != null) ...[
                 const SizedBox(height: 12),
                 MeError(message: c.error!),
-                TextButton(onPressed: c.load, child: const Text('重试')),
+                TextButton(onPressed: c.load, child: const Text('Try again')),
               ],
             ],
           ),
@@ -391,7 +402,8 @@ class MeHomeMetric extends StatelessWidget {
         .clamp(1.0, double.infinity);
     return Semantics(
       button: true,
-      label: '${kind.label}，${observation?.value ?? (failed ? '加载失败' : '待记录')}',
+      label:
+          '${kind.label}, ${observation?.displayValue ?? (failed ? 'Could not load' : 'Not recorded yet')}',
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -454,7 +466,8 @@ class MeHomeMetric extends StatelessWidget {
                     right: 60,
                     top: 35 * verticalScale,
                     child: Text(
-                      observation?.value ?? (failed ? '加载失败' : '待记录'),
+                      observation?.displayValue ??
+                          (failed ? 'Could not load' : 'Not recorded yet'),
                       style: MeDesign.text(
                         observation == null ? 16 : 22,
                         weight: FontWeight.w700,
@@ -469,7 +482,7 @@ class MeHomeMetric extends StatelessWidget {
                       left: 13,
                       bottom: 13 * verticalScale,
                       child: Text(
-                        '今天 ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}',
+                        'Today ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}',
                         style: MeDesign.text(
                           12,
                           color: const Color(0xff776e69),

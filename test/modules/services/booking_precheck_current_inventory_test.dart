@@ -11,6 +11,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/modules/services/presentation/booking_flow_dialogs.dart';
+import 'package:momcozy_flutter_app/modules/services/presentation/booking_page.dart';
 import '../../support/mom_inventory_transport.dart';
 import '../../support/service_inventory_transport.dart';
 import '../../support/fixture_api_transport.dart';
@@ -91,25 +92,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    // Visit the lazy service section through scrolling, let its data and button
-    // animations settle, then return to the top before the entry screenshot.
-    final homeScroll = find.byType(Scrollable).first;
-    await tester.scrollUntilVisible(
-      find.text('服务进度 ›'),
-      250,
-      scrollable: homeScroll,
-    );
-    await tester.pumpAndSettle();
-    await tester.drag(homeScroll, const Offset(0, 10000));
-    await tester.pumpAndSettle();
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -136,15 +125,25 @@ void main() {
   }
 
   Future<void> tap(WidgetTester tester, Finder target) async {
-    if (target.evaluate().isEmpty) {
-      await tester.drag(find.byType(Scrollable).last, const Offset(0, 10000));
+    final bookingScroll = find.descendant(
+      of: find.byType(BookingPage),
+      matching: find.byType(Scrollable),
+    );
+    if (target.evaluate().isEmpty && bookingScroll.evaluate().isNotEmpty) {
+      await tester.drag(bookingScroll.first, const Offset(0, -5000));
+      await settle(tester);
+    }
+    if (target.evaluate().isEmpty && bookingScroll.evaluate().isNotEmpty) {
+      await tester.drag(bookingScroll.first, const Offset(0, 10000));
       await settle(tester);
     }
     if (target.evaluate().isEmpty) {
       await tester.scrollUntilVisible(
         target,
         250,
-        scrollable: find.byType(Scrollable).last,
+        scrollable: bookingScroll.evaluate().isNotEmpty
+            ? bookingScroll.first
+            : find.byType(Scrollable).last,
       );
     } else {
       await tester.ensureVisible(target);
@@ -203,7 +202,7 @@ void main() {
   const booking = '/v1/care/episodes/service-episode/booking';
   const eligibility = '/v1/care/episodes/service-episode/booking-eligibility';
   const availability = '/v1/care/episodes/service-episode/availability';
-  const suitable = '我需要的是哺乳或喂养相关的 IBCLC 咨询';
+  const suitable = 'I need IBCLC support with lactation or feeding.';
   Future<void> chooseRegion(WidgetTester tester, String label) async {
     await tap(tester, find.byType(DropdownButtonFormField<String>));
     await tap(tester, find.text(label).last);
@@ -211,18 +210,18 @@ void main() {
 
   void expectContinue(WidgetTester tester, bool enabled) {
     final button = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, '继续选择时间'),
+      find.widgetWithText(FilledButton, 'Continue to time selection'),
     );
     expect(button.onPressed != null, enabled);
   }
 
   Future<void> closeAndBack(WidgetTester tester, String chain) async {
-    await tap(tester, find.text('返回'));
+    await tap(tester, find.text('Back'));
     await capture(
       tester,
       '$chain-home-return',
-      'Booking Back → Me',
-      route: '/me',
+      'Booking Back → service plan',
+      route: '/services/feeding-confidence',
     );
     await tester.pumpWidget(const SizedBox());
   }
@@ -236,17 +235,13 @@ void main() {
       await capture(
         tester,
         'controls-home',
-        'More → Me → owned plan',
-        route: '/me',
+        'More before expert support',
+        route: '/more',
       );
-      await tester.scrollUntilVisible(
-        find.text('预约咨询'),
-        250,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.pumpAndSettle();
+      await tap(tester, find.text('Expert support'));
+      await tap(tester, find.text('View my services'));
       transport.readGates[booking] = Completer<void>();
-      await tap(tester, find.text('预约咨询'));
+      await tap(tester, find.text('Book an appointment'));
       await capture(
         tester,
         'context-loading',
@@ -261,7 +256,7 @@ void main() {
         'Booking context returns HTTP 503',
       );
       transport.failingReads.remove(booking);
-      await tap(tester, find.text('重试'));
+      await tap(tester, find.text('Try again'));
       expect(find.byType(BookingPrecheckDialog), findsOneWidget);
       await capture(
         tester,
@@ -269,13 +264,13 @@ void main() {
         'Retry booking context → automatic precheck',
       );
       expectContinue(tester, false);
-      await tap(tester, find.byTooltip('关闭预约前确认'));
+      await tap(tester, find.byTooltip('Close booking check'));
       await capture(
         tester,
         'closed',
         'Close precheck → start confirmation card',
       );
-      await tap(tester, find.text('开始确认'));
+      await tap(tester, find.text('Start check'));
       await capture(tester, 'reopened', 'Start confirmation → blank precheck');
       await tap(tester, find.byType(DropdownButtonFormField<String>));
       await capture(
@@ -303,14 +298,14 @@ void main() {
         'Check lactation or feeding consultation suitability',
       );
       expectContinue(tester, false);
-      await tap(tester, find.text('有，或我不确定'));
+      await tap(tester, find.text('Yes, or I am not sure'));
       await capture(
         tester,
         'emergency-help',
         'Select emergency or uncertain → urgent help notice',
       );
       expectContinue(tester, false);
-      await tap(tester, find.text('目前没有上述紧急情况'));
+      await tap(tester, find.text('None of these apply right now'));
       await capture(tester, 'ready', 'Select no emergency → continue enabled');
       expectContinue(tester, true);
       await tap(tester, find.text(suitable));
@@ -322,7 +317,7 @@ void main() {
       expectContinue(tester, false);
       await tap(tester, find.text(suitable));
       transport.writeGate = Completer<void>();
-      await tap(tester, find.text('继续选择时间'));
+      await tap(tester, find.text('Continue to time selection'));
       await capture(
         tester,
         'submit-pending',
@@ -346,7 +341,10 @@ void main() {
         'submit-error',
         'Pending back blocked; eligibility HTTP 503 → retryable notice',
       );
-      expect(find.text('暂时无法确认，请检查网络后重试。'), findsOneWidget);
+      expect(
+        find.text('Could not confirm. Check your connection and try again.'),
+        findsOneWidget,
+      );
       transport.failingWrites.clear();
       for (final reason in [
         'emergency_help',
@@ -354,7 +352,7 @@ void main() {
         'region_not_supported',
       ]) {
         transport.rejection = reason;
-        await tap(tester, find.text('继续选择时间'));
+        await tap(tester, find.text('Continue to time selection'));
         await capture(
           tester,
           'server-$reason',
@@ -363,7 +361,7 @@ void main() {
         expect(find.byType(BookingPrecheckDialog), findsOneWidget);
       }
       transport.rejection = null;
-      await tap(tester, find.text('继续选择时间'));
+      await tap(tester, find.text('Continue to time selection'));
       expect(find.byType(BookingPrecheckDialog), findsNothing);
       await capture(
         tester,
@@ -385,20 +383,22 @@ void main() {
         await capture(
           tester,
           'availability-home',
-          'More → Me → owned plan',
-          route: '/me',
+          'More before expert support',
+          route: '/more',
         );
-        await tap(tester, find.text('预约咨询'));
+        await tap(tester, find.text('Expert support'));
+        await tap(tester, find.text('View my services'));
+        await tap(tester, find.text('Book an appointment'));
         await chooseRegion(tester, 'California (CA)');
         await tap(tester, find.text(suitable));
-        await tap(tester, find.text('目前没有上述紧急情况'));
+        await tap(tester, find.text('None of these apply right now'));
         await capture(
           tester,
           'availability-ready',
           'Complete region, suitability and risk inputs',
         );
         transport.readGates[availability] = Completer<void>();
-        await tap(tester, find.text('继续选择时间'));
+        await tap(tester, find.text('Continue to time selection'));
         await capture(
           tester,
           'availability-pending',
@@ -420,7 +420,7 @@ void main() {
         transport.failingReads.clear();
         transport.emptySlots = true;
         transport.readGates[availability] = Completer<void>();
-        await tap(tester, find.text('重试'));
+        await tap(tester, find.text('Try again'));
         await capture(
           tester,
           'availability-retry-pending',
@@ -433,16 +433,16 @@ void main() {
           'availability-empty',
           'Availability succeeds with no slots',
         );
-        expect(find.text('暂无可选时间'), findsOneWidget);
+        expect(find.text('No times available'), findsOneWidget);
         transport.emptySlots = false;
-        await tap(tester, find.byTooltip('刷新预约'));
+        await tap(tester, find.byTooltip('Refresh appointment'));
         await capture(
           tester,
           'availability-restored',
           'Refresh booking → available and occupied times',
         );
         final before = transport.requests.length;
-        await tap(tester, find.text('60 分钟 · 已占用'));
+        await tap(tester, find.text('60 min · Booked'));
         expect(transport.requests.length, before);
         await capture(
           tester,

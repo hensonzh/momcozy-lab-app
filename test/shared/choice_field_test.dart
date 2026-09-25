@@ -18,9 +18,9 @@ void main() {
                 title: '关注的事情',
                 style: style,
                 options: const {
-                  _Choice.baby: '宝宝',
+                  _Choice.baby: 'Baby',
                   _Choice.sleep: '休息',
-                  _Choice.unsure: '说不清楚',
+                  _Choice.unsure: 'Not sure',
                 },
                 selected: selected,
                 multiple: true,
@@ -31,18 +31,18 @@ void main() {
           ),
         ),
       );
-      await tester.tap(find.text('宝宝'));
+      await tester.tap(find.text('Baby'));
       await tester.pump();
       await tester.tap(find.text('休息'));
       await tester.pump();
       expect(selected, {_Choice.baby, _Choice.sleep});
-      await tester.tap(find.text('说不清楚'));
+      await tester.tap(find.text('Not sure'));
       await tester.pump();
       expect(selected, {_Choice.unsure});
-      await tester.tap(find.text('宝宝'));
+      await tester.tap(find.text('Baby'));
       await tester.pump();
       expect(selected, {_Choice.baby});
-      await tester.tap(find.text('宝宝'));
+      await tester.tap(find.text('Baby'));
       await tester.pump();
       expect(selected, isEmpty);
     });

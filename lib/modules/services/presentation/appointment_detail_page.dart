@@ -113,8 +113,8 @@ class _AppointmentDetailPageState extends State<AppointmentDetailPage>
             : 56,
         leadingWidth: MediaQuery.textScalerOf(context).scale(1) > 1.4 ? 88 : 64,
         centerTitle: false,
-        title: const Text('预约详情'),
-        leading: TextButton(onPressed: _back, child: const Text('返回')),
+        title: const Text('Appointment details'),
+        leading: TextButton(onPressed: _back, child: const Text('Back')),
       ),
       body: ClipRect(child: MomCozyPageBody(child: _body())),
     ),
@@ -127,7 +127,7 @@ class _AppointmentDetailPageState extends State<AppointmentDetailPage>
         child: MomSettingsCard(
           children: [
             Text(
-              '正在加载预约…',
+              'Loading appointment…',
               style: MomHomeTokens.text(16, weight: FontWeight.w700),
             ),
             const LinearProgressIndicator(),
@@ -141,14 +141,14 @@ class _AppointmentDetailPageState extends State<AppointmentDetailPage>
         child: MomSettingsCard(
           children: [
             Text(
-              '暂时无法打开预约',
+              'Could not open appointment',
               style: MomHomeTokens.text(16, weight: FontWeight.w700),
             ),
             Text(
-              '请稍后重试，核对最新预约状态。',
+              'Try again later to check the latest appointment status.',
               style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
             ),
-            TextButton(onPressed: _load, child: const Text('重试')),
+            TextButton(onPressed: _load, child: const Text('Try again')),
           ],
         ),
       );
@@ -158,12 +158,12 @@ class _AppointmentDetailPageState extends State<AppointmentDetailPage>
       AppointmentStatus.inProgress,
     }.contains(value.status);
     final status = switch (value.status) {
-      AppointmentStatus.confirmed => '已确认',
-      AppointmentStatus.inProgress => '咨询中',
-      AppointmentStatus.completed => '已完成',
-      AppointmentStatus.cancelled => '已取消',
-      AppointmentStatus.expired => '已过期',
-      AppointmentStatus.held => '待确认',
+      AppointmentStatus.confirmed => 'Confirmed',
+      AppointmentStatus.inProgress => 'In consultation',
+      AppointmentStatus.completed => 'Completed',
+      AppointmentStatus.cancelled => 'Canceled',
+      AppointmentStatus.expired => 'Expired',
+      AppointmentStatus.held => 'Awaiting confirmation',
     };
     return RefreshIndicator(
       onRefresh: _load,
@@ -173,7 +173,7 @@ class _AppointmentDetailPageState extends State<AppointmentDetailPage>
         children: [
           MomAppointmentSummary(
             appointment: value,
-            title: '$status · IBCLC 咨询',
+            title: '$status · IBCLC consultation',
             action: value.status == AppointmentStatus.confirmed
                 ? OutlinedButton(
                     onPressed: () => _cancel(value),
@@ -181,7 +181,7 @@ class _AppointmentDetailPageState extends State<AppointmentDetailPage>
                       context,
                       tinted: true,
                     ),
-                    child: const Text('取消预约'),
+                    child: const Text('Cancel appointment'),
                   )
                 : null,
           ),
@@ -190,21 +190,21 @@ class _AppointmentDetailPageState extends State<AppointmentDetailPage>
             MomSettingsCard(
               children: [
                 Text(
-                  '下一步',
+                  'Continue',
                   style: MomHomeTokens.text(18, weight: FontWeight.w700),
                 ),
                 FilledButton(
                   onPressed: () =>
                       _open('/services/appointments/${value.id}/intake'),
-                  child: Text(value.intakeVersion > 0 ? '查看信息采集表' : '填写信息采集表'),
+                  child: Text(value.intakeVersion > 0 ? 'View intake form' : 'Complete intake form'),
                 ),
                 OutlinedButton(
                   onPressed: () =>
                       _open('/services/appointments/${value.id}/room'),
                   child: Text(
                     value.status == AppointmentStatus.inProgress
-                        ? '返回咨询室'
-                        : '咨询前准备',
+                        ? 'Return to consultation room'
+                        : 'Prepare for your consultation',
                   ),
                 ),
               ],
@@ -215,13 +215,13 @@ class _AppointmentDetailPageState extends State<AppointmentDetailPage>
             MomSettingsCard(
               children: [
                 Text(
-                  '咨询总结',
+                  'Consultation summary',
                   style: MomHomeTokens.text(18, weight: FontWeight.w700),
                 ),
                 FilledButton(
                   onPressed: () =>
                       _open('/services/appointments/${value.id}/summary'),
-                  child: const Text('查看咨询总结'),
+                  child: const Text('View consultation summary'),
                 ),
               ],
             ),
@@ -231,13 +231,13 @@ class _AppointmentDetailPageState extends State<AppointmentDetailPage>
             MomSettingsCard(
               children: [
                 Text(
-                  '完成预约确认',
+                  'Finish confirming appointment',
                   style: MomHomeTokens.text(18, weight: FontWeight.w700),
                 ),
                 FilledButton(
                   onPressed: () =>
                       _open('/services/episodes/${value.episodeId}/booking'),
-                  child: const Text('继续确认预约'),
+                  child: const Text('Continue confirmation'),
                 ),
               ],
             ),
@@ -247,7 +247,7 @@ class _AppointmentDetailPageState extends State<AppointmentDetailPage>
             children: [
               TextButton(
                 onPressed: () => _open('/services/episodes/${value.episodeId}'),
-                child: const Text('查看服务详情'),
+                child: const Text('View service details'),
               ),
             ],
           ),

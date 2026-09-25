@@ -82,7 +82,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(probe.starts, 1);
       expect(probe.closes, 1);
-      await tester.tap(find.byTooltip('关闭设备检测'));
+      await tester.tap(find.byTooltip('Close device check'));
       await tester.pumpAndSettle();
       expect(probe.closes, 2);
     },

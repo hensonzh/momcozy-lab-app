@@ -171,7 +171,7 @@ class BabySectionHeader extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             textStyle: BabyDesign.text(13, line: 18, weight: FontWeight.w700),
           ),
-          child: const Text('记录'),
+          child: const Text('Log'),
         ),
       ),
     ],

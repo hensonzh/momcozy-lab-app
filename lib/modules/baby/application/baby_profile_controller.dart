@@ -73,13 +73,13 @@ class BabyProfileController extends ChangeNotifier {
   Future<BabyProfile?> save() async {
     if (!canSave) return null;
     validation = name.trim().isEmpty
-        ? '请填写宝宝称呼。'
+        ? 'Enter your baby\'s name.'
         : name.trim().runes.length > 120
-        ? '宝宝称呼不能超过 120 字。'
+        ? 'The name cannot exceed 120 characters.'
         : birthDate != null &&
               birthDate != _initial?.birthDate &&
               birthDate!.compareTo(today) > 0
-        ? '出生日期不能晚于今天。'
+        ? 'The date of birth cannot be in the future.'
         : null;
     if (validation != null) {
       notifyListeners();

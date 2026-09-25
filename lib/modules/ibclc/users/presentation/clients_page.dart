@@ -64,11 +64,11 @@ class _WorkbenchClientsPageState extends State<WorkbenchClientsPage>
       return WorkbenchPageBody(
         children: [
           WorkbenchHeading(
-            title: '我的客户',
-            subtitle: '查看你负责的客户与服务',
+            title: 'My clients',
+            subtitle: 'View clients and services assigned to you',
             actions: [
               IconButton(
-                tooltip: '刷新客户',
+                tooltip: 'Refresh clients',
                 onPressed: controller.loading ? null : controller.load,
                 icon: const Icon(Icons.refresh_rounded),
               ),
@@ -86,7 +86,7 @@ class _WorkbenchClientsPageState extends State<WorkbenchClientsPage>
                   onChanged: controller.search,
                   onSubmitted: (_) => controller.load(),
                   decoration: const InputDecoration(
-                    labelText: '搜索姓名或客户编号',
+                    labelText: 'Search by name or client ID',
                     prefixIcon: Icon(Icons.search_rounded),
                   ),
                 ),
@@ -98,9 +98,9 @@ class _WorkbenchClientsPageState extends State<WorkbenchClientsPage>
                   for (final filter in WorkbenchClientFilter.values)
                     ChoiceChip(
                       label: Text(switch (filter) {
-                        WorkbenchClientFilter.all => '全部',
-                        WorkbenchClientFilter.active => '服务中',
-                        WorkbenchClientFilter.completed => '已结束',
+                        WorkbenchClientFilter.all => 'All',
+                        WorkbenchClientFilter.active => 'In care',
+                        WorkbenchClientFilter.completed => 'Ended',
                       }),
                       selected: controller.filter == filter,
                       onSelected: (_) => controller.setFilter(filter),
@@ -111,7 +111,7 @@ class _WorkbenchClientsPageState extends State<WorkbenchClientsPage>
           ),
           const SizedBox(height: 22),
           if (controller.loading)
-            const LinearProgressIndicator(semanticsLabel: '正在读取客户'),
+            const LinearProgressIndicator(semanticsLabel: 'Loading clients'),
           if (controller.failure != null)
             ProductErrorView(
               failure: controller.failure!,
@@ -120,10 +120,12 @@ class _WorkbenchClientsPageState extends State<WorkbenchClientsPage>
           if (data != null && data.items.isEmpty)
             Card(
               child: ProductEmptyView(
-                title: controller.query.isEmpty ? '暂无客户' : '没有找到匹配的客户',
+                title: controller.query.isEmpty
+                    ? 'No clients yet'
+                    : 'No matching clients',
                 description: controller.query.isEmpty
-                    ? '分配给你的服务客户会显示在这里。'
-                    : '可调整筛选，或按客户编号搜索。',
+                    ? 'Clients assigned to your services will appear here.'
+                    : 'Adjust your filters or search by client ID.',
               ),
             ),
           if (data != null)
@@ -154,7 +156,7 @@ class _WorkbenchClientsPageState extends State<WorkbenchClientsPage>
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  '客户 ${client.patientRef.substring(0, client.patientRef.length.clamp(0, 8))} · ${client.services.length} 项服务',
+                                  'Client ${client.patientRef.substring(0, client.patientRef.length.clamp(0, 8))} · ${client.services.length} services',
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: MomCozyColors.mutedForeground,
@@ -164,7 +166,7 @@ class _WorkbenchClientsPageState extends State<WorkbenchClientsPage>
                             ),
                             OutlinedButton(
                               onPressed: () => _open(client.patientRef),
-                              child: const Text('查看客户'),
+                              child: const Text('View client'),
                             ),
                           ],
                         ),
@@ -178,7 +180,7 @@ class _WorkbenchClientsPageState extends State<WorkbenchClientsPage>
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
                                 Text(
-                                  service.package.name,
+                                  service.package.publicName,
                                   style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
@@ -188,7 +190,7 @@ class _WorkbenchClientsPageState extends State<WorkbenchClientsPage>
                                   episodeStatusLabels[service.episode.status]!,
                                 ),
                                 Text(
-                                  '${careStageLabels[service.episode.stage]} · 剩余 ${service.episode.remainingSessions} 次咨询',
+                                  '${careStageLabels[service.episode.stage]} · ${service.episode.remainingSessions} consultations left',
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: MomCozyColors.mutedForeground,
@@ -286,25 +288,27 @@ class _WorkbenchClientPageState extends State<WorkbenchClientPage>
             child: TextButton.icon(
               onPressed: widget.onBack,
               icon: const Icon(Icons.arrow_back_rounded, size: 18),
-              label: const Text('返回我的客户'),
+              label: const Text('Back to clients'),
             ),
           ),
           const SizedBox(height: 16),
           WorkbenchHeading(
-            title: client?.displayName ?? '客户资料',
+            title: client?.displayName ?? 'Client profile',
             subtitle: client?.deliveryDate == null
                 ? null
-                : '分娩日期 ${client!.deliveryDate}',
+                : 'Delivery date ${client!.deliveryDate}',
             actions: [
               IconButton(
-                tooltip: '刷新客户资料',
+                tooltip: 'Refresh client profile',
                 onPressed: controller.loading ? null : controller.load,
                 icon: const Icon(Icons.refresh_rounded),
               ),
             ],
           ),
           if (controller.loading)
-            const LinearProgressIndicator(semanticsLabel: '正在读取客户资料'),
+            const LinearProgressIndicator(
+              semanticsLabel: 'Loading client profile',
+            ),
           if (controller.failure != null)
             ProductErrorView(
               failure: controller.failure!,
@@ -313,8 +317,9 @@ class _WorkbenchClientPageState extends State<WorkbenchClientPage>
           if (client != null && !client.hasCaseAccess)
             const Card(
               child: ProductEmptyView(
-                title: '客户尚未授权查看病例',
-                description: '可查看已分配的预约与服务，病例资料需客户授权后读取。',
+                title: 'Client has not consented to case access',
+                description:
+                    'Assigned appointments and services are visible. Case details require the client\'s consent.',
               ),
             ),
           if (client != null)
@@ -330,12 +335,12 @@ class _WorkbenchClientPageState extends State<WorkbenchClientPage>
           if (data != null) ...[
             const SizedBox(height: 12),
             const Text(
-              '咨询记录',
+              'Consultation history',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 16),
             if (data.appointments.isEmpty)
-              const Card(child: ProductEmptyView(title: '暂无预约记录')),
+              const Card(child: ProductEmptyView(title: 'No appointments yet')),
             if (data.appointments.isNotEmpty)
               WorkbenchAppointmentList(
                 items: data.appointments,
@@ -381,7 +386,7 @@ class _ServiceCard extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(
-                  service.package.name,
+                  service.package.publicName,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -392,12 +397,12 @@ class _ServiceCard extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Text(
-              '${careStageLabels[episode.stage]} · 剩余 ${episode.remainingSessions} / ${episode.totalSessions} 次咨询',
+              '${careStageLabels[episode.stage]} · ${episode.remainingSessions} of ${episode.totalSessions} consultations left',
             ),
             const SizedBox(height: 8),
             Text(
               episode.startsAt == null || episode.endsAt == null
-                  ? '护理方案发布后开始服务周期'
+                  ? 'Service period starts when the care plan is published'
                   : '${dateInTimezone(episode.startsAt!, timezone)} — ${dateInTimezone(episode.endsAt!, timezone)}',
               style: const TextStyle(
                 color: MomCozyColors.mutedForeground,
@@ -407,13 +412,13 @@ class _ServiceCard extends StatelessWidget {
             if (!service.caseConsent)
               const Padding(
                 padding: EdgeInsets.only(top: 12),
-                child: WorkbenchBadge('本服务病例待授权'),
+                child: WorkbenchBadge('Case access awaiting consent'),
               ),
             const SizedBox(height: 14),
             TextButton.icon(
               onPressed: onReport,
               icon: const Icon(Icons.fact_check_outlined, size: 18),
-              label: const Text('查看跟进与报告'),
+              label: const Text('View follow-ups & reports'),
             ),
           ],
         ),

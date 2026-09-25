@@ -20,8 +20,8 @@ Future<void> verifyInputConfirmation(
     MaterialApp(
       theme: momCozyTheme(),
       debugShowCheckedModeBanner: false,
-      locale: const Locale('zh', 'CN'),
-      supportedLocales: const [Locale('zh', 'CN')],
+      locale: const Locale('en', 'US'),
+      supportedLocales: const [Locale('en', 'US')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(
@@ -61,13 +61,13 @@ Future<void> verifyInputConfirmation(
       builder: (_, update) => SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: ChoiceField<InputChoice>(
-          title: '关注的事情',
-          hint: '可多选',
+          title: 'What matters to you',
+          hint: 'Select all that apply',
           style: style,
           options: const {
-            InputChoice.baby: '宝宝',
-            InputChoice.sleep: '休息',
-            InputChoice.unsure: '说不清楚',
+            InputChoice.baby: 'Baby',
+            InputChoice.sleep: 'Rest',
+            InputChoice.unsure: 'Not sure',
           },
           selected: selected,
           multiple: true,
@@ -77,12 +77,12 @@ Future<void> verifyInputConfirmation(
       ),
     );
     await tester.pumpAndSettle();
-    await click('休息');
+    await click('Rest');
     expect(selected, {InputChoice.baby, InputChoice.sleep});
     await capture('choices-${style.name}');
-    await click('说不清楚');
+    await click('Not sure');
     expect(selected, {InputChoice.unsure});
-    await click('说不清楚');
+    await click('Not sure');
     expect(selected, isEmpty);
   }
 
@@ -97,7 +97,7 @@ Future<void> verifyInputConfirmation(
       return SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: ZonedDateTimeField(
-          label: '记录时间',
+          label: 'Record time',
           value: value,
           timezone: 'Asia/Shanghai',
           now: () => DateTime.utc(2026, 9, 12, 6),
@@ -119,7 +119,7 @@ Future<void> verifyInputConfirmation(
   );
   expect(
     tester
-        .widget<TextButton>(find.widgetWithText(TextButton, '清除时间'))
+        .widget<TextButton>(find.widgetWithText(TextButton, 'Clear time'))
         .onPressed,
     isNull,
   );
@@ -152,7 +152,7 @@ Future<void> verifyInputConfirmation(
   await capture('date');
   if (scale == 2) {
     await tester.enterText(find.byType(TextFormField), 'not a date');
-    await click('确定');
+    await click('OK');
     expect(find.byType(DatePickerDialog), findsOneWidget);
     expect(changes, 0);
     final strings = MaterialLocalizations.of(
@@ -160,18 +160,23 @@ Future<void> verifyInputConfirmation(
     );
     expect(find.text(strings.invalidDateFormatLabel), findsOneWidget);
   }
-  await click('取消');
+  await click('Cancel');
   expect(changes, 0);
   expect(value, original);
   await openDate();
-  await click('确定');
+  await click('OK');
   expect(find.byKey(const ValueKey('momcozy-time-picker')), findsOneWidget);
+  expect(
+    Localizations.localeOf(
+      tester.element(find.byKey(const ValueKey('momcozy-time-picker'))),
+    ),
+    const Locale('en', 'US'),
+  );
   expect(find.text('上午'), findsNothing);
-  expect(find.text('下午'), findsNothing);
   await capture('time');
   if (scale == 2) {
     await tester.enterText(find.byType(TextFormField).first, '25');
-    await click('确定');
+    await click('OK');
     expect(find.byKey(const ValueKey('momcozy-time-picker')), findsOneWidget);
     expect(changes, 0);
     await capture('time-invalid');
@@ -184,20 +189,20 @@ Future<void> verifyInputConfirmation(
     await tester.pumpAndSettle();
     await capture('time-minute');
   }
-  await click('取消');
+  await click('Cancel');
   expect(changes, 0);
   expect(value, original);
   await openDate();
-  await click('确定');
-  await click('确定');
+  await click('OK');
+  await click('OK');
   expect(changes, 1);
   expect(value, original);
-  await click('清除时间');
+  await click('Clear time');
   expect(value, isNull);
   expect(changes, 2);
-  expect(find.text('尚未填写'), findsOneWidget);
+  expect(find.text('Not set'), findsOneWidget);
 
-  final draft = TextEditingController(text: '今天想先休息一下');
+  final draft = TextEditingController(text: 'I would like to rest today.');
   var results = <bool>[];
   var uncertain = false;
   body.value = Builder(
@@ -208,7 +213,7 @@ Future<void> verifyInputConfirmation(
         children: [
           TextField(
             controller: draft,
-            decoration: const InputDecoration(labelText: '备注'),
+            decoration: const InputDecoration(labelText: 'Notes'),
           ),
           const SizedBox(height: 16),
           FilledButton(
@@ -217,34 +222,39 @@ Future<void> verifyInputConfirmation(
                 await confirmDiscard(
                   context,
                   uncertainSave: uncertain,
-                  confirmLabel: '放弃修改',
+                  confirmLabel: 'Discard changes',
                 ),
               );
             },
-            child: const Text('关闭记录'),
+            child: const Text('Close record'),
           ),
         ],
       ),
     ),
   );
   await tester.pumpAndSettle();
-  await click('关闭记录');
-  await tester.ensureVisible(find.text('还未保存的修改会被放弃。'));
+  await click('Close record');
+  await tester.ensureVisible(find.text('Your unsaved changes will be lost.'));
   await tester.pumpAndSettle();
   await capture('confirm');
-  await click('继续填写');
+  await click('Keep editing');
   expect(results, [false]);
-  expect(draft.text, '今天想先休息一下');
-  await click('关闭记录');
+  expect(draft.text, 'I would like to rest today.');
+  await click('Close record');
   await tester.binding.handlePopRoute();
   await tester.pumpAndSettle();
   expect(results, [false, false]);
-  expect(draft.text, '今天想先休息一下');
+  expect(draft.text, 'I would like to rest today.');
   uncertain = true;
-  await click('关闭记录');
-  expect(find.text('保存结果还未确认。返回后请先刷新记录，避免重复填写。'), findsOneWidget);
+  await click('Close record');
+  expect(
+    find.text(
+      'Your save has not been confirmed. Refresh your records before trying again to avoid duplicates.',
+    ),
+    findsOneWidget,
+  );
   await capture('uncertain');
-  await click('放弃修改');
+  await click('Discard changes');
   expect(results, [false, false, true]);
   expect(tester.takeException(), isNull);
   await tester.pumpWidget(const SizedBox());

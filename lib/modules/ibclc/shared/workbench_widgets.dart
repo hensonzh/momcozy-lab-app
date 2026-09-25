@@ -103,7 +103,7 @@ class WorkbenchPagination extends StatelessWidget {
       spacing: 18,
       children: [
         Text(
-          '显示 ${total == 0 ? 0 : offset + 1}–${(offset + limit).clamp(0, total)} / $total',
+          'Showing ${total == 0 ? 0 : offset + 1}–${(offset + limit).clamp(0, total)} of $total',
           style: const TextStyle(
             fontSize: MomCozyTypography.captionSize,
             color: MomCozyColors.mutedForeground,
@@ -115,17 +115,17 @@ class WorkbenchPagination extends StatelessWidget {
           children: [
             OutlinedButton(
               onPressed: !loading && offset > 0 ? () => onPage(-1) : null,
-              child: const Text('上一页'),
+              child: const Text('Previous page'),
             ),
             Text(
-              '第 ${offset ~/ limit + 1} 页',
+              'Page ${offset ~/ limit + 1}',
               style: const TextStyle(fontSize: 12),
             ),
             OutlinedButton(
               onPressed: !loading && offset + limit < total
                   ? () => onPage(1)
                   : null,
-              child: const Text('下一页'),
+              child: const Text('Next page'),
             ),
           ],
         ),

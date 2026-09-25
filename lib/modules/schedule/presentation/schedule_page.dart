@@ -115,7 +115,7 @@ class _SchedulePageState extends State<SchedulePage> {
                           ),
                           const SizedBox(height: 14),
                           Text(
-                            '${state.selected.month}月${state.selected.day}日',
+                            '${state.selected.month}/${state.selected.day}',
                             key: const ValueKey('schedule-selected-date'),
                             style: ScheduleDesign.text(
                               18,
@@ -129,7 +129,7 @@ class _SchedulePageState extends State<SchedulePage> {
                             state.phase == SchedulePhase.loading
                                 ? _loading()
                                 : Text(
-                                    '这个月的日程暂未读取，请重试。',
+                                    'Could not load this month\'s schedule. Please try again.',
                                     style: ScheduleDesign.text(
                                       13,
                                       color: MomHomeTokens.secondary,
@@ -168,10 +168,10 @@ class _SchedulePageState extends State<SchedulePage> {
                           customBorder: const CircleBorder(),
                           onTap: () => _editPersonal(),
                           child: Tooltip(
-                            message: '添加日程',
+                            message: 'Add to schedule',
                             child: Semantics(
                               button: true,
-                              label: '添加日程',
+                              label: 'Add to schedule',
                               excludeSemantics: true,
                               child: Center(
                                 child: Text(
@@ -202,7 +202,7 @@ class _SchedulePageState extends State<SchedulePage> {
     children: [
       Expanded(
         child: Text(
-          '日程',
+          'Schedule',
           style: ScheduleDesign.text(24, bold: true, lineHeight: 34),
         ),
       ),
@@ -226,7 +226,7 @@ class _SchedulePageState extends State<SchedulePage> {
               children: [
                 Flexible(
                   child: Text(
-                    _expanded ? '收起日历' : '展开日历',
+                    _expanded ? 'Collapse calendar' : 'Expand calendar',
                     style: ScheduleDesign.text(
                       12,
                       bold: true,
@@ -266,10 +266,10 @@ class _SchedulePageState extends State<SchedulePage> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('正在读取日程', style: ScheduleDesign.text(18, bold: true)),
+        Text('Loading schedule', style: ScheduleDesign.text(18, bold: true)),
         const SizedBox(height: 14),
         Text(
-          '你的日程和照护任务会显示在这里。',
+          'Your schedule and care tasks will appear here.',
           style: ScheduleDesign.text(13, color: MomHomeTokens.secondary),
         ),
         const SizedBox(height: 14),
@@ -299,13 +299,13 @@ class _SchedulePageState extends State<SchedulePage> {
         ),
         const SizedBox(height: 12),
         Text(
-          failure.kind == ProductFailureKind.offline ? '暂时无法连接' : '暂时无法加载日程',
+          failure.kind == ProductFailureKind.offline ? 'Could not connect' : 'Could not load schedule',
           textAlign: TextAlign.center,
           style: ScheduleDesign.text(18, bold: true, lineHeight: 26),
         ),
         const SizedBox(height: 12),
         Text(
-          failure.kind == ProductFailureKind.offline ? '连接网络后，即可查看日程' : '请稍后重试',
+          failure.kind == ProductFailureKind.offline ? 'Connect to the internet to view your schedule' : 'Please try again later',
           textAlign: TextAlign.center,
           style: ScheduleDesign.text(
             13,
@@ -325,7 +325,7 @@ class _SchedulePageState extends State<SchedulePage> {
               padding: EdgeInsets.zero,
             ),
             child: Text(
-              '重试',
+              'Try again',
               style: ScheduleDesign.text(
                 13,
                 bold: true,
@@ -354,12 +354,12 @@ class _SchedulePageState extends State<SchedulePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _taskFailure != null ? '暂时无法更新任务' : '暂时无法刷新',
+                _taskFailure != null ? 'Could not update task' : 'Could not refresh',
                 style: ScheduleDesign.text(14, bold: true, lineHeight: 20),
               ),
               const SizedBox(height: 4),
               Text(
-                '已保留上次的日程',
+                'Your last loaded schedule is still available',
                 style: ScheduleDesign.text(
                   12,
                   color: MomHomeTokens.secondary,
@@ -386,7 +386,7 @@ class _SchedulePageState extends State<SchedulePage> {
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            child: const Text('重试'),
+            child: const Text('Try again'),
           ),
         ),
       ],
@@ -446,9 +446,9 @@ class _SchedulePageState extends State<SchedulePage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('删除失败，请重试'),
+            content: const Text('Could not delete. Please try again.'),
             action: SnackBarAction(
-              label: '重试',
+              label: 'Try again',
               onPressed: () => _deletePersonal(entry),
             ),
           ),

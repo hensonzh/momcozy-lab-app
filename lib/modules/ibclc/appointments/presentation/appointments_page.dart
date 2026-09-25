@@ -66,7 +66,7 @@ class _WorkbenchAppointmentsPageState extends State<WorkbenchAppointmentsPage>
       initialDate: DateTime(current.year, current.month, current.day),
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
-      helpText: '选择预约日期',
+      helpText: 'Choose appointment date',
     );
     if (mounted && selected != null) {
       await controller.selectDate(LocalDate.fromDateTime(selected));
@@ -89,28 +89,32 @@ class _WorkbenchAppointmentsPageState extends State<WorkbenchAppointmentsPage>
       return WorkbenchPageBody(
         children: [
           WorkbenchHeading(
-            title: controller.date == null ? '今日预约' : '预约',
+            title: controller.date == null
+                ? 'Today\'s appointments'
+                : 'Appointments',
             subtitle: data == null ? null : '${data.date} · ${data.timezone}',
             actions: [
               OutlinedButton.icon(
                 onPressed: _date,
                 icon: const Icon(Icons.calendar_today_outlined, size: 16),
-                label: const Text('选择日期'),
+                label: const Text('Choose date'),
               ),
               if (controller.date != null)
                 TextButton(
                   onPressed: () => controller.selectDate(null),
-                  child: const Text('今天'),
+                  child: const Text('Today'),
                 ),
               IconButton(
-                tooltip: '刷新预约',
+                tooltip: 'Refresh appointment',
                 onPressed: controller.loading ? null : controller.load,
                 icon: const Icon(Icons.refresh_rounded),
               ),
             ],
           ),
           if (controller.loading)
-            const LinearProgressIndicator(semanticsLabel: '正在读取预约'),
+            const LinearProgressIndicator(
+              semanticsLabel: 'Loading appointments',
+            ),
           if (controller.failure != null)
             ProductErrorView(
               failure: controller.failure!,
@@ -119,8 +123,8 @@ class _WorkbenchAppointmentsPageState extends State<WorkbenchAppointmentsPage>
           if (data != null && data.items.isEmpty)
             const Card(
               child: ProductEmptyView(
-                title: '这一天没有预约',
-                description: '已确认的咨询会显示在这里。',
+                title: 'No appointments for this day',
+                description: 'Confirmed consultations will appear here.',
               ),
             ),
           if (data != null && data.items.isNotEmpty)
@@ -194,13 +198,13 @@ class WorkbenchAppointmentList extends StatelessWidget {
                 color: MomCozyColors.muted.withValues(alpha: .5),
                 child: _row([
                   for (final label in [
-                    '时间',
-                    '客户',
-                    '所在州',
-                    '服务套餐',
-                    '服务阶段',
-                    '当前状态',
-                    '操作',
+                    'Time',
+                    'Client',
+                    'State',
+                    'Service package',
+                    'Service stage',
+                    'Status',
+                    'Action',
                   ])
                     Text(
                       label,
@@ -255,7 +259,7 @@ class WorkbenchAppointmentList extends StatelessWidget {
         ),
         const SizedBox(height: 3),
         Text(
-          '${appointment.duration.inMinutes} 分钟',
+          '${appointment.duration.inMinutes} min',
           style: const TextStyle(
             fontSize: 11,
             color: MomCozyColors.mutedForeground,
@@ -282,7 +286,7 @@ class WorkbenchAppointmentList extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       ),
       child: Text(
-        item.caseConsent ? view.actionLabel : '等待授权',
+        item.caseConsent ? view.actionLabel : 'Awaiting consent',
         textAlign: TextAlign.center,
         style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
       ),
@@ -296,12 +300,12 @@ class WorkbenchAppointmentList extends StatelessWidget {
             view.action != WorkbenchAppointmentAction.prepare)
           TextButton(
             onPressed: () => onOpen(item, WorkbenchAppointmentAction.prepare),
-            child: const Text('咨询资料', style: TextStyle(fontSize: 11)),
+            child: const Text('Intake details', style: TextStyle(fontSize: 11)),
           ),
       ],
     );
     final package = Text(
-      item.package.name,
+      item.package.publicName,
       style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
     );
     final stage = Text(
@@ -337,7 +341,7 @@ class WorkbenchAppointmentList extends StatelessWidget {
                 Wrap(
                   spacing: 16,
                   runSpacing: 6,
-                  children: [Text('所在地：${appointment.region}'), stage],
+                  children: [Text('State: ${appointment.region}'), stage],
                 ),
                 const SizedBox(height: 14),
                 action,

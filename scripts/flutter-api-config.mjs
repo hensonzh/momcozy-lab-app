@@ -10,7 +10,7 @@ export const DEFAULT_LOCAL_AGENT_API_URL = "http://127.0.0.1:8010";
 
 const supportedFlavors = new Set([
   "local",
-  "unified",
+  "staging",
   "production",
 ]);
 const reservedApiDefines = new Set([PRODUCT_API_DEFINE, AGENT_API_DEFINE]);
@@ -19,7 +19,7 @@ export function resolveFlutterApiConfig({ flavor, productUrl, agentUrl }) {
   const normalizedFlavor = String(flavor || "").trim();
   if (!supportedFlavors.has(normalizedFlavor)) {
     throw new Error(
-      `Unsupported flavor: ${normalizedFlavor || "(empty)"}. Expected local, unified, or production.`,
+      `Unsupported flavor: ${normalizedFlavor || "(empty)"}. Expected local, staging, or production.`,
     );
   }
 
@@ -122,6 +122,15 @@ function resolveUrl({ name, value, fallback, flavor, allowLoopback }) {
   if (!allowLoopback && parsed.protocol !== "https:") {
     throw new Error(`${name} must use HTTPS for ${flavor} builds.`);
   }
+  const hostname = parsed.hostname.toLowerCase().replace(/\.$/, "");
+  if (
+    flavor === "production" &&
+    ["example.com", "example.org", "example.net"].some(
+      (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
+    )
+  ) {
+    throw new Error(`${name} must not use a placeholder domain for production builds.`);
+  }
   return resolved;
 }
 
@@ -198,11 +207,11 @@ function parseCliArgs(args) {
 function printHelp() {
   console.log(`Usage:
   node scripts/flutter-api-config.mjs validate \\
-    --flavor <local|unified|production> \\
+    --flavor <local|staging|production> \\
     --product-url <url> --agent-url <url> \\
     [--extra-dart-defines <KEY=VALUE,...>]
 
-local accepts omitted URLs and uses loopback defaults. unified and production
+local accepts omitted URLs and uses loopback defaults. staging and production
 require both HTTPS URLs and reject loopback or unspecified hosts.`);
 }
 

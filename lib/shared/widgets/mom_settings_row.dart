@@ -53,7 +53,7 @@ class MomSettingsRow extends StatelessWidget {
           if (unreadCount > 0) ...[
             const SizedBox(width: MomHomeTokens.gap),
             Semantics(
-              label: '$unreadCount 条未读通知',
+              label: '$unreadCount unread notifications',
               excludeSemantics: true,
               child: Text(
                 unreadCount > 99 ? '99+' : '$unreadCount',

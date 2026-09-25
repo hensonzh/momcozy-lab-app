@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 
 class AgentHubInteractionSnapshot {
   const AgentHubInteractionSnapshot({
@@ -378,7 +379,7 @@ AgentStreamRequest? _requestFromMap(Object? value) {
     afterSequence: _int(map['afterSequence']) == 0
         ? _int(map['after_sequence'])
         : _int(map['afterSequence']),
-    locale: _string(map['locale']) ?? 'zh-CN',
+    locale: momCozyEnglishLocale,
     images: _imagesFromList(map['images']),
     files: _filesFromList(map['files']),
     metadata: metadata is Map

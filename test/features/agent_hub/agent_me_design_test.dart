@@ -54,7 +54,7 @@ void main() {
             state: AgentStreamRunState(
               phase: AgentStreamRunPhase.finished,
               textContent:
-                  '我们可以一起整理今天的记录。\n\n**下一步**\n\n- 查看宝宝的喂养与睡眠记录\n- 记录你今天的休息情况',
+                  'We can review today’s records together.\n\n**Next steps**\n\n- Review your baby’s feeding and sleep\n- Note how much rest you had today',
             ),
           ),
         ),

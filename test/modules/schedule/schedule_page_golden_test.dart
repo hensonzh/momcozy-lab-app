@@ -44,11 +44,11 @@ void main() {
         hasMore: false,
       );
       expect(page.agendaOn(LocalDate(2026, 9, 9)).map((e) => e.title), [
-        '记录一次喂养感受',
+        'Log how feeding went',
         'early',
         'tie1',
         'tie2',
-        '哺乳咨询',
+        'Lactation consultation',
         'late',
       ]);
       expect(page.datesWithEvents().toSet(), {
@@ -65,12 +65,19 @@ void main() {
         appointments: [_appointment],
       );
       await _mount(tester, repo);
-      expect(find.text('咨询、行动与生活安排'), findsNothing);
-      expect(find.textContaining('当天安排'), findsNothing);
       expect(
-        tester.getRect(find.byKey(const ValueKey('schedule-month-calendar'))),
-        const Rect.fromLTWH(16, 64, 361, 369),
+        find.text('Consultations, tasks, and everyday plans'),
+        findsNothing,
       );
+      expect(find.textContaining("Today's schedule"), findsNothing);
+      final month = tester.getRect(
+        find.byKey(const ValueKey('schedule-month-calendar')),
+      );
+      expect(month.left, 16);
+      expect(month.top, 64);
+      expect(month.width, 361);
+      // English helper text may add a line; the calendar must grow instead of clipping.
+      expect(month.height, greaterThanOrEqualTo(369));
       expect(
         tester.getRect(find.byKey(const ValueKey('schedule-add'))),
         const Rect.fromLTWH(329, 666, 48, 48),
@@ -80,69 +87,75 @@ void main() {
         762,
       );
       await _capture(tester, 'month');
-      await tester.tap(find.text('收起日历'));
+      await tester.tap(find.text('Collapse calendar'));
       await tester.pumpAndSettle();
-      expect(find.text('9月7日–13日'), findsOneWidget);
+      expect(find.text('9/7–13'), findsOneWidget);
       expect(
         tester
             .getSize(find.byKey(const ValueKey('schedule-week-calendar')))
             .height,
-        149,
+        greaterThanOrEqualTo(149),
       );
       expect(repo.readCount, 1);
-      final titles = ['记录一次喂养感受', '宝宝体检', '哺乳咨询'];
+      final titles = [
+        'Log how feeding went',
+        'Baby checkup',
+        'Lactation consultation',
+      ];
       final ys = titles.map((s) => tester.getTopLeft(find.text(s)).dy).toList();
       expect(ys[0], lessThan(ys[1]));
       expect(ys[1], lessThan(ys[2]));
       expect(find.text('Jamie Lee, IBCLC'), findsNothing);
-      expect(find.text('带好成长记录'), findsNothing);
-      expect(find.text('已完成'), findsNothing);
+      expect(find.text('Bring the growth records'), findsNothing);
+      expect(find.text('Completed'), findsNothing);
       await _capture(tester, 'week');
-      await tester.tap(find.text('展开日历'));
+      await tester.tap(find.text('Expand calendar'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('schedule-day-2026-09-23')));
-      await tester.tap(find.text('收起日历'));
+      await tester.tap(find.text('Collapse calendar'));
       await tester.pumpAndSettle();
-      expect(find.text('9月21日–27日'), findsOneWidget);
-      expect(find.text('9月23日'), findsOneWidget);
-      expect(find.text('这一天没有安排'), findsOneWidget);
+      expect(find.text('9/21–27'), findsOneWidget);
+      expect(find.text('9/23'), findsOneWidget);
+      expect(find.text('Nothing scheduled for this day'), findsOneWidget);
       expect(repo.readCount, 1);
       expect(
         find.byKey(const ValueKey('schedule-dot-2026-09-23')),
         findsNothing,
       );
       await _capture(tester, 'empty');
-      await tester.tap(find.text('展开日历'));
+      await tester.tap(find.text('Expand calendar'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('schedule-day-2026-09-12')));
       await tester.pumpAndSettle();
       await _capture(tester, 'empty-month');
-      await tester.tap(find.byTooltip('添加日程'));
+      await tester.tap(find.byTooltip('Add to schedule'));
       await tester.pumpAndSettle();
       await _capture(tester, 'create');
-      await tester.tap(find.byTooltip('关闭日程'));
+      await tester.tap(find.byTooltip('Close schedule item'));
       await tester.pumpAndSettle();
       expect(repo.readCount, 1);
       await tester.tap(find.byKey(const ValueKey('schedule-day-2026-09-09')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('收起日历'));
+      await tester.tap(find.text('Collapse calendar'));
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.byTooltip('更多宝宝体检选项'));
-      await tester.tap(find.byTooltip('更多宝宝体检选项'));
+      await tester.ensureVisible(
+        find.byTooltip('More options for Baby checkup'),
+      );
+      await tester.tap(find.byTooltip('More options for Baby checkup'));
       await tester.pumpAndSettle();
       await _capture(tester, 'personal-menu');
-      await tester.tap(find.text('编辑'));
+      await tester.tap(find.text('Edit'));
       await tester.pumpAndSettle();
       await _capture(tester, 'edit');
-      await tester.tap(find.text('保存修改'));
+      await tester.tap(find.text('Save changes'));
       await tester.pumpAndSettle();
       expect(repo.readCount, 1);
-      await tester.tap(find.byTooltip('更多宝宝体检选项'));
+      await tester.tap(find.byTooltip('More options for Baby checkup'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('删除'));
+      await tester.tap(find.text('Delete'));
       await tester.pumpAndSettle();
       await _capture(tester, 'delete');
-      await tester.tap(find.text('保留日程'));
+      await tester.tap(find.text('Keep item'));
       await tester.pumpAndSettle();
       expect(repo.readCount, 1);
     },
@@ -153,26 +166,29 @@ void main() {
       final repo = _ScheduleRepository();
       await _mount(tester, repo);
       repo.pendingRead = Completer<void>();
-      await tester.tap(find.byTooltip('下个月'));
+      await tester.tap(find.byTooltip('Next month'));
       await tester.pump();
-      expect(find.text('正在读取日程'), findsOneWidget);
-      expect(find.text('这一天没有安排'), findsNothing);
+      expect(find.text('Loading schedule'), findsOneWidget);
+      expect(find.text('Nothing scheduled for this day'), findsNothing);
       repo.readFailure = const ProductFailure(ProductFailureKind.offline);
       repo.pendingRead!.complete();
       await tester.pumpAndSettle();
-      expect(find.text('这个月的日程暂未读取，请重试。'), findsOneWidget);
-      expect(find.text('这一天没有安排'), findsNothing);
+      expect(
+        find.text('Could not load this month\'s schedule. Please try again.'),
+        findsOneWidget,
+      );
+      expect(find.text('Nothing scheduled for this day'), findsNothing);
     },
   );
   testWidgets('first load retains shell until data is ready', (tester) async {
     final repo = _ScheduleRepository()..pendingRead = Completer<void>();
     await _mount(tester, repo, settle: false);
-    expect(find.text('正在读取日程'), findsOneWidget);
-    expect(find.text('Schedule'), findsOneWidget);
+    expect(find.text('Loading schedule'), findsOneWidget);
+    expect(find.text('Schedule'), findsNWidgets(2));
     await _capture(tester, 'loading');
     repo.pendingRead!.complete();
     await tester.pumpAndSettle();
-    expect(find.text('正在读取日程'), findsNothing);
+    expect(find.text('Loading schedule'), findsNothing);
   });
   testWidgets('offline retry is a real read and keeps navigation', (
     tester,
@@ -181,13 +197,13 @@ void main() {
       ..readFailure = const ProductFailure(ProductFailureKind.offline);
     await _mount(tester, repo);
     await _capture(tester, 'offline');
-    expect(find.text('Schedule'), findsOneWidget);
-    expect(find.byTooltip('添加日程'), findsNothing);
+    expect(find.text('Schedule'), findsNWidgets(2));
+    expect(find.byTooltip('Add to schedule'), findsNothing);
     repo.readFailure = null;
-    await tester.tap(find.text('重试'));
+    await tester.tap(find.text('Try again'));
     await tester.pumpAndSettle();
     expect(repo.readCount, 2);
-    expect(find.text('宝宝体检'), findsOneWidget);
+    expect(find.text('Baby checkup'), findsOneWidget);
   });
   testWidgets(
     'refresh preserves agenda; failed refresh retries without blanking content',
@@ -199,7 +215,7 @@ void main() {
           .widget<RefreshIndicator>(find.byType(RefreshIndicator))
           .onRefresh();
       await tester.pump();
-      expect(find.text('宝宝体检'), findsOneWidget);
+      expect(find.text('Baby checkup'), findsOneWidget);
       expect(
         find.byKey(const ValueKey('schedule-month-calendar')),
         findsOneWidget,
@@ -208,14 +224,20 @@ void main() {
       repo.pendingRead!.complete();
       await refresh;
       await tester.pumpAndSettle();
-      expect(find.text('已保留上次的日程'), findsOneWidget);
-      expect(find.text('宝宝体检'), findsOneWidget);
+      expect(
+        find.text('Your last loaded schedule is still available'),
+        findsOneWidget,
+      );
+      expect(find.text('Baby checkup'), findsOneWidget);
       await _capture(tester, 'refresh-failure');
       repo.readFailure = null;
       repo.pendingRead = null;
-      await tester.tap(find.text('重试'));
+      await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
-      expect(find.text('已保留上次的日程'), findsNothing);
+      expect(
+        find.text('Your last loaded schedule is still available'),
+        findsNothing,
+      );
     },
   );
   testWidgets(
@@ -224,18 +246,18 @@ void main() {
       final repo = _ScheduleRepository(plans: [_plan])
         ..taskFailure = const ProductFailure(ProductFailureKind.unavailable);
       await _mount(tester, repo);
-      await tester.tap(find.text('收起日历'));
+      await tester.tap(find.text('Collapse calendar'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('更多记录一次喂养感受选项'));
+      await tester.tap(find.byTooltip('More options for Log how feeding went'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('标记进行中'));
+      await tester.tap(find.text('Mark in progress'));
       await tester.pumpAndSettle();
-      expect(find.text('暂时无法更新任务'), findsOneWidget);
-      expect(find.text('记录一次喂养感受'), findsOneWidget);
+      expect(find.text('Could not update task'), findsOneWidget);
+      expect(find.text('Log how feeding went'), findsOneWidget);
       expect(repo.taskUpdates, isEmpty);
-      await tester.tap(find.text('重试'));
+      await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
-      expect(find.text('暂时无法更新任务'), findsNothing);
+      expect(find.text('Could not update task'), findsNothing);
       expect(repo.readCount, 2);
     },
   );
@@ -258,28 +280,32 @@ void main() {
           onPlan: (id) => plan = id,
           onAppointment: (a) => appointment = a,
         );
-        await tester.tap(find.text('收起日历'));
+        await tester.tap(find.text('Collapse calendar'));
         await tester.pumpAndSettle();
-        final taskMenu = find.byTooltip('更多记录一次喂养感受选项');
+        final taskMenu = find.byTooltip(
+          'More options for Log how feeding went',
+        );
         await tester.ensureVisible(taskMenu);
         await tester.tap(taskMenu);
         await tester.pumpAndSettle();
-        expect(find.text('编辑'), findsNothing);
-        expect(find.text('删除'), findsNothing);
-        await tester.tap(find.text('标记进行中'));
+        expect(find.text('Edit'), findsNothing);
+        expect(find.text('Delete'), findsNothing);
+        await tester.tap(find.text('Mark in progress'));
         await tester.pumpAndSettle();
         expect(repo.taskUpdates.single, ('one', 2, CareTaskStatus.inProgress));
         expect(repo.readCount, 1);
         await tester.tap(taskMenu);
         await tester.pumpAndSettle();
-        await tester.tap(find.text('查看照护方案'));
+        await tester.tap(find.text('View care plan'));
         await tester.pumpAndSettle();
         expect(plan, 'episode-1');
-        final appointmentMenu = find.byTooltip('更多哺乳咨询选项');
+        final appointmentMenu = find.byTooltip(
+          'More options for Lactation consultation',
+        );
         await tester.ensureVisible(appointmentMenu);
         await tester.tap(appointmentMenu);
         await tester.pumpAndSettle();
-        await tester.tap(find.text('查看预约'));
+        await tester.tap(find.text('View appointment'));
         await tester.pumpAndSettle();
         expect(appointment?.id, 'appointment-1');
         expect(tester.takeException(), isNull);
@@ -292,15 +318,15 @@ void main() {
       final repo = _ScheduleRepository(plans: [_plan])
         ..pendingTask = Completer<void>();
       await _mount(tester, repo);
-      final menu = find.byTooltip('更多记录一次喂养感受选项');
+      final menu = find.byTooltip('More options for Log how feeding went');
       await tester.ensureVisible(menu);
       await tester.tap(menu);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('标记进行中'));
+      await tester.tap(find.text('Mark in progress'));
       await tester.pump();
       await tester.tap(menu);
       await tester.pumpAndSettle();
-      expect(find.text('标记进行中'), findsNothing);
+      expect(find.text('Mark in progress'), findsNothing);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       repo.pendingTask!.complete();
@@ -308,7 +334,7 @@ void main() {
       expect(repo.taskUpdates.single, ('one', 2, CareTaskStatus.inProgress));
       await tester.tap(menu);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('标记已完成'));
+      await tester.tap(find.text('Mark completed'));
       await tester.pumpAndSettle();
       expect(repo.taskUpdates.last, ('one', 3, CareTaskStatus.completed));
     },
@@ -321,7 +347,7 @@ void main() {
           100,
           (i) => PersonalScheduleEntry(
             id: 'event-$i',
-            title: '安排 $i',
+            title: 'Event $i',
             date: LocalDate(2026, 9, 9),
             startTime: '09:00',
             note: '',
@@ -330,7 +356,7 @@ void main() {
         );
       await _mount(tester, repo, width: 320, height: 568, scale: 2);
       await tester.scrollUntilVisible(
-        find.byTooltip('更多安排 99选项'),
+        find.byTooltip('More options for Event 99'),
         300,
         maxScrolls: 150,
         scrollable: find.byType(Scrollable).first,
@@ -339,15 +365,15 @@ void main() {
       await tester.drag(find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
       expect(
-        tester.getBottomRight(find.byTooltip('更多安排 99选项')).dy,
+        tester.getBottomRight(find.byTooltip('More options for Event 99')).dy,
         lessThan(
           tester.getTopLeft(find.byKey(const ValueKey('schedule-add'))).dy,
         ),
       );
-      await tester.tap(find.byTooltip('更多安排 99选项'));
+      await tester.tap(find.byTooltip('More options for Event 99'));
       await tester.pumpAndSettle();
-      expect(find.text('编辑'), findsOneWidget);
-      expect(find.text('删除'), findsOneWidget);
+      expect(find.text('Edit'), findsOneWidget);
+      expect(find.text('Delete'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
@@ -442,7 +468,7 @@ final _catalog = ServiceCatalog(
   packages: [
     const ServicePackage(
       id: 'feeding-confidence',
-      name: '喂养安心',
+      name: 'Feeding Confidence',
       subtitle: '',
       description: '',
       durationDays: 7,
@@ -470,10 +496,10 @@ class _ScheduleRepository implements ScheduleRepository {
   final List<CareAppointment> appointments;
   final _entry = PersonalScheduleEntry(
     id: 'personal-1',
-    title: '宝宝体检',
+    title: 'Baby checkup',
     date: LocalDate(2026, 9, 9),
     startTime: '09:30',
-    note: '带好成长记录',
+    note: 'Bring the growth records',
     updatedAt: DateTime.utc(2026, 9, 9),
   );
 
@@ -586,16 +612,17 @@ final _plan = ScheduledPlan(
     planId: 'plan-1',
     consultationId: 'consultation-1',
     revision: 2,
-    title: '建立安心的喂养节奏',
-    summary: '结合近期记录，保持舒适的喂养姿势，留意宝宝的饥饿信号，并在下次咨询时一起回顾。',
-    goals: const ['舒适地喂养'],
+    title: 'Build a comfortable feeding routine',
+    summary:
+        "Use recent records to find a comfortable feeding position, notice your baby's hunger cues, and review them at your next consultation.",
+    goals: const ['Feed comfortably'],
     tasks: [
       PublishedCareTask(
         content: CarePlanTaskContent(
           sourceKey: 'one',
-          title: '记录一次喂养感受',
-          description: '记录宝宝的表现和自己的感受。',
-          dueLabel: '今天',
+          title: 'Log how feeding went',
+          description: 'Note how your baby fed and how you felt.',
+          dueLabel: 'Today',
           scheduledDate: LocalDate(2026, 9, 9),
         ),
         status: CareTaskStatus.completed,
@@ -604,9 +631,9 @@ final _plan = ScheduledPlan(
       PublishedCareTask(
         content: CarePlanTaskContent(
           sourceKey: 'two',
-          title: '回顾舒适的姿势',
-          description: '在下次咨询时和专家一起讨论。',
-          dueLabel: '明天',
+          title: 'Review comfortable feeding positions',
+          description: 'Discuss with your consultant at your next appointment.',
+          dueLabel: 'Tomorrow',
           scheduledDate: LocalDate(2026, 9, 10),
         ),
         status: CareTaskStatus.pending,

@@ -77,7 +77,7 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
                               ),
                               const SizedBox(height: 10),
                               const Text(
-                                'IBCLC 工作台',
+                                'IBCLC Workbench',
                                 style: TextStyle(
                                   color: MomCozyColors.mutedForeground,
                                   fontSize: 13,
@@ -86,10 +86,10 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
                               const SizedBox(height: 32),
                               Text(
                                 auth.identityPending
-                                    ? '正在确认工作身份'
+                                    ? 'Confirming your work identity'
                                     : mfa
-                                    ? '验证你的身份'
-                                    : '进入病例环境',
+                                    ? 'Verify your identity'
+                                    : 'Access your workbench',
                                 style: const TextStyle(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w700,
@@ -98,10 +98,10 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
                               const SizedBox(height: 8),
                               Text(
                                 auth.identityPending
-                                    ? '工作资料验证完成后，即可进入你的工作区。'
+                                    ? 'Once your work credentials are verified, you can access your workspace.'
                                     : mfa
-                                    ? '请输入认证器中当前显示的 6 位验证码。'
-                                    : '使用工作邮箱登录，继续完成两步验证。',
+                                    ? 'Enter the 6-digit code currently shown in your authenticator app.'
+                                    : 'Sign in with your work email to complete two-step verification.',
                                 style: const TextStyle(
                                   color: MomCozyColors.mutedForeground,
                                   height: 1.6,
@@ -113,7 +113,7 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
                                   child: Padding(
                                     padding: EdgeInsets.all(24),
                                     child: CircularProgressIndicator(
-                                      semanticsLabel: '正在恢复登录',
+                                      semanticsLabel: 'Restoring sign-in',
                                     ),
                                   ),
                                 )
@@ -121,18 +121,18 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
                                 if (!auth.busy)
                                   FilledButton(
                                     onPressed: auth.restore,
-                                    child: const Text('重新确认工作身份'),
+                                    child: const Text('Verify work identity again'),
                                   ),
                                 TextButton(
                                   onPressed: auth.busy ? null : auth.logout,
-                                  child: const Text('使用其他账号'),
+                                  child: const Text('Use another account'),
                                 ),
                               ] else if (!mfa) ...[
                                 TextField(
                                   controller: email,
                                   enabled: !auth.busy,
                                   decoration: const InputDecoration(
-                                    labelText: '工作邮箱',
+                                    labelText: 'Work email',
                                   ),
                                   keyboardType: TextInputType.emailAddress,
                                   autofillHints: const [AutofillHints.username],
@@ -148,9 +148,9 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
                                   enableSuggestions: false,
                                   autocorrect: false,
                                   decoration: InputDecoration(
-                                    labelText: '密码',
+                                    labelText: 'Password',
                                     suffixIcon: IconButton(
-                                      tooltip: obscure ? '显示密码' : '隐藏密码',
+                                      tooltip: obscure ? 'Show password' : 'Hide password',
                                       onPressed: () =>
                                           setState(() => obscure = !obscure),
                                       icon: Icon(
@@ -183,7 +183,7 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
                                     LengthLimitingTextInputFormatter(6),
                                   ],
                                   decoration: const InputDecoration(
-                                    labelText: '认证器验证码',
+                                    labelText: 'Authenticator code',
                                   ),
                                   onSubmitted: (_) => _submit(),
                                 ),
@@ -214,10 +214,10 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
                                     ),
                                     child: Text(
                                       auth.busy
-                                          ? '正在验证…'
+                                          ? 'Verifying…'
                                           : mfa
-                                          ? '进入工作台'
-                                          : '继续',
+                                          ? 'Enter workbench'
+                                          : 'Continue',
                                     ),
                                   ),
                                 ),
@@ -229,7 +229,7 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
                                             code.clear();
                                             auth.restart();
                                           },
-                                    child: const Text('返回邮箱登录'),
+                                    child: const Text('Back to email sign-in'),
                                   ),
                               ],
                               const SizedBox(height: 24),
@@ -243,7 +243,7 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
                                   SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      '工作账号需要两步验证',
+                                      'Work accounts require two-step verification',
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: MomCozyColors.mutedForeground,
@@ -270,20 +270,20 @@ class _WorkbenchLoginPageState extends State<WorkbenchLoginPage> {
 
 String _failureMessage(ProductFailure failure, bool mfa) =>
     switch (failure.code) {
-      'mfa_invalid' => '验证码不正确或已使用，请输入认证器中的新验证码。',
-      'mfa_locked' => '验证次数过多，请 10 分钟后重新登录。',
-      'mfa_challenge_expired' => '本次验证已过期，请重新输入邮箱和密码。',
+      'mfa_invalid' => 'That code is incorrect or has already been used. Enter a new code from your authenticator app.',
+      'mfa_locked' => 'Too many attempts. Sign in again in 10 minutes.',
+      'mfa_challenge_expired' => 'This verification has expired. Enter your email and password again.',
       'mfa_not_configured' ||
-      'workbench_not_enabled' => '工作账号尚未配置认证器，请联系账号管理员。',
-      'mfa_rate_limited' || 'rate_limit_exceeded' => '登录尝试过于频繁，请稍后重试。',
-      'auth_storage_failed' => '无法安全保存登录状态，请检查浏览器存储设置后重试。',
+      'workbench_not_enabled' => 'An authenticator has not been set up for this work account. Contact your account administrator.',
+      'mfa_rate_limited' || 'rate_limit_exceeded' => 'Too many sign-in attempts. Try again later.',
+      'auth_storage_failed' => 'Could not securely save your sign-in. Check your browser storage settings and try again.',
       _ => switch (failure.kind) {
-        ProductFailureKind.offline => '网络未连接，请连接后重试。',
+        ProductFailureKind.offline => 'You are offline. Connect and try again.',
         ProductFailureKind.unauthenticated =>
-          mfa ? '本次身份验证未通过，请重新登录。' : '邮箱或密码不正确，或登录已过期。',
-        ProductFailureKind.forbidden => '该账号暂时无法进入工作台，请联系账号管理员。',
-        ProductFailureKind.invalid => '请检查输入内容后重试。',
+          mfa ? 'Identity verification failed. Sign in again.' : 'Incorrect email or password, or your session has expired.',
+        ProductFailureKind.forbidden => 'This account cannot access the workbench right now. Contact your account administrator.',
+        ProductFailureKind.invalid => 'Check your entries and try again.',
         ProductFailureKind.conflict ||
-        ProductFailureKind.unavailable => '暂时无法完成登录，请稍后重试。',
+        ProductFailureKind.unavailable => 'Could not sign in right now. Try again later.',
       },
     };

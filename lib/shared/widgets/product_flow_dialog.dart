@@ -101,7 +101,7 @@ class ProductFlowDialog extends StatelessWidget {
                               foregroundColor: MomCozyColors.mutedForeground,
                               minimumSize: const Size(44, 44),
                             ),
-                            child: const Text('关闭'),
+                            child: const Text('Close'),
                           ),
                   ),
               ],

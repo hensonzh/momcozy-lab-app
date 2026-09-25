@@ -28,8 +28,8 @@ class ScheduleCalendar extends StatelessWidget {
         : 1;
     final end = start.addDays(6);
     final label = expanded
-        ? '${state.month.year}年${state.month.month}月'
-        : '${start.month}月${start.day}日–${start.month == end.month ? '' : '${end.month}月'}${end.day}日';
+        ? '${state.month.month}/${state.month.year}'
+        : '${start.month}/${start.day}–${start.month == end.month ? '' : '${end.month}/'}${end.day}';
     final events = state.page!.datesWithEvents().toSet();
     return Container(
       key: ValueKey(
@@ -51,7 +51,7 @@ class ScheduleCalendar extends StatelessWidget {
             children: [
               _arrow(
                 '‹',
-                expanded ? '上个月' : '上一周',
+                expanded ? 'Previous month' : 'Previous week',
                 () => onShift(-1),
                 fontSize: expanded ? 13 : 24,
               ),
@@ -61,7 +61,7 @@ class ScheduleCalendar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   child: Semantics(
                     button: true,
-                    label: '返回今天',
+                    label: 'Go to today',
                     child: Column(
                       children: [
                         Text(
@@ -75,7 +75,7 @@ class ScheduleCalendar extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '圆点代表当天有安排',
+                          'A dot means there is something scheduled that day',
                           textAlign: TextAlign.center,
                           style: ScheduleDesign.text(
                             11,
@@ -90,7 +90,7 @@ class ScheduleCalendar extends StatelessWidget {
               ),
               _arrow(
                 '›',
-                expanded ? '下个月' : '下一周',
+                expanded ? 'Next month' : 'Next week',
                 () => onShift(1),
                 fontSize: expanded ? 13 : 24,
               ),
@@ -99,7 +99,7 @@ class ScheduleCalendar extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              for (final day in const ['一', '二', '三', '四', '五', '六', '日'])
+              for (final day in const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
                 Expanded(
                   child: Text(
                     day,
@@ -166,7 +166,7 @@ class ScheduleCalendar extends StatelessWidget {
         button: true,
         selected: selected,
         excludeSemantics: true,
-        label: '${date.year}年${date.month}月${date.day}日${marked ? '，有安排' : ''}',
+        label: '${date.month}/${date.day}/${date.year}${marked ? ' · Has events' : ''}',
         onTap: () => onSelect(date),
         child: InkWell(
           key: ValueKey('schedule-day-$date'),

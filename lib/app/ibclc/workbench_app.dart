@@ -54,23 +54,27 @@ class _MomCozyWorkbenchAppState extends State<MomCozyWorkbenchApp> {
   static const destinations = [
     WorkbenchDestination(
       '/ibclc/appointments',
-      '今日预约',
+      'Today\'s appointments',
       Icons.event_available_outlined,
     ),
-    WorkbenchDestination('/ibclc/followups', '今日跟进', Icons.fact_check_outlined),
+    WorkbenchDestination(
+      '/ibclc/followups',
+      'Today\'s follow-ups',
+      Icons.fact_check_outlined,
+    ),
     WorkbenchDestination(
       '/ibclc/calendar',
-      '我的日程',
+      'My schedule',
       Icons.calendar_month_outlined,
     ),
     WorkbenchDestination(
       '/ibclc/clients',
-      '我的客户',
+      'My clients',
       Icons.people_outline_rounded,
     ),
     WorkbenchDestination(
       '/ibclc/reminders',
-      '工作提醒',
+      'Work reminders',
       Icons.notifications_none_rounded,
     ),
   ];
@@ -102,10 +106,10 @@ class _MomCozyWorkbenchAppState extends State<MomCozyWorkbenchApp> {
       errorBuilder: (context, state) => Scaffold(
         body: Center(
           child: ProductEmptyView(
-            title: '没有找到这个页面',
+            title: 'Page not found',
             action: FilledButton(
               onPressed: () => context.go('/ibclc/appointments'),
-              child: const Text('返回工作台'),
+              child: const Text('Back to workbench'),
             ),
           ),
         ),
@@ -379,11 +383,11 @@ class _MomCozyWorkbenchAppState extends State<MomCozyWorkbenchApp> {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-    title: 'Momcozy · IBCLC 工作台',
+    title: 'Momcozy · IBCLC Workbench',
     debugShowCheckedModeBanner: false,
     theme: momCozyTheme(isWorkbench: true),
-    locale: const Locale('zh', 'CN'),
-    supportedLocales: const [Locale('zh', 'CN'), Locale('en')],
+    locale: const Locale('en', 'US'),
+    supportedLocales: const [Locale('en', 'US')],
     localizationsDelegates: const [
       GlobalMaterialLocalizations.delegate,
       GlobalWidgetsLocalizations.delegate,

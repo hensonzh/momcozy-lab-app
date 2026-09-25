@@ -19,7 +19,7 @@ void main() {
         ),
         _semanticEvent(
           type: 'run.progress',
-          label: '我在组织回复～',
+          label: 'Putting together a response…',
           surface: 'status_bar',
           lifecycle: 'running',
           mergeKey: 'progress:response_finalizing',
@@ -45,7 +45,7 @@ void main() {
         ),
         _semanticEvent(
           type: 'run.progress',
-          label: '我接着处理下一步',
+          label: 'Working on the next step…',
           surface: 'status_bar',
           lifecycle: 'running',
           mergeKey: 'progress:model_followup',
@@ -63,7 +63,7 @@ void main() {
           events,
           now: now.add(const Duration(milliseconds: 700)),
         ).statusEvent?.semanticLabel,
-        '我接着处理下一步',
+        'Working on the next step…',
       );
     });
 
@@ -71,7 +71,7 @@ void main() {
       final projection = projectAgentWorkStatus([
         _semanticEvent(
           type: 'run.progress',
-          label: '我先理解一下你的需求～',
+          label: 'Let me understand what you need…',
           surface: 'status_bar',
           lifecycle: 'running',
           mergeKey: 'progress:context_ready',
@@ -99,7 +99,7 @@ void main() {
       ], now: now);
 
       expect(projection.isTerminal, isFalse);
-      expect(projection.statusEvent?.semanticLabel, '我先理解一下你的需求～');
+      expect(projection.statusEvent?.semanticLabel, 'Let me understand what you need…');
     });
 
     test('terminal response clears all work status', () {

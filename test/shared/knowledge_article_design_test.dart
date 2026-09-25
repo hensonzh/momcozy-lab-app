@@ -39,19 +39,21 @@ void main() {
                       context,
                       article: article,
                       babyStyle: baby,
-                      title: baby ? '更好地了解 Luna' : '更好地了解自己的身体',
+                      title: baby
+                          ? 'Learn more about Luna'
+                          : 'Understand your body',
                       boundary: baby
-                          ? '内容用于帮助理解记录，不是对宝宝健康或发育状态的判断。'
-                          : '内容用于帮助理解你的连续记录，不是对身体或心理状态的诊断。',
+                          ? 'This information helps you understand your records. It does not assess your baby\'s health or development.'
+                          : 'This information helps you understand your records. It is not a diagnosis of your physical or mental health.',
                       onAsk: () => asked++,
                     ),
-                    child: const Text('阅读'),
+                    child: const Text('Read'),
                   ),
                 ),
               ),
             ),
           );
-          await tester.tap(find.text('阅读'));
+          await tester.tap(find.text('Read'));
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
           expect(find.text(article.title), findsOneWidget);
@@ -63,15 +65,15 @@ void main() {
               ),
             );
           }
-          await tester.ensureVisible(find.text('问问 Cozymate'));
+          await tester.ensureVisible(find.text('Ask Momcozy AI'));
           await tester.pumpAndSettle();
-          await tester.tap(find.text('问问 Cozymate'));
+          await tester.tap(find.text('Ask Momcozy AI'));
           await tester.pumpAndSettle();
           expect(asked, 1);
           expect(find.byType(Dialog), findsNothing);
-          await tester.tap(find.text('阅读'));
+          await tester.tap(find.text('Read'));
           await tester.pumpAndSettle();
-          await tester.tap(find.text('关闭'));
+          await tester.tap(find.text('Close'));
           await tester.pumpAndSettle();
           expect(asked, 1);
           expect(find.byType(Dialog), findsNothing);

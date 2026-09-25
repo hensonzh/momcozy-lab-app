@@ -86,7 +86,7 @@ class LiveKitConsultationMedia extends ConsultationMedia {
       });
     } catch (_) {
       if (generation == _generation && !_disposed) {
-        error = '视频连接未能建立，请检查网络后重试。';
+        error = 'Could not establish a video connection. Check your network and try again.';
         await disconnect();
       }
       rethrow;
@@ -121,7 +121,7 @@ class LiveKitConsultationMedia extends ConsultationMedia {
     try {
       await change();
     } catch (_) {
-      error = '未能开启摄像头或麦克风，请检查设备权限后重试。';
+      error = 'Could not turn on the camera or microphone. Check device permissions and try again.';
     } finally {
       busy = false;
       _notify();

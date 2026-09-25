@@ -22,9 +22,9 @@ Future<void> showMeRecordSheet(
   builder: (context) => MeRecordSheet(controller: controller, kind: kind),
 );
 const meQuickOptions = {
-  MeMetric.energy: ['有力气', '还撑得住', '很疲惫'],
-  MeMetric.sleep: ['少于 3 小时', '3–4 小时', '4–5 小时', '5–6 小时', '6 小时以上', '不确定'],
-  MeMetric.mood: ['不太好', '一般', '不错'],
+  MeMetric.energy: ['Energized', 'Managing', 'Exhausted'],
+  MeMetric.sleep: ['Less than 3 hours', '3–4 hours', '4–5 hours', '5–6 hours', 'Over 6 hours', 'Not sure'],
+  MeMetric.mood: ['Having a hard day', 'Okay', 'Good'],
 };
 
 class MeRecordSheet extends StatefulWidget {
@@ -46,7 +46,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
       note = TextEditingController(),
       duration = TextEditingController();
   String? value, side, phase, impact, swallow, carer;
-  String action = '添加一袋';
+  String action = 'Add a bag';
   double pain = 0;
   bool busy = false, failed = false;
   late DateTime at = widget.controller.now();
@@ -83,9 +83,9 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
     final time =
         '${record.occurredAt.hour.toString().padLeft(2, '0')}:${record.occurredAt.minute.toString().padLeft(2, '0')}';
     final method = record.fields['feeding_method'] == 'breastfeeding'
-        ? '亲喂'
-        : '瓶喂';
-    return '关联今天 $time 的$method记录。';
+        ? 'Nursing'
+        : 'Bottle feeding';
+    return 'Linked to your $method record from today at $time.';
   }
 
   bool get quick => meQuickOptions.containsKey(widget.kind);
@@ -176,7 +176,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
           .map((e) => DropdownMenuItem(value: e, child: Text(e)))
           .toList(),
       onChanged: busy ? null : changed,
-      decoration: const InputDecoration(hintText: '请选择'),
+      decoration: const InputDecoration(hintText: 'Please select'),
       style: MeDesign.text(14),
     ),
   );
@@ -184,14 +184,14 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
   Widget build(BuildContext context) {
     final kind = widget.kind;
     final title = switch (kind) {
-      MeMetric.energy => '今天有精神吗？',
-      MeMetric.sleep => '昨晚大概睡了多久？',
-      MeMetric.mood => '现在的心情怎么样？',
-      MeMetric.pain => '这次喂奶疼不疼？',
-      MeMetric.latch => '宝宝这次含得稳吗？',
-      MeMetric.bottle => '宝宝这次愿意吃奶瓶吗？',
-      MeMetric.storage => '更新储奶记录',
-      _ => '记录一次泵奶',
+      MeMetric.energy => 'How is your energy today?',
+      MeMetric.sleep => 'About how long did you sleep last night?',
+      MeMetric.mood => 'How are you feeling right now?',
+      MeMetric.pain => 'Did feeding hurt this time?',
+      MeMetric.latch => 'How was your baby\'s latch?',
+      MeMetric.bottle => 'How did your baby take the bottle?',
+      MeMetric.storage => 'Update stored milk',
+      _ => 'Log a pumping session',
     };
     return PopScope(
       canPop: !busy,
@@ -247,7 +247,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                               Transform.translate(
                                 offset: const Offset(14, 0),
                                 child: IconButton(
-                                  tooltip: '关闭',
+                                  tooltip: 'Close',
                                   onPressed: busy
                                       ? null
                                       : () => Navigator.pop(context),
@@ -267,7 +267,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                         const SizedBox(height: 2),
                         if (quick) ...[
                           Text(
-                            '只记录你现在的感受，之后随时可以更新。',
+                            'Record how you feel right now. You can update it later.',
                             style: MeDesign.text(
                               12,
                               color: MeDesign.muted,
@@ -340,7 +340,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                           ),
                           const SizedBox(height: 74),
                           Text(
-                            '不需要补齐其他项目。',
+                            'You do not need to fill out the other items.',
                             style: MeDesign.text(12, color: MeDesign.muted),
                           ),
                           const SizedBox(height: 24),
@@ -349,10 +349,10 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                             linkedFeed != null
                                 ? linkedHelp
                                 : switch (kind) {
-                                    MeMetric.pump => '记录实际泵出的量，不设置必须完成的目标。',
-                                    MeMetric.storage => '添加或取用奶袋，让库存保持清楚。',
-                                    MeMetric.bottle => '可以关联已有瓶喂，不重复记录奶量。',
-                                    _ => '记录这次喂奶时的实际感受。',
+                                    MeMetric.pump => 'Record the amount you pumped, without setting a target you have to meet.',
+                                    MeMetric.storage => 'Track bags you add or use to keep your stored milk up to date.',
+                                    MeMetric.bottle => 'Link an existing bottle feeding instead of logging the amount again.',
+                                    _ => 'Record how this feeding felt for you.',
                                   },
                             style: MeDesign.text(
                               12,
@@ -363,12 +363,12 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                           const SizedBox(height: 18),
                           if (kind == MeMetric.pain) ...[
                             field(
-                              '哪一侧不舒服？',
+                              'Which side feels uncomfortable?',
                               BabyChoices<String>(
                                 options: const {
-                                  '左侧': '左侧',
-                                  '右侧': '右侧',
-                                  '两侧': '两侧',
+                                  'Left side': 'Left side',
+                                  'Right side': 'Right side',
+                                  'Both sides': 'Both sides',
                                 },
                                 selected: side,
                                 onChanged: (v) => setState(() => side = v),
@@ -379,13 +379,13 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                               ),
                             ),
                             dropdown(
-                              '什么时候疼？',
-                              ['刚开始含奶时', '喂奶过程中', '喂奶后', '泵奶时'],
+                              'When did it hurt?',
+                              ['When latching', 'During feeding', 'After feeding', 'While pumping'],
                               phase,
                               (v) => setState(() => phase = v),
                             ),
                             field(
-                              '疼痛程度',
+                              'Pain level',
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
@@ -410,14 +410,14 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        '0 无痛',
+                                        '0 No pain',
                                         style: MeDesign.text(
                                           11,
                                           color: MeDesign.muted,
                                         ),
                                       ),
                                       Text(
-                                        '10 最强烈',
+                                        '10 Most severe',
                                         style: MeDesign.text(
                                           11,
                                           color: MeDesign.muted,
@@ -429,44 +429,44 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                               ),
                             ),
                             dropdown(
-                              '对这次喂奶的影响',
-                              ['可以继续喂', '需要暂停', '无法继续'],
+                              'How did it affect feeding?',
+                              ['Could continue', 'Needed a break', 'Could not continue'],
                               impact,
                               (v) => setState(() => impact = v),
                             ),
                           ],
                           if (kind == MeMetric.latch) ...[
                             dropdown(
-                              '含住以后怎么样？',
-                              ['含得稳', '容易松开', '含不住'],
+                              'How was the latch?',
+                              ['Stayed latched', 'Came off easily', 'Could not latch'],
                               value,
                               (v) => setState(() => value = v),
                             ),
                             dropdown(
-                              '有观察到吞咽吗？（可选）',
-                              ['有', '没有', '不确定'],
+                              'Did you notice swallowing? (optional)',
+                              ['Yes', 'No', 'Not sure'],
                               swallow,
                               (v) => setState(() => swallow = v),
                             ),
                           ],
                           if (kind == MeMetric.bottle) ...[
                             dropdown(
-                              '宝宝的接受情况',
-                              ['愿意吃', '愿意吃一些', '不太愿意', '不愿意吃'],
+                              'How did your baby respond?',
+                              ['Fed willingly', 'Took some', 'Reluctant', 'Refused'],
                               value,
                               (v) => setState(() => value = v),
                             ),
                             dropdown(
-                              '谁来喂？（可选）',
-                              ['自己', '伴侣', '家人', '专业照护人员'],
+                              'Who fed your baby? (optional)',
+                              ['Me', 'Partner', 'Family', 'Care professional'],
                               carer,
                               (v) => setState(() => carer = v),
                             ),
                           ],
                           if (kind == MeMetric.storage) ...[
                             dropdown(
-                              '这次要做什么？',
-                              ['添加一袋', '取用一袋'],
+                              'What would you like to do?',
+                              ['Add a bag', 'Use a bag'],
                               action,
                               (v) => setState(() => action = v!),
                             ),
@@ -476,10 +476,10 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                               kind == MeMetric.bottle) ...[
                             field(
                               kind == MeMetric.storage
-                                  ? '储存日期'
+                                  ? 'Date stored'
                                   : kind == MeMetric.bottle
-                                  ? '记录时间'
-                                  : '泵奶时间',
+                                  ? 'Record time'
+                                  : 'Pumping time',
                               OutlinedButton(
                                 onPressed: busy
                                     ? null
@@ -521,7 +521,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                             ),
                             if (kind != MeMetric.bottle)
                               field(
-                                kind == MeMetric.storage ? '这袋有多少？' : '这次泵出多少？',
+                                kind == MeMetric.storage ? 'How much is in this bag?' : 'How much did you pump?',
                                 TextFormField(
                                   controller: amount,
                                   enabled: !busy,
@@ -539,7 +539,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                                             !n.isFinite ||
                                             n <= 0 ||
                                             n > 3000
-                                        ? '请输入有效奶量'
+                                        ? 'Enter a valid milk amount'
                                         : null;
                                   },
                                 ),
@@ -547,25 +547,25 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                           ],
                           if (kind == MeMetric.pump) ...[
                             dropdown(
-                              '泵了哪一侧？',
-                              ['左侧', '右侧', '两侧'],
+                              'Which side did you pump?',
+                              ['Left side', 'Right side', 'Both sides'],
                               side,
                               (v) => setState(() => side = v),
                             ),
                             field(
-                              '时长（可选）',
+                              'Duration (optional)',
                               TextFormField(
                                 controller: duration,
                                 enabled: !busy,
                                 keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
-                                  suffixText: '分钟',
+                                  suffixText: 'Minutes',
                                 ),
                                 validator: (v) {
                                   if (v == null || v.isEmpty) return null;
                                   final n = int.tryParse(v);
                                   return n == null || n <= 0 || n > 240
-                                      ? '请输入 1–240 分钟'
+                                      ? 'Enter 1–240 minutes'
                                       : null;
                                 },
                               ),
@@ -573,7 +573,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                           ],
                           if (kind == MeMetric.pain || kind == MeMetric.latch)
                             field(
-                              '补充变化或备注（可选）',
+                              'Changes or notes (optional)',
                               TextFormField(
                                 controller: note,
                                 enabled: !busy,
@@ -588,7 +588,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                           const SizedBox(height: 12),
                         ],
                         MeButton(
-                          '保存记录',
+                          'Save record',
                           onPressed: valid ? save : null,
                           busy: busy,
                         ),

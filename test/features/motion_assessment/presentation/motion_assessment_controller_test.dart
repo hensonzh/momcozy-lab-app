@@ -829,7 +829,10 @@ void main() {
       expect(prompt.payload['recommended_action'], 'adjust_side_profile');
       expect(voice.latestContext?.missingRegions, ['ear']);
       expect(voice.latestContext?.samplingState, 'blocked');
-      expect(controller.guidance, '请侧身，让近侧耳朵和肩部入镜');
+      expect(
+        controller.guidance,
+        'Turn sideways so the nearer ear and shoulder are in frame',
+      );
 
       await controller.finish();
     },
@@ -944,7 +947,10 @@ void main() {
       await controller.start();
 
       expect(controller.phase, MotionAssessmentPagePhase.failed);
-      expect(controller.errorMessage, contains('姿态模型加载失败'));
+      expect(
+        controller.errorMessage,
+        contains('Could not load on-device posture tracking'),
+      );
       expect(controller.errorMessage, isNot(contains('网络')));
       expect(controller.poseDiagnosticMessage, contains('Unable to open'));
       expect(controller.poseDiagnosticMessage, contains('RuntimeException'));
@@ -977,7 +983,10 @@ void main() {
     await _flush();
 
     expect(controller.phase, MotionAssessmentPagePhase.failed);
-    expect(controller.errorMessage, contains('姿态识别运行异常'));
+    expect(
+      controller.errorMessage,
+      contains('On-device posture tracking encountered an error'),
+    );
     expect(pose.stopCalls, 1);
 
     await controller.finish();
@@ -1277,7 +1286,7 @@ void main() {
         find.byKey(const ValueKey('motion-assessment-end')),
         findsOneWidget,
       );
-      expect(find.text('结束评估'), findsOneWidget);
+      expect(find.text('End assessment'), findsOneWidget);
       expect(
         find.byKey(const ValueKey('motion-assessment-guidance')),
         findsNothing,
@@ -1434,7 +1443,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('请允许摄像头权限后重试。'), findsOneWidget);
+    expect(find.text('Allow camera access and try again.'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('motion-assessment-retry')),
       findsOneWidget,

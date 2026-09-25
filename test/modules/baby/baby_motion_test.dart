@@ -126,19 +126,19 @@ void main() {
     final c = editor(BabyTestRecords(), BabyRecordKind.dailyStatus);
     addTearDown(c.dispose);
     await tester.pumpWidget(host(BabyRecordEditor(controller: c)));
-    await tester.tap(find.text('尿湿'));
+    await tester.tap(find.text('Wet diapers'));
     await tester.pump();
     await tester.enterText(find.byKey(const ValueKey('wet-count')), '3');
     await tester.pump();
-    await tester.tap(find.text('便便'));
+    await tester.tap(find.text('Dirty diapers'));
     await tester.pump();
     await tester.enterText(find.byKey(const ValueKey('stool-count')), '2');
     await tester.pump();
-    await tester.tap(find.text('精神状态'));
+    await tester.tap(find.text('Mood'));
     await tester.pump();
     expect(find.byKey(const ValueKey('wet-count')), findsNothing);
     expect(find.byKey(const ValueKey('stool-count')), findsNothing);
-    await tester.tap(find.text('平静满足'));
+    await tester.tap(find.text('Calm and content'));
     await tester.pumpAndSettle();
     expect(c.wetCount, '3');
     expect(c.stoolCount, '2');
@@ -184,7 +184,7 @@ void main() {
         find.byKey(const ValueKey('growth-weight')),
         '4.2',
       );
-      await tester.tap(find.text('身长'));
+      await tester.tap(find.text('Length'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 40));
       final fade = find
@@ -206,7 +206,7 @@ void main() {
   testWidgets(
     'save label transitions keep button geometry and semantics stable',
     (tester) async {
-      final text = ValueNotifier('保存');
+      final text = ValueNotifier('Save');
       addTearDown(text.dispose);
       await tester.pumpWidget(
         host(
@@ -223,14 +223,14 @@ void main() {
         ),
       );
       final before = tester.getRect(find.byType(FilledButton));
-      text.value = '正在保存…';
+      text.value = 'Saving…';
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 70));
       expect(tester.getRect(find.byType(FilledButton)), before);
-      expect(find.text('保存'), findsOneWidget);
-      expect(find.text('正在保存…'), findsOneWidget);
+      expect(find.text('Save'), findsOneWidget);
+      expect(find.text('Saving…'), findsOneWidget);
       await tester.pumpAndSettle();
-      expect(find.text('保存'), findsNothing);
+      expect(find.text('Save'), findsNothing);
       expect(tester.getRect(find.byType(FilledButton)), before);
     },
   );

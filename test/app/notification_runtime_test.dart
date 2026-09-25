@@ -19,7 +19,7 @@ void main() {
         status: MomCozySessionStatus.authenticated,
         userId: 'account-one',
         babyId: 'baby-one',
-        locale: 'en',
+        locale: 'zh-CN',
         accessToken: 'access-one',
         refreshToken: 'refresh-one',
       );
@@ -51,6 +51,7 @@ void main() {
       final originalKey = notifications.keys.last;
       final originalRepository = notifications.repositories.last;
       expect(originalKey, isNotNull);
+      expect(notifications.locales.last, 'en-US');
 
       await runtime.selectBaby('baby-two');
       await tester.pumpAndSettle();
@@ -79,6 +80,8 @@ void main() {
       );
       await tester.pumpAndSettle();
       final nextKey = notifications.keys.last;
+      expect((await store.readSession())?.locale, 'en-US');
+      expect(runtime.currentSession.locale, 'en-US');
       expect(nextKey, isNot(originalKey));
       expect(
         notifications.backend.events.where((e) => e == 'detach'),
@@ -121,6 +124,7 @@ class _RecordingCoordinator extends NotificationCoordinator {
         onForeground: (_) {},
       );
   final keys = <String?>[];
+  final locales = <String>[];
   final repositories = <NotificationsRepository?>[];
   final backend = FakeRepository();
 
@@ -132,6 +136,7 @@ class _RecordingCoordinator extends NotificationCoordinator {
     String locale = 'en',
   }) async {
     keys.add(key);
+    locales.add(locale);
     repositories.add(inboxRepository);
     await super.setAccount(
       key: key,

@@ -76,13 +76,13 @@ Future<void> mountHost(
                 createDeviceCheck: TestReadyDeviceCheck.new,
               ),
             ),
-            child: const Text('查看预约'),
+            child: const Text('View appointment'),
           ),
         ),
       ),
     ),
   );
-  await tester.tap(find.text('查看预约'));
+  await tester.tap(find.text('View appointment'));
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 300));
 }
@@ -96,24 +96,24 @@ void main() {
       ..pending = Completer<ConsultationRoomContext>();
     var returned = 0;
     await mountHost(tester, rooms, (_) => returned++);
-    expect(find.text('预约详情'), findsOneWidget);
-    await tester.tap(find.byTooltip('关闭预约详情'));
+    expect(find.text('Appointment details'), findsOneWidget);
+    await tester.tap(find.byTooltip('Close appointment details'));
     await tester.pumpAndSettle();
     expect(returned, 1);
     rooms.pending!.complete(rooms.context);
     await tester.pumpAndSettle();
-    expect(find.text('预约详情'), findsNothing);
+    expect(find.text('Appointment details'), findsNothing);
     expect(rooms.keys, isEmpty);
     final reads = rooms.loads;
     await tester.pump(const Duration(seconds: 10));
     expect(rooms.loads, reads);
     rooms.pending = null;
     rooms.offline = true;
-    await tester.tap(find.text('查看预约'));
+    await tester.tap(find.text('View appointment'));
     await tester.pumpAndSettle();
-    expect(find.text('重试'), findsOneWidget);
+    expect(find.text('Try again'), findsOneWidget);
     rooms.offline = false;
-    await tester.tap(find.text('重试'));
+    await tester.tap(find.text('Try again'));
     await tester.pumpAndSettle();
     expect(
       find.descendant(
@@ -122,7 +122,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    await tester.tap(find.byTooltip('关闭预约详情'));
+    await tester.tap(find.byTooltip('Close appointment details'));
     await tester.pumpAndSettle();
     expect(returned, 2);
     expect(tester.takeException(), isNull);
@@ -134,18 +134,18 @@ void main() {
       HomeConsultationDestination? destination;
       await mountHost(tester, rooms, (value) => destination = value);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('开始咨询'));
+      await tester.tap(find.text('Start consultation'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('继续确认'));
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
       rooms.json['intake_ready'] = false;
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('查看信息采集表').last);
+      await tester.tap(find.text('View intake form').last);
       await tester.pumpAndSettle();
       expect(destination, HomeConsultationDestination.intake);
-      expect(find.text('预约详情'), findsNothing);
-      expect(find.text('开始视频咨询'), findsNothing);
+      expect(find.text('Appointment details'), findsNothing);
+      expect(find.text('Start video consultation'), findsNothing);
       expect(rooms.keys, isEmpty);
       expect(tester.takeException(), isNull);
     },
@@ -161,7 +161,7 @@ void main() {
         ..pending = Completer<ConsultationRoomContext>();
       var returned = false;
       await mountHost(tester, rooms, (_) => returned = true, scale: 2);
-      expect(find.text('正在读取咨询信息'), findsOneWidget);
+      expect(find.text('Loading consultation details'), findsOneWidget);
       await expectLater(
         find.byType(MaterialApp),
         matchesGoldenFile(
@@ -172,7 +172,7 @@ void main() {
         const ProductFailure(ProductFailureKind.offline),
       );
       await tester.pumpAndSettle();
-      expect(find.text('重试'), findsOneWidget);
+      expect(find.text('Try again'), findsOneWidget);
       await expectLater(
         find.byType(MaterialApp),
         matchesGoldenFile(
@@ -180,13 +180,13 @@ void main() {
         ),
       );
       rooms.pending = null;
-      await tester.ensureVisible(find.text('重试'));
-      await tester.tap(find.text('重试'));
+      await tester.ensureVisible(find.text('Try again'));
+      await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('开始咨询'));
+      await tester.ensureVisible(find.text('Start consultation'));
       await tester.pumpAndSettle();
       expect(rooms.keys, isEmpty);
-      await tester.tap(find.byTooltip('关闭预约详情'));
+      await tester.tap(find.byTooltip('Close appointment details'));
       await tester.pumpAndSettle();
       expect(returned, isTrue);
       expect(tester.takeException(), isNull);
@@ -262,7 +262,7 @@ void main() {
             );
           }
 
-          await click('查看预约');
+          await click('View appointment');
           expect(
             find.descendant(
               of: find.byType(ConsultationPreparation),
@@ -270,46 +270,46 @@ void main() {
             ),
             findsOneWidget,
           );
-          expect(find.text('预约详情'), findsOneWidget);
-          expect(find.text('咨询前准备'), findsNothing);
+          expect(find.text('Appointment details'), findsOneWidget);
+          expect(find.text('Prepare for your consultation'), findsNothing);
           expect(rooms.keys, isEmpty);
           expect(media.single.connectCalls, 0);
           await shot('ready');
-          await tester.tap(find.byTooltip('关闭预约详情'));
+          await tester.tap(find.byTooltip('Close appointment details'));
           await tester.pumpAndSettle();
           expect(returned, 1);
-          expect(find.text('预约详情'), findsNothing);
-          await click('查看预约');
-          await click('取消预约');
+          expect(find.text('Appointment details'), findsNothing);
+          await click('View appointment');
+          await click('Cancel appointment');
           await shot('cancel');
           expect(appointments.cancels, 0);
           // Keeping the appointment returns home, matching the design modal flow.
-          await click('保留预约');
+          await click('Keep appointment');
           expect(returned, 2);
-          await click('查看预约');
-          await click('开始咨询');
-          expect(find.text('摄像头和麦克风均可用'), findsOneWidget);
-          await click('继续确认');
-          expect(find.text('开始视频咨询'), findsOneWidget);
+          await click('View appointment');
+          await click('Start consultation');
+          expect(find.text('Camera and microphone are ready'), findsOneWidget);
+          await click('Continue');
+          expect(find.text('Start video consultation'), findsOneWidget);
           expect(rooms.keys, isEmpty);
-          await click('确认并进入咨询室');
+          await click('Confirm and join');
           expect(rooms.keys, hasLength(1));
           expect(media.last.connectCalls, 1);
-          expect(find.text('等待室'), findsWidgets);
+          expect(find.text('Waiting room'), findsWidgets);
           await shot('room');
-          await click('离开房间');
-          await click('留在房间');
+          await click('Leave room');
+          await click('Stay in room');
           expect(returned, 2);
-          await click('离开房间');
-          await click('暂时离开');
+          await click('Leave room');
+          await click('Leave for now');
           expect(returned, 3);
           expect(media.last.disconnectCalls, greaterThan(0));
-          await click('查看预约');
-          await click('取消预约');
-          await click('确认取消');
+          await click('View appointment');
+          await click('Cancel appointment');
+          await click('Confirm cancellation');
           expect(appointments.cancels, 1);
           expect(returned, 4);
-          expect(find.text('预约详情'), findsNothing);
+          expect(find.text('Appointment details'), findsNothing);
           await tester.pumpWidget(const SizedBox());
         },
       );

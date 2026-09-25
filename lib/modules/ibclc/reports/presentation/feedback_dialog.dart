@@ -26,7 +26,7 @@ class _ReportFeedbackDialogState extends State<ReportFeedbackDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('反馈修改'),
+    title: const Text('Suggest changes'),
     content: SizedBox(
       width: 560,
       child: SingleChildScrollView(
@@ -34,9 +34,9 @@ class _ReportFeedbackDialogState extends State<ReportFeedbackDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('${widget.report.date} · 报告第 ${widget.report.version} 版'),
+            Text('${widget.report.date} · Report version ${widget.report.version}'),
             const SizedBox(height: 14),
-            const Text('请指出需要修改的回答或摘要，并说明具体意见。'),
+            const Text('Identify the answer or summary that needs to change and explain your feedback.'),
             const SizedBox(height: 16),
             TextField(
               controller: text,
@@ -44,7 +44,7 @@ class _ReportFeedbackDialogState extends State<ReportFeedbackDialog> {
               minLines: 4,
               maxLines: 8,
               maxLength: 3000,
-              decoration: InputDecoration(labelText: '具体意见', errorText: error),
+              decoration: InputDecoration(labelText: 'Specific feedback', errorText: error),
               onChanged: (value) {
                 widget.onDraft(value);
                 if (error != null) setState(() => error = null);
@@ -57,17 +57,17 @@ class _ReportFeedbackDialogState extends State<ReportFeedbackDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: const Text('Cancel'),
       ),
       FilledButton(
         onPressed: () {
           if (text.text.trim().runes.length < 5) {
-            setState(() => error = '请填写至少 5 个字的具体意见。');
+            setState(() => error = 'Enter at least 5 characters of specific feedback.');
             return;
           }
           Navigator.pop(context, text.text.trim());
         },
-        child: const Text('提交反馈'),
+        child: const Text('Submit feedback'),
       ),
     ],
   );

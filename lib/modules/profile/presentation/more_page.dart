@@ -85,7 +85,7 @@ class _MorePageState extends State<MorePage> {
                 child: Semantics(
                   header: true,
                   child: Text(
-                    '更多',
+                    'More',
                     style: MomHomeTokens.text(
                       22,
                       weight: FontWeight.w700,
@@ -107,13 +107,13 @@ class _MorePageState extends State<MorePage> {
                   foregroundColor: MomHomeTokens.secondary,
                   textStyle: MomHomeTokens.text(12, height: 14 / 12),
                 ),
-                child: const Text('隐私'),
+                child: const Text('Privacy'),
               ),
             ],
           ),
           const SizedBox(height: MomHomeTokens.gap),
           Text(
-            '照顾好自己，也安心管理每一份陪伴',
+            'Care for yourself and stay in control of your support',
             style: MomHomeTokens.text(
               12,
               color: MomHomeTokens.secondary,
@@ -122,11 +122,11 @@ class _MorePageState extends State<MorePage> {
           ),
           const SizedBox(height: MomHomeTokens.gap),
           Semantics(
-            label: '账号信息',
+            label: 'Account information',
             child: _AccountCard(name: name, email: email, loading: loading),
           ),
           const SizedBox(height: MomHomeTokens.gap),
-          const _SectionTitle('日常管理'),
+          const _SectionTitle('Everyday settings'),
           const SizedBox(height: MomHomeTokens.gap),
           Material(
             color: MomHomeTokens.surface,
@@ -140,14 +140,14 @@ class _MorePageState extends State<MorePage> {
               child: Column(
                 children: [
                   MomSettingsRow(
-                    title: '账号设置',
-                    subtitle: '登录方式与账号管理',
+                    title: 'Account settings',
+                    subtitle: 'Sign-in methods and account management',
                     onTap: () => context.push('/account'),
                   ),
                   const Divider(height: 1, color: MomHomeTokens.border),
                   MomSettingsRow(
-                    title: '通知',
-                    subtitle: '查看消息与服务提醒',
+                    title: 'Notifications',
+                    subtitle: 'View messages and service reminders',
                     unreadCount: unread,
                     onTap: () => context.push('/notifications?from=/more'),
                   ),
@@ -156,11 +156,11 @@ class _MorePageState extends State<MorePage> {
             ),
           ),
           const SizedBox(height: MomHomeTokens.gap),
-          const _SectionTitle('专家陪伴'),
+          const _SectionTitle('Expert care'),
           const SizedBox(height: MomHomeTokens.gap),
           MomExpertPlanEntry(
             settingsLayout: true,
-            title: '专家支持',
+            title: 'Expert support',
             trailingGap: MomHomeTokens.gap,
             onTap: () => context.push('/services'),
           ),
@@ -207,7 +207,7 @@ class _MorePageState extends State<MorePage> {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               textStyle: MomHomeTokens.text(13, height: 16 / 13),
             ),
-            child: const Text('退出登录'),
+            child: const Text('Sign out'),
           ),
         ],
       ),
@@ -241,7 +241,7 @@ class _AccountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayName = name.trim().isNotEmpty ? name.trim() : '我的账号';
+    final displayName = name.trim().isNotEmpty ? name.trim() : 'My account';
     final initial = name
         .trim()
         .split(RegExp(r'\s+'))
@@ -291,9 +291,9 @@ class _AccountCard extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 25),
           child: Text(
             loading
-                ? '正在加载账号…'
+                ? 'Loading account…'
                 : email.isEmpty
-                ? '管理你的账号信息'
+                ? 'Manage your account information'
                 : email,
             style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
           ),

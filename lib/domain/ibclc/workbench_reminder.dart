@@ -1,4 +1,5 @@
 import '../care/service_event.dart';
+import '../care/service_package.dart';
 import '../shared/local_date.dart';
 
 final class WorkbenchReminder {
@@ -14,12 +15,14 @@ final class WorkbenchReminder {
   });
   final CareServiceEvent event;
   final String patientRef, packageName;
+  String get publicPackageName =>
+      englishCarePackageName(packageName, id: event.episodeId);
   final String? patientName, timezone;
   final DateTime? startsAt, readAt;
   final LocalDate? reportDate;
   String get displayName => patientName?.trim().isNotEmpty == true
       ? patientName!
-      : '客户 ${patientRef.substring(0, 8)}';
+      : 'Client ${patientRef.substring(0, 8)}';
 }
 
 final class WorkbenchReminders {

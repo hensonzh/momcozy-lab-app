@@ -3,27 +3,35 @@ import 'package:flutter/material.dart';
 import '../application/me_controller.dart';
 import 'me_design.dart';
 
-const meProfileGroups = ['基本信息', '分娩情况', '喂养方式', '照护与补充信息'];
+const meProfileGroups = [
+  'About you',
+  'Delivery details',
+  'Feeding method',
+  'Support & more',
+];
 const meProfileChoices = <String, Map<String, String>>{
-  'delivery_count': {'1': '第1次', '2': '第2次', '3': '第3次及以上'},
-  'baby_count': {'1': '单胎', '2': '双胞胎', '3': '三胞胎及以上'},
-  'current_delivery_method': {'vaginal': '阴道分娩（顺产）', 'cesarean': '剖宫产'},
+  'delivery_count': {'1': 'First', '2': 'Second', '3': 'Third or later'},
+  'baby_count': {'1': 'One baby', '2': 'Twins', '3': 'Triplets or more'},
+  'current_delivery_method': {
+    'vaginal': 'Vaginal birth',
+    'cesarean': 'Cesarean birth',
+  },
   'feeding_methods': {
-    'direct': '母乳亲喂',
-    'expressed': '母乳瓶喂',
-    'formula': '配方奶瓶喂',
+    'direct': 'Nursing',
+    'expressed': 'Bottle-fed breast milk',
+    'formula': 'Bottle-fed formula',
   },
   'feeding_preference': {
-    'breast': '母乳喂养',
-    'formula': '配方奶喂养',
-    'mixed': '混合喂养',
-    'undecided': '还没想好',
+    'breast': 'Breastfeeding',
+    'formula': 'Formula feeding',
+    'mixed': 'Combination feeding',
+    'undecided': 'Not sure yet',
   },
   'caregivers': {
-    'partner': '伴侣',
-    'family': '家人',
-    'professional': '专业照护人员',
-    'self': '主要由我照护',
+    'partner': 'Partner',
+    'family': 'Family',
+    'professional': 'Care professional',
+    'self': 'Mostly me',
   },
 };
 
@@ -31,24 +39,24 @@ class MeProfilePage extends StatelessWidget {
   const MeProfilePage({super.key, required this.controller});
   final MeController controller;
   String value(String key) =>
-      controller.state?.profile[key]?.toString() ?? '未填写';
+      controller.state?.profile[key]?.toString() ?? 'Not provided';
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: controller,
     builder: (context, _) => MePage(
-      title: '个人档案',
+      title: 'My profile',
       background: MeDesign.profileBackground,
       bodyPadding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '让 Cozymate 更了解你',
+            'Help Momcozy AI get to know you',
             style: MeDesign.text(22, weight: FontWeight.w700, line: 32),
           ),
           const SizedBox(height: 6),
           Text(
-            '按意愿填写，之后可以随时修改。',
+            'Share what you feel comfortable sharing. You can update it anytime.',
             style: MeDesign.text(13, color: MeDesign.muted, line: 19),
           ),
           const SizedBox(height: 25),
@@ -87,7 +95,7 @@ class MeProfilePage extends StatelessWidget {
                           SizedBox(
                             width: 54,
                             child: Text(
-                              '编辑 ›',
+                              'Edit ›',
                               style: MeDesign.text(
                                 13,
                                 color: MeDesign.rose,
@@ -129,25 +137,25 @@ class MeProfilePage extends StatelessWidget {
       'current_delivery_method',
     ];
     return switch (group) {
-      0 => ['${value('preferred_name')} · 年龄${value('age')}'],
+      0 => ['${value('preferred_name')} · Age ${value('age')}'],
       1 => [
-        '分娩日期  ${birth == null ? '未填写' : '${birth.year}年${birth.month}月${birth.day}日'}',
-        '分娩孕周  ${weeks == null ? '未填写' : '$weeks 周${days == null ? '' : ' $days 天'}'}',
+        'Delivery date  ${birth == null ? 'Not provided' : '${birth.month}/${birth.day}/${birth.year}'}',
+        'Gestational age  ${weeks == null ? 'Not provided' : '$weeks wk${days == null ? '' : ' $days days'}'}',
         delivery.every((e) => profile[e] == null)
-            ? '分娩胎次、宝宝数量、分娩方式待填写'
+            ? 'Delivery history, number of babies, and delivery method not provided'
             : delivery.map(_labels).join(' · '),
       ],
       2 => [
-        '目前的喂养方式  ${_labels('feeding_methods')}',
-        '倾向的喂养方式  ${_labels('feeding_preference')}',
+        'Current feeding method  ${_labels('feeding_methods')}',
+        'Preferred feeding method  ${_labels('feeding_preference')}',
       ],
-      _ => ['照护支持、返工安排与其他情况'],
+      _ => ['Care support, return-to-work plans, and other notes'],
     };
   }
 
   String _labels(String key) {
     final value = controller.state?.profile[key];
-    if (value == null) return '未填写';
+    if (value == null) return 'Not provided';
     return (value is List ? value : [value])
         .map(
           (e) =>
@@ -157,7 +165,7 @@ class MeProfilePage extends StatelessWidget {
                   : e.toString()] ??
               e,
         )
-        .join('、');
+        .join(', ');
   }
 }
 
@@ -240,7 +248,7 @@ class _MeProfileEditorState extends State<MeProfileEditor> {
         maxLength: limit,
         style: MeDesign.text(16),
         decoration: InputDecoration(
-          hintText: hint ?? '填写$name',
+          hintText: hint ?? 'Enter $name',
           filled: true,
           fillColor: MeDesign.surface,
         ),
@@ -253,16 +261,20 @@ class _MeProfileEditorState extends State<MeProfileEditor> {
         ),
         validator: (v) {
           if (v == null || v.isEmpty) {
-            return key == 'preferred_name' ? '请填写称呼' : null;
+            return key == 'preferred_name' ? 'Please enter a name' : null;
           }
           if (numeric) {
             final n = int.tryParse(v);
-            if (n == null) return '请输入整数';
-            if (key == 'age' && (n < 12 || n > 70)) return '请输入 12–70 岁';
-            if (key == 'gestation_weeks' && (n < 20 || n > 45)) {
-              return '请输入 20–45 周';
+            if (n == null) return 'Enter a whole number';
+            if (key == 'age' && (n < 12 || n > 70)) {
+              return 'Enter an age from 12 to 70';
             }
-            if (key == 'gestation_days' && (n < 0 || n > 6)) return '请输入 0–6 天';
+            if (key == 'gestation_weeks' && (n < 20 || n > 45)) {
+              return 'Enter 20–45 weeks';
+            }
+            if (key == 'gestation_days' && (n < 0 || n > 6)) {
+              return 'Enter 0–6 days';
+            }
           }
           return null;
         },
@@ -359,7 +371,8 @@ class _MeProfileEditorState extends State<MeProfileEditor> {
           ),
         ),
         child: Text(
-          draft[key]?.toString() ?? '选择日期${future ? '（选填）' : ''}',
+          draft[key]?.toString() ??
+              'Select a date${future ? ' (optional)' : ''}',
           style: MeDesign.text(
             16,
             color: draft[key] == null ? MeDesign.muted : MeDesign.ink,
@@ -378,68 +391,90 @@ class _MeProfileEditorState extends State<MeProfileEditor> {
     child: MePage(
       title: meProfileGroups[widget.group],
       onBack: back,
-      footer: MeButton('保存', onPressed: dirty ? save : null, busy: busy),
+      footer: MeButton('Save', onPressed: dirty ? save : null, busy: busy),
       body: Form(
         key: form,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (widget.group == 0) ...[
-              Text('怎么称呼你？', style: MeDesign.text(24, weight: FontWeight.w700)),
+              Text(
+                'What should we call you?',
+                style: MeDesign.text(24, weight: FontWeight.w700),
+              ),
               const SizedBox(height: 10),
               Text(
-                '填写称呼和年龄，帮助 Cozymate 了解你的情况。',
+                'Share your name and age so Momcozy AI can tailor its support to you.',
                 style: MeDesign.text(14, color: MeDesign.muted),
               ),
               const SizedBox(height: 40),
-              input('preferred_name', '称呼'),
-              input('age', '年龄', numeric: true),
+              input('preferred_name', 'Name'),
+              input('age', 'Age', numeric: true),
             ],
             if (widget.group == 1) ...[
-              Text('关于这次分娩', style: MeDesign.text(24, weight: FontWeight.w700)),
+              Text(
+                'About your delivery',
+                style: MeDesign.text(24, weight: FontWeight.w700),
+              ),
               const SizedBox(height: 30),
-              dateField('actual_delivery_date', '分娩日期'),
+              dateField('actual_delivery_date', 'Delivery date'),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: input(
                       'gestation_weeks',
-                      '分娩时孕周',
+                      'Gestational age at delivery',
                       numeric: true,
-                      hint: '周',
+                      hint: 'Weeks',
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: input(
                       'gestation_days',
-                      '天',
+                      'Days',
                       numeric: true,
                       hint: '0–6',
                     ),
                   ),
                 ],
               ),
-              choices('delivery_count', '这是第几次分娩'),
-              choices('baby_count', '本次宝宝数量'),
-              choices('current_delivery_method', '分娩方式'),
+              choices('delivery_count', 'How many times have you given birth?'),
+              choices('baby_count', 'How many babies did you deliver?'),
+              choices('current_delivery_method', 'Delivery method'),
             ],
             if (widget.group == 2) ...[
-              choices('feeding_methods', '目前的喂养方式 · 可多选', multi: true),
+              choices(
+                'feeding_methods',
+                'Current feeding methods · Select all that apply',
+                multi: true,
+              ),
               const SizedBox(height: 24),
-              choices('feeding_preference', '倾向的喂养方式 · 单选'),
+              choices(
+                'feeding_preference',
+                'Preferred feeding method · Select one',
+              ),
             ],
             if (widget.group == 3) ...[
-              choices('caregivers', '平时谁会帮忙照护 · 可多选', multi: true),
+              choices(
+                'caregivers',
+                'Who helps care for your baby? · Select all that apply',
+                multi: true,
+              ),
               const SizedBox(height: 24),
-              dateField('return_to_work_date', '计划返工日期', future: true),
+              dateField(
+                'return_to_work_date',
+                'Planned return-to-work date',
+                future: true,
+              ),
               input(
                 'additional_context',
-                '需要特别了解的情况',
+                'Anything else we should know?',
                 lines: 5,
                 limit: 500,
-                hint: '例如恢复情况、既往健康问题、正在用药，或其他想补充的事。',
+                hint:
+                    'For example, your recovery, health history, medications, or anything else you would like to share.',
               ),
             ],
             if (failed) const MeError(),

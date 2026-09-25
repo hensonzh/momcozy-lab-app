@@ -117,14 +117,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -231,19 +230,27 @@ void main() {
     await capture(
       tester,
       '$chain-home',
-      'More → Me before conditional purchase',
-      route: '/me',
+      'More before conditional purchase',
+      route: '/more',
     );
     await tap(tester, find.byType(MomExpertPlanEntry));
     await capture(
       tester,
       '$chain-catalog',
-      'Home expert plan → catalog',
+      'More Expert support → catalog',
       route: '/services',
     );
-    await tap(tester, find.text('查看方案 →').first);
+    for (
+      var i = 0;
+      i < 30 && find.text('View plans →').hitTestable().evaluate().isEmpty;
+      i++
+    ) {
+      await tester.drag(find.byType(ListView).last, const Offset(0, -240));
+      await settle(tester);
+    }
+    await tap(tester, find.text('View plans →').hitTestable().first);
     await capture(tester, '$chain-package', 'Catalog → package');
-    await tap(tester, find.text('购买'));
+    await tap(tester, find.text('Purchase'));
   }
 
   Future<void> ready(WidgetTester tester) async {
@@ -259,7 +266,7 @@ void main() {
   }) async {
     await entry(tester, chain, stripe: stripe);
     await ready(tester);
-    await tap(tester, find.text('确认并继续'));
+    await tap(tester, find.text('Confirm and continue'));
     await capture(
       tester,
       '$chain-payment',
@@ -273,19 +280,19 @@ void main() {
   }
 
   Future<void> finish(WidgetTester tester, String chain) async {
-    await tap(tester, find.text('返回').first);
+    await tap(tester, find.text('Back').first);
     await capture(
       tester,
       '$chain-catalog-return',
       'Package Back → catalog',
       route: '/services',
     );
-    await tap(tester, find.text('返回').first);
+    await tap(tester, find.text('Back').first);
     await capture(
       tester,
       '$chain-home-return',
-      'Catalog Back → Me',
-      route: '/me',
+      'Catalog Back → More',
+      route: '/more',
     );
     await tester.pumpWidget(const SizedBox());
   }
@@ -318,9 +325,9 @@ void main() {
           'Framework Back while idle → package',
         );
         expect(transport.order, isNull);
-        await tap(tester, find.text('购买'));
+        await tap(tester, find.text('Purchase'));
         await ready(tester);
-        await tap(tester, find.text('确认并继续'));
+        await tap(tester, find.text('Confirm and continue'));
         await capture(
           tester,
           'new-card',
@@ -332,19 +339,19 @@ void main() {
           find.byType(TextFormField).first,
           '4000 0025 0000 3155',
         );
-        await tap(tester, find.text('支付 \$219'));
+        await tap(tester, find.text('Pay \$219'));
         await capture(
           tester,
           'submitted-challenge',
           'Submitted card → challenge with locked fields',
         );
-        await tap(tester, find.byTooltip('关闭购买'));
+        await tap(tester, find.byTooltip('Close purchase'));
         await capture(
           tester,
           'challenge-closed',
           'Close challenge → resumable package',
         );
-        await tap(tester, find.text('继续付款'));
+        await tap(tester, find.text('Continue to payment'));
         await capture(
           tester,
           'challenge-reopened',
@@ -357,14 +364,14 @@ void main() {
           'challenge-back-dismissed',
           'Idle framework Back → resumable package',
         );
-        await tap(tester, find.text('继续付款'));
-        await tap(tester, find.text('确认验证'));
+        await tap(tester, find.text('Continue to payment'));
+        await tap(tester, find.text('Confirm verification'));
         await capture(
           tester,
           'reopened-challenge-success',
           'Confirm reopened challenge → paid episode',
         );
-        await tap(tester, find.byTooltip('关闭购买'));
+        await tap(tester, find.byTooltip('Close purchase'));
         await capture(tester, 'success-close', 'Success Close → owned package');
         expect(transport.appointment, isNull);
         await finish(tester, 'resume');
@@ -377,15 +384,16 @@ void main() {
       await entry(tester, 'errors');
       await ready(tester);
       final messages = {
-        401: '登录已过期，请重新登录后继续。',
-        403: '当前账号无法操作这笔订单。',
-        409: '订单状态已更新，请查询最新结果后继续。',
-        422: '请核对填写的信息后重试。',
+        401: 'Your session has expired. Sign in again to continue.',
+        403: 'This account cannot access this order.',
+        409:
+            'The order status has changed. Check the latest status before continuing.',
+        422: 'Check your information and try again.',
       };
       transport.failingWrites.add('/v1/care/orders');
       for (final row in messages.entries) {
         transport.failureStatus = row.key;
-        await tap(tester, find.text('确认并继续'));
+        await tap(tester, find.text('Confirm and continue'));
         await capture(
           tester,
           'create-${row.key}',
@@ -395,7 +403,7 @@ void main() {
         expect(transport.order, isNull);
       }
       transport.failingWrites.clear();
-      await tap(tester, find.text('重试'));
+      await tap(tester, find.text('Try again'));
       await capture(
         tester,
         'create-business-recovered',
@@ -404,7 +412,7 @@ void main() {
       transport.failingWrites.add(payPath);
       for (final row in messages.entries) {
         transport.failureStatus = row.key;
-        await tap(tester, find.text('支付 \$219'));
+        await tap(tester, find.text('Pay \$219'));
         await capture(
           tester,
           'payment-${row.key}',
@@ -417,19 +425,19 @@ void main() {
         );
       }
       transport.failingWrites.clear();
-      await tap(tester, find.text('查询结果'));
+      await tap(tester, find.text('Check status'));
       await capture(
         tester,
         'business-query-recovered',
         'Query actual pending order → error cleared',
       );
-      await tap(tester, find.text('取消付款'));
+      await tap(tester, find.text('Cancel payment'));
       await capture(
         tester,
         'business-cancelled',
         'Cancel recovered pending order → no benefits',
       );
-      await tap(tester, find.text('返回方案'));
+      await tap(tester, find.text('Back to plan'));
       await finish(tester, 'errors');
     });
     testWidgets(
@@ -439,7 +447,7 @@ void main() {
         await card(tester, 'stripe', stripe: true);
         expect(find.byType(TextFormField), findsNothing);
         transport.writeGate = Completer<void>();
-        await tap(tester, find.text('打开 Stripe Checkout'));
+        await tap(tester, find.text('Open Stripe Checkout'));
         await capture(
           tester,
           'checkout-pending',
@@ -461,7 +469,7 @@ void main() {
         );
         expect(launches, isEmpty);
         transport.failingWrites.clear();
-        await tap(tester, find.text('打开 Stripe Checkout'));
+        await tap(tester, find.text('Open Stripe Checkout'));
         await capture(
           tester,
           'launch-rejected',
@@ -473,12 +481,12 @@ void main() {
           'https://checkout.stripe.com/c/pay/inventory-only',
         );
         launchThrows = true;
-        await tap(tester, find.text('打开 Stripe Checkout'));
+        await tap(tester, find.text('Open Stripe Checkout'));
         expect(launches, hasLength(2));
-        expect(find.text('未打开支付页面'), findsOneWidget);
+        expect(find.text('Payment page did not open'), findsOneWidget);
         launchThrows = false;
         launchGate = Completer<bool>();
-        await tap(tester, find.text('打开 Stripe Checkout'));
+        await tap(tester, find.text('Open Stripe Checkout'));
         await capture(
           tester,
           'launch-pending',
@@ -497,10 +505,10 @@ void main() {
           'launch-accepted',
           'Platform reports URL opened → App ready for query, no payment inferred',
         );
-        expect(find.text('未打开支付页面'), findsNothing);
+        expect(find.text('Payment page did not open'), findsNothing);
         expect(transport.order!['status'], 'pending');
         transport.readGates[orderPath] = Completer<void>();
-        await tap(tester, find.text('我已完成付款，查询结果'));
+        await tap(tester, find.text('I have paid · Check status'));
         await capture(
           tester,
           'stripe-query-pending',
@@ -516,57 +524,57 @@ void main() {
         );
         transport.failingReads.clear();
         transport.order!['status'] = 'cancelled';
-        await tap(tester, find.text('查询结果'));
+        await tap(tester, find.text('Check status'));
         await capture(
           tester,
           'stripe-cancelled',
           'Query cancelled external payment → no service benefits',
         );
         expect(transport.episode, isNull);
-        await tap(tester, find.text('返回方案'));
+        await tap(tester, find.text('Back to plan'));
         await capture(
           tester,
           'stripe-cancel-return',
           'Cancelled Stripe order → package',
         );
-        await tap(tester, find.text('购买'));
+        await tap(tester, find.text('Purchase'));
         await ready(tester);
-        await tap(tester, find.text('确认并继续'));
+        await tap(tester, find.text('Confirm and continue'));
         await capture(
           tester,
           'stripe-repurchase',
           'Repurchase after cancellation → new Stripe order',
         );
         transport.order!['status'] = 'failed';
-        await tap(tester, find.text('我已完成付款，查询结果'));
+        await tap(tester, find.text('I have paid · Check status'));
         await capture(
           tester,
           'stripe-failed',
           'Query returns failed → reopen checkout or query',
         );
         transport.order!['status'] = 'processing';
-        await tap(tester, find.text('我已完成付款，查询结果'));
+        await tap(tester, find.text('I have paid · Check status'));
         await capture(
           tester,
           'stripe-processing',
           'Query processing → only query, no sandbox completion',
         );
-        expect(find.text('完成模拟付款'), findsNothing);
+        expect(find.text('Complete simulated payment'), findsNothing);
         transport.order!['status'] = 'paid';
-        await tap(tester, find.text('查询结果'));
+        await tap(tester, find.text('Check status'));
         await capture(
           tester,
           'stripe-syncing',
           'Stripe paid without episode → entitlement sync',
         );
         transport.episode = transport.newEpisode();
-        await tap(tester, find.text('查询结果'));
+        await tap(tester, find.text('Check status'));
         await capture(
           tester,
           'stripe-success',
           'Query paid episode → success and booking actions',
         );
-        await tap(tester, find.text('稍后预约'));
+        await tap(tester, find.text('Book later'));
         await capture(tester, 'stripe-owned', 'Book later → owned package');
         expect(
           transport.requests.where(

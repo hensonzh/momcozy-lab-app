@@ -1,10 +1,10 @@
 const _agentHubIntroductionBody =
-    '来自 Momcozy 团队，是陪你一起照顾自己和宝宝的智能伙伴。\n\n'
-    '关于喂养、宝宝的日常和产后恢复，都可以和我聊聊。我会帮你整理记录、梳理问题，陪你找到下一步。\n\n'
-    '从你现在最关心的一件事开始吧。';
+    'I\'m your AI companion from Momcozy, here to support you and your baby.\n\n'
+    'Ask me about feeding, your baby\'s daily care, or postpartum recovery. I can help you make sense of your records, think through questions, and find a next step.\n\n'
+    'What\'s on your mind today?';
 
 const agentHubDefaultGreeting =
-    '嗨，初次见面，很高兴认识你，我是 Cozymate\n\n$_agentHubIntroductionBody';
+    'Hi, I\'m Momcozy AI. It\'s lovely to meet you.\n\n$_agentHubIntroductionBody';
 
 class AgentHubGreetingProfile {
   const AgentHubGreetingProfile({
@@ -29,5 +29,5 @@ typedef AgentHubGreetingProfileLoader =
 String agentHubGreetingForProfile(AgentHubGreetingProfile? profile) {
   final name = profile?.displayName.trim() ?? '';
   if (name.isEmpty) return agentHubDefaultGreeting;
-  return '嗨 $name，初次见面，很高兴认识你，我是 Cozymate\n\n$_agentHubIntroductionBody';
+  return 'Hi $name, I\'m Momcozy AI. It\'s lovely to meet you.\n\n$_agentHubIntroductionBody';
 }

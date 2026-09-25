@@ -9,16 +9,64 @@ import '../../support/momcozy_test_fonts.dart';
 import 'documentation_test_support.dart';
 
 void localizePlan(Map plan) {
-  plan['title'] = '接下来，一起记录和观察';
-  plan['summary'] = '先从今天的小记录开始。把我们共同确认的变化记下来，下次跟进时一起回顾。';
-  plan['goals'] = ['记录真实感受', '共同回顾这段时间的变化'];
+  plan['title'] = 'Your next steps, together';
+  plan['summary'] =
+      'Start with a small note today. We can review the changes we discussed at your next follow-up.';
+  plan['goals'] = ['Record how you feel', 'Review changes together'];
   final task = (plan['tasks'] as List).first as Map;
-  task['title'] = '记下今天的一次观察';
-  task['description'] = '记录今天与你的目标相关的一次观察，下次跟进时一起讨论。';
-  task['due_label'] = '今天';
+  task['title'] = 'Note one observation today';
+  task['description'] =
+      'Record one observation related to your goal and discuss it at your next follow-up.';
+  task['category'] = 'Observation';
+  task['due_label'] = 'Today';
 }
 
 void main() {
+  testWidgets('legacy plan shows review guidance at 320px and 2x text', (
+    tester,
+  ) async {
+    await loadMomCozyTestFonts();
+    tester.view.physicalSize = const Size(320, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repository = TestDocumentationRepository()
+      ..json = documentationFixture('documentation_published');
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: momCozyTheme(isWorkbench: true),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: DocumentationPage(
+          createController: () => DocumentationController(
+            repository: repository,
+            appointmentId: 'appointment',
+          ),
+          initialTab: DocumentationTab.plan,
+          onBack: () {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final hint = find.textContaining('Review the title, summary, goals');
+    await tester.ensureVisible(hint);
+    await tester.pumpAndSettle();
+    expect(hint, findsOneWidget);
+    expect(
+      tester
+          .widget<FilledButton>(
+            find.widgetWithText(FilledButton, 'Publish new version'),
+          )
+          .onPressed,
+      isNull,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   for (final width in [1024.0, 1280.0]) {
     for (final tab in DocumentationTab.values) {
       testWidgets('professional ${tab.name} editor at $width', (tester) async {
@@ -30,10 +78,11 @@ void main() {
         final repository = TestDocumentationRepository();
         localizePlan((repository.json['plan'] as Map)['content'] as Map);
         (repository.json['note'] as Map)['content'] = {
-          'subjective': '用户描述了本次希望讨论的变化。',
-          'objective': '记录本次共同确认的观察。',
-          'assessment': '依据本次咨询信息形成的专业评估。',
-          'plan': '在下次跟进时回顾记录与变化。',
+          'subjective':
+              'The client described changes they would like to discuss.',
+          'objective': 'Record the observations confirmed together.',
+          'assessment': 'Clinical assessment based on this consultation.',
+          'plan': 'Review notes and changes at the next follow-up.',
         };
         await tester.pumpWidget(
           MaterialApp(
@@ -130,10 +179,15 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('签署记录'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Sign note').first);
       await tester.pumpAndSettle();
       expect(repository.calls, isEmpty);
-      await tester.tap(find.text('确认签署'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.widgetWithText(FilledButton, 'Sign note'),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(
         tester
@@ -141,24 +195,27 @@ void main() {
             .every((value) => value.readOnly),
         isTrue,
       );
-      await tester.tap(find.text('创建修订'));
+      await tester.tap(find.text('Create revision'));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.descendant(
           of: find.byType(AlertDialog),
           matching: find.byType(TextField),
         ),
-        '补充本次观察',
+        'Additional observations',
       );
       await tester.tap(
         find.descendant(
           of: find.byType(AlertDialog),
-          matching: find.text('创建修订'),
+          matching: find.text('Create revision'),
         ),
       );
       await tester.pumpAndSettle();
-      expect(repository.calls.last.body['reason'], '补充本次观察');
-      expect(find.text('修订理由：补充本次观察'), findsOneWidget);
+      expect(repository.calls.last.body['reason'], 'Additional observations');
+      expect(
+        find.text('Reason for revision: Additional observations'),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
     },
@@ -201,17 +258,17 @@ void main() {
       );
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
-        find.text('查看怎么做'),
+        find.text('See how'),
         300,
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('查看怎么做'));
+      await tester.tap(find.text('See how'));
       await tester.pumpAndSettle();
       expect(repository.calls, isEmpty);
-      await tester.ensureVisible(find.text('已完成'));
+      await tester.ensureVisible(find.text('Completed'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('已完成'));
+      await tester.tap(find.text('Completed'));
       await tester.pumpAndSettle();
       expect(repository.calls.length, 1);
       expect(tester.takeException(), isNull);

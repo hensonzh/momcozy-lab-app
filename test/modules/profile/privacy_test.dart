@@ -315,17 +315,17 @@ void main() {
           expect(repo.writes, isEmpty);
           await toggle(tester, CareConsentScope.video);
           expect(repo.writes, isEmpty);
-          await click(tester, '保存更改');
+          await click(tester, 'Save changes');
           await shot(tester, 'confirm', width, scale);
-          await click(tester, '继续保留');
+          await click(tester, 'Keep access');
           expect(repo.writes, isEmpty);
-          await click(tester, '保存更改');
-          await click(tester, '确认关闭');
+          await click(tester, 'Save changes');
+          await click(tester, 'Turn off access');
           expect(repo.writes.single.scope, CareConsentScope.video);
           expect(repo.writes.single.active, isFalse);
           expect(repo.data[CareConsentScope.ibclcCase]!.active, isTrue);
-          expect(find.text('隐私设置已保存'), findsOneWidget);
-          await click(tester, '管理通知与提醒');
+          expect(find.text('Privacy settings saved'), findsOneWidget);
+          await click(tester, 'Manage notifications & reminders');
           expect(notifications, isTrue);
           await shot(tester, 'saved', width, scale);
           expect(repo.data[CareConsentScope.notifications]!.active, isTrue);
@@ -363,21 +363,21 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(picker);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('专家支持服务').last);
+      await tester.tap(find.text('Expert support service').last);
       await tester.pumpAndSettle();
-      await click(tester, '继续查看');
+      await click(tester, 'Keep reviewing');
       expect(tester.state<FormFieldState<String>>(picker).value, 'episode');
       expect(repo.writes, isEmpty);
       await tester.ensureVisible(picker);
       await tester.pumpAndSettle();
       await tester.tap(picker);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('专家支持服务').last);
+      await tester.tap(find.text('Expert support service').last);
       await tester.pumpAndSettle();
-      await click(tester, '放弃并离开');
+      await click(tester, 'Discard and leave');
       expect(tester.state<FormFieldState<String>>(picker).value, 'other');
       await toggle(tester, CareConsentScope.aiContext);
-      await click(tester, '保存更改');
+      await click(tester, 'Save changes');
       expect(repo.writes.single.episode, 'other');
     },
   );
@@ -386,7 +386,7 @@ void main() {
     (tester) async {
       final repo = Consents();
       await mount(tester, repo, initialEpisodeId: 'unowned');
-      expect(find.text('未找到这个服务的授权'), findsOneWidget);
+      expect(find.text('No consent found for this service'), findsOneWidget);
       expect(find.byType(Switch), findsNothing);
       expect(repo.writes, isEmpty);
     },
@@ -398,9 +398,9 @@ void main() {
       await mount(tester, repo);
       await toggle(tester, CareConsentScope.aiContext);
       repo.pending = Completer<void>();
-      await tester.ensureVisible(find.text('保存更改'));
+      await tester.ensureVisible(find.text('Save changes'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('保存更改'));
+      await tester.tap(find.text('Save changes'));
       await tester.pump();
       expect(
         tester
@@ -412,7 +412,7 @@ void main() {
       );
       expect(
         tester
-            .widget<TextButton>(find.widgetWithText(TextButton, '返回'))
+            .widget<TextButton>(find.widgetWithText(TextButton, 'Back'))
             .onPressed,
         isNull,
       );
@@ -420,10 +420,10 @@ void main() {
       repo.pending!.complete();
       await tester.pumpAndSettle();
       await shot(tester, 'uncertain', 390, 1);
-      expect(find.text('隐私设置已保存'), findsNothing);
+      expect(find.text('Privacy settings saved'), findsNothing);
       repo.pending = null;
       repo.writeFailure = null;
-      await click(tester, '重新读取授权');
+      await click(tester, 'Reload consent');
       expect(repo.writes, hasLength(1));
       expect(
         tester

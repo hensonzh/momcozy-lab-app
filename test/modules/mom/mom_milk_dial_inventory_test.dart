@@ -11,7 +11,6 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/modules/mom/presentation/lactation_panel.dart';
-import 'package:momcozy_flutter_app/modules/mom/presentation/mom_home_sections.dart';
 import 'package:momcozy_flutter_app/modules/mom/application/lactation_controller.dart';
 import '../../support/mom_inventory_transport.dart';
 import '../../support/fixture_api_transport.dart';
@@ -92,14 +91,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -133,7 +131,7 @@ void main() {
     WidgetTester tester,
     String state,
     String action, {
-    String route = '/me',
+    String route = '/me/lactation',
   }) async {
     // Commit edits and finish the input hint's fade without settling spinners.
     await tester.pump();
@@ -153,7 +151,7 @@ void main() {
       'previous_source': previous,
       'route': route,
       'trigger': action,
-      'root_entry': 'Authenticated More → tap Me bottom navigation',
+      'root_entry': 'Authenticated More → existing lactation deep link',
       'evidence':
           'Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone',
       'test': 'test/modules/mom/mom_milk_dial_inventory_test.dart',
@@ -170,7 +168,7 @@ void main() {
   }
 
   Future<void> closePanel(WidgetTester tester) async {
-    final close = find.byTooltip('关闭泌乳记录');
+    final close = find.byTooltip('Close feeding and pumping records');
     if (close.evaluate().isEmpty) {
       await tester.scrollUntilVisible(
         close,
@@ -231,14 +229,9 @@ void main() {
       tester,
     ) async {
       await mount(tester, width: width, scale: 1);
-      await capture(tester, 'home-entry', 'More → Me');
-      await tap(
-        tester,
-        find.descendant(
-          of: find.byType(MomLactationCard),
-          matching: find.byType(FilledButton),
-        ),
-      );
+      await capture(tester, 'home-entry', 'Authenticated More', route: '/more');
+      router.push('/me/lactation?create=1');
+      await tester.pumpAndSettle();
       await input(tester, measurement(LactationMethod.pump), '120');
       await capture(tester, 'form-filled', 'Record milk → enter pump 120 ml');
       Future<void> openPicker() => tap(
@@ -287,7 +280,7 @@ void main() {
       expect(draft(tester).occurredAt.hour, 11);
       expect(draft(tester).occurredAt.minute, 20);
       await capture(tester, 'accepted', 'Confirm dial → draft 11:20');
-      await tap(tester, find.text('保存这次记录'));
+      await tap(tester, find.text('Save this record'));
       expect(transport.records.single['version'], 1);
       await capture(tester, 'saved', 'Save pump 120 ml at 11:20 → list');
       await editSaved(tester);
@@ -325,20 +318,18 @@ void main() {
         );
         expect(horizontal, findsOneWidget);
         final position = tester.state<ScrollableState>(horizontal).position;
-        expect(position.maxScrollExtent, greaterThan(0));
-        final rect = tester.getRect(horizontal);
-        final start = Offset(rect.center.dx, rect.top + 10);
-        await tester.dragFrom(start, const Offset(150, 0));
-        await tester.pumpAndSettle();
-        expect(position.pixels, closeTo(position.minScrollExtent, .1));
+        expect(
+          position.maxScrollExtent,
+          0,
+          reason:
+              'English picker controls should fit without horizontal scrolling',
+        );
+        expect(action(strings.okButtonLabel).hitTestable(), findsOneWidget);
         await capture(
           tester,
           'invalid-input-left-edge',
-          'Drag picker right → horizontal left edge shows help and AM/PM',
+          'Narrow picker shows help and AM/PM without horizontal scrolling',
         );
-        await tester.dragFrom(start, const Offset(-150, 0));
-        await tester.pumpAndSettle();
-        expect(position.pixels, closeTo(position.maxScrollExtent, .1));
         await capture(
           tester,
           'invalid-input-right-edge',
@@ -368,7 +359,7 @@ void main() {
       expect(draft(tester).occurredAt.hour, 12);
       expect(draft(tester).occurredAt.minute, 0);
       await capture(tester, 'noon-accepted', 'Confirm noon → draft 12:00');
-      await tap(tester, find.text('保存修改'));
+      await tap(tester, find.text('Save changes'));
       expect(transport.records.single['version'], 2);
       await capture(tester, 'noon-saved', 'Save noon → record version 2');
       await editSaved(tester);
@@ -390,15 +381,21 @@ void main() {
         'close-confirm',
         'Close record editor → discard confirmation',
       );
-      await tap(tester, find.text('离开'));
+      await tap(tester, find.text('Leave'));
       expect(transport.records.single['version'], 2);
       await capture(
         tester,
         'home-return',
-        'Discard editor → saved noon record retained, home',
+        'Discard editor → saved noon record retained, More',
+        route: '/more',
       );
-      await tap(tester, find.text('More'));
-      await capture(tester, 'more-return', 'Me → More', route: '/more');
+      await tester.pumpAndSettle();
+      await capture(
+        tester,
+        'more-return',
+        'More remains available after lactation',
+        route: '/more',
+      );
     });
   }
 }

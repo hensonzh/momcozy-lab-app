@@ -7,7 +7,7 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import '../../support/momcozy_test_fonts.dart';
 import 'lactation_test.dart' show LactationFixture, date, now;
 
-const validation = '请检查记录时间和数值：奶量为 0–2000 ml，亲喂时长为 0–240 分钟的整数。';
+const validation = 'Check the time and values: milk amount must be 0–2,000 ml, and nursing duration must be a whole number from 0–240 minutes.';
 Future<void> click(WidgetTester tester, Finder finder) async {
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
@@ -74,11 +74,11 @@ void main() {
             );
           }
 
-          await visible(find.text('今天还没有泌乳记录'));
+          await visible(find.text('No feeding or pumping records today'));
           await shot('empty');
-          await click(tester, find.text('添加一条'));
+          await click(tester, find.text('Add a record'));
           await shot('pump');
-          await click(tester, find.text('亲喂'));
+          await click(tester, find.text('Nursing'));
           await shot('nurse');
           final measure = find.byKey(
             const ValueKey('lactation-measurement-nurse'),
@@ -86,7 +86,7 @@ void main() {
           await tester.ensureVisible(measure);
           await tester.enterText(measure, '241');
           await tester.pumpAndSettle();
-          await tester.tap(find.text('保存这次记录'));
+          await tester.tap(find.text('Save this record'));
           await tester.pumpAndSettle();
           expect(repo.keys, isEmpty);
           expect(find.text(validation).hitTestable(), findsOneWidget);
@@ -94,24 +94,24 @@ void main() {
           await tester.ensureVisible(measure);
           await tester.enterText(measure, '12');
           await tester.pumpAndSettle();
-          await click(tester, find.text('补充感受与备注'));
-          await click(tester, find.text('胀满'));
-          final note = find.widgetWithText(TextFormField, '备注（可选）');
+          await click(tester, find.text('Feelings and notes'));
+          await click(tester, find.text('Full'));
+          final note = find.widgetWithText(TextFormField, 'Notes (optional)');
           await tester.ensureVisible(note);
           tester.view.viewInsets = const FakeViewPadding(bottom: 280);
           await tester.enterText(note, '这次右侧有些胀，先记录下来');
           await tester.pumpAndSettle();
           await shot('optional-keyboard');
           repo.createFailure = const ProductFailure(ProductFailureKind.offline);
-          await tester.tap(find.text('保存这次记录'));
+          await tester.tap(find.text('Save this record'));
           await tester.pumpAndSettle();
-          expect(find.text('保存结果还未确认，请重试这次保存。').hitTestable(), findsOneWidget);
-          expect(find.text('这次记录已保存。'), findsNothing);
+          expect(find.text('Your save has not been confirmed. Please try again.').hitTestable(), findsOneWidget);
+          expect(find.text('Record saved.'), findsNothing);
           await shot('uncertain');
           repo.createFailure = null;
           tester.view.resetViewInsets();
           await tester.pumpAndSettle();
-          await tester.tap(find.text('重试保存'));
+          await tester.tap(find.text('Try saving again'));
           await tester.pumpAndSettle();
           expect(repo.keys, hasLength(2));
           expect(repo.keys.first, repo.keys.last);
@@ -120,7 +120,7 @@ void main() {
           expect((saved.observation as NursingObservation).durationMinutes, 12);
           expect(saved.observation.feeling, BreastComfort.full);
           expect(saved.observation.note, '这次右侧有些胀，先记录下来');
-          expect(find.text('这次记录已保存。').hitTestable(), findsOneWidget);
+          expect(find.text('Record saved.').hitTestable(), findsOneWidget);
           await shot('saved');
           await visible(find.byKey(const ValueKey('lactation-edit-created')));
           await click(
@@ -131,7 +131,7 @@ void main() {
           await tester.ensureVisible(measure);
           await tester.enterText(measure, '15');
           await tester.pumpAndSettle();
-          await tester.tap(find.text('保存修改'));
+          await tester.tap(find.text('Save changes'));
           await tester.pumpAndSettle();
           expect(repo.records.single.version, 2);
           expect(
@@ -139,7 +139,7 @@ void main() {
                 .durationMinutes,
             15,
           );
-          expect(find.text('这次记录已更新。').hitTestable(), findsOneWidget);
+          expect(find.text('Record updated.').hitTestable(), findsOneWidget);
           await shot('updated');
           await visible(find.byKey(const ValueKey('lactation-delete-created')));
           await click(
@@ -147,13 +147,13 @@ void main() {
             find.byKey(const ValueKey('lactation-delete-created')),
           );
           expect(repo.records, isEmpty);
-          await visible(find.text('撤销'));
-          expect(find.text('这次记录已更新。'), findsNothing);
+          await visible(find.text('Undo'));
+          expect(find.text('Record updated.'), findsNothing);
           await shot('deleted');
-          await click(tester, find.text('撤销'));
+          await click(tester, find.text('Undo'));
           expect(repo.restoreVersion, 9);
           expect(repo.records, hasLength(1));
-          await visible(find.text('记录已恢复。'));
+          await visible(find.text('Record restored.'));
           await shot('restored');
           await tester.pumpWidget(const SizedBox());
         },

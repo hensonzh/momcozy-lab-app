@@ -65,7 +65,7 @@ class MomServiceExpertIdentity extends StatelessWidget {
                     style: MomHomeTokens.text(14, weight: FontWeight.w700),
                   ),
                   Text(
-                    'IBCLC · 哺乳顾问',
+                    'IBCLC · Lactation Consultant',
                     style: MomHomeTokens.text(
                       11,
                       color: MomHomeTokens.secondary,
@@ -120,10 +120,13 @@ class MomAppointmentSummary extends StatelessWidget {
         style: MomHomeTokens.text(20, weight: FontWeight.w700),
       ),
       Text(
-        '${appointment.duration.inMinutes} 分钟 · ${appointment.timezone}',
+        '${appointment.duration.inMinutes} min · ${appointment.timezone}',
         style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
       ),
-      MomServiceExpertIdentity(name: appointment.providerName, label: '本次咨询专家'),
+      MomServiceExpertIdentity(
+        name: appointment.publicProviderName,
+        label: 'Your consultant',
+      ),
       ?action,
     ],
   );

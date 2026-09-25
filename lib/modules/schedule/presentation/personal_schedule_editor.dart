@@ -182,7 +182,7 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
   @override
   Widget build(BuildContext context) {
     final dateField = _ScheduleField(
-      label: '日期',
+      label: 'Date',
       child: OutlinedButton(
         key: const ValueKey('schedule-date'),
         onPressed: _editable ? _pickDate : null,
@@ -201,7 +201,7 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
       ),
     );
     final timeField = _ScheduleField(
-      label: '开始时间',
+      label: 'Start time',
       child: OutlinedButton(
         key: const ValueKey('schedule-time'),
         onPressed: _editable ? _pickTime : null,
@@ -215,13 +215,13 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
         if (!didPop) _close();
       },
       child: _ScheduleDialogFrame(
-        title: widget.existing == null ? '添加日程' : '编辑日程',
+        title: widget.existing == null ? 'Add to schedule' : 'Edit schedule item',
         onClose: _busy ? null : () => _close(),
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _ScheduleField(
-              label: '日程名称',
+              label: 'Title',
               child: TextField(
                 key: const ValueKey('schedule-title'),
                 controller: _title,
@@ -233,9 +233,9 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
                   _failure = null;
                   _titleTouched = true;
                 }),
-                decoration: _input('例如：宝宝体检').copyWith(
+                decoration: _input('For example: baby checkup').copyWith(
                   errorText: _titleTouched && _title.text.trim().isEmpty
-                      ? '请填写日程名称'
+                      ? 'Enter a title'
                       : null,
                 ),
               ),
@@ -246,7 +246,7 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
             timeField,
             const SizedBox(height: 14),
             _ScheduleField(
-              label: '备注',
+              label: 'Notes',
               optional: true,
               child: TextField(
                 key: const ValueKey('schedule-note'),
@@ -257,7 +257,7 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
                 maxLines: 5,
                 style: ScheduleDesign.text(13, lineHeight: 20),
                 onChanged: (_) => setState(() => _failure = null),
-                decoration: _input('需要准备的东西或地点'),
+                decoration: _input('What to bring or where to go'),
               ),
             ),
           ],
@@ -297,12 +297,12 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
               ),
               child: Text(
                 _busy
-                    ? '正在保存…'
+                    ? 'Saving…'
                     : _failure != null
-                    ? '重试保存'
+                    ? 'Try saving again'
                     : widget.existing == null
-                    ? '添加到日程'
-                    : '保存修改',
+                    ? 'Add to schedule'
+                    : 'Save changes',
               ),
             ),
           ],
@@ -312,11 +312,11 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
   }
 
   String get _failureMessage => switch (_failure?.kind) {
-    ProductFailureKind.conflict => '这条日程已更新，请刷新后再试。填写内容已保留。',
-    ProductFailureKind.unauthenticated => '登录已过期。请重新登录后继续。',
-    ProductFailureKind.forbidden => '当前账号无法修改这条日程。',
-    ProductFailureKind.invalid => '请检查填写内容后重试，草稿仍然保留。',
-    _ => '暂时无法保存，填写内容已保留，请稍后重试。',
+    ProductFailureKind.conflict => 'This item was updated elsewhere. Refresh and try again. Your entries are still here.',
+    ProductFailureKind.unauthenticated => 'Your session has expired. Sign in again to continue.',
+    ProductFailureKind.forbidden => 'This account cannot edit this item.',
+    ProductFailureKind.invalid => 'Check your entries and try again. Your draft is still here.',
+    _ => 'Could not save right now. Your entries are still here. Try again later.',
   };
   InputDecoration _input(String hint) => InputDecoration(
     hintText: hint,
@@ -350,7 +350,7 @@ class _ScheduleField extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Text(
-        optional ? '$label · 选填' : label,
+        optional ? '$label · optional' : label,
         style: ScheduleDesign.text(
           12,
           bold: true,
@@ -379,7 +379,7 @@ class _ScheduleDialogFrame extends StatelessWidget {
     data: momSettingsTheme(Theme.of(context)),
     child: MomSettingsFlowDialog(
       title: title,
-      closeLabel: '关闭日程',
+      closeLabel: 'Close schedule item',
       closeIcon: Text(
         '×',
         style: ScheduleDesign.text(13, bold: true, color: MomHomeTokens.rose),
@@ -398,7 +398,7 @@ class PersonalScheduleDeleteDialog extends StatelessWidget {
   final PersonalScheduleEntry entry;
   @override
   Widget build(BuildContext context) => _ScheduleDialogFrame(
-    title: '删除日程？',
+    title: 'Delete this item?',
     onClose: () => Navigator.pop(context, false),
     content: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -419,7 +419,7 @@ class PersonalScheduleDeleteDialog extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         Text(
-          '删除后将从日历和当日日程中移除，且无法恢复。',
+          'This item will be removed from your calendar and daily schedule. This cannot be undone.',
           style: MomHomeTokens.text(
             13,
             height: 1.4,
@@ -436,7 +436,7 @@ class PersonalScheduleDeleteDialog extends StatelessWidget {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('保留日程'),
+          child: const Text('Keep item'),
         ),
         const SizedBox(height: 14),
         OutlinedButton(
@@ -444,7 +444,7 @@ class PersonalScheduleDeleteDialog extends StatelessWidget {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('确认删除'),
+          child: const Text('Delete item'),
         ),
       ],
     ),

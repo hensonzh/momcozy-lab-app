@@ -91,25 +91,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    // Visit the lazy service section through scrolling, let its data and button
-    // animations settle, then return to the top before the entry screenshot.
-    final homeScroll = find.byType(Scrollable).first;
-    await tester.scrollUntilVisible(
-      find.text('服务进度 ›'),
-      250,
-      scrollable: homeScroll,
-    );
-    await tester.pumpAndSettle();
-    await tester.drag(homeScroll, const Offset(0, 10000));
-    await tester.pumpAndSettle();
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -211,19 +199,21 @@ void main() {
     await capture(
       tester,
       '$chain-home',
-      'More → Me with existing service',
-      route: '/me',
+      'More before expert support',
+      route: '/more',
     );
-    await tap(tester, find.text('服务进度 ›'));
+    await tap(tester, find.text('Expert support'));
+    await tap(tester, find.text('View my services'));
+    await tap(tester, find.text('View service progress'));
   }
 
   Future<void> finish(WidgetTester tester, String chain) async {
-    await tap(tester, find.text('返回'));
+    await tap(tester, find.text('Back'));
     await capture(
       tester,
       '$chain-home-return',
-      'Timeline Back → Me',
-      route: '/me',
+      'Timeline Back → service plan',
+      route: '/services/feeding-confidence',
     );
     await tester.pumpWidget(const SizedBox());
   }
@@ -250,17 +240,13 @@ void main() {
       await capture(
         tester,
         'errors-home',
-        'More → Me before timeline request',
-        route: '/me',
+        'More before expert support',
+        route: '/more',
       );
-      await tester.scrollUntilVisible(
-        find.text('服务进度 ›'),
-        250,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.pumpAndSettle();
+      await tap(tester, find.text('Expert support'));
+      await tap(tester, find.text('View my services'));
       transport.readGates[overview] = Completer<void>();
-      await tap(tester, find.text('服务进度 ›'));
+      await tap(tester, find.text('View service progress'));
       await capture(
         tester,
         'initial-loading',
@@ -273,22 +259,22 @@ void main() {
       transport.failingReads.clear();
       final saved = transport.episode;
       transport.episode = null;
-      await tap(tester, find.text('重试'));
+      await tap(tester, find.text('Try again'));
       await capture(
         tester,
         'episode-missing',
         'Retry returns no matching episode → missing service',
       );
       transport.episode = saved;
-      await tap(tester, find.text('返回妈妈主页'));
+      await tap(tester, find.text('Back to home'));
       await capture(
         tester,
         'missing-home-return',
-        'Missing service action → original Me',
-        route: '/me',
+        'Missing service action → service plan',
+        route: '/services/feeding-confidence',
       );
       transport.readGates[booking] = Completer<void>();
-      await tap(tester, find.text('服务进度 ›'));
+      await tap(tester, find.text('View service progress'));
       await capture(
         tester,
         'appointments-loading',
@@ -303,7 +289,7 @@ void main() {
         'Appointment read 503 → service identity retained',
       );
       transport.failingReads.clear();
-      await tap(tester, find.text('重试读取预约'));
+      await tap(tester, find.text('Reload appointments'));
       await capture(
         tester,
         'appointments-recovered',
@@ -325,7 +311,7 @@ void main() {
         'Overview refresh 503 → full error surface',
       );
       transport.failingReads.clear();
-      await tap(tester, find.text('重试'));
+      await tap(tester, find.text('Try again'));
       await capture(
         tester,
         'refresh-recovered',
@@ -343,19 +329,19 @@ void main() {
           'events-latest',
           'Open multi-event service → latest event',
         );
-        expect(find.text('服务包已购买'), findsOneWidget);
-        expect(find.text('咨询已结束'), findsOneWidget);
-        expect(find.text('预约已取消'), findsOneWidget);
-        expect(find.text('预约已过期'), findsOneWidget);
-        expect(find.text('查看预约'), findsOneWidget);
-        await tap(tester, find.text('↑ 查看更早记录'));
+        expect(find.text('Package purchased'), findsOneWidget);
+        expect(find.text('Consultation ended'), findsOneWidget);
+        expect(find.text('Appointment canceled'), findsOneWidget);
+        expect(find.text('Appointment expired'), findsOneWidget);
+        expect(find.text('View appointment'), findsOneWidget);
+        await tap(tester, find.text('↑ Earlier records'));
         await capture(
           tester,
           'events-earlier',
           'Earlier records → identity and first event',
         );
-        expect(find.text('↓ 回到最近记录'), findsOneWidget);
-        await tap(tester, find.text('↓ 回到最近记录'));
+        expect(find.text('↓ Back to latest records'), findsOneWidget);
+        await tap(tester, find.text('↓ Back to latest records'));
         await capture(
           tester,
           'events-latest-return',
@@ -371,7 +357,7 @@ void main() {
           endReason: 'completed',
         );
         transport.publishSummary();
-        await tap(tester, find.text('查看咨询总结'));
+        await tap(tester, find.text('View consultation summary'));
         await capture(
           tester,
           'event-summary',
@@ -379,7 +365,7 @@ void main() {
           route: '/services/appointments/completed-event/summary',
         );
         expect(find.text('Published client-facing summary'), findsOneWidget);
-        await tap(tester, find.text('返回'));
+        await tap(tester, find.byTooltip('Back'));
         await capture(
           tester,
           'summary-return',
@@ -388,28 +374,28 @@ void main() {
         transport.appointment = current;
         transport.roomData['appointment'] = current;
         transport.roomData['consultation'] = null;
-        await tap(tester, find.text('查看预约'));
+        await tap(tester, find.text('View appointment'));
         await capture(
           tester,
           'event-appointment',
           'Confirmed event → appointment detail',
           route: '/services/appointments/service-appointment/room',
         );
-        await tap(tester, find.byTooltip('关闭预约详情'));
+        await tap(tester, find.byTooltip('Close appointment details'));
         await capture(
           tester,
           'appointment-return',
           'Appointment Close → timeline',
         );
-        await tap(tester, find.text('预约咨询'));
+        await tap(tester, find.text('Book consultation'));
         await capture(
           tester,
           'event-booking',
           'Timeline booking with confirmed appointment → existing appointment detail',
           route: '$progressRoute/booking',
         );
-        expect(find.text('预约详情'), findsOneWidget);
-        await tap(tester, find.text('返回'));
+        expect(find.text('Booking details'), findsOneWidget);
+        await tap(tester, find.text('Back'));
         await capture(tester, 'booking-return', 'Booking Back → timeline');
         transport.readGates[booking] = Completer<void>();
         await refresh(tester);
@@ -427,7 +413,7 @@ void main() {
           'Appointment context 503 → retained old events and retry',
         );
         transport.failingReads.clear();
-        await tap(tester, find.text('重试读取预约'));
+        await tap(tester, find.text('Reload appointments'));
         await capture(
           tester,
           'events-refresh-recovered',
@@ -446,15 +432,15 @@ void main() {
           'event-in-progress',
           'Refresh current consultation → in-progress event',
         );
-        expect(find.text('咨询进行中'), findsOneWidget);
-        await tap(tester, find.text('查看预约'));
+        expect(find.text('Consultation in progress'), findsOneWidget);
+        await tap(tester, find.text('View appointment'));
         await capture(
           tester,
           'in-progress-room',
           'In-progress event → active consultation entry',
           route: '/services/appointments/service-appointment/room',
         );
-        await tap(tester, find.byTooltip('关闭预约详情'));
+        await tap(tester, find.byTooltip('Close appointment details'));
         await capture(
           tester,
           'in-progress-return',
@@ -469,21 +455,21 @@ void main() {
       narrow = compact;
       await enter(tester, 'states');
       await capture(tester, 'active', 'Active plan → appointment action');
-      await tap(tester, find.text('预约咨询'));
+      await tap(tester, find.text('Book consultation'));
       await capture(
         tester,
         'active-booking',
         'Active plan without appointment → booking precheck',
         route: '$progressRoute/booking',
       );
-      await tap(tester, find.byTooltip('关闭预约前确认'));
+      await tap(tester, find.byTooltip('Close booking check'));
       await capture(
         tester,
         'active-booking-closed',
         'Close precheck → start-confirmation page',
         route: '$progressRoute/booking',
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'active-booking-return',
@@ -505,36 +491,36 @@ void main() {
           'state-$status',
           'Refresh server episode $status → supported state and actions',
         );
-        expect(find.text('预约咨询'), findsNothing);
+        expect(find.text('Book consultation'), findsNothing);
         expect(
-          find.text('继续支持'),
+          find.text('Continue care'),
           status == 'completed' || status == 'cancelled'
               ? findsOneWidget
               : findsNothing,
         );
       }
-      await tap(tester, find.text('继续支持'));
+      await tap(tester, find.text('Continue care'));
       await capture(
         tester,
         'renew-options',
         'Ended service Continue support → renewal options',
         route: '$progressRoute/renew',
       );
-      await tap(tester, find.text('选择').first);
+      await tap(tester, find.text('Select').first);
       await capture(
         tester,
         'renew-purchase',
         'Select renewal plan → real eligibility dialog',
         route: '$progressRoute/renew',
       );
-      await tap(tester, find.byTooltip('关闭购买'));
+      await tap(tester, find.byTooltip('Close purchase'));
       await capture(
         tester,
         'renew-purchase-closed',
         'Close eligibility → renewal options',
         route: '$progressRoute/renew',
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.byTooltip('Back'));
       await capture(tester, 'renew-return', 'Renewal Back → ended timeline');
       transport.episode!['status'] = 'active';
       transport.episode!['remaining_sessions'] = 0;
@@ -544,8 +530,8 @@ void main() {
         'active-exhausted',
         'Active service with zero remaining → no new booking or renewal',
       );
-      expect(find.text('预约咨询'), findsNothing);
-      expect(find.text('继续支持'), findsNothing);
+      expect(find.text('Book consultation'), findsNothing);
+      expect(find.text('Continue care'), findsNothing);
       transport.episode!['remaining_sessions'] = 1;
       transport.episode!['ends_at'] = inventoryMomNow
           .subtract(const Duration(days: 1))
@@ -556,16 +542,16 @@ void main() {
         'active-past-end',
         'Server still active after endsAt → current timeline retains booking action',
       );
-      expect(find.text('预约咨询'), findsOneWidget);
-      await tap(tester, find.text('预约咨询'));
+      expect(find.text('Book consultation'), findsOneWidget);
+      await tap(tester, find.text('Book consultation'));
       await capture(
         tester,
         'past-end-booking',
         'Past-end active plan booking → actual target handling',
         route: '$progressRoute/booking',
       );
-      await tap(tester, find.byTooltip('关闭预约前确认'));
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.byTooltip('Close booking check'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'past-end-return',

@@ -43,7 +43,7 @@ void main() {
       expect(growth.unit, 'kg');
       expect(writeBabyObservation(growth).containsKey('occurred_at'), isFalse);
       final development = records.whereType<BabyDevelopmentRecord>().single;
-      expect(development.label, '看向靠近的脸');
+      expect(development.label, 'Looks at a face up close');
       expect(writeBabyObservation(development).containsKey('label'), isFalse);
     },
   );

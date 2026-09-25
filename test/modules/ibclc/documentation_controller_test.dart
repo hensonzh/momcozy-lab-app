@@ -9,6 +9,45 @@ import 'documentation_test_support.dart';
 
 void main() {
   test(
+    'a saved legacy plan remains a draft until English copy is reviewed',
+    () async {
+      final repository = TestDocumentationRepository()
+        ..json = documentationFixture('documentation_published');
+      final controller = DocumentationController(
+        repository: repository,
+        appointmentId: 'appointment',
+      );
+      addTearDown(controller.dispose);
+      await controller.load();
+      expect(controller.plan.complete, isTrue);
+      expect(controller.canPublish, isFalse);
+      expect(controller.plan.tasks.single.category, '观察');
+      await controller.publish();
+      expect(repository.calls, isEmpty);
+
+      controller.changePlan(
+        controller.plan.copyWith(
+          tasks: [
+            controller.plan.tasks.single.copyWith(
+              category: 'Observation',
+              dueLabel: 'Today',
+            ),
+          ],
+        ),
+      );
+      repository.onCall = (action, body) async {
+        if (action == 'save_plan') {
+          (repository.json['plan'] as Map)['content'] = body['content'];
+        }
+      };
+      await controller.savePlan();
+      expect(repository.calls.single.action, 'save_plan');
+      expect(controller.canPublish, isTrue);
+      expect(controller.plan.tasks.single.sourceKey, 'log-observation');
+    },
+  );
+
+  test(
     'an uncertain note save freezes content, version, and mutation key across retry',
     () async {
       final repository = TestDocumentationRepository();

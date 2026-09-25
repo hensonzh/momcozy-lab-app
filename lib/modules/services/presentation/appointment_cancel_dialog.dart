@@ -60,21 +60,21 @@ class _AppointmentCancelDialogState extends State<AppointmentCancelDialog> {
         child: Theme(
           data: momSettingsTheme(Theme.of(context)),
           child: MomSettingsFlowDialog(
-            title: '取消预约',
-            closeLabel: '关闭取消预约',
+            title: 'Cancel appointment',
+            closeLabel: 'Close cancellation dialog',
             maxHeight: 520,
             onClose: controller.busy ? null : () => Navigator.pop(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
-                MomAppointmentSummary(appointment: appointment, title: '本次预约'),
+                MomAppointmentSummary(appointment: appointment, title: 'This appointment'),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 14),
                   child: Divider(height: 1),
                 ),
                 const Text(
-                  '取消后，该时段将释放。重新预约时需要再次确认信息采集表，已填写内容会保留。',
+                  'Canceling releases this time slot. If you book again, you will need to reconfirm your intake form. Your answers will be saved.',
                   style: TextStyle(
                     fontSize: 13,
                     height: 1.55,
@@ -88,8 +88,8 @@ class _AppointmentCancelDialogState extends State<AppointmentCancelDialog> {
                     liveRegion: true,
                     child: Text(
                       controller.failure != null
-                          ? '暂时无法确认取消结果。可重试原操作，或核对预约状态。'
-                          : '预约状态已变化，当前不能取消。请返回查看最新预约。',
+                          ? 'Could not confirm cancellation. Try the same action again or check the appointment status.'
+                          : 'The appointment status has changed and it can no longer be canceled here. Go back to view the latest details.',
                       style: const TextStyle(
                         fontSize: 12,
                         color: MomCozyColors.danger,
@@ -100,7 +100,7 @@ class _AppointmentCancelDialogState extends State<AppointmentCancelDialog> {
                     onPressed: controller.busy
                         ? null
                         : () => _run(refresh: true),
-                    child: const Text('核对预约状态'),
+                    child: const Text('Check appointment status'),
                   ),
                 ],
                 const SizedBox(height: 16),
@@ -114,8 +114,8 @@ class _AppointmentCancelDialogState extends State<AppointmentCancelDialog> {
                         child: Text(
                           controller.uncertain ||
                                   !controller.canCancel && !controller.busy
-                              ? '返回预约'
-                              : '保留预约',
+                              ? 'Back to appointment'
+                              : 'Keep appointment',
                         ),
                       ),
                       OutlinedButton(
@@ -123,10 +123,10 @@ class _AppointmentCancelDialogState extends State<AppointmentCancelDialog> {
                         style: ServiceFlowTheme.cancellationStyle(context),
                         child: Text(
                           controller.busy
-                              ? '正在处理…'
+                              ? 'Processing…'
                               : controller.uncertain
-                              ? '重试取消'
-                              : '确认取消',
+                              ? 'Try canceling again'
+                              : 'Confirm cancellation',
                         ),
                       ),
                     ];

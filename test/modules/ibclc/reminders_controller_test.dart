@@ -23,6 +23,16 @@ class ReminderRepository implements WorkbenchRemindersRepository {
 
 void main() {
   test(
+    'legacy reminder package copy is English without changing the event',
+    () {
+      final reminder = readReminders(workbenchFixture('reminders')).items.first;
+      expect(reminder.publicPackageName, startsWith('Care plan · '));
+      expect(reminder.publicPackageName, isNot(contains('喂养')));
+      expect(reminder.packageName, '喂养安心');
+      expect(reminder.event.episodeId, isNotEmpty);
+    },
+  );
+  test(
     'read acknowledgements serialize taps and clear private rows after permission loss',
     () async {
       final repository = ReminderRepository();

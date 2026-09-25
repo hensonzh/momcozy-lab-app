@@ -79,20 +79,20 @@ class _BookingPrecheckDialogState extends State<BookingPrecheckDialog> {
         child: Theme(
           data: momSettingsTheme(Theme.of(context)),
           child: MomSettingsFlowDialog(
-            title: '预约前确认',
-            closeLabel: '关闭预约前确认',
+            title: 'Before booking',
+            closeLabel: 'Close booking check',
             maxHeight: 680,
             onClose: c.busy || _waiting ? null : () => Navigator.pop(context),
             child: _stack([
               const Text(
-                '当前所在州',
+                'Current state',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
               ),
               DropdownButtonFormField<String>(
                 initialValue: c.region,
                 isExpanded: true,
                 itemHeight: null,
-                hint: const Text('请选择当前所在州'),
+                hint: const Text('Select your current state'),
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(fontSize: 13),
@@ -118,15 +118,15 @@ class _BookingPrecheckDialogState extends State<BookingPrecheckDialog> {
                 onChanged: c.canEdit && !_waiting ? c.setRegion : null,
               ),
               if (c.region != null && !c.regionSupported)
-                const BookingNotice(title: '当前服务暂未覆盖该州，暂不能继续预约。'),
+                const BookingNotice(title: 'This service is not available in your state yet, so you cannot book right now.'),
               _group(
-                '服务适用性',
+                'Is this service right for you?',
                 CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
                   controlAffinity: ListTileControlAffinity.leading,
                   activeColor: MomHomeTokens.rose,
                   title: const Text(
-                    '我需要的是哺乳或喂养相关的 IBCLC 咨询',
+                    'I need IBCLC support with lactation or feeding.',
                     style: TextStyle(fontSize: 13, height: 1.5),
                   ),
                   value: c.serviceSuitable,
@@ -136,10 +136,10 @@ class _BookingPrecheckDialogState extends State<BookingPrecheckDialog> {
                 ),
               ),
               _group(
-                '紧急风险判断',
+                'Emergency check',
                 _stack([
                   const Text(
-                    '如妈妈或宝宝出现呼吸困难、无法唤醒、大量出血等情况，应先寻求紧急医疗帮助。',
+                    'If you or your baby has trouble breathing, cannot be awakened, has heavy bleeding, or has another emergency, seek urgent medical help first.',
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.5,
@@ -151,8 +151,8 @@ class _BookingPrecheckDialogState extends State<BookingPrecheckDialog> {
                     onChanged: c.setEmergency,
                     child: _stack([
                       for (final item in {
-                        EmergencyStatus.clear: '目前没有上述紧急情况',
-                        EmergencyStatus.needsHelp: '有，或我不确定',
+                        EmergencyStatus.clear: 'None of these apply right now',
+                        EmergencyStatus.needsHelp: 'Yes, or I am not sure',
                       }.entries)
                         Container(
                           decoration: BoxDecoration(
@@ -181,11 +181,11 @@ class _BookingPrecheckDialogState extends State<BookingPrecheckDialog> {
               ),
               if (c.emergencyStatus == EmergencyStatus.needsHelp)
                 const BookingNotice(
-                  title: '请先寻求紧急帮助',
-                  body: '请先联系当地急救服务。IBCLC 预约不能替代紧急医疗。',
+                  title: 'Seek emergency help first',
+                  body: 'Contact local emergency services first. An IBCLC appointment is not a substitute for emergency care.',
                 ),
               if (c.failure != null || c.message != null)
-                BookingNotice(title: c.message ?? '暂时无法确认，请检查网络后重试。'),
+                BookingNotice(title: c.message ?? 'Could not confirm. Check your connection and try again.'),
               FilledButton(
                 onPressed: c.canPrecheck && !_waiting
                     ? () async {
@@ -200,7 +200,7 @@ class _BookingPrecheckDialogState extends State<BookingPrecheckDialog> {
                         }
                       }
                     : null,
-                child: Text(c.busy || _waiting ? '正在确认…' : '继续选择时间'),
+                child: Text(c.busy || _waiting ? 'Confirming…' : 'Continue to time selection'),
               ),
             ]),
           ),
@@ -261,15 +261,15 @@ class BookingSelectionDialog extends StatelessWidget {
         child: Theme(
           data: momSettingsTheme(Theme.of(context)),
           child: MomSettingsFlowDialog(
-            title: '确认预约时间',
-            closeLabel: '关闭预约时间确认',
+            title: 'Confirm appointment time',
+            closeLabel: 'Close time confirmation',
             maxHeight: 620,
             onClose: c.busy ? null : () => Navigator.pop(context),
             child: _stack([
-              MomAppointmentSummary(appointment: appointment, title: '本次咨询'),
+              MomAppointmentSummary(appointment: appointment, title: 'This consultation'),
               if (valid) ...[
                 const Text(
-                  '所选时间已暂时保留',
+                  'Your selected time is on hold',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,
@@ -277,7 +277,7 @@ class BookingSelectionDialog extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '请在 ${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')} 内确认',
+                  'Confirm within ${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 13,
@@ -288,11 +288,11 @@ class BookingSelectionDialog extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   value: reminder,
                   title: const Text(
-                    '提前 15 分钟提醒我',
+                    'Remind me 15 minutes before',
                     style: TextStyle(fontSize: 13),
                   ),
                   subtitle: const Text(
-                    '开启前会检查通知权限。',
+                    'We will check notification permissions before turning this on.',
                     style: TextStyle(fontSize: 13),
                   ),
                   onChanged: c.canEdit
@@ -301,19 +301,19 @@ class BookingSelectionDialog extends StatelessWidget {
                 ),
               ] else if (confirmed)
                 const Text(
-                  '预约已确认',
+                  'Appointment confirmed',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, color: MomHomeTokens.teal),
                 )
               else if (!c.unresolvedMutation)
-                const BookingNotice(title: '所选时段的保留时间已到，请重新选择'),
+                const BookingNotice(title: 'Your selected time is no longer on hold. Choose another time.'),
               if (c.failure != null || c.message != null)
                 BookingNotice(
-                  title: c.message ?? '暂时无法确认预约，请检查网络后重试。',
+                  title: c.message ?? 'Could not confirm your appointment. Check your connection and try again.',
                   action: !c.unresolvedMutation && !c.busy
                       ? TextButton(
                           onPressed: c.loading ? null : c.load,
-                          child: const Text('查询最新预约'),
+                          child: const Text('Check latest appointment'),
                         )
                       : null,
                 ),
@@ -322,17 +322,17 @@ class BookingSelectionDialog extends StatelessWidget {
                   onPressed: c.canEdit
                       ? () => Navigator.pop(context, true)
                       : null,
-                  child: const Text('继续填写信息采集表'),
+                  child: const Text('Continue intake form'),
                 )
               else if (c.unresolvedMutation)
                 FilledButton(
                   onPressed: c.busy ? null : () => confirm(retry: true),
-                  child: Text(c.busy ? '正在确认…' : '重试上次提交'),
+                  child: Text(c.busy ? 'Confirming…' : 'Retry last submission'),
                 )
               else if (valid)
                 FilledButton(
                   onPressed: c.canEdit ? confirm : null,
-                  child: Text(c.busy ? '正在确认…' : '确认预约'),
+                  child: Text(c.busy ? 'Confirming…' : 'Confirm appointment'),
                 ),
               if (!confirmed)
                 TextButton(
@@ -346,7 +346,7 @@ class BookingSelectionDialog extends StatelessWidget {
                           }
                         }
                       : null,
-                  child: const Text('重新选择'),
+                  child: const Text('Choose another time'),
                 ),
             ]),
           ),

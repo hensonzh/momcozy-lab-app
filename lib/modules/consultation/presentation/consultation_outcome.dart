@@ -25,24 +25,24 @@ class UserConsultationOutcome extends StatelessWidget {
         reason == ConsultationEndReason.userNoShow;
     final (title, description, icon) = switch (reason) {
       ConsultationEndReason.technicalFailure => (
-        '视频连接未能继续',
-        '这不是你的问题。本次未扣减咨询次数，可以重新选择合适的时间。',
+        'Video connection could not continue',
+        'This was not your fault. No consultation was used. You can book another time.',
         Icons.wifi_off_outlined,
       ),
       ConsultationEndReason.userNoShow => (
-        '这次咨询未能开始',
-        '我们没能在预约时间与你开始咨询。本次未扣减咨询次数，如需继续支持，可以重新预约。',
+        'This consultation could not start',
+        'We could not start at the booked time. No consultation was used. Book again if you need support.',
         Icons.schedule_outlined,
       ),
       ConsultationEndReason.safetyEscalation => (
-        '本次咨询已结束',
-        '请按专家的建议继续寻求支持，后续记录会出现在服务进度中。',
+        'This consultation has ended',
+        'Follow your consultant\'s guidance for further support. Follow-up records will appear in Service Progress.',
         Icons.health_and_safety_outlined,
       ),
       _ =>
         data.appointment.status == AppointmentStatus.cancelled
-            ? ('预约已取消', '如需继续支持，可以重新安排咨询时间。', Icons.close)
-            : ('本次咨询已结束', 'IBCLC 正在整理本次建议，可在服务进度中查看。', Icons.check),
+            ? ('Appointment canceled', 'You can book another consultation if you need more support.', Icons.close)
+            : ('This consultation has ended', 'Your IBCLC is preparing recommendations. You can view them in Service Progress.', Icons.check),
     };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -82,16 +82,16 @@ class UserConsultationOutcome extends StatelessWidget {
             ),
             FilledButton(
               onPressed: unsuccessful ? onRebook : onSummary,
-              child: Text(unsuccessful ? '重新预约' : '查看咨询总结'),
+              child: Text(unsuccessful ? 'Book another appointment' : 'View consultation summary'),
             ),
             if (unsuccessful)
-              TextButton(onPressed: onHome, child: const Text('返回妈妈主页'))
+              TextButton(onPressed: onHome, child: const Text('Back to home'))
             else if (reason != ConsultationEndReason.completed)
-              TextButton(onPressed: onRebook, child: const Text('重新预约')),
+              TextButton(onPressed: onRebook, child: const Text('Book another appointment')),
           ],
         ),
         const SizedBox(height: 14),
-        MomAppointmentSummary(appointment: data.appointment, title: '本次预约'),
+        MomAppointmentSummary(appointment: data.appointment, title: 'This appointment'),
       ],
     );
   }

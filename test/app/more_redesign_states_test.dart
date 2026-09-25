@@ -26,7 +26,7 @@ void main() {
     ) async {
       final transport = _PendingIdentity();
       final router = await _host(tester, transport, width, scale);
-      expect(find.text('正在加载账号…'), findsOneWidget);
+      expect(find.text('Loading account…'), findsOneWidget);
       await expectLater(
         find.byType(MaterialApp),
         matchesGoldenFile(
@@ -36,7 +36,7 @@ void main() {
 
       transport.reply.completeError(StateError('offline'));
       await tester.pumpAndSettle();
-      expect(find.text('管理你的账号信息'), findsOneWidget);
+      expect(find.text('Manage your account information'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
       expect(find.text('Mia Chen'), findsNothing);
       await expectLater(
@@ -55,8 +55,8 @@ void main() {
             .onPressed,
         isNull,
       );
-      await tester.scrollUntilVisible(find.text('专家支持'), -200);
-      await tester.tap(find.text('专家支持'));
+      await tester.scrollUntilVisible(find.text('Expert support'), -200);
+      await tester.tap(find.text('Expert support'));
       await tester.pumpAndSettle();
       expect(router.state.uri.path, '/services');
       expect(tester.takeException(), isNull);

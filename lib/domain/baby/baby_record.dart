@@ -4,9 +4,9 @@ import '../shared/record_deletion.dart';
 enum BabyRecordKind { feeding, sleep, diaper, growth, development, dailyStatus }
 
 const babyDevelopmentItems = {
-  'looks-at-face': '看向靠近的脸',
-  'responds-to-sound': '听到声音后有动作或表情反应',
-  'lifts-head': '俯卧时短暂抬起头',
+  'looks-at-face': 'Looks at a face up close',
+  'responds-to-sound': 'Reacts to sounds with movement or expressions',
+  'lifts-head': 'Briefly lifts their head during tummy time',
 };
 
 enum BabyMentalState { content, active, crying, drowsy }

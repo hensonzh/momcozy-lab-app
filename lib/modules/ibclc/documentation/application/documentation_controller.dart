@@ -56,7 +56,8 @@ class DocumentationController extends ChangeNotifier {
       !noteDirty &&
       data?.plan != null &&
       data?.note?.status == ClinicalNoteStatus.signed &&
-      plan.complete;
+      plan.complete &&
+      plan.englishClientCopy;
 
   Future<void> load({bool discardChanges = false}) async {
     if (busy || uncertain) return;
@@ -121,7 +122,9 @@ class DocumentationController extends ChangeNotifier {
 
   Future<void> saveNote() async {
     if (!noteEditable) return;
-    if (!note.withinLimits) return _invalid('每个 SOAP 段落最多 8000 字');
+    if (!note.withinLimits) {
+      return _invalid('Each SOAP section can have up to 8,000 characters.');
+    }
     final content = note,
         revision = _noteRevision,
         version = _noteVersion,
@@ -135,7 +138,7 @@ class DocumentationController extends ChangeNotifier {
           expectedVersion: version,
           idempotencyKey: key,
         ),
-        '专业记录草稿已保存',
+        'Clinical note draft saved',
         replaceNote: true,
       ),
     );
@@ -154,7 +157,7 @@ class DocumentationController extends ChangeNotifier {
           expectedVersion: version,
           idempotencyKey: key,
         ),
-        '专业记录已签署',
+        'Clinical note signed',
         replaceNote: true,
       ),
     );
@@ -163,7 +166,9 @@ class DocumentationController extends ChangeNotifier {
   Future<void> amend(String reason) async {
     if (!editable || data?.note?.status != ClinicalNoteStatus.signed) return;
     if (reason.trim().isEmpty || reason.trim().length > 1000) {
-      return _invalid('请填写修订理由，最多 1000 字');
+      return _invalid(
+        'Enter a reason for the revision, up to 1,000 characters.',
+      );
     }
     final revision = _noteRevision,
         version = _noteVersion,
@@ -178,7 +183,7 @@ class DocumentationController extends ChangeNotifier {
           expectedVersion: version,
           idempotencyKey: key,
         ),
-        '已创建修订草稿，原签署记录保留',
+        'Revision draft created. The original signed note remains.',
         replaceNote: true,
       ),
     );
@@ -186,7 +191,11 @@ class DocumentationController extends ChangeNotifier {
 
   Future<void> savePlan() async {
     if (!editable) return;
-    if (!plan.withinLimits) return _invalid('请检查字数上限；最多 6 个目标、12 项任务');
+    if (!plan.withinLimits) {
+      return _invalid(
+        'Check the character limits. You can add up to 6 goals and 12 tasks.',
+      );
+    }
     final content = plan, version = _planVersion, key = newMutationKey();
     await _run(
       _PendingMutation(
@@ -196,7 +205,7 @@ class DocumentationController extends ChangeNotifier {
           expectedVersion: version,
           idempotencyKey: key,
         ),
-        '护理方案草稿已保存',
+        'Care plan draft saved',
         replacePlan: true,
       ),
     );
@@ -212,7 +221,7 @@ class DocumentationController extends ChangeNotifier {
           expectedVersion: version,
           idempotencyKey: key,
         ),
-        '护理方案已发布，用户现在可以查看',
+        'Care plan published. The client can now view it.',
         replacePlan: true,
       ),
     );
@@ -275,11 +284,16 @@ class DocumentationController extends ChangeNotifier {
       needsReload = true;
     }
     validation = switch (failure!.code) {
-      'case_consent_required' => '用户已撤回本次服务的数据授权',
-      'note_signed' => '这份记录已签署，请重新载入后创建修订',
-      'signed_note_required' => '请先签署当前专业记录，再发布护理方案',
-      'plan_incomplete' => '请补全总结、目标和每项任务的内容',
-      'documentation_not_ready' => '咨询结束后可以填写专业记录和护理方案',
+      'case_consent_required' =>
+        'The client withdrew data consent for this service.',
+      'note_signed' => 'This note is signed. Reload it to create a revision.',
+      'signed_note_required' =>
+        'Sign the current clinical note before publishing the care plan.',
+      'plan_incomplete' => 'Complete the summary, goals, and each task.',
+      'plan_language_review_required' =>
+        'Review the client-facing plan in English before publishing. The draft is still saved.',
+      'documentation_not_ready' =>
+        'You can write the clinical note and care plan after the consultation ends.',
       _ => null,
     };
   }

@@ -85,7 +85,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.3
-                ? 96
+                ? 120
                 : 56,
             leadingWidth: MediaQuery.textScalerOf(context).scale(1) > 1.4
                 ? 88
@@ -93,12 +93,17 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
             centerTitle: false,
             leading: TextButton(
               onPressed: controller.busy ? null : widget.onBack,
-              child: const Text('返回'),
+              child: const Text('Back'),
             ),
-            title: Text(confirmed ? '预约详情' : '选择时间'),
+            title: Text(
+              confirmed ? 'Booking details' : 'Choose a time',
+              maxLines: 2,
+              softWrap: true,
+              overflow: TextOverflow.visible,
+            ),
             actions: [
               IconButton(
-                tooltip: '刷新预约',
+                tooltip: 'Refresh appointment',
                 onPressed: controller.busy ? null : _load,
                 icon: const Icon(Icons.refresh),
               ),
@@ -119,7 +124,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
         child: MomSettingsCard(
           children: [
             Text(
-              '正在加载预约…',
+              'Loading appointments…',
               style: MomHomeTokens.text(16, weight: FontWeight.w700),
             ),
             const LinearProgressIndicator(),
@@ -144,13 +149,15 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
             _failure(),
           if (controller.unresolvedMutation) ...[
             const Text(
-              '正在核对上次提交结果，请重试以恢复预约。',
+              'Checking your last submission. Try again to restore the appointment.',
               style: TextStyle(color: MomHomeTokens.secondary),
             ),
             const SizedBox(height: MomCozySpacing.compact),
             FilledButton(
               onPressed: controller.busy ? null : _retry,
-              child: Text(controller.busy ? '正在确认…' : '重试上次提交'),
+              child: Text(
+                controller.busy ? 'Confirming…' : 'Retry last submission',
+              ),
             ),
             const SizedBox(height: MomCozySpacing.card),
           ],
@@ -169,16 +176,16 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
               _slot(slot),
             TextButton(
               onPressed: controller.busy ? null : _reviewHold,
-              child: const Text('查看所选时间'),
+              child: const Text('View selected time'),
             ),
           ] else if (current != null) ...[
             MomAppointmentSummary(
               appointment: current,
               title: current.status == AppointmentStatus.inProgress
-                  ? '咨询中 · IBCLC 咨询'
+                  ? 'In consultation · IBCLC'
                   : confirmed
-                  ? '已确认 · IBCLC 咨询'
-                  : '所选时间已暂时保留',
+                  ? 'Confirmed · IBCLC'
+                  : 'Your selected time is on hold',
               action: current.status == AppointmentStatus.confirmed
                   ? OutlinedButton(
                       onPressed: controller.canEdit ? _cancel : null,
@@ -186,7 +193,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
                         context,
                         tinted: true,
                       ),
-                      child: const Text('取消预约'),
+                      child: const Text('Cancel appointment'),
                     )
                   : null,
             ),
@@ -194,11 +201,11 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
             MomSettingsCard(
               children: [
                 Text(
-                  '咨询前准备',
+                  'Prepare for your consultation',
                   style: MomHomeTokens.text(18, weight: FontWeight.w700),
                 ),
                 const Text(
-                  '咨询前请完成信息采集表，让专家了解这次最想解决的问题。',
+                  'Complete the intake form before your consultation so your IBCLC understands what matters most to you.',
                   style: TextStyle(height: 1.6),
                 ),
                 FilledButton(
@@ -206,7 +213,9 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
                       ? () => _openIntake(current)
                       : null,
                   child: Text(
-                    current.intakeVersion > 0 ? '查看信息采集表' : '填写信息采集表',
+                    current.intakeVersion > 0
+                        ? 'View intake form'
+                        : 'Complete intake form',
                   ),
                 ),
                 if (widget.onConsultation != null) ...[
@@ -220,8 +229,8 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
                     icon: const Icon(Icons.videocam_outlined),
                     label: Text(
                       current.status == AppointmentStatus.inProgress
-                          ? '返回咨询室'
-                          : '咨询前准备',
+                          ? 'Return to consultation room'
+                          : 'Prepare for your consultation',
                     ),
                   ),
                 ],
@@ -241,11 +250,11 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
             MomSettingsCard(
               children: [
                 Text(
-                  '当前没有可用的咨询次数',
+                  'No consultations available',
                   style: MomHomeTokens.text(18, weight: FontWeight.w700),
                 ),
                 Text(
-                  '可在服务进度中查看已完成的咨询。',
+                  'You can review completed consultations in Service Progress.',
                   style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
                 ),
               ],
@@ -259,12 +268,12 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
               children: [
                 const Expanded(
                   child: Text(
-                    '可选时间',
+                    'Available times',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                   ),
                 ),
                 Text(
-                  '${controller.availability?.slots.length ?? 0} 个时段',
+                  '${controller.availability?.slots.length ?? 0} time slots',
                   style: const TextStyle(
                     fontSize: 11,
                     color: MomHomeTokens.secondary,
@@ -286,11 +295,11 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
               MomSettingsCard(
                 children: [
                   Text(
-                    '暂无可选时间',
+                    'No times available',
                     style: MomHomeTokens.text(16, weight: FontWeight.w700),
                   ),
                   Text(
-                    '请尝试其他日期或专家。',
+                    'Try another date or consultant.',
                     style: MomHomeTokens.text(
                       13,
                       color: MomHomeTokens.secondary,
@@ -329,7 +338,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
                 if (!controller.busy && !controller.unresolvedMutation)
                   TextButton(
                     onPressed: controller.load,
-                    child: const Text('刷新预约'),
+                    child: const Text('Refresh appointment'),
                   ),
               ],
             ),
@@ -339,14 +348,17 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
   Widget _precheck() => MomSettingsCard(
     gradient: MomHomeTokens.milk,
     children: [
-      Text('先做个预约前确认', style: MomHomeTokens.text(22, weight: FontWeight.w700)),
       Text(
-        '确认所在州、服务适用性与紧急风险。',
+        'A quick check before booking',
+        style: MomHomeTokens.text(22, weight: FontWeight.w700),
+      ),
+      Text(
+        'Confirm your state, whether this service fits your needs, and any emergency risks.',
         style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
       ),
       FilledButton(
         onPressed: controller.canEdit ? _reviewPrecheck : null,
-        child: const Text('开始确认'),
+        child: const Text('Start check'),
       ),
     ],
   );
@@ -357,12 +369,15 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
       MomSettingsCard(
         color: MomHomeTokens.mint,
         children: [
-          Text('选择专家', style: MomHomeTokens.text(18, weight: FontWeight.w700)),
+          Text(
+            'Choose a consultant',
+            style: MomHomeTokens.text(18, weight: FontWeight.w700),
+          ),
           if (controller.provider case final provider?)
             MomServiceExpertIdentity(
-              name: provider.displayName,
-              label: '可预约专家',
-              bio: provider.bio,
+              name: provider.publicName,
+              label: 'Available consultants',
+              bio: provider.publicBio,
             ),
           DropdownButtonFormField<String>(
             key: ValueKey(controller.providerId),
@@ -373,14 +388,14 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
             items: controller.providers
                 .map(
                   (p) =>
-                      DropdownMenuItem(value: p.id, child: Text(p.displayName)),
+                      DropdownMenuItem(value: p.id, child: Text(p.publicName)),
                 )
                 .toList(),
             onChanged: controller.canChoose ? controller.selectProvider : null,
           ),
           if (controller.provider case final provider?)
             Text(
-              '以下时间均为 ${provider.timezone}',
+              'Times shown in ${provider.timezone}',
               style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
             ),
         ],
@@ -389,7 +404,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
       MomSettingsCard(
         children: [
           Text(
-            '日期',
+            'Date',
             style: MomHomeTokens.text(
               12,
               weight: FontWeight.w700,
@@ -408,7 +423,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
           ),
           if (controller.date case final date?)
             Text(
-              '${date == controller.today ? '今天 · ' : ''}${['周一', '周二', '周三', '周四', '周五', '周六', '周日'][DateTime(date.year, date.month, date.day).weekday - 1]}',
+              '${date == controller.today ? 'Today · ' : ''}${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][DateTime(date.year, date.month, date.day).weekday - 1]}',
               style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
             ),
         ],
@@ -467,7 +482,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
                       ),
                       const SizedBox(height: MomCozySpacing.xs),
                       Text(
-                        '${slot.duration.inMinutes} 分钟${slot.available ? '' : ' · 已占用'}',
+                        '${slot.duration.inMinutes} min${slot.available ? '' : ' · Booked'}',
                         style: const TextStyle(
                           color: MomHomeTokens.secondary,
                           fontSize: 11,
@@ -573,6 +588,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
       context: context,
       theme: momSettingsTheme(Theme.of(context)),
       initialDate: DateTime(selected.year, selected.month, selected.day),
+      currentDate: DateTime(today.year, today.month, today.day),
       firstDate: DateTime(today.year, today.month, today.day),
       lastDate: DateTime(end.year, end.month, end.day),
     );

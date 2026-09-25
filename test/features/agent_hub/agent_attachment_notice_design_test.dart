@@ -13,10 +13,10 @@ import '../../support/momcozy_test_fonts.dart';
 void main() {
   setUpAll(loadMomCozyTestFonts);
   const messages = {
-    'image-error': '图片上传失败，请重试。',
-    'file-error': '文件上传失败，请重试。',
-    'too-large': '文件不能超过 10MB。',
-    'unsupported': '暂仅支持 PDF 文件。',
+    'image-error': 'Image upload failed. Try again.',
+    'file-error': 'File upload failed. Try again.',
+    'too-large': 'Files must be 10 MB or smaller.',
+    'unsupported': 'Only PDF files are supported for now.',
   };
   for (final width in [390.0, 320.0]) {
     final scale = width == 320 ? 2.0 : 1.0;

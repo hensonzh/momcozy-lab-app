@@ -152,7 +152,7 @@ void main() {
         final composer = find.byKey(const ValueKey('agent-composer-input'));
         String draft() => tester.widget<TextField>(composer).controller!.text;
         await tester.enterText(composer, 'Draft for first conversation');
-        await tester.tap(find.text('More'));
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
         await tester.pumpAndSettle();
         router.go('/?conversationId=$_second');
         await tester.pumpAndSettle();
@@ -176,7 +176,7 @@ void main() {
 
         // A fresh authenticated runtime, even for the same user, must not reuse
         // private in-memory interaction state from the previous login.
-        await tester.tap(find.text('More'));
+        await tester.tap(find.byKey(const ValueKey('bottom-nav-more')));
         await tester.pumpAndSettle();
         // Simulate the cleared persistent session on logout; the new runtime
         // must also discard the previous runtime's in-memory per-thread cache.

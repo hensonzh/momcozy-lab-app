@@ -9,7 +9,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>momcozy AI</string>
+	<string>Momcozy AI</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -29,11 +29,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>用于视频咨询、检查摄像头，以及拍摄你选择提供的照片或视频。</string>
+	<string>Used for video consultations, camera checks, and photos or videos you choose to share.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>用于视频咨询、检查麦克风，以及录制你选择发送的语音消息。</string>
+	<string>Used for video consultations, microphone checks, and voice messages you choose to send.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>用于选择头像或母婴场景图片，以生成数字人形象或发送给智能体分析。</string>
+	<string>Used to choose an avatar or a parenting-related image to create your digital avatar or share with Momcozy AI.</string>
 	<key>FirebaseMessagingAutoInitEnabled</key>
 	<false/>
 	<key>UIBackgroundModes</key>

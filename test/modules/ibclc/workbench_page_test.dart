@@ -65,10 +65,10 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.semantics.byLabel('我的客户'), findsOne);
+        expect(find.semantics.byLabel('My clients'), findsOne);
         expect(
           find.semantics.byPredicate(
-            (node) => node.getSemanticsData().tooltip == '工作账号',
+            (node) => node.getSemanticsData().tooltip == 'Work account',
           ),
           findsOne,
         );
@@ -93,14 +93,14 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('2 条未读'), findsOneWidget);
-      await tester.tap(find.text('标记已读').first);
+      expect(find.text('2 unread'), findsOneWidget);
+      await tester.tap(find.text('Mark as read').first);
       await tester.pumpAndSettle();
-      expect(find.text('1 条未读'), findsOneWidget);
-      expect(find.text('已读'), findsOneWidget);
-      await tester.tap(find.byTooltip('刷新工作提醒'));
+      expect(find.text('1 unread'), findsOneWidget);
+      expect(find.text('Read'), findsOneWidget);
+      await tester.tap(find.byTooltip('Refresh work reminders'));
       await tester.pumpAndSettle();
-      expect(find.text('1 条未读'), findsOneWidget);
+      expect(find.text('1 unread'), findsOneWidget);
       expect(
         harness.requests.where((request) => request.method == 'PUT'),
         hasLength(1),
@@ -126,10 +126,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('标记已读').first);
-      await tester.tap(find.text('标记已读').first);
+      await tester.ensureVisible(find.text('Mark as read').first);
+      await tester.tap(find.text('Mark as read').first);
       await tester.pumpAndSettle();
-      expect(find.text('已读'), findsOneWidget);
+      expect(find.text('Read'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
     },
@@ -154,12 +154,12 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        await tester.ensureVisible(find.byTooltip('下个月'));
-        await tester.tap(find.byTooltip('下个月'));
+        await tester.ensureVisible(find.byTooltip('Next month'));
+        await tester.tap(find.byTooltip('Next month'));
         await tester.pumpAndSettle();
         expect(harness.requests.last.url.queryParameters['date'], '2026-10-10');
-        expect(find.semantics.byLabel('2026年10月10日'), findsOne);
-        expect(find.text('这一天没有预约'), findsOneWidget);
+        expect(find.semantics.byLabel('October 10, 2026'), findsOne);
+        expect(find.text('No appointments this day'), findsOneWidget);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox.shrink());
       } finally {
@@ -185,31 +185,31 @@ void main() {
       await tester.pumpAndSettle();
       expect(harness.requests, isEmpty);
       await tester.enterText(
-        find.widgetWithText(TextField, '工作邮箱'),
+        find.widgetWithText(TextField, 'Work email'),
         'jamie@example.test',
       );
       await tester.enterText(
-        find.widgetWithText(TextField, '密码'),
+        find.widgetWithText(TextField, 'Password'),
         'synthetic-password',
       );
-      await tester.tap(find.text('继续'));
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
       expect(harness.requests.map((r) => r.url.path), ['/v1/ibclc/auth/login']);
-      expect(find.text('验证你的身份'), findsOneWidget);
+      expect(find.text('Verify your identity'), findsOneWidget);
       await tester.enterText(
-        find.widgetWithText(TextField, '认证器验证码'),
+        find.widgetWithText(TextField, 'Authenticator code'),
         '123456',
       );
-      await tester.tap(find.text('进入工作台'));
+      await tester.tap(find.text('Enter workbench'));
       await tester.pumpAndSettle();
       expect(find.byType(WorkbenchClientPage), findsOneWidget);
       expect(find.text('林晓'), findsWidgets);
       expect(harness.store.saved, isNotNull);
-      await tester.tap(find.byTooltip('工作账号'));
+      await tester.tap(find.byTooltip('Work account'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('退出登录'));
+      await tester.tap(find.text('Sign out'));
       await tester.pumpAndSettle();
-      expect(find.text('进入病例环境'), findsOneWidget);
+      expect(find.text('Access your workbench'), findsOneWidget);
       expect(find.text('林晓'), findsNothing);
       expect(harness.store.saved, isNull);
       expect(harness.requests.last.url.path, '/v1/auth/logout');
@@ -234,10 +234,10 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      await tester.tap(find.byTooltip('打开工作台导航'));
+      await tester.tap(find.byTooltip('Open workbench navigation'));
       await tester.pumpAndSettle();
-      expect(find.text('我的客户'), findsOneWidget);
-      await tester.tap(find.text('我的客户'));
+      expect(find.text('My clients'), findsOneWidget);
+      await tester.tap(find.text('My clients'));
       await tester.pumpAndSettle();
       expect(find.text('林晓'), findsOneWidget);
       expect(tester.takeException(), isNull);

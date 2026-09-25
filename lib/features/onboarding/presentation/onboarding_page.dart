@@ -11,6 +11,7 @@ import '../../../shared/widgets/momcozy_components.dart';
 import '../../../shared/widgets/product_feedback.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/text/english_error_text.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_text_roles.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/platform_portrait_picker.dart';
@@ -30,6 +31,7 @@ class OnboardingPage extends StatefulWidget {
     this.avatarTaskMode = false,
     this.avatarThumbnailLoader,
     this.onAvatarTaskCompleted,
+    this.now = DateTime.now,
   });
 
   final OnboardingController controller;
@@ -38,6 +40,7 @@ class OnboardingPage extends StatefulWidget {
   final bool avatarTaskMode;
   final OnboardingAvatarImageLoader? avatarThumbnailLoader;
   final VoidCallback? onAvatarTaskCompleted;
+  final DateTime Function() now;
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
@@ -99,7 +102,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: MomSettingsCard(
         children: [
           Text(
-            failed ? 'We couldn’t load your setup' : 'Preparing your setup',
+            failed ? 'We couldn\'t load your setup' : 'Preparing your setup',
             style: MomHomeTokens.text(20, weight: FontWeight.w700),
           ),
           if (failed) ...[
@@ -221,7 +224,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final age = int.tryParse(_ageController.text.trim());
     if (_nameController.text.trim().isEmpty) {
       setState(
-        () => _validationMessage = 'Enter the name you’d like us to use.',
+        () => _validationMessage = 'Enter the name you\'d like us to use.',
       );
       return;
     }
@@ -240,17 +243,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return _ProfileStep(
       title: 'Tell us about your delivery',
       reason:
-          'Your delivery date helps personalize postpartum recovery and your baby’s age-based guidance.',
+          'Your delivery date helps personalize postpartum recovery and your baby\'s age-based guidance.',
       children: [
         _DateField(
           label: 'Delivery date',
           value: draft.deliveryDate,
           onTap: () async {
-            final today = DateUtils.dateOnly(DateTime.now());
+            final today = DateUtils.dateOnly(widget.now());
             final selected = await showMomCozyDatePicker(
               context: context,
               theme: authLoginTheme(Theme.of(context)),
               initialDate: draft.deliveryDate ?? today,
+              currentDate: today,
               firstDate: DateTime(today.year - 2),
               lastDate: today,
             );
@@ -414,12 +418,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
         _StepPrompt(
           companionPreview: true,
           title: failed
-              ? 'Let’s try another photo'
+              ? 'Let\'s try another photo'
               : replacing
               ? 'Create a new digital companion'
               : 'Create your digital companion',
           reason: failed
-              ? 'A clear, front-facing portrait helps us create a companion that feels more like you. We couldn’t use the last photo.'
+              ? 'A clear, front-facing portrait helps us create a companion that feels more like you. We couldn\'t use the last photo.'
               : replacing
               ? 'Your current companion stays active until you choose and confirm a new one.'
               : 'A portrait helps us make your companion feel more like you.',
@@ -597,8 +601,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
       if (!mounted) return;
       setState(
         () => _validationMessage = error is FormatException
-            ? error.message
-            : 'We couldn’t open that photo. Please try another one.',
+            ? englishErrorText(
+                error.message,
+                fallback:
+                    'We couldn\'t open that photo. Please try another one.',
+              )
+            : 'We couldn\'t open that photo. Please try another one.',
       );
     }
   }
@@ -621,7 +629,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Creating four options can take a few minutes. We’ll keep working in the cloud, so you can start using the app now. We’ll let you know when they’re ready.',
+                  'Creating four options can take a few minutes. We\'ll keep working in the cloud, so you can start using the app now. We\'ll let you know when they\'re ready.',
                   style: MomHomeTokens.text(
                     13,
                     color: MomHomeTokens.secondary,
@@ -1062,9 +1070,9 @@ class _AvatarGenerationWaitingView extends StatelessWidget {
       OnboardingAvatarGenerationPhase.queued =>
         'Your photo is uploaded. Image creation will begin as soon as a generation slot is available.',
       OnboardingAvatarGenerationPhase.generating =>
-        'We’re using your photo and the MomCozy illustration style. This is usually the longest part.',
+        'We\'re using your photo and the MomCozy illustration style. This is usually the longest part.',
       _ =>
-        'We’re preparing your photo and the MomCozy illustration style for image creation.',
+        'We\'re preparing your photo and the MomCozy illustration style for image creation.',
     };
 
     return Column(
@@ -1107,7 +1115,7 @@ class _AvatarGenerationRecipe extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'What’s happening',
+                  'What\'s happening',
                   style: TextStyle(
                     color: MomHomeTokens.ink,
                     fontSize: 14,
@@ -1570,7 +1578,7 @@ class _AvatarGenerationWaitNote extends StatelessWidget {
           SizedBox(width: MomCozySpacing.compact),
           Expanded(
             child: Text(
-              'Image generation can take a few minutes. There’s nothing else you need to do—generation continues in the cloud if you briefly leave the app.',
+              'Image generation can take a few minutes. There\'s nothing else you need to do—generation continues in the cloud if you briefly leave the app.',
               style: MomCozyTextRoles.paragraphOf(context).copyWith(
                 color: MomHomeTokens.secondary,
                 fontSize: 13,

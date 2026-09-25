@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/domain/care/consultation_room.dart';
 import 'package:momcozy_flutter_app/domain/shared/product_failure.dart';
@@ -95,31 +96,40 @@ void main() {
               width: width,
               scale: scale,
             );
-            expect(find.text('正在读取咨询信息'), findsOneWidget);
+            expect(find.text('Loading consultation details'), findsOneWidget);
+            if (!home && scale == 2) {
+              final title = tester.renderObject<RenderParagraph>(
+                find.text('Video consultation'),
+              );
+              expect(title.didExceedMaxLines, isFalse);
+            }
             expect(repo.loads, 1);
             await _shot(tester, 'loading', home, width, scale);
             repo.response.completeError(
               const ProductFailure(ProductFailureKind.unavailable),
             );
             await tester.pumpAndSettle();
-            expect(find.text('暂时无法载入，请稍后重试'), findsOneWidget);
+            expect(
+              find.text('Could not load right now. Please try again later.'),
+              findsOneWidget,
+            );
             await _shot(tester, 'error', home, width, scale);
             repo.response = Completer();
-            await tester.ensureVisible(find.text('重试'));
+            await tester.ensureVisible(find.text('Try again'));
             await tester.pumpAndSettle();
-            await tester.tap(find.text('重试'));
+            await tester.tap(find.text('Try again'));
             await tester.pump(const Duration(milliseconds: 20));
-            expect(find.text('正在读取咨询信息'), findsOneWidget);
-            expect(find.text('重试'), findsNothing);
+            expect(find.text('Loading consultation details'), findsOneWidget);
+            expect(find.text('Try again'), findsNothing);
             expect(repo.loads, 2);
             expect(repo.prepareCalls, 0);
             expect(repo.keys, isEmpty);
             expect(media.connectCalls, 0);
             repo.response.complete(repo.context);
             await tester.pumpAndSettle();
-            expect(find.text('开始前准备'), findsOneWidget);
-            expect(find.text('预约详情'), findsOneWidget);
-            expect(find.text('正在读取咨询信息'), findsNothing);
+            expect(find.text('Before you join'), findsOneWidget);
+            expect(find.text('Appointment details'), findsOneWidget);
+            expect(find.text('Loading consultation details'), findsNothing);
             expect(repo.loads, 2);
             expect(media.connectCalls, 0);
             expect(tester.takeException(), isNull);
@@ -144,7 +154,9 @@ void main() {
           onBack: () => backs++,
         );
         await _shot(tester, 'loading', home, 320, 2, short: true);
-        await tester.tap(find.byTooltip(home ? '关闭预约详情' : '返回'));
+        await tester.tap(
+          find.byTooltip(home ? 'Close appointment details' : 'Back'),
+        );
         await tester.pump(const Duration(milliseconds: 50));
         expect(backs, 1);
         expect(media.disconnectCalls, 1);
@@ -175,11 +187,16 @@ void main() {
           const ProductFailure(ProductFailureKind.offline),
         );
         await tester.pumpAndSettle();
-        expect(find.text('网络未连接，请连接后重试'), findsOneWidget);
-        await tester.ensureVisible(find.text('重试'));
+        expect(
+          find.text("You're offline. Connect and try again."),
+          findsOneWidget,
+        );
+        await tester.ensureVisible(find.text('Try again'));
         await tester.pumpAndSettle();
         await _shot(tester, 'offline', home, 320, 2, short: true);
-        await tester.tap(find.byTooltip(home ? '关闭预约详情' : '返回'));
+        await tester.tap(
+          find.byTooltip(home ? 'Close appointment details' : 'Back'),
+        );
         await tester.pumpAndSettle();
         expect(backs, 1);
       },

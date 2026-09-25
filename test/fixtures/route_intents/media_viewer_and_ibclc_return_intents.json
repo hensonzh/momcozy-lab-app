@@ -4,17 +4,17 @@
   "input": {
     "mediaLinks": [
       {
-        "title": "泵奶指南 PDF",
+        "title": "Pumping guide PDF",
         "kind": "pdf",
         "url": "/skill-assets/guides/pump.pdf"
       },
       {
-        "title": "佩戴视频",
+        "title": "How to wear your pump",
         "kind": "video",
         "url": "https://cdn.example.com/wear-guide.mp4"
       },
       {
-        "title": "不支持资料",
+        "title": "Unsupported resource",
         "kind": "other",
         "url": "https://cdn.example.com/raw.zip"
       }
@@ -47,7 +47,7 @@
     {
       "type": "ShowToast",
       "payload": {
-        "message": "该资料已失效，请获取最新资料。"
+        "message": "This resource has expired. Please request the latest version."
       }
     },
     {
@@ -55,14 +55,14 @@
       "path": "/media-viewer",
       "payload": {
         "kind": "video",
-        "title": "佩戴视频",
+        "title": "How to wear your pump",
         "url": "https://cdn.example.com/wear-guide.mp4"
       }
     },
     {
       "type": "ShowToast",
       "payload": {
-        "message": "该资料暂不支持应用内打开"
+        "message": "This resource cannot be opened in the app yet."
       }
     },
     {

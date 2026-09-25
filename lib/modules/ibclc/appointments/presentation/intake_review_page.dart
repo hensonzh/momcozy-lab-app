@@ -87,39 +87,39 @@ class _IntakeReviewPageState extends State<IntakeReviewPage>
           child: TextButton.icon(
             onPressed: widget.onBack,
             icon: const Icon(Icons.arrow_back_rounded),
-            label: const Text('返回预约'),
+            label: const Text('Back to appointments'),
           ),
         ),
         const SizedBox(height: 16),
         WorkbenchHeading(
-          title: '咨询前资料',
-          subtitle: intake == null ? null : '用户提交 · 第 ${intake.version} 版',
+          title: 'Consultation intake',
+          subtitle: intake == null ? null : 'Client submission · Version ${intake.version}',
           actions: [
             OutlinedButton.icon(
               onPressed: widget.onRoom,
               icon: const Icon(Icons.videocam_outlined),
-              label: const Text('进入咨询室'),
+              label: const Text('Join consultation'),
             ),
             IconButton(
-              tooltip: '刷新咨询资料',
+              tooltip: 'Refresh intake',
               onPressed: loading ? null : _load,
               icon: const Icon(Icons.refresh_rounded),
             ),
           ],
         ),
-        if (loading) const LinearProgressIndicator(semanticsLabel: '正在读取咨询资料'),
+        if (loading) const LinearProgressIndicator(semanticsLabel: 'Loading intake'),
         if (failure?.code == 'not_found')
           const Card(
             child: ProductEmptyView(
-              title: '用户尚未提交咨询资料',
-              description: '用户完成咨询准备后，可在这里查看。',
+              title: 'Client has not submitted intake yet',
+              description: 'You can view it here once the client completes their consultation preparation.',
             ),
           )
         else if (failure?.code == 'consent_required')
           const Card(
             child: ProductEmptyView(
-              title: '病例授权已撤回',
-              description: '客户重新授权后才能查看本次咨询资料。',
+              title: 'Case access consent withdrawn',
+              description: 'The client must give consent again before you can view this intake.',
             ),
           )
         else if (failure != null)
@@ -132,7 +132,7 @@ class _IntakeReviewPageState extends State<IntakeReviewPage>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    '当前困扰',
+                    'Current concerns',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 16),
@@ -149,8 +149,8 @@ class _IntakeReviewPageState extends State<IntakeReviewPage>
                     ],
                   ),
                   const SizedBox(height: 24),
-                  _Field('希望改善', content.feedingGoal),
-                  _Field('需要的支持', content.supportNeeded),
+                  _Field('Desired outcome', content.feedingGoal),
+                  _Field('Support needed', content.supportNeeded),
                 ],
               ),
             ),
@@ -163,26 +163,26 @@ class _IntakeReviewPageState extends State<IntakeReviewPage>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    '妈妈与宝宝',
+                    'Mom & baby',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 20),
-                  _Field('妈妈分娩日期', content.profile.deliveryDate.toString()),
-                  _Field('所在地', content.profile.region),
-                  _Field('宝宝', content.profile.baby.name),
+                  _Field('Delivery date', content.profile.deliveryDate.toString()),
+                  _Field('State', content.profile.region),
+                  _Field('Baby', content.profile.baby.name),
                   _Field(
-                    '出生日期',
-                    content.profile.baby.birthDate?.toString() ?? '未填写',
+                    'Date of birth',
+                    content.profile.baby.birthDate?.toString() ?? 'Not provided',
                   ),
-                  _Field('宝宝性别', switch (content.profile.baby.sex) {
-                    BabySex.female => '女',
-                    BabySex.male => '男',
-                    BabySex.unspecified => '未填写',
+                  _Field('Baby\'s sex', switch (content.profile.baby.sex) {
+                    BabySex.female => 'Female',
+                    BabySex.male => 'Male',
+                    BabySex.unspecified => 'Not provided',
                   }),
                   _Field(
-                    '喂养方式',
+                    'Feeding method',
                     content.profile.baby.feedingMode == FeedingMode.unknown
-                        ? '未填写'
+                        ? 'Not provided'
                         : feedingModeLabels[content.profile.baby.feedingMode]!,
                   ),
                 ],
@@ -214,7 +214,7 @@ class _Field extends StatelessWidget {
         const SizedBox(height: 6),
         SelectionArea(
           child: Text(
-            value.isEmpty ? '未填写' : value,
+            value.isEmpty ? 'Not provided' : value,
             style: const TextStyle(height: 1.6),
           ),
         ),

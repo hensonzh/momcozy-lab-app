@@ -118,13 +118,13 @@ RouteIntent routeIntentFromFallbackCase(Map<String, Object?> inputCase) {
         return const RouteIntent(
           type: 'MediaViewerMissingResource',
           path: '/media-viewer',
-          payload: {'message': '缺少资源参数，请从资料卡片进入。'},
+          payload: {'message': 'Resource details are missing. Please open it from the resource card.'},
         );
       }
       if (_isRetiredSkillAssetUrl(url)) {
         return const RouteIntent(
           type: 'ShowToast',
-          payload: {'message': '该资料已失效，请获取最新资料。'},
+          payload: {'message': 'This resource has expired. Please request the latest version.'},
         );
       }
       return RouteIntent(type: 'OpenMediaViewer', path: '/media-viewer');
@@ -158,13 +158,13 @@ RouteIntent _routeIntentFromMediaLink(Map<String, Object?> link) {
   if (_isRetiredSkillAssetUrl(url)) {
     return const RouteIntent(
       type: 'ShowToast',
-      payload: {'message': '该资料已失效，请获取最新资料。'},
+      payload: {'message': 'This resource has expired. Please request the latest version.'},
     );
   }
   if (!_supportedMediaKinds.contains(kind) || url.isEmpty) {
     return const RouteIntent(
       type: 'ShowToast',
-      payload: {'message': '该资料暂不支持应用内打开'},
+      payload: {'message': 'This resource cannot be opened in the app yet.'},
     );
   }
 
@@ -255,7 +255,7 @@ RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
     return const RouteIntent(
       type: 'OpenAgentHubAndStartWorkFlow',
       path: '/',
-      payload: {'prompt': '我想制定返工计划'},
+      payload: {'prompt': 'I\'d like to plan my return to work.'},
     );
   }
 

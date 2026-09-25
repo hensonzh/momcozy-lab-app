@@ -35,8 +35,14 @@ class MomServicePackageFacts extends StatelessWidget {
     child: Column(
       spacing: 10,
       children: [
-        _fact(MomCozyLineGlyph.users, '${package.sessions} 次 IBCLC 在线咨询'),
-        _fact(MomCozyLineGlyph.calendar, '${package.durationDays} 天持续陪伴'),
+        _fact(
+          MomCozyLineGlyph.users,
+          '${package.sessions} online IBCLC consultations',
+        ),
+        _fact(
+          MomCozyLineGlyph.calendar,
+          '${package.durationDays} days of ongoing support',
+        ),
       ],
     ),
   );
@@ -66,11 +72,11 @@ class MomProviderTeamCard extends StatelessWidget {
       spacing: 8,
       children: [
         Text(
-          'IBCLC 专家团队服务',
+          'IBCLC expert support',
           style: MomHomeTokens.text(18, weight: FontWeight.w700),
         ),
         Text(
-          '真人专家 + AI 持续陪伴',
+          'Personalized expert care with ongoing AI support',
           style: MomHomeTokens.text(
             12,
             color: MomHomeTokens.secondary,
@@ -112,7 +118,7 @@ class MomProviderTeamCard extends StatelessWidget {
             barrierColor: const Color(0x472b2423),
             builder: (context) => _MomProviderTeamDialog(providers: providers),
           ),
-          child: const Text('了解团队'),
+          child: const Text('Meet the team'),
         ),
       ],
     );
@@ -148,16 +154,18 @@ class MomProviderIdentity extends StatelessWidget {
           spacing: 4,
           children: [
             Text(
-              provider?.displayName ?? '待分配专家',
+              provider?.publicName ?? 'Consultant not assigned yet',
               style: MomHomeTokens.text(14, weight: FontWeight.w700),
             ),
             Text(
-              provider == null ? '预约时确认本次专家' : 'IBCLC',
+              provider == null
+                  ? 'Confirm your consultant when booking'
+                  : 'IBCLC',
               style: MomHomeTokens.text(11, color: MomHomeTokens.teal),
             ),
             if (provider != null && provider!.languages.isNotEmpty)
               Text(
-                provider!.languages.join(' · '),
+                provider!.languageLabel,
                 style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
               ),
           ],
@@ -196,14 +204,14 @@ class _MomProviderTeamDialog extends StatelessWidget {
                     spacing: 8,
                     children: [
                       Text(
-                        'IBCLC 专家团队',
+                        'IBCLC team',
                         style: MomHomeTokens.text(20, weight: FontWeight.w700),
                       ),
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: const Text('关闭'),
+                          child: const Text('Close'),
                         ),
                       ),
                     ],
@@ -213,7 +221,7 @@ class _MomProviderTeamDialog extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          'IBCLC 专家团队',
+                          'IBCLC team',
                           style: MomHomeTokens.text(
                             20,
                             weight: FontWeight.w700,
@@ -223,7 +231,7 @@ class _MomProviderTeamDialog extends StatelessWidget {
                       const SizedBox(width: 8),
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text('关闭'),
+                        child: const Text('Close'),
                       ),
                     ],
                   ),
@@ -235,7 +243,7 @@ class _MomProviderTeamDialog extends StatelessWidget {
                       spacing: 16,
                       children: [
                         Text(
-                          '服务包不会预先绑定某一位专家。购买后，我们会结合你的问题和可预约时间，提供可选的专家。',
+                          'Your package is not assigned to a consultant in advance. After purchase, you can choose from consultants based on your needs and available times.',
                           style: MomHomeTokens.text(
                             13,
                             color: MomHomeTokens.secondary,
@@ -247,7 +255,7 @@ class _MomProviderTeamDialog extends StatelessWidget {
                             color: MomHomeTokens.neutralSurface,
                             children: [
                               Text(
-                                '当前暂无可预约专家，请稍后再来查看。',
+                                'No consultants are available to book right now. Check back later.',
                                 style: MomHomeTokens.text(
                                   13,
                                   color: MomHomeTokens.secondary,
@@ -261,7 +269,7 @@ class _MomProviderTeamDialog extends StatelessWidget {
                             children: [
                               MomProviderIdentity(provider: provider),
                               Text(
-                                provider.bio,
+                                provider.publicBio,
                                 style: MomHomeTokens.text(
                                   12,
                                   color: MomHomeTokens.secondary,
@@ -274,7 +282,7 @@ class _MomProviderTeamDialog extends StatelessWidget {
                           color: MomHomeTokens.mint,
                           children: [
                             Text(
-                              '预约确认前，你会看到并确认本次具体专家。',
+                              'You will see and confirm your consultant before booking.',
                               style: MomHomeTokens.text(
                                 12,
                                 color: MomHomeTokens.teal,

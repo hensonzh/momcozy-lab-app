@@ -116,12 +116,12 @@ Future<ConsultationRoomController> mount(
     ),
   );
   await tester.pumpAndSettle();
-  await tester.scrollUntilVisible(find.text('开始咨询'), 200);
-  await click(tester, '开始咨询');
-  expect(find.text('摄像头和麦克风均可用'), findsOneWidget);
+  await tester.scrollUntilVisible(find.text('Start consultation'), 200);
+  await click(tester, 'Start consultation');
+  expect(find.text('Camera and microphone are ready'), findsOneWidget);
   expect(rooms.regions, isEmpty);
   expect(rooms.keys, isEmpty);
-  await click(tester, '继续确认');
+  await click(tester, 'Continue');
   return controller;
 }
 
@@ -171,44 +171,52 @@ void main() {
         expect(
           tester
               .widget<FilledButton>(
-                find.widgetWithText(FilledButton, '确认并进入咨询室'),
+                find.widgetWithText(FilledButton, 'Confirm and join'),
               )
               .onPressed,
           isNull,
         );
-        await click(tester, '去授权');
+        await click(tester, 'Review consent');
         await shot(tester, 'consent', width, scale);
         expect(
           tester
-              .widget<FilledButton>(find.widgetWithText(FilledButton, '确认视频授权'))
+              .widget<FilledButton>(
+                find.widgetWithText(FilledButton, 'Confirm video consent'),
+              )
               .onPressed,
           isNull,
         );
-        await click(tester, '我同意开启本次服务的视频咨询');
-        await click(tester, '确认视频授权');
+        await click(
+          tester,
+          'I consent to video consultations for this service',
+        );
+        await click(tester, 'Confirm video consent');
         expect(actualConsents.writes, [
           (scope: CareConsentScope.video, version: 4, active: true),
         ]);
         await shot(tester, 'ready', width, scale);
         await region(tester, 'New York (NY)');
-        await click(tester, '确认并进入咨询室');
+        await click(tester, 'Confirm and join');
         expect(rooms.regions, ['NY']);
         expect(rooms.keys, isEmpty);
         await shot(tester, 'region-blocked', width, scale);
         expect(
           tester
               .widget<FilledButton>(
-                find.widgetWithText(FilledButton, '确认并进入咨询室'),
+                find.widgetWithText(FilledButton, 'Confirm and join'),
               )
               .onPressed,
           isNull,
         );
         await region(tester, 'California (CA)');
-        await click(tester, '确认并进入咨询室');
+        await click(tester, 'Confirm and join');
         expect(rooms.regions, ['NY', 'CA']);
         expect(rooms.keys, hasLength(1));
         expect(find.byType(ConsultationStartDialog), findsNothing);
-        expect(find.textContaining('等待 Test IBCLC 进入'), findsOneWidget);
+        expect(
+          find.textContaining('Waiting for Test IBCLC to join'),
+          findsOneWidget,
+        );
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox.shrink());
       });
@@ -236,9 +244,14 @@ void main() {
         }
         await controller.load();
         await tester.pumpAndSettle();
-        final enter = find.widgetWithText(FilledButton, '确认并进入咨询室');
+        final enter = find.widgetWithText(FilledButton, 'Confirm and join');
         expect(tester.widget<FilledButton>(enter).onPressed, isNull);
         await tester.ensureVisible(enter);
+        expect(
+          tester.getSize(find.text('Start video consultation')).width,
+          greaterThan(260),
+          reason: 'The full English heading must not split within a word.',
+        );
         await shot(tester, 'changed-$state', 320, 2);
         rooms.json['intake_ready'] = true;
         rooms.json['video_provider'] = 'sandbox';
@@ -260,7 +273,7 @@ void main() {
       ..ready()
       ..locationPending = Completer<void>();
     await mount(tester, rooms, Consents(rooms));
-    await tester.tap(find.text('确认并进入咨询室'));
+    await tester.tap(find.text('Confirm and join'));
     await tester.pump();
     expect(rooms.regions, ['CA']);
     expect(
@@ -277,7 +290,9 @@ void main() {
             find.descendant(
               of: find.byType(ConsultationStartDialog),
               matching: find.byWidgetPredicate(
-                (w) => w is IconButton && w.tooltip == '关闭咨询确认',
+                (w) =>
+                    w is IconButton &&
+                    w.tooltip == 'Close consultation confirmation',
               ),
             ),
           )
@@ -304,17 +319,17 @@ void main() {
       height: 568,
       scale: 2,
     );
-    await click(tester, '去授权');
-    await click(tester, '我同意开启本次服务的视频咨询');
-    await click(tester, '确认视频授权');
+    await click(tester, 'Review consent');
+    await click(tester, 'I consent to video consultations for this service');
+    await click(tester, 'Confirm video consent');
     await region(tester, 'New York (NY)');
-    await click(tester, '确认并进入咨询室');
-    await tester.ensureVisible(find.text('确认并进入咨询室'));
+    await click(tester, 'Confirm and join');
+    await tester.ensureVisible(find.text('Confirm and join'));
     await tester.pumpAndSettle();
     await shot(tester, 'short-blocked-footer', 320, 2);
     expect(rooms.keys, isEmpty);
     await region(tester, 'California (CA)');
-    await click(tester, '确认并进入咨询室');
+    await click(tester, 'Confirm and join');
     expect(rooms.keys, hasLength(1));
     await tester.pumpWidget(const SizedBox.shrink());
   });
@@ -325,13 +340,13 @@ void main() {
       ..ready()
       ..locationPending = Completer<void>();
     await mount(tester, rooms, Consents(rooms));
-    await tester.tap(find.text('确认并进入咨询室'));
+    await tester.tap(find.text('Confirm and join'));
     await tester.pump();
     rooms.json['video_consent'] = false;
     rooms.locationPending!.complete();
     await tester.pumpAndSettle();
     expect(rooms.keys, isEmpty);
-    expect(find.text('去授权'), findsOneWidget);
+    expect(find.text('Review consent'), findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
   });
   testWidgets('closing a preparing room cancels pending automatic join', (
@@ -341,7 +356,7 @@ void main() {
       ..ready()
       ..preparing = true;
     final controller = await mount(tester, rooms, Consents(rooms));
-    await tester.tap(find.text('确认并进入咨询室'));
+    await tester.tap(find.text('Confirm and join'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(controller.wantsToJoin, isTrue);
@@ -350,7 +365,8 @@ void main() {
       find.descendant(
         of: find.byType(ConsultationStartDialog),
         matching: find.byWidgetPredicate(
-          (w) => w is IconButton && w.tooltip == '关闭咨询确认',
+          (w) =>
+              w is IconButton && w.tooltip == 'Close consultation confirmation',
         ),
       ),
     );
@@ -369,18 +385,18 @@ void main() {
       ..ready()
       ..locationOffline = true;
     await mount(tester, rooms, Consents(rooms));
-    await click(tester, '确认并进入咨询室');
+    await click(tester, 'Confirm and join');
     expect(rooms.keys, isEmpty);
     expect(
       find.descendant(
         of: find.byType(ConsultationStartDialog),
-        matching: find.textContaining('连接暂时中断'),
+        matching: find.textContaining('Connection interrupted'),
       ),
       findsOneWidget,
     );
     await shot(tester, 'offline', 390, 1);
     rooms.locationOffline = false;
-    await click(tester, '确认并进入咨询室');
+    await click(tester, 'Confirm and join');
     expect(rooms.regions, ['CA', 'CA']);
     expect(rooms.keys, hasLength(1));
     await tester.pumpWidget(const SizedBox.shrink());
@@ -391,9 +407,9 @@ void main() {
     final rooms = Rooms();
     final actual = Consents(rooms)..pending = Completer<void>();
     await mount(tester, rooms, actual);
-    await click(tester, '去授权');
-    await click(tester, '我同意开启本次服务的视频咨询');
-    await tester.tap(find.text('确认视频授权'));
+    await click(tester, 'Review consent');
+    await click(tester, 'I consent to video consultations for this service');
+    await tester.tap(find.text('Confirm video consent'));
     await tester.pump();
     expect(actual.writes, hasLength(1));
     await tester.binding.handlePopRoute();
@@ -405,7 +421,7 @@ void main() {
     await tester.pumpAndSettle();
     await shot(tester, 'consent-offline', 390, 1);
     actual.pending = null;
-    await click(tester, '确认视频授权');
+    await click(tester, 'Confirm video consent');
     expect(actual.writes.map((e) => e.version).toList(), [4, 4]);
     expect(
       actual.writes.every((e) => e.scope == CareConsentScope.video && e.active),
@@ -422,7 +438,7 @@ void main() {
     rooms.json['location'] = null;
     await mount(tester, rooms, Consents(rooms));
     expect(find.text('WA'), findsOneWidget);
-    await click(tester, '确认并进入咨询室');
+    await click(tester, 'Confirm and join');
     expect(rooms.regions, ['WA']);
     expect(rooms.keys, hasLength(1));
     await tester.pumpWidget(const SizedBox.shrink());

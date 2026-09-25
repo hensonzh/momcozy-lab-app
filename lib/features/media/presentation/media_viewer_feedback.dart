@@ -38,7 +38,7 @@ class MediaViewerLoadError extends StatelessWidget {
     this.darkBackground = true,
     this.icon = Icons.broken_image_outlined,
     this.retryButtonKey = const ValueKey('media-viewer-retry'),
-    this.retryLabel = '重新加载',
+    this.retryLabel = 'Reload',
   });
 
   final String message;

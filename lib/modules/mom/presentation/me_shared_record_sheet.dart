@@ -55,15 +55,15 @@ class MeSharedRecordSheet extends StatelessWidget {
         final feed = c.kind == BabyRecordKind.feeding,
             diaper = c.kind == BabyRecordKind.diaper;
         final title = feed
-            ? '记录一次喂奶'
+            ? 'Log a feeding'
             : diaper
-            ? '记一次换尿布'
-            : '记一次宝宝体重';
+            ? 'Log a diaper change'
+            : 'Log your baby\'s weight';
         final help = feed
-            ? '这条记录也会出现在宝宝页面。'
+            ? 'This record will also appear on your baby\'s page.'
             : diaper
-            ? '与宝宝页面共用记录，不需要重复填写。'
-            : '有新的测量时再记，不需要每天测量。';
+            ? 'This record is shared with your baby\'s page. No need to enter it twice.'
+            : 'Add a record when you have a new measurement. Daily weighing is not necessary.';
         Widget field(String title, Widget child) => Padding(
           padding: const EdgeInsets.only(bottom: 16),
           child: Column(
@@ -92,7 +92,7 @@ class MeSharedRecordSheet extends StatelessWidget {
               for (final e in options.entries)
                 DropdownMenuItem(value: e.key, child: Text(e.value)),
             ],
-            decoration: const InputDecoration(hintText: '请选择'),
+            decoration: const InputDecoration(hintText: 'Please select'),
             style: MeDesign.text(14),
           ),
         );
@@ -180,7 +180,7 @@ class MeSharedRecordSheet extends StatelessWidget {
                                 ),
                               ),
                               IconButton(
-                                tooltip: '关闭',
+                                tooltip: 'Close',
                                 onPressed: c.busy
                                     ? null
                                     : () => Navigator.pop(context),
@@ -204,10 +204,10 @@ class MeSharedRecordSheet extends StatelessWidget {
                         const SizedBox(height: 18),
                         field(
                           feed
-                              ? '喂奶时间'
+                              ? 'Feeding time'
                               : diaper
-                              ? '换尿布时间'
-                              : '测量日期',
+                              ? 'Diaper change time'
+                              : 'Measurement date',
                           OutlinedButton(
                             onPressed: c.busy ? null : date,
                             style: OutlinedButton.styleFrom(
@@ -215,7 +215,7 @@ class MeSharedRecordSheet extends StatelessWidget {
                             ),
                             child: Text(
                               feed || diaper
-                                  ? '${c.occurredAt.month}月${c.occurredAt.day}日 ${c.occurredAt.hour.toString().padLeft(2, '0')}:${c.occurredAt.minute.toString().padLeft(2, '0')}'
+                                  ? '${c.occurredAt.month}/${c.occurredAt.day} ${c.occurredAt.hour.toString().padLeft(2, '0')}:${c.occurredAt.minute.toString().padLeft(2, '0')}'
                                   : c.recordedOn.toString(),
                               style: MeDesign.text(14),
                             ),
@@ -223,11 +223,11 @@ class MeSharedRecordSheet extends StatelessWidget {
                         ),
                         if (feed) ...[
                           select(
-                            '这次怎么喂？',
+                            'How did you feed your baby?',
                             const {
-                              BabyFeedingMethod.breastfeeding: '亲喂',
-                              BabyFeedingMethod.expressedMilk: '母乳瓶喂',
-                              BabyFeedingMethod.formula: '配方奶瓶喂',
+                              BabyFeedingMethod.breastfeeding: 'Nursing',
+                              BabyFeedingMethod.expressedMilk: 'Bottle-fed breast milk',
+                              BabyFeedingMethod.formula: 'Bottle-fed formula',
                             },
                             c.feedingMethod,
                             c.setFeedingMethod,
@@ -235,29 +235,29 @@ class MeSharedRecordSheet extends StatelessWidget {
                           if (c.feedingMethod ==
                               BabyFeedingMethod.breastfeeding) ...[
                             select(
-                              '喂了哪一侧？',
+                              'Which side did you nurse on?',
                               const {
-                                FeedingSide.left: '左侧',
-                                FeedingSide.right: '右侧',
-                                FeedingSide.both: '两侧',
+                                FeedingSide.left: 'Left side',
+                                FeedingSide.right: 'Right side',
+                                FeedingSide.both: 'Both sides',
                               },
                               c.feedingSide,
                               c.setSide,
                             ),
                             field(
-                              '大概喂了多久？（可选）',
+                              'About how long? (optional)',
                               TextField(
                                 enabled: c.editable,
                                 keyboardType: TextInputType.number,
                                 onChanged: c.setDuration,
                                 decoration: const InputDecoration(
-                                  suffixText: '分钟',
+                                  suffixText: 'Minutes',
                                 ),
                               ),
                             ),
                           ] else
                             field(
-                              '这次喝了多少？',
+                              'How much did your baby drink?',
                               TextField(
                                 enabled: c.editable,
                                 keyboardType:
@@ -273,30 +273,30 @@ class MeSharedRecordSheet extends StatelessWidget {
                         ],
                         if (diaper) ...[
                           select(
-                            '这次是什么情况？',
+                            'What was in the diaper?',
                             const {
-                              DiaperKind.wet: '只有尿',
-                              DiaperKind.dirty: '只有便便',
-                              DiaperKind.both: '尿和便便都有',
+                              DiaperKind.wet: 'Wet only',
+                              DiaperKind.dirty: 'Dirty only',
+                              DiaperKind.both: 'Wet and dirty',
                             },
                             c.diaperKind,
                             c.setDiaperKind,
                           ),
                           field(
-                            '补充情况（可选）',
+                            'Additional notes (optional)',
                             TextField(
                               enabled: c.editable,
                               onChanged: c.setNote,
                               maxLength: 500,
                               decoration: const InputDecoration(
-                                hintText: '点这里填写',
+                                hintText: 'Add a note',
                               ),
                             ),
                           ),
                         ],
                         if (!feed && !diaper) ...[
                           field(
-                            '测量体重',
+                            'Weight measurement',
                             TextField(
                               enabled: c.editable,
                               keyboardType:
@@ -311,11 +311,11 @@ class MeSharedRecordSheet extends StatelessWidget {
                             ),
                           ),
                           select(
-                            '在哪里测量的？（可选）',
+                            'Where was this measured? (optional)',
                             const {
-                              'home': '家中测量',
-                              'clinic': '医院或体检',
-                              'other': '其他',
+                              'home': 'At home',
+                              'clinic': 'Clinic or checkup',
+                              'other': 'Other',
                             },
                             c.measurementSource,
                             c.setMeasurementSource,
@@ -324,10 +324,10 @@ class MeSharedRecordSheet extends StatelessWidget {
                         const SizedBox(height: 48),
                         Text(
                           feed
-                              ? '亲喂不需要填写毫升。'
+                              ? 'No need to enter milliliters for nursing.'
                               : diaper
-                              ? '首页显示你已经记录的次数。'
-                              : '测量日期会和体重一起展示。',
+                              ? 'Your home page shows the number of diaper changes you logged.'
+                              : 'The measurement date will appear with the weight.',
                           style: MeDesign.text(
                             11,
                             color: MeDesign.muted,
@@ -347,7 +347,7 @@ class MeSharedRecordSheet extends StatelessWidget {
                           const SizedBox(height: 12),
                         ],
                         MeButton(
-                          '保存记录',
+                          'Save record',
                           busy: c.busy,
                           onPressed: c.canSave
                               ? () async {

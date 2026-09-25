@@ -67,10 +67,12 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
               backgroundColor: MomHomeTokens.background,
               surfaceTintColor: Colors.transparent,
               centerTitle: true,
-              toolbarHeight: 60,
+              toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.3
+                  ? 108
+                  : 60,
               leading: BabyPressFeedback(
                 child: IconButton(
-                  tooltip: '返回',
+                  tooltip: 'Back',
                   onPressed: c.busy ? null : () => Navigator.pop(context),
                   icon: BabyDesign.asset('Back', width: 20, height: 20),
                   color: MomHomeTokens.rose,
@@ -80,10 +82,11 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
               title: SizedBox(
                 width: MediaQuery.sizeOf(context).width - 112,
                 child: Text(
-                  savedName.isEmpty ? '添加宝宝' : '$savedName 的资料',
+                  savedName.isEmpty ? 'Add a baby' : 'Baby profile',
                   textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
                   style: BabyDesign.text(20, weight: FontWeight.w600),
                 ),
               ),
@@ -104,7 +107,7 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                           MomSettingsCard(
                             borderInside: true,
                             children: [
-                              const BabyLabel('宝宝称呼', required: true),
+                              const BabyLabel('Baby\'s name', required: true),
                               TextField(
                                 controller: name,
                                 enabled: c.editable,
@@ -136,17 +139,17 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                                       color: MomHomeTokens.border,
                                     ),
                                   ),
-                                  hintText: '给宝宝起一个称呼吧',
+                                  hintText: 'What do you call your baby?',
                                   counterText: '',
                                 ),
                               ),
-                              const BabyLabel('出生日期'),
+                              const BabyLabel('Date of birth'),
                               Text(
                                 c.birthDate?.toString() ?? '—',
                                 style: BabyDesign.text(16),
                               ),
                               Text(
-                                '与妈妈的分娩日期一致',
+                                'Same as the delivery date in your profile',
                                 style: BabyDesign.text(
                                   13,
                                   color: MomHomeTokens.secondary,
@@ -157,9 +160,12 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                           MomSettingsCard(
                             borderInside: true,
                             children: [
-                              const BabyLabel('宝宝性别', required: true),
+                              const BabyLabel(
+                                'Sex recorded at birth',
+                                required: true,
+                              ),
                               Text(
-                                '用于匹配生长参考范围',
+                                'Used to show the appropriate growth reference range',
                                 style: BabyDesign.text(
                                   13,
                                   color: MomHomeTokens.secondary,
@@ -175,8 +181,8 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                                   height: 44,
                                   radius: 16,
                                   options: const {
-                                    BabySex.female: '女宝宝',
-                                    BabySex.male: '男宝宝',
+                                    BabySex.female: 'Girl',
+                                    BabySex.male: 'Boy',
                                   },
                                   selected: c.sex,
                                   enabled: c.editable,
@@ -186,7 +192,10 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                             ],
                           ),
                           if (c.failure != null)
-                            Text('保存失败，请重试', style: BabyDesign.text(13)),
+                            Text(
+                              'Could not save. Please try again.',
+                              style: BabyDesign.text(13),
+                            ),
                         ],
                       ),
                     ),
@@ -219,10 +228,10 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                               : null,
                           child: BabyAnimatedLabel(
                             c.busy
-                                ? '正在保存…'
+                                ? 'Saving…'
                                 : saved && !c.dirty
-                                ? '已保存'
-                                : '保存宝宝资料',
+                                ? 'Saved'
+                                : 'Save baby profile',
                           ),
                         ),
                       ),

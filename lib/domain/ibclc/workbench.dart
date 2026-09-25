@@ -48,8 +48,10 @@ final class WorkbenchAppointment {
   final ClinicalNoteStatus? noteStatus;
   final int publishedRevision;
   String get displayName => caseConsent
-      ? (patientName?.trim().isNotEmpty == true ? patientName! : '未填写姓名')
-      : '待授权用户';
+      ? (patientName?.trim().isNotEmpty == true
+            ? patientName!
+            : 'Name not provided')
+      : 'Awaiting authorization';
 }
 
 final class WorkbenchAppointments {
@@ -93,8 +95,8 @@ final class WorkbenchClient {
   final List<ClientCareService> services;
   bool get hasCaseAccess => services.any((value) => value.caseConsent);
   String get displayName => hasCaseAccess
-      ? (name?.trim().isNotEmpty == true ? name! : '未填写姓名')
-      : '待授权用户';
+      ? (name?.trim().isNotEmpty == true ? name! : 'Name not provided')
+      : 'Awaiting authorization';
 }
 
 enum WorkbenchClientFilter { all, active, completed }

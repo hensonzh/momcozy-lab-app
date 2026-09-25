@@ -201,7 +201,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('1 片'), findsNothing);
-    expect(find.text('1 次'), findsAtLeastNWidgets(3));
+    expect(find.text('1 feeding'), findsOneWidget);
     await tester.runAsync(() async {
       final png =
           await (key.currentContext!.findRenderObject()!
@@ -307,7 +307,7 @@ void main() {
             : state == 'profile-long'
             ? BabyProfile(
                 id: 'baby',
-                name: '宝宝称呼比较长也应该保持完整可读',
+                name: 'A longer baby name should remain readable',
                 birthDate: profile.birthDate,
                 sex: BabySex.male,
                 version: 1,
@@ -316,7 +316,7 @@ void main() {
       );
       addTearDown(p.dispose);
       if (state == 'profile-edited' || state == 'profile-saving') {
-        p.setName('Luna 宝贝');
+        p.setName('Luna Mae');
       }
       if (state == 'profile-saving') pending = p.save();
       if (state == 'profile-long') p.setSex(BabySex.female);
@@ -366,19 +366,19 @@ void main() {
       }
       await tester.pumpAndSettle();
       if (state == 'profile-saved' || state == 'profile-again') {
-        await tester.enterText(find.byType(TextField), 'Luna 宝贝');
+        await tester.enterText(find.byType(TextField), 'Luna Mae');
         await tester.pump();
-        await tester.tap(find.text('保存宝宝资料'));
+        await tester.tap(find.text('Save baby profile'));
         await tester.pumpAndSettle();
-        expect(find.text('Luna 宝贝 的资料'), findsOneWidget);
+        expect(find.text('Baby profile'), findsOneWidget);
         if (state == 'profile-again') {
-          await tester.enterText(find.byType(TextField), 'Luna 小宝');
+          await tester.enterText(find.byType(TextField), 'Luna Joy');
           FocusManager.instance.primaryFocus?.unfocus();
           await tester.pumpAndSettle();
         }
       }
       if (state == 'profile-edited' || state == 'profile-saving') {
-        expect(find.text('Luna 的资料'), findsOneWidget);
+        expect(find.text('Baby profile'), findsOneWidget);
       }
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 80));

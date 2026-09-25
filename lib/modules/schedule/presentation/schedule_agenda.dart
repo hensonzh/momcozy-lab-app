@@ -33,9 +33,9 @@ class ScheduleAgenda extends StatelessWidget {
         borderInside: true,
         backgroundDecoration: MomCardDecoration.utility,
         children: [
-          Text('这一天没有安排', style: ScheduleDesign.text(16, bold: true)),
+          Text('Nothing scheduled for this day', style: ScheduleDesign.text(16, bold: true)),
           Text(
-            '你添加的日程、IBCLC 咨询和服务任务会显示在这里。',
+            'Schedule items, IBCLC consultations, and care tasks will appear here.',
             style: ScheduleDesign.text(13, color: MomHomeTokens.secondary),
           ),
         ],
@@ -63,27 +63,27 @@ class ScheduleAgenda extends StatelessWidget {
         : ScheduleCardKind.task;
     final actions = <String, String>{};
     if (personal != null) {
-      actions.addAll({'edit': '编辑', 'delete': '删除'});
+      actions.addAll({'edit': 'Edit', 'delete': 'Delete'});
     } else if (appointment != null && onAppointment != null) {
       actions['appointment'] = switch (appointment.status) {
-        AppointmentStatus.held => '确认预约',
-        AppointmentStatus.completed => '查看咨询总结',
-        _ => '查看预约',
+        AppointmentStatus.held => 'Confirm appointment',
+        AppointmentStatus.completed => 'View consultation summary',
+        _ => 'View appointment',
       };
     } else if (task != null) {
       if (onTaskStatus != null) {
         for (final action in const {
-          CareTaskStatus.pending: '恢复待完成',
-          CareTaskStatus.inProgress: '标记进行中',
-          CareTaskStatus.completed: '标记已完成',
-          CareTaskStatus.skipped: '暂时跳过',
+          CareTaskStatus.pending: 'Mark as pending',
+          CareTaskStatus.inProgress: 'Mark in progress',
+          CareTaskStatus.completed: 'Mark completed',
+          CareTaskStatus.skipped: 'Skip for now',
         }.entries) {
           if (action.key != task.task.status) {
             actions[action.key.name] = action.value;
           }
         }
       }
-      if (onPlan != null) actions['plan'] = '查看照护方案';
+      if (onPlan != null) actions['plan'] = 'View care plan';
     }
     return Container(
       key: ValueKey('schedule-entry-${entry.key}'),
@@ -146,7 +146,7 @@ class ScheduleAgenda extends StatelessWidget {
             child: SizedBox.square(
               dimension: 44,
               child: PopupMenuButton<String>(
-                tooltip: '更多${entry.title}选项',
+                tooltip: 'More options for ${entry.title}',
                 enabled: actions.isNotEmpty,
                 padding: EdgeInsets.zero,
                 icon: Transform.translate(

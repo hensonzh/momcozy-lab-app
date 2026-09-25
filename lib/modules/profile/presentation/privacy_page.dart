@@ -15,24 +15,24 @@ import '../application/privacy_controller.dart';
 const privacyScopeCopy =
     <CareConsentScope, ({String title, String description, String impact})>{
       CareConsentScope.ibclcCase: (
-        title: '提供给本次服务的 IBCLC',
-        description: '仅允许被分配的 IBCLC 查看本次信息采集表和授权记录。',
-        impact: '关闭后，无法继续查看本次表单或进入本次咨询；已查看或依法保留的记录不会删除。',
+        title: 'Share with your assigned IBCLC',
+        description: 'Only your assigned IBCLC can view the intake form and consent records for this service.',
+        impact: 'If turned off, the form can no longer be viewed and you cannot join this consultation. Records already viewed or legally retained will not be deleted.',
       ),
       CareConsentScope.video: (
-        title: '进入视频咨询',
-        description: '用于进入已预约的视频房间；默认不录音、不录像。',
-        impact: '关闭后，无法再次进入本次视频咨询。',
+        title: 'Join video consultation',
+        description: 'Allows you to join your booked video session. Audio and video are not recorded by default.',
+        impact: 'If turned off, you cannot rejoin this video consultation.',
       ),
       CareConsentScope.aiContext: (
-        title: '让 Cozymate 使用已选记录',
-        description: '在本次服务授权的范围内衔接对话上下文。',
-        impact: '关闭后仍可使用通用对话，已有记录不会删除。',
+        title: 'Allow Momcozy AI to use selected records',
+        description: 'Use selected records to provide context within the scope of this service.',
+        impact: 'You can still use general chat if this is turned off. Existing records will remain.',
       ),
       CareConsentScope.notifications: (
-        title: '接收服务提醒',
-        description: '用于本次服务的预约、任务与跟进提醒。',
-        impact: '关闭后不再发送这类主动提醒，仍可在 App 内查看安排。',
+        title: 'Receive service reminders',
+        description: 'For appointments, tasks, and follow-ups related to this service.',
+        impact: 'If turned off, you will no longer receive these reminders. Your schedule will still be available in the app.',
       ),
     };
 
@@ -109,18 +109,18 @@ class _PrivacyPageState extends State<PrivacyPage> {
         context: context,
         animationStyle: MomCozyMotion.animationStyle(context),
         builder: (context) => MomSettingsDialog(
-          closeLabel: '关闭',
-          title: '离开授权设置？',
+          closeLabel: 'Close',
+          title: 'Leave consent settings?',
           onCancel: () => Navigator.pop(context, false),
-          cancelLabel: '继续查看',
+          cancelLabel: 'Keep reviewing',
           content: Text(
             _consent?.uncertain == true
-                ? '保存结果还未确认。再次进入时请重新读取授权状态。'
-                : '尚未保存的授权更改会被放弃。',
+                ? 'Your save has not been confirmed. Reload your consent settings when you return.'
+                : 'Your unsaved consent changes will be lost.',
           ),
           primaryAction: FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('放弃并离开'),
+            child: const Text('Discard and leave'),
           ),
         ),
       ) ??
@@ -145,16 +145,16 @@ class _PrivacyPageState extends State<PrivacyPage> {
         context: context,
         animationStyle: MomCozyMotion.animationStyle(context),
         builder: (context) => MomSettingsDialog(
-          closeLabel: '关闭',
-          title: '确认关闭服务授权？',
+          closeLabel: 'Close',
+          title: 'Turn off service access?',
           onCancel: () => Navigator.pop(context, false),
-          cancelLabel: '继续保留',
+          cancelLabel: 'Keep access',
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 12,
             children: [
               const Text(
-                '关闭后，将停止后续表单查看或视频入场。正在进行的本次视频连接也可能结束。已经查看或依法需要保留的服务记录不会被删除。',
+                'Turning this off will prevent further form access or video entry. A video session in progress may also end. Records already viewed or legally required to be kept will remain.',
               ),
               for (final s in c.revokedRequired)
                 Text('• ${privacyScopeCopy[s]!.title}'),
@@ -165,7 +165,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
               backgroundColor: MomCozyColors.danger,
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('确认关闭'),
+            child: const Text('Turn off access'),
           ),
         ),
       );
@@ -207,33 +207,33 @@ class _PrivacyPageState extends State<PrivacyPage> {
                       alignment: Alignment.centerLeft,
                       child: TextButton(
                         onPressed: c?.busy == true ? null : _back,
-                        child: const Text('返回'),
+                        child: const Text('Back'),
                       ),
                     ),
                     Text(
-                      '隐私与数据',
+                      'Privacy & data',
                       style: MomHomeTokens.text(22, weight: FontWeight.w700),
                     ),
-                    const _Paragraph('按用途决定谁可以使用哪些信息。'),
+                    const _Paragraph('Choose who can use your information and for what purpose.'),
                     MomSettingsCard(
                       gradient: MomHomeTokens.milk,
                       children: [
                         Text(
-                          '账号记录',
+                          'Account records',
                           style: MomHomeTokens.text(
                             16,
                             weight: FontWeight.w700,
                           ),
                         ),
-                        const _Paragraph('你主动填写的档案与妈妈、宝宝记录保存在当前账号下。'),
+                        const _Paragraph('Profiles and records you enter for yourself and your baby are saved to this account.'),
                         Text(
-                          '保存我的记录',
+                          'Keep my records',
                           style: MomHomeTokens.text(
                             13,
                             weight: FontWeight.w700,
                           ),
                         ),
-                        const _Paragraph('这里的服务授权不会删除账号记录。账号资料可在账号设置中管理。'),
+                        const _Paragraph('Changing service consent here will not delete your account records. Manage your account details in Account Settings.'),
                       ],
                     ),
                     if (overview.failure case final failure?)
@@ -241,9 +241,9 @@ class _PrivacyPageState extends State<PrivacyPage> {
                     else if (overview.overview == null)
                       const _Loading()
                     else if (_requestedMissing)
-                      const _Empty('未找到这个服务的授权', '请返回原服务页面重新进入。')
+                      const _Empty('No consent found for this service', 'Return to the service page and try again.')
                     else if (overview.overview!.episodes.isEmpty)
-                      const _Empty('暂无需要管理授权的服务', '购买服务后，可以在这里按服务查看与调整授权。')
+                      const _Empty('No service consent to manage yet', 'After purchasing a service, you can review and change its consent settings here.')
                     else ...[
                       DropdownButtonFormField<String>(
                         initialValue: _selected,
@@ -252,7 +252,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                         itemHeight: null,
                         dropdownColor: MomHomeTokens.surface,
                         borderRadius: BorderRadius.circular(16),
-                        decoration: const InputDecoration(labelText: '选择服务'),
+                        decoration: const InputDecoration(labelText: 'Select a service'),
                         items: [
                           for (final e in overview.overview!.episodes)
                             DropdownMenuItem(
@@ -269,18 +269,18 @@ class _PrivacyPageState extends State<PrivacyPage> {
                                 if (id != null) unawaited(_select(id));
                               },
                       ),
-                      const _Paragraph('以下更改只作用于所选服务。各项授权单独保存，不会自动更改其他服务。'),
+                      const _Paragraph('These changes apply only to the selected service. Each permission is saved separately and will not change other services.'),
                       if (c == null || c.loading)
                         const _Loading()
                       else if (c.draft.isEmpty && c.failure != null)
                         ProductErrorView(failure: c.failure!, onRetry: c.load)
                       else ...[
-                        const _Heading('服务所需', '提供专家支持和视频入场所需的授权。关闭不会删除历史记录。'),
+                        const _Heading('Required for service', 'Permissions needed for expert support and video sessions. Turning them off will not delete past records.'),
                         ..._scopes(c, [
                           CareConsentScope.ibclcCase,
                           CareConsentScope.video,
                         ]),
-                        const _Heading('按需开启', '不影响 App 的基础记录，可以随时调整。'),
+                        const _Heading('Optional permissions', 'These do not affect basic record keeping and can be changed anytime.'),
                         ..._scopes(c, [
                           CareConsentScope.aiContext,
                           CareConsentScope.notifications,
@@ -292,11 +292,11 @@ class _PrivacyPageState extends State<PrivacyPage> {
                           ),
                           if (c.uncertain)
                             const _Paragraph(
-                              '保存结果尚未确认。重试会继续同一次更改；重新读取会放弃未确认的草稿，以服务器状态为准。',
+                              'Your save has not been confirmed. Try again to continue the same change, or reload to discard the unconfirmed draft and use the server version.',
                             ),
                           TextButton(
                             onPressed: c.busy ? null : c.load,
-                            child: const Text('重新读取授权'),
+                            child: const Text('Reload consent'),
                           ),
                         ],
                         if (c.saved)
@@ -306,7 +306,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                               color: MomHomeTokens.mint,
                               children: [
                                 Text(
-                                  '隐私设置已保存',
+                                  'Privacy settings saved',
                                   style: MomHomeTokens.text(
                                     13,
                                     color: MomHomeTokens.teal,
@@ -320,10 +320,10 @@ class _PrivacyPageState extends State<PrivacyPage> {
                             onPressed: c.busy || c.needsReload ? null : _save,
                             child: Text(
                               c.busy
-                                  ? '正在保存…'
+                                  ? 'Saving…'
                                   : c.uncertain
-                                  ? '重试保存'
-                                  : '保存更改',
+                                  ? 'Try saving again'
+                                  : 'Save changes',
                             ),
                           ),
                       ],
@@ -343,7 +343,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
             .where((p) => p.id == e.packageId)
             .firstOrNull
             ?.name ??
-        '专家支持服务';
+        'Expert support service';
     final date = e.startsAt?.toLocal();
     return '$name${date == null ? '' : ' · ${date.year}/${date.month}/${date.day}'}';
   }
@@ -354,13 +354,13 @@ class _PrivacyPageState extends State<PrivacyPage> {
         MomSettingsCard(
           children: [
             Text(
-              '接收服务提醒',
+              'Receive service reminders',
               style: MomHomeTokens.text(16, weight: FontWeight.w700),
             ),
-            const _Paragraph('预约、任务与跟进提醒在通知设置中统一管理。'),
+            const _Paragraph('Manage appointment, task, and follow-up reminders in Notification Settings.'),
             TextButton(
               onPressed: c.busy ? null : widget.onNotifications,
-              child: const Text('管理通知与提醒'),
+              child: const Text('Manage notifications & reminders'),
             ),
           ],
         )
@@ -415,7 +415,7 @@ class _Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MomSettingsCard(
     children: [
-      Text('正在加载…', style: MomHomeTokens.text(16, weight: FontWeight.w700)),
+      Text('Loading…', style: MomHomeTokens.text(16, weight: FontWeight.w700)),
       const LinearProgressIndicator(),
     ],
   );
@@ -450,7 +450,7 @@ class _ScopeRow extends StatelessWidget {
           ),
         ),
         Text(
-          enabled ? (value ? '已开启' : '已关闭') : '暂不可更改',
+          enabled ? (value ? 'On' : 'Off') : 'Cannot change right now',
           style: MomHomeTokens.text(10, color: MomHomeTokens.secondary),
         ),
       ],

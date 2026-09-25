@@ -133,7 +133,7 @@ void main() {
       final saved = await p.save(
         BabyProfile(
           id: 'baby',
-          name: 'Luna 宝贝',
+          name: 'Luna Mae',
           birthDate: babyTestProfile.birthDate,
           sex: BabySex.female,
           version: 1,
@@ -141,13 +141,13 @@ void main() {
         timezone: 'Asia/Shanghai',
       );
       await c.applySavedProfile(saved);
-      expect(c.baby!.name, 'Luna 宝贝');
+      expect(c.baby!.name, 'Luna Mae');
       expect(r.recentReads, 1);
       expect(r.latestReads, 1);
       p.values = [babyTestProfile];
       p.gate!.complete();
       await stale;
-      expect(c.baby!.name, 'Luna 宝贝');
+      expect(c.baby!.name, 'Luna Mae');
       c.dispose();
     },
   );
@@ -238,17 +238,17 @@ void main() {
       );
       await tester.pumpAndSettle();
       final before = (p.reads, r.recentReads, r.latestReads, r.curveReads);
-      await tester.tap(find.text('记录').first);
+      await tester.tap(find.text('Log').first);
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('关闭'));
+      await tester.tap(find.byTooltip('Close'));
       await tester.pumpAndSettle();
       expect((p.reads, r.recentReads, r.latestReads, r.curveReads), before);
       await tester.tap(find.text('Luna'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('编辑当前宝宝资料'));
+      await tester.tap(find.text('Edit this baby\'s profile'));
       await tester.pumpAndSettle();
       expect(find.byType(BabyProfileEditor), findsOneWidget);
-      await tester.tap(find.byTooltip('返回'));
+      await tester.tap(find.byTooltip('Back'));
       await tester.pumpAndSettle();
       expect((p.reads, r.recentReads, r.latestReads, r.curveReads), before);
     },
@@ -264,14 +264,14 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('记录').first);
+    await tester.tap(find.text('Log').first);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('瓶喂'));
+    await tester.tap(find.text('Bottle feeding'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('母乳'));
+    await tester.tap(find.text('Breast milk'));
     await tester.pumpAndSettle();
     r.gate = Completer();
-    await tester.tap(find.text('保存'));
+    await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
     expect(find.byType(BabyRecordEditor), findsNothing);
     expect(c.summary!.measuredIntakeMl, 40);

@@ -21,8 +21,8 @@ class LocalDevStackTest(unittest.TestCase):
             workspace = Path(directory)
             self._write_fixture(workspace)
             self.assertEqual(self._run(workspace, "init").returncode, 0)
-            agent_path = workspace / "agent/env/compose.local.env"
-            example = workspace / "agent/env/compose.local.env.example"
+            agent_path = workspace / "agent/env/local.env"
+            example = workspace / "agent/env/local.env.example"
             example.write_text(example.read_text() + "AGENT_MODEL_PROVIDER=openai_responses\nAGENT_MODEL_REASONING_EFFORT=low\n")
             agent_path.write_text(agent_path.read_text() + "OPENAI_API_KEY=private-sentinel\nOPENAI_REASONING_EFFORT=medium\nFACT_WORKER_BATCH_SIZE=8\n")
             result = self._run(workspace, "init")
@@ -46,8 +46,8 @@ class LocalDevStackTest(unittest.TestCase):
             result = self._run(workspace, "init")
 
             self.assertEqual(result.returncode, 0, result.stderr)
-            backend = _read_env(workspace / "backend/env/compose.local.env")
-            agent = _read_env(workspace / "agent/env/compose.local.env")
+            backend = _read_env(workspace / "backend/env/local.env")
+            agent = _read_env(workspace / "agent/env/local.env")
             private_key = base64.b64decode(backend["AUTH_JWT_PRIVATE_KEY_B64"])
             self.assertTrue(private_key.startswith(b"-----BEGIN PRIVATE KEY-----"))
             self.assertEqual(
@@ -181,13 +181,13 @@ class LocalDevStackTest(unittest.TestCase):
         (workspace / "agent/env").mkdir(parents=True)
         (workspace / "backend/docker-compose.local.yml").write_text("services: {}\n")
         (workspace / "agent/docker-compose.local.yml").write_text("services: {}\n")
-        (workspace / "backend/env/compose.local.env.example").write_text(
+        (workspace / "backend/env/local.env.example").write_text(
             "AUTH_JWT_PRIVATE_KEY_B64=${AUTH_JWT_PRIVATE_KEY_B64}\n"
             "AUTH_JWT_ISSUER=momcozy-local\n"
             "AUTH_JWT_RUNTIME_AUDIENCE=momcozy-agent-runtime\n"
             "AGENT_RUNTIME_SERVICE_API_KEY=local-agent-runtime-service-key-with-at-least-32-bytes\n"
         )
-        (workspace / "agent/env/compose.local.env.example").write_text(
+        (workspace / "agent/env/local.env.example").write_text(
             "PRODUCT_BACKEND_BASE_URL=http://host.docker.internal:8000\n"
             "PRODUCT_BACKEND_SERVICE_KEY=local-agent-runtime-service-key-with-at-least-32-bytes\n"
             "AUTH_JWKS_URL=http://host.docker.internal:8000/.well-known/jwks.json\n"

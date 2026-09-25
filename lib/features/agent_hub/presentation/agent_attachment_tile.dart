@@ -153,7 +153,7 @@ class AgentAttachmentMetadata extends StatelessWidget {
 }
 
 String agentAttachmentSize(int bytes) {
-  if (bytes <= 0) return '大小未知';
+  if (bytes <= 0) return 'Size unknown';
   if (bytes < 1024) return '$bytes B';
   if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
   return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';

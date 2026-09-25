@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 
 void main() {
@@ -21,13 +22,32 @@ void main() {
       containsPair('X-Momcozy-Client', 'flutter'),
     );
     expect(request.threadId, isNull);
-    expect(request.locale, 'zh-CN');
+    expect(request.locale, 'en-US');
     expect(payload['message'], 'Review my pattern');
     expect(payload['runtime_pattern'], 'proprietary_runtime');
     expect(payload.containsKey('thread_id'), isFalse);
     expect(payload.containsKey('user_id'), isFalse);
     expect(runner.reconnectPolicy.enabled, isTrue);
     expect(runner.runStatusReader, isA<ProductionAgentRunStatusReader>());
+  });
+
+  test('existing Chinese-locale session sends English Agent Hub requests', () {
+    const session = MomCozySession(
+      status: MomCozySessionStatus.authenticated,
+      userId: 'existing-user',
+      babyId: 'existing-baby',
+      locale: 'zh-CN',
+      accessToken: 'existing-token',
+    );
+
+    final request = buildSessionAgentHubRequest('Help me', session: session);
+
+    expect(request.locale, 'en-US');
+    expect(request.toMap()['locale'], 'en-US');
+    expect(
+      buildDefaultAgentHubPayload(request)['client_context'],
+      containsPair('locale', 'en-US'),
+    );
   });
 
   test('default Agent Hub controls use the dedicated Agent Runtime', () {

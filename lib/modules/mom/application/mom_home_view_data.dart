@@ -26,15 +26,15 @@ class MomDailyInsight {
   final DateTime? generatedAt;
   static const waiting = MomDailyInsight(
     status: MomInsightStatus.waiting,
-    eyebrow: 'Cozymate · 等待你的首次记录',
-    title: '记录一点点，\n我会更懂你的恢复状态',
-    body: '可以记录泵奶与亲喂，也可以与 Cozymate 交流喂养和恢复情况。',
+    eyebrow: 'Momcozy AI · Waiting for your first record',
+    title: 'Start with a record.\nI\'ll get to know your recovery as you go.',
+    body: 'Track pumping and nursing, or talk with Momcozy AI about feeding and recovery.',
   );
   static const unavailable = MomDailyInsight(
     status: MomInsightStatus.unavailable,
-    eyebrow: 'Cozymate · 每日分析暂不可用',
-    title: '记录每一点变化，\n与 Cozymate 一起了解自己',
-    body: '每日分析暂不可用，你仍可以与 Cozymate 交流今天的状态。',
+    eyebrow: 'Momcozy AI · Daily insights unavailable',
+    title: 'Notice the little changes,\nwith Momcozy AI by your side',
+    body: 'Daily insights aren\'t available right now. You can still talk with Momcozy AI about your day.',
   );
 }
 
@@ -57,16 +57,16 @@ class MomHomeViewData {
     final day = profile?.postpartumDay(c.date);
     final hour = c.now().toLocal().hour;
     final greeting = hour < 12
-        ? '早上好'
+        ? 'Good morning'
         : hour < 18
-        ? '下午好'
-        : '晚上好';
+        ? 'Good afternoon'
+        : 'Good evening';
     final milk = c.milk;
     final hasMilk = (milk?.recordCount ?? 0) > 0;
     return MomHomeViewData(
       greeting:
-          '$greeting${profile?.displayName.isNotEmpty == true ? '，${profile!.displayName}' : ''}',
-      phaseLabel: day == null ? '陪伴每个阶段' : formatPostpartumDay(day),
+          '$greeting${profile?.displayName.isNotEmpty == true ? ', ${profile!.displayName}' : ''}',
+      phaseLabel: day == null ? 'Here for every stage' : formatPostpartumDay(day),
       insight: hasMilk
           ? c.insight.value ?? MomDailyInsight.unavailable
           : c.lactation.hasValue
@@ -78,16 +78,16 @@ class MomHomeViewData {
           ? milk!.measuredVolumeMl != null
                 ? '${compactNumber(milk.measuredVolumeMl!)} ml'
                 : milk.nursingMinutes != null
-                ? '${milk.nursingMinutes} 分钟'
-                : '${milk.recordCount} 次'
+                ? '${milk.nursingMinutes} min'
+                : '${milk.recordCount} times'
           : c.lactation.loading
-          ? '载入中…'
+          ? 'Loading…'
           : c.lactation.failure != null
-          ? '暂未载入'
-          : '待记录',
+          ? 'Not loaded yet'
+          : 'Not recorded yet',
       lactationMeta: hasMilk
-          ? '泵奶 ${milk!.pumpCount} 次 · 亲喂 ${milk.nursingCount} 次'
-          : '记录泵奶与亲喂，了解每天的变化',
+          ? 'Pumping ${milk!.pumpCount} times · Nursing ${milk.nursingCount} times'
+          : 'Log pumping and nursing to see daily changes',
     );
   }
 }

@@ -404,7 +404,7 @@ void main() {
           'run_id': 'run-transient-001',
           'transient': true,
           'cursor': '1720000000-0',
-          'payload': {'delta': '正在'},
+          'payload': {'delta': 'Genera'},
         }),
       );
       state = state.applyEvent(
@@ -415,12 +415,12 @@ void main() {
           'run_id': 'run-transient-001',
           'transient': true,
           'cursor': '1720000000-1',
-          'payload': {'delta': '生成'},
+          'payload': {'delta': 'ting'},
         }),
       );
 
-      expect(state.textContent, '正在生成');
-      expect(state.provisionalTextContent, '正在生成');
+      expect(state.textContent, 'Generating');
+      expect(state.provisionalTextContent, 'Generating');
       expect(state.lastSequence, isNull);
       expect(state.lastTransientCursor, '1720000000-1');
       expect(state.events, isEmpty);
@@ -433,11 +433,11 @@ void main() {
           'run_id': 'run-transient-001',
           'transient': true,
           'cursor': '1720000000-0',
-          'payload': {'delta': '正在'},
+          'payload': {'delta': 'Genera'},
         }),
       );
       expect(state.lastTransientCursor, '1720000000-1');
-      expect(state.textContent, '正在生成');
+      expect(state.textContent, 'Generating');
 
       final restored = AgentStreamRunState.fromMap(state.toMap());
       expect(restored.lastTransientCursor, '1720000000-1');
@@ -456,11 +456,11 @@ void main() {
           'run_id': 'run-transient-001',
           'message_id': 'msg-final-001',
           'sequence': 4,
-          'payload': {'role': 'assistant', 'text': '这是最终回复。'},
+          'payload': {'role': 'assistant', 'text': 'Your response is ready.'},
         }),
       );
 
-      expect(state.textContent, '正在生成');
+      expect(state.textContent, 'Generating');
       expect(state.provisionalTextContent, '');
       expect(state.lastSequence, 4);
       expect(state.phase, AgentStreamRunPhase.streaming);
@@ -477,7 +477,7 @@ void main() {
           'thread_id': 'thread-suffix-001',
           'run_id': 'run-suffix-001',
           'message_id': 'msg-suffix-001',
-          'payload': {'delta': '这是最终'},
+          'payload': {'delta': 'This is the '},
         }),
       );
 
@@ -487,11 +487,11 @@ void main() {
           'thread_id': 'thread-suffix-001',
           'run_id': 'run-suffix-001',
           'message_id': 'msg-suffix-001',
-          'payload': {'role': 'assistant', 'text': '这是最终回复。'},
+          'payload': {'role': 'assistant', 'text': 'This is the final reply.'},
         }),
       );
 
-      expect(state.textContent, '这是最终回复。');
+      expect(state.textContent, 'This is the final reply.');
       expect(state.provisionalTextContent, '');
     });
 

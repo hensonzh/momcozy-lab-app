@@ -248,8 +248,8 @@ class ForwardHeadAnalyzer {
       sampleCount: sampleCount,
       sampleDuration: stableDuration,
       userMessage: classification == ForwardHeadClassification.forwardTendency
-          ? '当前画面呈现头部前移倾向，建议结合更多角度与专业评估综合判断。'
-          : '当前画面的头颈位置处于参考范围，请继续保持自然站姿。',
+          ? 'This view suggests forward head posture. Consider other angles and a professional assessment before drawing conclusions.'
+          : 'The head and neck position in this view is within the reference range. Keep standing naturally.',
       side: _dominantSide(),
       angleDispersionDegrees: dispersion,
       measurementQualityScore: _measurementQualityScore(dispersion),

@@ -209,19 +209,19 @@ class MotionAssessmentContextSnapshot {
   String toRealtimeInstructions({int contextAgeMs = 0}) {
     if (phase == 'selecting_assessments' || phase == 'plan_confirmed') {
       return '''
-请基于下面“最新评估项目计划”回应用户刚才的语音：
+Respond to the user's latest speech using the current assessment plan below:
 ${jsonEncode(toJson())}
 
-当前仍在项目选择阶段，没有姿态画面结论。可以根据用户刚才的明确语音调用 motion_assessment_plan；更新、增加或移除项目必须使用这里的 revision，用户明确确认当前选择时才调用 confirm。最多说两句：简短复述选择，再说清唯一的下一步。不要寒暄、要求用户站位或虚构姿态结果。
+The user is still choosing assessment areas; there are no posture conclusions yet. You may call motion_assessment_plan based on their explicit speech. Use the revision shown here when updating, adding, or removing areas. Call confirm only when the user clearly confirms the current selection. Speak at most two sentences: briefly repeat the choice and give one next step. Do not add greetings, positioning instructions, or invented results. Respond in English.
 '''
           .trim();
     }
     return '''
-请基于下面“最新端侧姿态语义快照”回答用户刚才的语音问题。快照可能比对话历史更新：
+Answer the user's latest spoken question using this on-device semantic posture snapshot, which may be newer than the conversation history:
 ${jsonEncode(toJson())}
-快照当前年龄：${contextAgeMs.clamp(0, 1 << 31)} ms。
+Snapshot age: ${contextAgeMs.clamp(0, 1 << 31)} ms.
 
-约束：本地质量门是权威来源；不得推翻 accept/reject、多人暂停或最终 classification。普通回答最多两句；动作指导只说一句，尽量不超过 18 个汉字。不要寒暄、解释检测过程、重复鼓励或预告后续。若快照已过 fresh_for_ms，只说明正在重新确认画面，不猜测当前姿态。不要声称持续观看视频或看到原始关键点，不作医疗诊断。
+Constraints: the on-device quality gate is authoritative. Do not override accept/reject, multi-person pause, or final classification. Ordinary answers use at most two sentences; movement guidance uses one sentence, ideally under 12 words. Do not add greetings, explain detection, repeatedly encourage, or preview later steps. If the snapshot is older than fresh_for_ms, say only that the view is being checked again; do not guess the current posture. Do not claim to watch continuous video or see raw keypoints, and do not make a medical diagnosis. Respond in English.
 '''
         .trim();
   }

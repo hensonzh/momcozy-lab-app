@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
@@ -51,13 +52,13 @@ Future<void> verifyAgentImage(
   );
   await tester.runAsync(
     () => precacheImage(
-      ResizeImage(MemoryImage(bytes), width: 80),
+      ResizeImage(MemoryImage(bytes), width: 336),
       tester.element(find.byType(MaterialApp)),
     ),
   );
   await tester.pumpAndSettle();
-  expect(find.text(name), findsOneWidget);
-  expect(find.text('4.0 KB'), findsOneWidget);
+  expect(find.text(name), findsNothing);
+  expect(find.text('4.0 KB'), findsNothing);
   final trigger = find.byKey(const ValueKey('agent-sent-image-0'));
   expect(tester.getSize(trigger).height, greaterThanOrEqualTo(44));
   expect(thumbnails, 1);
@@ -66,7 +67,15 @@ Future<void> verifyAgentImage(
   await capture('metadata');
   await tester.tap(trigger);
   await tester.pump(const Duration(milliseconds: 300));
-  expect(find.text(name), findsNWidgets(2));
+  expect(find.text(name), findsOneWidget);
+  expect(
+    tester
+        .renderObject<RenderParagraph>(
+          find.descendant(of: find.text(name), matching: find.byType(RichText)),
+        )
+        .didExceedMaxLines,
+    isFalse,
+  );
   expect(find.byKey(const ValueKey('media-viewer-loading')), findsOneWidget);
   await capture('loading');
   pending.complete(Uint8List(0));
@@ -109,7 +118,7 @@ Future<void> verifyAgentImage(
   await tester.binding.handlePopRoute();
   await tester.pumpAndSettle();
   expect(find.byKey(const ValueKey('agent-sent-image-close')), findsNothing);
-  expect(find.text(name), findsOneWidget);
+  expect(find.text(name), findsNothing);
   expect(tester.takeException(), isNull);
   await tester.pumpWidget(const SizedBox());
 }
@@ -136,7 +145,7 @@ Future<void> verifyUnavailableAgentImage(
     ),
   );
   await tester.pumpAndSettle();
-  expect(find.text('大小未知'), findsOneWidget);
+  expect(find.text('Size unknown'), findsNothing);
   await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
   await tester.runAsync(
     () async => Future<void>.delayed(const Duration(milliseconds: 50)),
@@ -148,7 +157,7 @@ Future<void> verifyUnavailableAgentImage(
   await capture('unavailable');
   await tester.tap(find.byKey(const ValueKey('agent-sent-image-close')));
   await tester.pumpAndSettle();
-  expect(find.text('Unavailable image.png'), findsOneWidget);
+  expect(find.text('Unavailable image.png'), findsNothing);
   expect(tester.takeException(), isNull);
   await tester.pumpWidget(const SizedBox());
 }
@@ -161,7 +170,7 @@ Widget _host(Widget child, double scale) => MaterialApp(
     child: child!,
   ),
   home: Scaffold(
-    appBar: AppBar(title: const Text('Cozymate')),
+    appBar: AppBar(title: const Text('Momcozy AI')),
     body: SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: child,

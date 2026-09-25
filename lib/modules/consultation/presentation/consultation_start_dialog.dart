@@ -142,8 +142,8 @@ class _ConsultationStartDialogState extends State<ConsultationStartDialog> {
         child: Theme(
           data: momSettingsTheme(Theme.of(context)),
           child: MomSettingsFlowDialog(
-            title: '开始视频咨询',
-            closeLabel: '关闭咨询确认',
+            title: 'Start video consultation',
+            closeLabel: 'Close consultation confirmation',
             maxHeight: 720,
             onClose: _busy ? null : _close,
             child: Column(
@@ -151,7 +151,7 @@ class _ConsultationStartDialogState extends State<ConsultationStartDialog> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  '开始前请确认你当前所在的位置。',
+                  'Confirm your current location before joining.',
                   style: TextStyle(
                     fontSize: 13,
                     height: 1.55,
@@ -163,7 +163,7 @@ class _ConsultationStartDialogState extends State<ConsultationStartDialog> {
                   color: MomHomeTokens.mint,
                   children: [
                     const Text(
-                      '当前所在州',
+                      'Current state',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
@@ -204,28 +204,28 @@ class _ConsultationStartDialogState extends State<ConsultationStartDialog> {
                 if (_rejected) ...[
                   const SizedBox(height: 14),
                   _notice(
-                    '当前专家暂不支持你选择的州，请确认实际所在地，或返回预约页重新安排。',
+                    'Your consultant does not currently support the selected state. Check your location or return to booking to reschedule.',
                     icon: Icons.shield_outlined,
                   ),
                 ],
                 if (!data.videoConsent) ...[
                   const SizedBox(height: 14),
                   _notice(
-                    '需要开启本次服务的视频咨询授权',
+                    'Video consultation consent is required for this service',
                     icon: Icons.lock_outline,
                     action: TextButton(
                       onPressed: _busy ? null : _restoreConsent,
-                      child: const Text('去授权'),
+                      child: const Text('Review consent'),
                     ),
                   ),
                 ],
                 if (!data.intakeReady || !data.caseConsent) ...[
                   const SizedBox(height: 14),
                   _notice(
-                    '请先完善信息采集表，并确认向本次 IBCLC 共享资料。',
+                    'Complete the intake form and confirm that your IBCLC may view it.',
                     action: TextButton(
                       onPressed: _busy ? null : _intake,
-                      child: const Text('查看信息采集表'),
+                      child: const Text('View intake form'),
                     ),
                   ),
                 ],
@@ -233,10 +233,10 @@ class _ConsultationStartDialogState extends State<ConsultationStartDialog> {
                   const SizedBox(height: 14),
                   _notice(
                     data.videoProvider == VideoProvider.disabled
-                        ? '视频咨询暂未开放，请稍后再试。'
+                        ? 'Video consultations are not available yet. Try again later.'
                         : controller.now.isBefore(data.opensAt)
-                        ? '咨询室会在预约开始前 10 分钟开放。'
-                        : '本次预约的进入时间已过，请返回重新安排。',
+                        ? 'The consultation room opens 10 minutes before your appointment.'
+                        : 'The join window for this appointment has closed. Go back to reschedule.',
                   ),
                 ],
                 if (message != null && !_rejected) ...[
@@ -246,7 +246,7 @@ class _ConsultationStartDialogState extends State<ConsultationStartDialog> {
                 if (controller.wantsToJoin && !controller.inRoom) ...[
                   const SizedBox(height: 14),
                   const Text(
-                    '咨询室正在准备，请稍候。关闭将取消本次进入。',
+                    'The consultation room is getting ready. Closing this dialog will cancel this join attempt.',
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.5,
@@ -261,7 +261,7 @@ class _ConsultationStartDialogState extends State<ConsultationStartDialog> {
                       ? _enter
                       : null,
                   child: Text(
-                    _busy || controller.wantsToJoin ? '正在进入…' : '确认并进入咨询室',
+                    _busy || controller.wantsToJoin ? 'Joining…' : 'Confirm and join',
                   ),
                 ),
               ],
@@ -307,8 +307,8 @@ class _ConsultationVideoConsentDialogState
         child: Theme(
           data: momSettingsTheme(Theme.of(context)),
           child: MomSettingsFlowDialog(
-            title: '视频咨询授权',
-            closeLabel: '关闭视频授权',
+            title: 'Video consultation consent',
+            closeLabel: 'Close video consent',
             maxHeight: 720,
             onClose: busy ? null : () => Navigator.pop(context),
             child: Column(
@@ -316,7 +316,7 @@ class _ConsultationVideoConsentDialogState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  '开启后，可以与本次负责的 IBCLC 进行实时音视频咨询。',
+                  'Turning this on lets you have a live audio and video consultation with your assigned IBCLC.',
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.55,
@@ -337,7 +337,7 @@ class _ConsultationVideoConsentDialogState
                           : (value) =>
                                 setState(() => _accepted = value ?? false),
                       title: const Text(
-                        '我同意开启本次服务的视频咨询',
+                        'I consent to video consultations for this service',
                         style: TextStyle(fontSize: 14, height: 1.5),
                       ),
                     ),
@@ -350,7 +350,7 @@ class _ConsultationVideoConsentDialogState
                 const SizedBox(height: 14),
                 FilledButton(
                   onPressed: _accepted && !busy ? _save : null,
-                  child: Text(busy ? '正在确认…' : '确认视频授权'),
+                  child: Text(busy ? 'Confirming…' : 'Confirm video consent'),
                 ),
               ],
             ),

@@ -11,6 +11,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/text/english_error_text.dart';
 
 class MomCozyInviteAuthPage extends StatefulWidget {
   const MomCozyInviteAuthPage({
@@ -65,8 +66,8 @@ class _MomCozyInviteAuthPageState extends State<MomCozyInviteAuthPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const AuthLoginHeader(
-                    title: '欢迎使用',
-                    subtitle: '使用邀请码继续',
+                    title: 'Welcome',
+                    subtitle: 'Continue with an invitation code',
                     compact: true,
                   ),
                   MomSettingsCard(
@@ -87,8 +88,8 @@ class _MomCozyInviteAuthPageState extends State<MomCozyInviteAuthPage> {
                         autocorrect: false,
                         enableSuggestions: false,
                         decoration: InputDecoration(
-                          labelText: '邀请码',
-                          hintText: '请输入邀请码',
+                          labelText: 'Invitation code',
+                          hintText: 'Enter your invitation code',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           prefixIcon: const Icon(Icons.key_rounded),
                         ),
@@ -107,7 +108,7 @@ class _MomCozyInviteAuthPageState extends State<MomCozyInviteAuthPage> {
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Text('邀请码登录'),
+                            : const Text('Sign in with code'),
                       ),
                     ],
                   ),
@@ -125,7 +126,7 @@ class _MomCozyInviteAuthPageState extends State<MomCozyInviteAuthPage> {
     final inviteCode = _inviteCodeController.text.trim();
     if (inviteCode.isEmpty) {
       setState(() {
-        _errorText = '请输入邀请码';
+        _errorText = 'Enter your invitation code';
       });
       _inviteCodeFocusNode.requestFocus();
       return;
@@ -146,7 +147,9 @@ class _MomCozyInviteAuthPageState extends State<MomCozyInviteAuthPage> {
         error: error,
         stackTrace: stackTrace,
       );
-      _showError('无法读取本机登录标识。请重启 App 后重试。');
+      _showError(
+        'Could not read this device\'s sign-in ID. Restart the app and try again.',
+      );
       return;
     }
 
@@ -177,7 +180,9 @@ class _MomCozyInviteAuthPageState extends State<MomCozyInviteAuthPage> {
         error: error,
         stackTrace: stackTrace,
       );
-      _showError('账号认证已通过，但无法保存本机登录状态。请重启 App 后重试。');
+      _showError(
+        'Your account was verified, but we could not save your sign-in on this device. Restart the app and try again.',
+      );
       return;
     }
 
@@ -191,7 +196,7 @@ class _MomCozyInviteAuthPageState extends State<MomCozyInviteAuthPage> {
         error: error,
         stackTrace: stackTrace,
       );
-      _showError('登录状态已保存，请重启 App 继续。');
+      _showError('Sign-in was saved. Restart the app to continue.');
     }
   }
 
@@ -278,11 +283,12 @@ class _SanitizedLocalAuthFailure implements Exception {
 String _authErrorText(Object error, {bool inviteLogin = false}) {
   if (error is ApiHttpException) {
     if (inviteLogin && error.errorCode == 'permission_denied') {
-      return '邀请码已在其他设备使用过';
+      return 'This invitation code has already been used on another device.';
     }
-    return error.errorMessage?.isNotEmpty == true
-        ? error.errorMessage!
-        : '认证失败，请稍后重试。';
+    return englishErrorText(
+      error.errorMessage,
+      fallback: 'Could not verify your account. Please try again later.',
+    );
   }
-  return '认证失败，请稍后重试。';
+  return 'Could not verify your account. Please try again later.';
 }

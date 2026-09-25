@@ -173,12 +173,12 @@ class ConsultationRoomController extends ChangeNotifier {
   Future<void> checkLocation(String region) => _perform(() async {
     final normalized = region.trim().toUpperCase();
     if (!RegExp(r'^[A-Z]{2}$').hasMatch(normalized)) {
-      message = '请选择本次咨询时所在的州。';
+      message = 'Select the state where you are located for this consultation.';
       return;
     }
     final location = await repository.checkLocation(appointmentId, normalized);
     _apply(await repository.load(appointmentId));
-    if (!location.passed) message = '专家目前不能为该地区提供本次服务，请返回预约页重新安排。';
+    if (!location.passed) message = 'Your consultant cannot provide this service in your state right now. Return to booking to reschedule.';
   });
 
   Future<void> enter() async {
@@ -377,19 +377,19 @@ class ConsultationRoomController extends ChangeNotifier {
   void _fail(Object error) {
     failure = productFailure(error);
     message = switch (failure?.code) {
-      'consent_required' || 'consent_conflict' => '授权状态有更新，请重新查看后继续。',
-      'location_required' => '请再次确认本次咨询时所在的州。',
-      'room_not_open' => '咨询室会在预约开始前 10 分钟开放。',
-      'room_window_closed' => '本次预约的进入时间已过，请重新安排咨询。',
-      'room_not_ready' => '咨询室正在准备，请稍候再试。',
-      'video_unavailable' => '视频服务暂时不可用，请稍后重试。',
-      'participants_required' => '双方进入咨询室后，专家才能开始咨询。',
-      'media_not_connected' => '正在核对视频连接，请稍候。',
-      'connection_replaced' => '本次连接已在其他页面更新，请重新进入。',
-      'connection_closed' => '上次连接已关闭，请重新进入。',
-      'version_conflict' => '咨询状态已更新，请刷新后继续。',
+      'consent_required' || 'consent_conflict' => 'Consent has changed. Review it again before continuing.',
+      'location_required' => 'Confirm your state for this consultation again.',
+      'room_not_open' => 'The consultation room opens 10 minutes before your appointment.',
+      'room_window_closed' => 'The time to join this appointment has passed. Please reschedule.',
+      'room_not_ready' => 'The consultation room is getting ready. Please try again shortly.',
+      'video_unavailable' => 'Video service is unavailable right now. Try again later.',
+      'participants_required' => 'The consultant can start once both participants have joined.',
+      'media_not_connected' => 'Checking the video connection. Please wait.',
+      'connection_replaced' => 'This connection changed on another page. Rejoin the room.',
+      'connection_closed' => 'The previous connection closed. Rejoin the room.',
+      'version_conflict' => 'The consultation status changed. Refresh to continue.',
       _ =>
-        _uncertain(failure!) ? '连接暂时中断，请重试。已提交的操作会继续核对。' : '暂时无法完成，请刷新咨询状态后重试。',
+        _uncertain(failure!) ? 'Connection interrupted. Try again. We will keep checking any actions already submitted.' : 'Could not complete this action. Refresh the consultation status and try again.',
     };
     if (failure?.code == 'connection_closed' ||
         failure?.code == 'connection_replaced') {

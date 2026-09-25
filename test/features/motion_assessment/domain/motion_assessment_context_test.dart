@@ -47,7 +47,10 @@ void main() {
     expect(framing, isNot(contains('full_body_visible')));
     expect((json['sampling']! as Map)['progress'], 0.75);
     expect((json['measurement']! as Map)['rolling_median'], 48.1);
-    expect(snapshot.toRealtimeInstructions(), contains('本地质量门是权威来源'));
+    expect(
+      snapshot.toRealtimeInstructions(),
+      contains('the on-device quality gate is authoritative'),
+    );
     expect(json.toString(), isNot(contains('landmarks')));
     expect(json.toString(), isNot(contains('video')));
   });
@@ -70,7 +73,9 @@ void main() {
     });
     expect(
       snapshot.toRealtimeInstructions(),
-      contains('可以根据用户刚才的明确语音调用 motion_assessment_plan'),
+      contains(
+        'You may call motion_assessment_plan based on their explicit speech',
+      ),
     );
   });
 }

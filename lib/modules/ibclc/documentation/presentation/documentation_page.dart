@@ -59,9 +59,9 @@ class _DocumentationPageState extends State<DocumentationPage> {
     }
     if (controller.dirty) {
       final confirmed = await _confirm(
-        '重新载入记录？',
-        const Text('当前未保存的修改会被放弃。'),
-        '重新载入',
+        'Reload this note?',
+        const Text('Your unsaved changes will be lost.'),
+        'Reload',
       );
       if (!confirmed) return;
     }
@@ -77,7 +77,7 @@ class _DocumentationPageState extends State<DocumentationPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('返回编辑'),
+              child: const Text('Keep editing'),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
@@ -89,9 +89,11 @@ class _DocumentationPageState extends State<DocumentationPage> {
       false;
   Future<void> _sign() async {
     if (await _confirm(
-          '确认签署这条记录？',
-          const Text('签署后内容会变为只读；如需修改，请创建新的修订并说明理由。'),
-          '确认签署',
+          'Sign this note?',
+          const Text(
+            'Once signed, the note becomes read-only. To make changes, create a new revision and explain why.',
+          ),
+          'Sign note',
         ) &&
         mounted) {
       await controller.sign();
@@ -101,7 +103,7 @@ class _DocumentationPageState extends State<DocumentationPage> {
   Future<void> _publish() async {
     final plan = controller.plan;
     final confirmed = await _confirm(
-      '发布这版护理方案？',
+      'Publish this care plan?',
       SizedBox(
         width: 480,
         child: SingleChildScrollView(
@@ -115,7 +117,9 @@ class _DocumentationPageState extends State<DocumentationPage> {
               const SizedBox(height: 12),
               for (final goal in plan.goals) Text('• $goal'),
               const SizedBox(height: 16),
-              Text('将发布 ${plan.tasks.length} 项行动任务：'),
+              Text(
+                'The following ${plan.tasks.length} action tasks will be published:',
+              ),
               for (final task in plan.tasks)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
@@ -127,7 +131,7 @@ class _DocumentationPageState extends State<DocumentationPage> {
           ),
         ),
       ),
-      '确认发布',
+      'Publish plan',
     );
     if (confirmed && mounted) await controller.publish();
   }
@@ -150,7 +154,7 @@ class _DocumentationPageState extends State<DocumentationPage> {
       await showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('专业记录 · 修订 ${note.revision}'),
+          title: Text('Clinical note · Revision ${note.revision}'),
           content: SizedBox(
             width: 720,
             child: SingleChildScrollView(
@@ -160,7 +164,9 @@ class _DocumentationPageState extends State<DocumentationPage> {
                   if (note.amendmentReason.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16),
-                      child: Text('修订理由：${note.amendmentReason}'),
+                      child: Text(
+                        'Reason for revision: ${note.amendmentReason}',
+                      ),
                     ),
                   ClinicalNoteEditor(
                     content: note.content,
@@ -174,16 +180,18 @@ class _DocumentationPageState extends State<DocumentationPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('关闭'),
+              child: const Text('Close'),
             ),
           ],
         ),
       );
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('暂时无法查看此版本，请重新载入后重试')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not view this version. Reload and try again.'),
+          ),
+        );
       }
     }
   }
@@ -213,11 +221,11 @@ class _DocumentationPageState extends State<DocumentationPage> {
                     TextButton.icon(
                       onPressed: controller.busy ? null : _back,
                       icon: const Icon(Icons.arrow_back, size: 18),
-                      label: const Text('返回咨询'),
+                      label: const Text('Back to consultation'),
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      '咨询记录与方案',
+                      'Consultation notes & plan',
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     if (controller.data case final data?)
@@ -235,11 +243,11 @@ class _DocumentationPageState extends State<DocumentationPage> {
                       segments: const [
                         ButtonSegment(
                           value: DocumentationTab.note,
-                          label: Text('专业记录'),
+                          label: Text('Clinical note'),
                         ),
                         ButtonSegment(
                           value: DocumentationTab.plan,
-                          label: Text('护理方案'),
+                          label: Text('Care plan'),
                         ),
                       ],
                       selected: {tab},
@@ -260,11 +268,15 @@ class _DocumentationPageState extends State<DocumentationPage> {
                     if (controller.message case final message?)
                       _notice(message),
                     if (controller.uncertain)
-                      _notice('提交结果尚未确认，请重试这次操作。', warning: true),
+                      _notice(
+                        'Submission has not been confirmed. Try this action again.',
+                        warning: true,
+                      ),
                     if (controller.data != null && !controller.data!.editable)
                       const ProductEmptyView(
-                        title: '咨询结束后填写',
-                        description: '结束本次咨询后，可保存专业记录并整理护理方案。',
+                        title: 'Complete after the consultation',
+                        description:
+                            'After ending the consultation, you can save a clinical note and prepare a care plan.',
                       ),
                     if (controller.data?.editable ?? false) _editor(context),
                   ],
@@ -302,7 +314,9 @@ class _DocumentationPageState extends State<DocumentationPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isNote ? (signed ? '已签署 · 只读' : '专业记录') : '方案',
+                      isNote
+                          ? (signed ? 'Signed · Read-only' : 'Clinical note')
+                          : 'Plan',
                       style: const TextStyle(
                         color: MomCozyColors.mutedForeground,
                       ),
@@ -327,13 +341,13 @@ class _DocumentationPageState extends State<DocumentationPage> {
                                   : 'Draft')
                             : (controller.data?.publication == null
                                   ? 'Draft'
-                                  : 'v${controller.data!.publication!.revision} · 已发布'),
+                                  : 'v${controller.data!.publication!.revision} · Published'),
                       ),
                     ),
                     if (isNote && signed)
                       OutlinedButton(
                         onPressed: controller.editable ? _amend : null,
-                        child: const Text('创建修订'),
+                        child: const Text('Create revision'),
                       ),
                     if (isNote && !signed) ...[
                       OutlinedButton(
@@ -343,11 +357,11 @@ class _DocumentationPageState extends State<DocumentationPage> {
                                     controller.data?.note == null)
                             ? controller.saveNote
                             : null,
-                        child: const Text('保存草稿'),
+                        child: const Text('Save draft'),
                       ),
                       FilledButton(
                         onPressed: controller.canSign ? _sign : null,
-                        child: const Text('签署记录'),
+                        child: const Text('Sign note'),
                       ),
                     ],
                     if (!isNote) ...[
@@ -358,14 +372,14 @@ class _DocumentationPageState extends State<DocumentationPage> {
                                     controller.data?.plan == null)
                             ? controller.savePlan
                             : null,
-                        child: const Text('保存方案'),
+                        child: const Text('Save plan'),
                       ),
                       FilledButton(
                         onPressed: controller.canPublish ? _publish : null,
                         child: Text(
                           controller.data?.publication == null
-                              ? '发布方案'
-                              : '发布新版本',
+                              ? 'Publish plan'
+                              : 'Publish new version',
                         ),
                       ),
                     ],
@@ -376,22 +390,43 @@ class _DocumentationPageState extends State<DocumentationPage> {
           ),
           const SizedBox(height: 12),
           Text(
-            isNote ? '本次咨询的专业判断与下一步。' : '把专业判断拆成用户可以完成的动作。',
+            isNote
+                ? 'Your clinical assessment and next steps for this consultation.'
+                : 'Turn your clinical assessment into actions the client can take.',
             style: const TextStyle(color: MomCozyColors.mutedForeground),
           ),
           if (isNote ? controller.noteDirty : controller.planDirty)
-            _notice('有未保存修改', warning: true),
-          if (isNote && signed) _notice('已签署记录保持只读。修改会创建新修订，并保留原记录。'),
-          if (!isNote && !signed) _notice('请先签署当前专业记录，再发布护理方案。', warning: true),
+            _notice('You have unsaved changes', warning: true),
+          if (isNote && signed)
+            _notice(
+              'Signed notes stay read-only. Changes create a new revision and preserve the original.',
+            ),
+          if (!isNote && !signed)
+            _notice(
+              'Sign the current clinical note before publishing the care plan.',
+              warning: true,
+            ),
           if (!isNote && signed && !controller.plan.complete)
-            _notice('请补全方案标题、总结、目标及每项任务的内容，再保存并发布。', warning: true),
+            _notice(
+              'Complete the plan title, summary, goals, and each task before saving and publishing.',
+              warning: true,
+            ),
+          if (!isNote &&
+              controller.plan.complete &&
+              !controller.plan.englishClientCopy)
+            _notice(
+              'Review the title, summary, goals, and task details in English before publishing. You can still save the draft.',
+              warning: true,
+            ),
           if (!isNote && controller.data?.publication != null)
             _notice(
-              '用户目前可见 v${controller.data!.publication!.revision}。保存草稿后，需要再次发布才会更新用户的方案。',
+              'The client currently sees version ${controller.data!.publication!.revision}. Saving a draft will not update it until you publish again.',
             ),
           if (isNote &&
               controller.data?.note?.amendmentReason.isNotEmpty == true)
-            _notice('修订理由：${controller.data!.note!.amendmentReason}'),
+            _notice(
+              'Reason for revision: ${controller.data!.note!.amendmentReason}',
+            ),
           const SizedBox(height: 24),
           if (isNote)
             ClinicalNoteEditor(
@@ -408,7 +443,7 @@ class _DocumentationPageState extends State<DocumentationPage> {
           if (isNote && controller.data!.noteHistory.isNotEmpty) ...[
             const Divider(),
             const SizedBox(height: 12),
-            const Text('记录版本'),
+            const Text('Note versions'),
             Wrap(
               spacing: 8,
               children: [
@@ -418,7 +453,7 @@ class _DocumentationPageState extends State<DocumentationPage> {
                         ? null
                         : () => _history(revision),
                     child: Text(
-                      '修订 ${revision.revision} · ${revision.status == ClinicalNoteStatus.signed ? '已签署' : '草稿'}',
+                      'Revision ${revision.revision} · ${revision.status == ClinicalNoteStatus.signed ? 'Signed' : 'Draft'}',
                     ),
                   ),
               ],
@@ -460,7 +495,7 @@ class _AmendDialogState extends State<_AmendDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('创建专业记录修订'),
+    title: const Text('Create clinical note revision'),
     content: SizedBox(
       width: 480,
       child: TextField(
@@ -470,19 +505,19 @@ class _AmendDialogState extends State<_AmendDialog> {
         maxLines: 5,
         maxLength: 1000,
         decoration: const InputDecoration(
-          labelText: '修订理由',
-          hintText: '说明这次需要补充或更正的内容',
+          labelText: 'Reason for revision',
+          hintText: 'Explain what needs to be added or corrected',
         ),
       ),
     ),
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: const Text('Cancel'),
       ),
       FilledButton(
         onPressed: () => Navigator.pop(context, reason.text),
-        child: const Text('创建修订'),
+        child: const Text('Create revision'),
       ),
     ],
   );

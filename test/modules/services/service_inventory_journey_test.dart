@@ -89,14 +89,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -157,7 +156,7 @@ void main() {
       'previous_source': previous,
       'route': route,
       'trigger': action,
-      'root_entry': 'Authenticated More → tap Me bottom navigation',
+      'root_entry': 'Authenticated More → Expert support',
       'evidence':
           'Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone',
       'test': 'test/modules/services/service_inventory_journey_test.dart',
@@ -181,7 +180,7 @@ void main() {
       tap(tester, find.byType(MomExpertPlanEntry));
   Future<void> package(WidgetTester tester) async {
     await catalog(tester);
-    await tap(tester, find.text('查看方案 →').first);
+    await tap(tester, find.text('View plans →').first);
   }
 
   Future<void> region(WidgetTester tester, String label) async {
@@ -191,17 +190,17 @@ void main() {
 
   Future<void> paymentForm(WidgetTester tester) async {
     await package(tester);
-    await tap(tester, find.text('购买'));
+    await tap(tester, find.text('Purchase'));
     await region(tester, 'California (CA)');
     await tap(tester, find.byType(CheckboxListTile));
-    await tap(tester, find.text('确认并继续'));
+    await tap(tester, find.text('Confirm and continue'));
     expect(transport.order, isNotNull);
   }
 
   Future<void> bookingEntry(WidgetTester tester) async {
     await catalog(tester);
-    await tap(tester, find.text('查看我的服务'));
-    await tap(tester, find.text('开始预约'));
+    await tap(tester, find.text('View my services'));
+    await tap(tester, find.text('Book an appointment'));
     expect(router.state.uri.path, bookingRoute);
   }
 
@@ -231,9 +230,12 @@ void main() {
 
   Future<void> precheck(WidgetTester tester) async {
     await region(tester, 'California (CA)');
-    await tap(tester, find.text('我需要的是哺乳或喂养相关的 IBCLC 咨询'));
-    await tap(tester, find.text('目前没有上述紧急情况'));
-    await tap(tester, find.text('继续选择时间'));
+    await tap(
+      tester,
+      find.text('I need IBCLC support with lactation or feeding.'),
+    );
+    await tap(tester, find.text('None of these apply right now'));
+    await tap(tester, find.text('Continue to time selection'));
   }
 
   testWidgets('inventory Services catalog team and every package detail', (
@@ -244,22 +246,22 @@ void main() {
     await capture(
       tester,
       'catalog',
-      'Me expert plan → actual service catalog',
+      'More expert support → actual service catalog',
       route: '/services',
     );
-    await tap(tester, find.byType(ProviderTeamTile));
+    await tap(tester, find.text('Meet the team'));
     await capture(
       tester,
       'catalog-team',
       'Learn about team → provider modal',
       route: '/services',
     );
-    await tap(tester, find.text('关闭'));
+    await tap(tester, find.text('Close'));
     final names = {
-      'feeding-confidence': '喂养安心',
-      'better-breastfeeding': '亲喂改善',
-      'milk-supply-care': '奶量管理',
-      'comfortable-feeding': '舒适哺乳支持',
+      'feeding-confidence': 'Feeding Confidence',
+      'better-breastfeeding': 'Better Breastfeeding',
+      'milk-supply-care': 'Milk Supply Care',
+      'comfortable-feeding': 'Comfortable Feeding',
     };
     for (final entry in names.entries) {
       await tester.scrollUntilVisible(
@@ -275,7 +277,7 @@ void main() {
       );
       await tap(
         tester,
-        find.descendant(of: card, matching: find.text('查看方案 →')),
+        find.descendant(of: card, matching: find.text('View plans →')),
       );
       await capture(
         tester,
@@ -283,15 +285,15 @@ void main() {
         'Catalog ${entry.value} → detail and purchase CTA',
         route: '/services/${entry.key}',
       );
-      await tap(tester, find.byType(ProviderTeamTile));
+      await tap(tester, find.text('Meet the team'));
       await capture(
         tester,
         'package-team-${entry.key}',
         'Package detail → team information',
         route: '/services/${entry.key}',
       );
-      await tap(tester, find.text('关闭'));
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Close'));
+      await tap(tester, find.text('Back'));
     }
     await capture(
       tester,
@@ -299,12 +301,12 @@ void main() {
       'All four package detail back paths → catalog',
       route: '/services',
     );
-    await tap(tester, find.text('返回'));
+    await tap(tester, find.text('Back'));
     await capture(
       tester,
       'catalog-return-home',
-      'Catalog back → Me',
-      route: '/me',
+      'Catalog back → More',
+      route: '/more',
     );
     expect(transport.requests, isEmpty);
     await tester.pumpWidget(const SizedBox());
@@ -315,7 +317,7 @@ void main() {
     (tester) async {
       await mount(tester);
       await package(tester);
-      await tap(tester, find.text('购买'));
+      await tap(tester, find.text('Purchase'));
       await capture(
         tester,
         'purchase-eligibility-empty',
@@ -340,14 +342,14 @@ void main() {
         'purchase-eligibility-ready',
         'Supported state → eligibility can be submitted',
       );
-      await tap(tester, find.text('确认并继续'));
+      await tap(tester, find.text('Confirm and continue'));
       await capture(
         tester,
         'purchase-card-form',
         'Eligibility and order API responses → sandbox card form',
       );
       await tester.enterText(find.byType(TextFormField).first, '12');
-      await tap(tester, find.text('支付 \$219'));
+      await tap(tester, find.text('Pay \$219'));
       await capture(
         tester,
         'purchase-invalid-card',
@@ -363,7 +365,7 @@ void main() {
         find.byType(TextFormField).first,
         '4000 0000 0000 9995',
       );
-      await tap(tester, find.text('支付 \$219'));
+      await tap(tester, find.text('Pay \$219'));
       expect(transport.order!['status'], 'failed');
       await capture(
         tester,
@@ -374,35 +376,35 @@ void main() {
         find.byType(TextFormField).first,
         '4000 0025 0000 3155',
       );
-      await tap(tester, find.text('支付 \$219'));
+      await tap(tester, find.text('Pay \$219'));
       await capture(
         tester,
         'purchase-bank-challenge',
         'Challenge test card → bank verification',
       );
-      await tap(tester, find.text('确认验证'));
+      await tap(tester, find.text('Confirm verification'));
       expect(transport.episode, isNotNull);
       await capture(
         tester,
         'purchase-success',
         'Confirm bank verification → purchased benefits',
       );
-      await tap(tester, find.text('开始预约'));
+      await tap(tester, find.text('Book an appointment'));
       await capture(
         tester,
         'purchase-to-booking',
         'Purchase success CTA → booking route and precheck',
         route: bookingRoute,
       );
-      await tap(tester, find.byTooltip('关闭预约前确认'));
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.byTooltip('Close booking check'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'purchase-owned-detail',
         'Booking back → purchased package detail',
         route: packageRoute,
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'purchase-owned-catalog',
@@ -410,7 +412,7 @@ void main() {
         route: '/services',
       );
       await refreshCatalog(tester);
-      expect(find.text('查看我的服务'), findsOneWidget);
+      expect(find.text('View my services'), findsOneWidget);
       await capture(
         tester,
         'purchase-owned-catalog-refreshed',
@@ -433,8 +435,11 @@ void main() {
         route: bookingRoute,
       );
       await region(tester, 'New York (NY)');
-      await tap(tester, find.text('我需要的是哺乳或喂养相关的 IBCLC 咨询'));
-      await tap(tester, find.text('目前没有上述紧急情况'));
+      await tap(
+        tester,
+        find.text('I need IBCLC support with lactation or feeding.'),
+      );
+      await tap(tester, find.text('None of these apply right now'));
       await capture(
         tester,
         'booking-region-blocked',
@@ -442,15 +447,15 @@ void main() {
         route: bookingRoute,
       );
       await region(tester, 'California (CA)');
-      await tap(tester, find.text('有，或我不确定'));
+      await tap(tester, find.text('Yes, or I am not sure'));
       await capture(
         tester,
         'booking-emergency',
         'Potential emergency selected → guidance and disabled booking',
         route: bookingRoute,
       );
-      await tap(tester, find.text('目前没有上述紧急情况'));
-      await tap(tester, find.text('继续选择时间'));
+      await tap(tester, find.text('None of these apply right now'));
+      await tap(tester, find.text('Continue to time selection'));
       await capture(
         tester,
         'booking-slots',
@@ -465,15 +470,15 @@ void main() {
         'Select slot → server hold and confirm time dialog',
         route: bookingRoute,
       );
-      await tap(tester, find.byTooltip('关闭预约时间确认'));
+      await tap(tester, find.byTooltip('Close time confirmation'));
       await capture(
         tester,
         'booking-held-collapsed',
         'Close time confirmation → hold retained on booking page',
         route: bookingRoute,
       );
-      await tap(tester, find.text('查看所选时间'));
-      await tap(tester, find.text('确认预约'));
+      await tap(tester, find.text('View selected time'));
+      await tap(tester, find.text('Confirm appointment'));
       expect(transport.appointment!['status'], 'confirmed');
       await capture(
         tester,
@@ -481,32 +486,32 @@ void main() {
         'Confirm hold → actual intake route',
         route: intakeRoute,
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'booking-confirmed-details',
         'Intake back → confirmed appointment details',
         route: bookingRoute,
       );
-      await tap(tester, find.text('取消预约'));
+      await tap(tester, find.text('Cancel appointment'));
       await capture(
         tester,
         'booking-cancel-confirm',
         'Cancel appointment → cancellation confirmation',
         route: bookingRoute,
       );
-      await tap(tester, find.text('保留预约'));
+      await tap(tester, find.text('Keep appointment'));
       await capture(
         tester,
         'booking-cancel-retained',
         'Keep appointment → confirmed details unchanged',
         route: bookingRoute,
       );
-      await tap(tester, find.text('取消预约'));
+      await tap(tester, find.text('Cancel appointment'));
       transport.failingWrites.add(
         '/v1/care/appointments/service-appointment/cancel',
       );
-      await tap(tester, find.text('确认取消'));
+      await tap(tester, find.text('Confirm cancellation'));
       await capture(
         tester,
         'booking-cancel-error',
@@ -515,7 +520,7 @@ void main() {
       );
       expect(transport.appointment!['status'], 'confirmed');
       transport.failingWrites.clear();
-      await tap(tester, find.text('重试取消'));
+      await tap(tester, find.text('Try canceling again'));
       expect(transport.appointment!['status'], 'cancelled');
       await capture(
         tester,
@@ -523,7 +528,7 @@ void main() {
         'Retry cancellation → actual product returns to package detail',
         route: packageRoute,
       );
-      await tap(tester, find.text('查看我的服务进度'));
+      await tap(tester, find.text('View service progress'));
       await capture(
         tester,
         'booking-cancelled-timeline',
@@ -538,11 +543,11 @@ void main() {
     (tester) async {
       await mount(tester);
       await package(tester);
-      await tap(tester, find.text('购买'));
+      await tap(tester, find.text('Purchase'));
       await region(tester, 'California (CA)');
       await tap(tester, find.byType(CheckboxListTile));
       transport.failingWrites.add('/v1/care/orders');
-      await tap(tester, find.text('确认并继续'));
+      await tap(tester, find.text('Confirm and continue'));
       await capture(
         tester,
         'purchase-order-error',
@@ -550,19 +555,19 @@ void main() {
       );
       expect(transport.order, isNull);
       transport.failingWrites.clear();
-      await tap(tester, find.text('重试'));
+      await tap(tester, find.text('Try again'));
       final creates = transport.requests
           .where((r) => r['path'] == '/v1/care/orders')
           .toList();
       expect(creates, hasLength(2));
       expect(creates.first['headers'], creates.last['headers']);
-      await tap(tester, find.byTooltip('关闭购买'));
+      await tap(tester, find.byTooltip('Close purchase'));
       await capture(
         tester,
         'purchase-pending-detail',
         'Close unpaid order → continue payment on package',
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'purchase-pending-catalog',
@@ -576,9 +581,9 @@ void main() {
         'Pull refresh → pending order resume action',
         route: '/services',
       );
-      await tap(tester, find.text('继续付款'));
+      await tap(tester, find.text('Continue to payment'));
       transport.failingReads.add('/v1/care/orders/service-order');
-      await tap(tester, find.text('继续付款'));
+      await tap(tester, find.text('Continue to payment'));
       await capture(
         tester,
         'purchase-resume-error',
@@ -593,7 +598,7 @@ void main() {
         'Transient error snackbar expires → payment CTA unobscured',
       );
       transport.failingReads.clear();
-      await tap(tester, find.text('继续付款'));
+      await tap(tester, find.text('Continue to payment'));
       await capture(
         tester,
         'purchase-resumed-form',
@@ -601,9 +606,9 @@ void main() {
       );
       expect(find.byType(TextFormField), findsNWidgets(4));
       transport.writeGate = Completer<void>();
-      await tester.ensureVisible(find.text('支付 \$219'));
+      await tester.ensureVisible(find.text('Pay \$219'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('支付 \$219'));
+      await tester.tap(find.text('Pay \$219'));
       await tester.pump();
       await capture(
         tester,
@@ -621,13 +626,13 @@ void main() {
         'Payment unavailable → pending outcome retained for retry',
       );
       transport.failingWrites.clear();
-      await tap(tester, find.text('重试这笔付款'));
+      await tap(tester, find.text('Try payment again'));
       await capture(
         tester,
         'purchase-retry-success',
         'Retry same outcome → payment and benefits confirmed',
       );
-      await tap(tester, find.text('稍后预约'));
+      await tap(tester, find.text('Book later'));
       await capture(
         tester,
         'purchase-later-booking',
@@ -647,33 +652,33 @@ void main() {
         find.byType(TextFormField).first,
         '4000 0025 0000 3155',
       );
-      await tap(tester, find.text('支付 \$219'));
-      await tap(tester, find.text('取消付款'));
+      await tap(tester, find.text('Pay \$219'));
+      await tap(tester, find.text('Cancel payment'));
       await capture(
         tester,
         'purchase-challenge-cancelled',
         'Cancel bank verification → cancelled order with no entitlement',
       );
       expect(transport.episode, isNull);
-      await tap(tester, find.text('返回方案'));
+      await tap(tester, find.text('Back to plan'));
       await capture(
         tester,
         'purchase-cancelled-detail',
         'Cancelled order back → package can be purchased again',
       );
-      await tap(tester, find.text('购买'));
+      await tap(tester, find.text('Purchase'));
       await region(tester, 'California (CA)');
       await tap(tester, find.byType(CheckboxListTile));
-      await tap(tester, find.text('确认并继续'));
+      await tap(tester, find.text('Confirm and continue'));
       transport.paymentStatusOverride = 'reconciling';
-      await tap(tester, find.text('支付 \$219'));
+      await tap(tester, find.text('Pay \$219'));
       await capture(
         tester,
         'purchase-reconciling',
         'Server payment reconciliation → query instead of duplicate payment',
       );
       transport.failingReads.add('/v1/care/orders/${transport.order!['id']}');
-      await tap(tester, find.text('查询结果'));
+      await tap(tester, find.text('Check status'));
       await capture(
         tester,
         'purchase-query-error',
@@ -681,13 +686,13 @@ void main() {
       );
       transport.failingReads.clear();
       transport.paymentStatusOverride = null;
-      await tap(tester, find.text('完成模拟付款'));
+      await tap(tester, find.text('Complete simulated payment'));
       await capture(
         tester,
         'purchase-reconciliation-complete',
         'Complete pending sandbox payment → purchased benefits',
       );
-      await tap(tester, find.text('稍后预约'));
+      await tap(tester, find.text('Book later'));
       await tester.pumpWidget(const SizedBox());
     },
   );
@@ -724,7 +729,7 @@ void main() {
       final packages =
           transport.responsesByPath['/v1/care/catalog']!['packages'];
       transport.responsesByPath['/v1/care/catalog']!['packages'] = [];
-      await tap(tester, find.text('重试'));
+      await tap(tester, find.text('Try again'));
       await capture(
         tester,
         'catalog-empty',
@@ -740,23 +745,23 @@ void main() {
         route: '/services',
       );
       transport.failingReads.add('/v1/care/catalog');
-      await tap(tester, find.text('查看方案 →').first);
+      await tap(tester, find.text('View plans →').first);
       await capture(
         tester,
         'package-read-error',
         'Enter package while API unavailable → detail error',
       );
       transport.failingReads.clear();
-      await tap(tester, find.text('重试'));
+      await tap(tester, find.text('Try again'));
       await capture(
         tester,
         'package-read-recovered',
         'Retry package read → full detail',
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       transport.responsesByPath['/v1/care/catalog']!['payment_mode'] =
           'disabled';
-      await tap(tester, find.text('查看方案 →').first);
+      await tap(tester, find.text('View plans →').first);
       await capture(
         tester,
         'package-payment-disabled',
@@ -764,7 +769,12 @@ void main() {
       );
       expect(
         tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, '暂未开放购买'))
+            .widget<FilledButton>(
+              find.widgetWithText(
+                FilledButton,
+                'Not available to purchase yet',
+              ),
+            )
             .onPressed,
         isNull,
       );
@@ -789,7 +799,7 @@ void main() {
       transport.failingReads.add(
         '/v1/care/episodes/service-episode/availability',
       );
-      await tap(tester, find.byTooltip('刷新预约'));
+      await tap(tester, find.byTooltip('Refresh appointment'));
       await capture(
         tester,
         'booking-availability-error',
@@ -798,7 +808,7 @@ void main() {
       );
       transport.failingReads.clear();
       transport.emptySlots = true;
-      await tap(tester, find.text('重试'));
+      await tap(tester, find.text('Try again'));
       await capture(
         tester,
         'booking-no-slots',
@@ -806,7 +816,7 @@ void main() {
         route: bookingRoute,
       );
       transport.emptySlots = false;
-      await tap(tester, find.byTooltip('刷新预约'));
+      await tap(tester, find.byTooltip('Refresh appointment'));
       transport.failingWrites.add('/v1/care/episodes/service-episode/holds');
       await tap(tester, find.text('10:00 – 11:00 PDT'));
       await capture(
@@ -816,7 +826,7 @@ void main() {
         route: bookingRoute,
       );
       transport.failingWrites.clear();
-      await tap(tester, find.text('重试上次提交'));
+      await tap(tester, find.text('Retry last submission'));
       await capture(
         tester,
         'booking-hold-recovered',
@@ -826,7 +836,7 @@ void main() {
       transport.failingWrites.add(
         '/v1/care/appointments/service-appointment/confirm',
       );
-      await tap(tester, find.text('确认预约'));
+      await tap(tester, find.text('Confirm appointment'));
       await capture(
         tester,
         'booking-confirm-error',
@@ -834,7 +844,7 @@ void main() {
         route: bookingRoute,
       );
       transport.failingWrites.clear();
-      await tap(tester, find.text('重试上次提交').last);
+      await tap(tester, find.text('Retry last submission').last);
       await capture(
         tester,
         'booking-confirm-recovered',
@@ -856,23 +866,23 @@ void main() {
       await bookingEntry(tester);
       await precheck(tester);
       await tap(tester, find.text('10:00 – 11:00 PDT'));
-      await tap(tester, find.text('确认预约'));
+      await tap(tester, find.text('Confirm appointment'));
       await capture(
         tester,
         'intake-unfilled',
         'Confirmed booking → unfilled intake with profile prefill',
         route: intakeRoute,
       );
-      await tap(tester, find.text('含乳困难'));
-      await tap(tester, find.text('喂养疼痛'));
+      await tap(tester, find.text('Latching difficulties'));
+      await tap(tester, find.text('Pain during feeding'));
       await tester.enterText(
         find.byKey(const ValueKey('goal-1')),
-        '本地界面测试，希望更规律地记录喂养。',
+        'For this test, I would like a steadier feeding routine.',
       );
-      await tap(tester, find.text('补充情况'));
+      await tap(tester, find.text('Additional details'));
       await tester.enterText(
         find.byKey(const ValueKey('support-1')),
-        '仅为隔离测试填写的咨询背景。',
+        'Additional consultation context for this isolated test.',
       );
       await capture(
         tester,
@@ -887,15 +897,15 @@ void main() {
         'Open feeding method selector',
         route: intakeRoute,
       );
-      await tap(tester, find.text('母乳瓶喂').last);
-      await tap(tester, find.text('查看说明'));
+      await tap(tester, find.text('Bottle-fed breast milk').last);
+      await tap(tester, find.text('Read details'));
       await capture(
         tester,
         'intake-consent-info',
         'Information use details → consent explanation dialog',
         route: intakeRoute,
       );
-      await tap(tester, find.text('知道了'));
+      await tap(tester, find.text('Got it'));
       await tap(tester, find.byKey(const ValueKey('intake-consent')));
       await capture(
         tester,
@@ -903,27 +913,29 @@ void main() {
         'Explicit consent → save enabled',
         route: intakeRoute,
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'intake-discard-confirm',
         'Back with edited intake → discard confirmation',
         route: intakeRoute,
       );
-      await tap(tester, find.text('继续填写'));
+      await tap(tester, find.text('Keep editing'));
       transport.writeGate = Completer<void>();
-      await tester.ensureVisible(find.text('保存信息'));
+      await tester.ensureVisible(find.text('Save information'));
       await tester.pumpAndSettle();
       expect(
         tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, '保存信息'))
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Save information'),
+            )
             .onPressed,
         isNotNull,
       );
       final savesBefore = transport.requests
           .where((r) => (r['path'] as String).endsWith('/intake'))
           .length;
-      await tester.tap(find.text('保存信息'));
+      await tester.tap(find.text('Save information'));
       await tester.pump();
       expect(
         transport.requests
@@ -931,7 +943,7 @@ void main() {
             .length,
         savesBefore + 1,
       );
-      expect(find.text('正在保存…'), findsOneWidget);
+      expect(find.text('Saving…'), findsOneWidget);
       await capture(
         tester,
         'intake-saving',
@@ -949,16 +961,16 @@ void main() {
         'Save unavailable → snapshot retained and retry enabled',
         route: intakeRoute,
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'intake-uncertain-leave',
         'Back with uncertain save → reconciliation warning',
         route: intakeRoute,
       );
-      await tap(tester, find.text('继续填写'));
+      await tap(tester, find.text('Keep editing'));
       transport.failingWrites.clear();
-      await tap(tester, find.text('重试保存'));
+      await tap(tester, find.text('Try saving again'));
       expect(transport.intake, isNotNull);
       await capture(
         tester,
@@ -966,14 +978,14 @@ void main() {
         'Retry original snapshot → intake completion modal',
         route: intakeRoute,
       );
-      await tap(tester, find.text('稍后再说，查看预约'));
+      await tap(tester, find.text('Maybe later · View appointment'));
       await capture(
         tester,
         'intake-saved-return',
         'Save complete then view appointment → confirmed detail',
         route: bookingRoute,
       );
-      await tap(tester, find.text('查看信息采集表'));
+      await tap(tester, find.text('View intake form'));
       await capture(
         tester,
         'intake-reopened',
@@ -982,9 +994,9 @@ void main() {
       );
       await tester.enterText(
         find.byKey(const ValueKey('goal-1')),
-        '更新的本地界面测试目标。',
+        'A revised goal for this UI test.',
       );
-      await tap(tester, find.text('保存修改'));
+      await tap(tester, find.text('Save changes'));
       await capture(
         tester,
         'intake-update-saved',
@@ -1067,7 +1079,7 @@ void main() {
       transport.failingReads.add(
         '/v1/care/appointments/service-appointment/intake',
       );
-      await tap(tester, find.text('确认预约'));
+      await tap(tester, find.text('Confirm appointment'));
       expect(transport.appointment!['starts_at'], '2026-09-14T17:00:00.000Z');
       await capture(
         tester,
@@ -1079,7 +1091,7 @@ void main() {
       final gate = Completer<void>();
       transport.readGates['/v1/care/appointments/service-appointment/intake'] =
           gate;
-      await tester.tap(find.text('重试'));
+      await tester.tap(find.text('Try again'));
       await tester.pump();
       await capture(
         tester,
@@ -1095,10 +1107,10 @@ void main() {
         'Read retry resolves → intact editable form',
         route: intakeRoute,
       );
-      await tap(tester, find.text('奶量担心'));
+      await tap(tester, find.text('Milk supply concerns'));
       await tester.enterText(
         find.byKey(const ValueKey('goal-1')),
-        '本地界面测试，继续梳理咨询重点。',
+        'For this test, I want to clarify my consultation priorities.',
       );
       await tap(tester, find.byIcon(Icons.calendar_today_outlined));
       await capture(
@@ -1118,7 +1130,7 @@ void main() {
         'Open recorded sex options',
         route: intakeRoute,
       );
-      await tap(tester, find.text('男宝宝').last);
+      await tap(tester, find.text('Boy').last);
       await tap(tester, find.byType(DropdownButtonFormField<String>));
       await capture(
         tester,
@@ -1128,7 +1140,7 @@ void main() {
       );
       await tap(tester, find.text('California (CA)').last);
       await tap(tester, find.byType(DropdownButtonFormField<FeedingMode>));
-      await tap(tester, find.text('母乳瓶喂').last);
+      await tap(tester, find.text('Bottle-fed breast milk').last);
       await tap(tester, find.byKey(const ValueKey('intake-consent')));
       await tap(tester, find.byKey(const ValueKey('intake-consent')));
       await capture(
@@ -1139,13 +1151,15 @@ void main() {
       );
       expect(
         tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, '保存信息'))
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Save information'),
+            )
             .onPressed,
         isNull,
       );
       expect(transport.intake, isNull);
       await tap(tester, find.byKey(const ValueKey('intake-consent')));
-      await tap(tester, find.text('保存信息'));
+      await tap(tester, find.text('Save information'));
       expect(transport.intake, isNotNull);
       await capture(
         tester,
@@ -1153,11 +1167,11 @@ void main() {
         'First intake save → completion choices',
         route: intakeRoute,
       );
-      await tap(tester, find.text('开始预问诊'));
+      await tap(tester, find.text('Discuss with Momcozy AI'));
       await capture(
         tester,
-        'intake-to-cozymate',
-        'Preconsult CTA → actual Cozymate route with context draft',
+        'intake-to-momcozy-ai',
+        'Preconsult CTA → actual Momcozy AI route with context draft',
         route: '/',
       );
       expect(
@@ -1167,7 +1181,7 @@ void main() {
             )
             .controller!
             .text,
-        '我已完成咨询的信息采集，希望继续梳理这次咨询重点。',
+        "I've completed my consultation intake. Can you help me prepare the key points to discuss?",
       );
       expect(
         transport.requests.any((r) => (r['path'] as String).contains('/runs')),

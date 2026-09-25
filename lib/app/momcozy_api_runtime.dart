@@ -51,10 +51,7 @@ const _defaultBabyId = String.fromEnvironment(
   'MOMCOZY_DEFAULT_BABY_ID',
   defaultValue: 'demo-baby',
 );
-const _defaultLocale = String.fromEnvironment(
-  'MOMCOZY_LOCALE',
-  defaultValue: 'zh-CN',
-);
+const _defaultLocale = momCozyEnglishLocale;
 
 Future<String> _deviceTimezone() async =>
     (await FlutterTimezone.getLocalTimezone()).identifier;
@@ -390,7 +387,7 @@ class MomCozyApiRuntime {
 
   String get babyId => session.babyId;
 
-  String get locale => session.locale;
+  String get locale => momCozyEnglishLocale;
 
   MomCozySession get currentSession =>
       _currentSessionProvider?.call() ?? session;
@@ -599,16 +596,17 @@ class MomCozyRuntimeController extends ChangeNotifier {
     MomCozySession session, {
     required MomCozySessionStore sessionStore,
   }) async {
+    final englishSession = session.copyWith(locale: momCozyEnglishLocale);
     final generation = ++_sessionGeneration;
     await _serializeSessionWrite(() async {
       if (generation != _sessionGeneration) {
         throw StateError('Session changed.');
       }
-      await sessionStore.writeSession(session);
+      await sessionStore.writeSession(englishSession);
       if (generation != _sessionGeneration) {
         throw StateError('Session changed.');
       }
-      replaceRuntime(_runtimeForSession(session));
+      replaceRuntime(_runtimeForSession(englishSession));
     });
   }
 

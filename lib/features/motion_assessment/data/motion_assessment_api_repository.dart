@@ -7,7 +7,7 @@ abstract interface class MotionAssessmentRepository {
     required String target,
     required String poseEngine,
     String sourceArtifactId = '',
-    String locale = 'zh-CN',
+    String locale = 'en-US',
     bool keyFrameUploadEnabled = false,
   });
 
@@ -48,7 +48,7 @@ class MotionAssessmentApiRepository implements MotionAssessmentRepository {
     required String target,
     required String poseEngine,
     String sourceArtifactId = '',
-    String locale = 'zh-CN',
+    String locale = 'en-US',
     bool keyFrameUploadEnabled = false,
   }) async {
     final json = await transport.postJson(

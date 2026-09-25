@@ -280,8 +280,8 @@ class FrontalPostureAnalyzer {
       userMessage:
           shoulderClass == ShoulderHeightClassification.asymmetryTendency ||
               trunkClass == TrunkLateralLeanClassification.lateralLeanTendency
-          ? '当前正面画面呈现姿态偏移倾向，建议结合更多观察与专业评估综合判断。'
-          : '当前正面画面处于参考范围，请继续保持自然站姿。',
+          ? 'The front view suggests a posture difference. Consider more observations and a professional assessment before drawing conclusions.'
+          : 'The front view is within the reference range. Keep standing naturally.',
     );
   }
 

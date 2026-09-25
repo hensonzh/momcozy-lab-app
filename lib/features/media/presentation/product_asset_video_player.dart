@@ -223,7 +223,7 @@ class _VideoLoadingState extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const MediaViewerLoading(
     key: ValueKey('product-asset-video-loading'),
-    label: '加载视频…',
+    label: 'Loading video…',
   );
 }
 
@@ -234,7 +234,7 @@ class _VideoErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MediaViewerLoadError(
     key: const ValueKey('product-asset-video-error'),
-    message: '视频加载失败',
+    message: 'Could not load video',
     icon: Icons.videocam_off_outlined,
     retryButtonKey: const ValueKey('product-asset-video-retry'),
     onRetry: onRetry,
@@ -265,7 +265,7 @@ class _ProductAssetVideoFullscreenPage extends StatelessWidget {
             right: MediaQuery.paddingOf(context).right + 8,
             child: IconButton.filledTonal(
               key: const ValueKey('product-asset-video-exit-fullscreen'),
-              tooltip: '退出全屏',
+              tooltip: 'Exit full screen',
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.close_rounded),
               style: _videoControlStyle(immersive: true),
@@ -302,11 +302,11 @@ class _ProductAssetVideoViewport extends StatelessWidget {
         builder: (context, value, child) {
           if (value.hasError) {
             return MediaViewerLoadError(
-              message: '视频播放中断',
-              description: '请返回播放页后重新加载。',
+              message: 'Video playback interrupted',
+              description: 'Return to the video page and reload.',
               icon: Icons.videocam_off_outlined,
               onRetry: onFullscreen,
-              retryLabel: '返回播放页',
+              retryLabel: 'Back to video',
             );
           }
           return Column(
@@ -481,7 +481,7 @@ class _ProductAssetVideoControls extends StatelessWidget {
                 children: [
                   IconButton(
                     key: const ValueKey('product-asset-video-play-pause'),
-                    tooltip: value.isPlaying ? '暂停' : '播放',
+                    tooltip: value.isPlaying ? 'Pause' : 'Play',
                     onPressed: () => unawaited(_togglePlayback()),
                     icon: Icon(
                       value.isPlaying
@@ -498,7 +498,7 @@ class _ProductAssetVideoControls extends StatelessWidget {
                   const SizedBox(width: 8),
                   IconButton(
                     key: const ValueKey('product-asset-video-volume'),
-                    tooltip: value.volume == 0 ? '打开声音' : '静音',
+                    tooltip: value.volume == 0 ? 'Unmute' : 'Mute',
                     onPressed: () {
                       final volume = value.volume == 0 ? 1.0 : 0.0;
                       unawaited(
@@ -519,7 +519,7 @@ class _ProductAssetVideoControls extends StatelessWidget {
                           ? 'product-asset-video-exit-fullscreen-control'
                           : 'product-asset-video-fullscreen',
                     ),
-                    tooltip: immersive ? '退出全屏' : '全屏播放',
+                    tooltip: immersive ? 'Exit full screen' : 'Play full screen',
                     onPressed: onFullscreen,
                     icon: Icon(
                       immersive

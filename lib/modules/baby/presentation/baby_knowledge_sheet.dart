@@ -31,7 +31,7 @@ Future<void> showBabyKnowledge(
               spacing: 6,
               children: [
                 Text(
-                  i == 0 ? '可能饿了' : '可能吃饱了',
+                  i == 0 ? 'Might be hungry' : 'Might be full',
                   style: BabyDesign.text(14, line: 20, weight: FontWeight.w700),
                 ),
                 Text(article.points[i], style: BabyDesign.text(14, line: 22)),
@@ -47,7 +47,7 @@ Future<void> showBabyKnowledge(
               ),
             ),
         Text(
-          '内容用于帮助理解记录，不是对宝宝健康或发育状态的判断。',
+          'This information helps you understand your records. It does not assess your baby\'s health or development.',
           style: BabyDesign.text(11, line: 17, color: MomHomeTokens.secondary),
         ),
       ],
@@ -79,7 +79,7 @@ Future<void> showBabyKnowledge(
                 ),
               ),
               const Flexible(
-                child: Text('问问 Cozymate', textAlign: TextAlign.center),
+                child: Text('Ask Momcozy AI', textAlign: TextAlign.center),
               ),
             ],
           ),

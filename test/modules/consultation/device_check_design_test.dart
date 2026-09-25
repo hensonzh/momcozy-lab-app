@@ -37,7 +37,9 @@ class Probe extends ConsultationDeviceCheck {
     tracks.add(track);
     video = track;
     microphoneAvailable = succeed;
-    microphoneError = succeed ? null : '未能使用麦克风，请检查权限或设备。';
+    microphoneError = succeed
+        ? null
+        : 'Could not use the microphone. Check device permissions or hardware.';
     busy = false;
   }
 }
@@ -74,19 +76,21 @@ Future<void> mount(
                 onSuccess: onSuccess,
               ),
             ),
-            child: const Text('检查设备'),
+            child: const Text('Check device'),
           ),
         ),
       ),
     ),
   );
   expect(probe.starts, 0);
-  await tester.tap(find.text('检查设备'));
+  await tester.tap(find.text('Check device'));
   await tester.pumpAndSettle();
 }
 
 Future<void> click(WidgetTester tester, String text) async {
-  final target = text == '关闭' ? find.byTooltip('关闭设备检测') : find.text(text);
+  final target = text == 'Close'
+      ? find.byTooltip('Close device check')
+      : find.text(text);
   await tester.ensureVisible(target);
   await tester.pumpAndSettle();
   await tester.tap(target);
@@ -119,14 +123,14 @@ void main() {
       ..succeed = true;
     var continued = 0;
     await mount(tester, probe, 390, 1, onSuccess: () => continued++);
-    expect(find.text('继续确认'), findsNothing);
+    expect(find.text('Continue'), findsNothing);
     probe.pending!.complete();
     await tester.pumpAndSettle();
     expect(continued, 0);
     await shot(tester, 'continue', 390, 1);
-    await click(tester, '继续确认');
+    await click(tester, 'Continue');
     expect(continued, 1);
-    await click(tester, '关闭');
+    await click(tester, 'Close');
   });
   testWidgets(
     'device completion remains reachable on a short screen with large text',
@@ -135,10 +139,10 @@ void main() {
       await mount(tester, probe, 320, 2);
       tester.view.physicalSize = const Size(320, 568);
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('完成'));
+      await tester.ensureVisible(find.text('Done'));
       await tester.pumpAndSettle();
       await shot(tester, 'short-ready-actions', 320, 2);
-      await click(tester, '完成');
+      await click(tester, 'Done');
       expect(find.byType(ConsultationDeviceCheckDialog), findsNothing);
       expect(tester.takeException(), isNull);
     },
@@ -154,29 +158,31 @@ void main() {
           await shot(tester, 'checking', width, scale);
           expect(
             tester
-                .widget<FilledButton>(find.widgetWithText(FilledButton, '检查中…'))
+                .widget<FilledButton>(
+                  find.widgetWithText(FilledButton, 'Checking…'),
+                )
                 .onPressed,
             isNull,
           );
           probe.pending!.complete();
           await tester.pumpAndSettle();
-          expect(find.text('完成'), findsNothing);
+          expect(find.text('Done'), findsNothing);
           expect(probe.tracks.single.stops, 1);
           expect(probe.tracks.single.disposals, 1);
           await shot(tester, 'error', width, scale);
           probe.pending = null;
           probe.succeed = true;
-          await click(tester, '开始检测');
+          await click(tester, 'Start check');
           expect(probe.starts, 2);
-          expect(find.text('摄像头和麦克风均可用'), findsOneWidget);
+          expect(find.text('Camera and microphone are ready'), findsOneWidget);
           expect(probe.video, isNull);
           expect(probe.tracks.last.stops, 1);
           expect(probe.tracks.last.disposals, 1);
           await shot(tester, 'ready', width, scale);
-          await click(tester, '重新检查');
+          await click(tester, 'Check again');
           expect(probe.starts, 3);
           expect(probe.tracks.last.stops, 1);
-          await click(tester, '完成');
+          await click(tester, 'Done');
           expect(find.byType(ConsultationDeviceCheckDialog), findsNothing);
           await tester.pumpWidget(const SizedBox.shrink());
         },
@@ -213,7 +219,7 @@ void main() {
       );
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('关闭设备检测'));
+      await tester.tap(find.byTooltip('Close device check'));
       await tester.pumpAndSettle();
       final track = Camera();
       pending.complete(track);
@@ -245,8 +251,8 @@ void main() {
     await tester.tap(find.text('Open'));
     await tester.pumpAndSettle();
     expect(probe.starts, 0);
-    expect(find.text('开始检查'), findsOneWidget);
-    await tester.tap(find.text('关闭检查'));
+    expect(find.text('Start check'), findsOneWidget);
+    await tester.tap(find.text('Close check'));
     await tester.pumpAndSettle();
   });
 }

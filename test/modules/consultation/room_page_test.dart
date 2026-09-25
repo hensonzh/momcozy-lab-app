@@ -111,13 +111,13 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('离开房间'));
+      await tester.ensureVisible(find.text('Leave room'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('离开房间'));
+      await tester.tap(find.text('Leave room'));
       await tester.pumpAndSettle();
-      expect(find.text('暂时离开咨询室？'), findsOneWidget);
+      expect(find.text('Leave the consultation room for now?'), findsOneWidget);
       expect(media.state, ConsultationMediaState.connected);
-      await tester.tap(find.text('暂时离开'));
+      await tester.tap(find.text('Leave for now'));
       await tester.pumpAndSettle();
       expect(exited, isTrue);
       expect(media.state, ConsultationMediaState.disconnected);
@@ -162,7 +162,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.pumpWidget(app());
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('离开房间'));
+      await tester.ensureVisible(find.text('Leave room'));
       expect(created, 1);
       expect(media.connectCalls, 1);
       expect(tester.takeException(), isNull);

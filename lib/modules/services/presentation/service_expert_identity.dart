@@ -58,7 +58,7 @@ class ServiceExpertIdentity extends StatelessWidget {
                 ),
               ),
               const Text(
-                'IBCLC · 哺乳顾问',
+                'IBCLC · Lactation Consultant',
                 style: TextStyle(
                   fontSize: 10,
                   color: MomCozyColors.expertAccent,

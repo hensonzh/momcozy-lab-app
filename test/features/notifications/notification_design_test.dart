@@ -126,14 +126,18 @@ void main() {
         );
         await mount(tester, NotificationSettingsPage(coordinator: coordinator));
         await capture(tester, 'settings');
-        final consultations = find.widgetWithText(
-          SwitchListTile,
-          'Consultations',
+        final consultations = find.byKey(
+          const ValueKey('notification-preference-consultations'),
         );
         await tester.scrollUntilVisible(consultations, 200);
         await tap(
           tester,
-          find.descendant(of: consultations, matching: find.byType(Switch)),
+          width == 320 && scale == 2
+              ? consultations
+              : find.descendant(
+                  of: consultations,
+                  matching: find.byType(Switch),
+                ),
         );
         expect(platform.requests, 0);
         await capture(tester, 'consent');

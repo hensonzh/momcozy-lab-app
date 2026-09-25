@@ -21,13 +21,13 @@ class PdfDocumentToolbar extends StatelessWidget {
       children: [
         IconButton(
           style: _controlStyle,
-          tooltip: '上一页',
+          tooltip: 'Previous page',
           onPressed: ready && page > 1 ? onPrevious : null,
           icon: const Icon(Icons.chevron_left, size: 22),
         ),
         Expanded(
           child: Text(
-            ready ? '第 $page / $pageCount 页' : '正在打开…',
+            ready ? 'Page $page of $pageCount' : 'Opening…',
             textAlign: TextAlign.center,
             style: MomHomeTokens.text(
               13,
@@ -38,7 +38,7 @@ class PdfDocumentToolbar extends StatelessWidget {
         ),
         IconButton(
           style: _controlStyle,
-          tooltip: '下一页',
+          tooltip: 'Next page',
           onPressed: ready && page < pageCount ? onNext : null,
           icon: const Icon(Icons.chevron_right, size: 22),
         ),
@@ -49,14 +49,14 @@ class PdfDocumentToolbar extends StatelessWidget {
       children: [
         IconButton(
           style: _controlStyle,
-          tooltip: '缩小文档',
+          tooltip: 'Zoom out',
           onPressed: ready ? onZoomOut : null,
           icon: const Icon(Icons.zoom_out, size: 22),
         ),
         const SizedBox(width: 8),
         IconButton(
           style: _controlStyle,
-          tooltip: '放大文档',
+          tooltip: 'Zoom in',
           onPressed: ready ? onZoomIn : null,
           icon: const Icon(Icons.zoom_in, size: 22),
         ),

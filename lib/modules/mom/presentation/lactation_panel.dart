@@ -17,19 +17,22 @@ import '../../../shared/widgets/momcozy_line_icon.dart';
 import '../application/lactation_controller.dart';
 import 'lactation_chart.dart';
 
-const breastSideLabels = {BreastSide.left: '左侧', BreastSide.right: '右侧'};
+const breastSideLabels = {
+  BreastSide.left: 'Left side',
+  BreastSide.right: 'Right side',
+};
 const breastComfortLabels = {
-  BreastComfort.comfortable: '舒服',
-  BreastComfort.full: '胀满',
-  BreastComfort.painful: '疼痛',
-  BreastComfort.uncertain: '说不清楚',
+  BreastComfort.comfortable: 'Comfortable',
+  BreastComfort.full: 'Full',
+  BreastComfort.painful: 'Painful',
+  BreastComfort.uncertain: 'Not sure',
 };
 
 String lactationMeasurement(LactationObservation value) => switch (value) {
   PumpObservation(:final volumeMl) =>
-    volumeMl == null ? '奶量未填写' : '${compactNumber(volumeMl)} ml',
+    volumeMl == null ? 'Amount not recorded' : '${compactNumber(volumeMl)} ml',
   NursingObservation(:final durationMinutes) =>
-    durationMinutes == null ? '时长未填写' : '$durationMinutes 分钟',
+    durationMinutes == null ? 'Duration not recorded' : '$durationMinutes min',
 };
 String compactNumber(num value) => value == value.roundToDouble()
     ? value.toInt().toString()
@@ -176,7 +179,9 @@ class _LactationPanelState extends State<LactationPanel> {
     final wasEditing = widget.controller.editing != null;
     if (await widget.controller.save()) {
       if (!mounted) return;
-      setState(() => _savedMessage = wasEditing ? '这次记录已更新。' : '这次记录已保存。');
+      setState(
+        () => _savedMessage = wasEditing ? 'Record updated.' : 'Record saved.',
+      );
       widget.onChanged?.call();
       await _reveal(_listFeedback);
     } else if (mounted) {
@@ -199,7 +204,7 @@ class _LactationPanelState extends State<LactationPanel> {
     if (!mounted) return;
     if (widget.controller.deletion == null &&
         widget.controller.failure == null) {
-      setState(() => _savedMessage = '记录已恢复。');
+      setState(() => _savedMessage = 'Record restored.');
       widget.onChanged?.call();
     }
     await _reveal(_listFeedback);
@@ -231,7 +236,7 @@ class _LactationPanelState extends State<LactationPanel> {
                       children: [
                         Expanded(
                           child: Text(
-                            '今日泌乳',
+                            'Feeding & pumping today',
                             style: MomHomeTokens.text(
                               20,
                               weight: FontWeight.w700,
@@ -240,7 +245,7 @@ class _LactationPanelState extends State<LactationPanel> {
                         ),
                         const SizedBox(width: 12),
                         IconButton(
-                          tooltip: '关闭泌乳记录',
+                          tooltip: 'Close feeding and pumping records',
                           onPressed: controller.busy ? null : _close,
                           icon: const Icon(Icons.close_rounded, size: 22),
                           style: IconButton.styleFrom(
@@ -280,8 +285,8 @@ class _LactationPanelState extends State<LactationPanel> {
                               Expanded(
                                 child: Text(
                                   controller.editing == null
-                                      ? '添加一条记录'
-                                      : '编辑这次记录',
+                                      ? 'Add a record'
+                                      : 'Edit this record',
                                   style: MomHomeTokens.text(
                                     16,
                                     weight: FontWeight.w600,
@@ -291,7 +296,7 @@ class _LactationPanelState extends State<LactationPanel> {
                               if (controller.todayRecords.isNotEmpty)
                                 TextButton(
                                   onPressed: controller.busy ? null : _cancel,
-                                  child: const Text('返回记录'),
+                                  child: const Text('Back to records'),
                                 ),
                             ],
                           ),
@@ -313,7 +318,7 @@ class _LactationPanelState extends State<LactationPanel> {
                             children: [
                               if (controller.validationErrors.isNotEmpty)
                                 const _LactationFeedback(
-                                  '请检查记录时间和数值：奶量为 0–2000 ml，亲喂时长为 0–240 分钟的整数。',
+                                  'Check the time and values: milk amount must be 0–2,000 ml, and nursing duration must be a whole number from 0–240 minutes.',
                                   error: true,
                                 ),
                               if (controller.failure case final failure?)
@@ -331,7 +336,7 @@ class _LactationPanelState extends State<LactationPanel> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 14),
                                   child: Text(
-                                    '保存结果还未确认，请重试这次保存。',
+                                    'Your save has not been confirmed. Please try again.',
                                     style: MomHomeTokens.text(
                                       13,
                                       color: MomHomeTokens.secondary,
@@ -353,7 +358,7 @@ class _LactationPanelState extends State<LactationPanel> {
                           Expanded(
                             child: OutlinedButton(
                               onPressed: controller.busy ? null : _cancel,
-                              child: const Text('取消'),
+                              child: const Text('Cancel'),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -369,12 +374,12 @@ class _LactationPanelState extends State<LactationPanel> {
                               ),
                               child: Text(
                                 controller.busy
-                                    ? '正在保存…'
+                                    ? 'Saving…'
                                     : controller.uncertainSave
-                                    ? '重试保存'
+                                    ? 'Try saving again'
                                     : controller.editing == null
-                                    ? '保存这次记录'
-                                    : '保存修改',
+                                    ? 'Save this record'
+                                    : 'Save changes',
                               ),
                             ),
                           ),
@@ -401,7 +406,7 @@ class _LactationPanelState extends State<LactationPanel> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          '${controller.date.month} 月 ${controller.date.day} 日\n一次一次，慢慢记录',
+                                          '${controller.date.month}/${controller.date.day}\nOne session at a time',
                                           style: MomHomeTokens.text(
                                             14,
                                             color: MomHomeTokens.secondary,
@@ -432,7 +437,7 @@ class _LactationPanelState extends State<LactationPanel> {
                               LayoutBuilder(
                                 builder: (context, constraints) {
                                   final title = Text(
-                                    '今日记录',
+                                    'Today\'s records',
                                     style: MomHomeTokens.text(
                                       18,
                                       weight: FontWeight.w700,
@@ -443,7 +448,7 @@ class _LactationPanelState extends State<LactationPanel> {
                                         ? null
                                         : () => _begin(),
                                     icon: const Icon(Icons.add, size: 18),
-                                    label: const Text('添加一条'),
+                                    label: const Text('Add a record'),
                                   );
                                   return MediaQuery.textScalerOf(
                                             context,
@@ -484,13 +489,13 @@ class _LactationPanelState extends State<LactationPanel> {
                                     _LactationFeedback(_savedMessage!),
                                   if (controller.deletion != null)
                                     _LactationFeedback(
-                                      '记录已删除',
+                                      'Record deleted',
                                       warning: true,
                                       action: TextButton(
                                         onPressed: controller.busy
                                             ? null
                                             : _undo,
-                                        child: const Text('撤销'),
+                                        child: const Text('Undo'),
                                       ),
                                     ),
                                 ],
@@ -501,14 +506,14 @@ class _LactationPanelState extends State<LactationPanel> {
                                   child: MomSettingsCard(
                                     children: [
                                       Text(
-                                        '今天还没有泌乳记录',
+                                        'No feeding or pumping records today',
                                         style: MomHomeTokens.text(
                                           16,
                                           weight: FontWeight.w600,
                                         ),
                                       ),
                                       Text(
-                                        '添加一次泵奶或亲喂即可。',
+                                        'Add a pumping or nursing session to get started.',
                                         style: MomHomeTokens.text(
                                           14,
                                           color: MomHomeTokens.secondary,
@@ -556,19 +561,19 @@ class _LactationFields extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      _label('记录方式'),
+      _label('Method'),
       const SizedBox(height: 8),
       _choiceRow<LactationMethod>(
         options: const {
-          LactationMethod.pump: '泵奶',
-          LactationMethod.nurse: '亲喂',
+          LactationMethod.pump: 'Pumping',
+          LactationMethod.nurse: 'Nursing',
         },
         selected: draft.method,
         tabs: true,
         onSelect: (value) => onChanged(draft.copyWith(method: value)),
       ),
       const SizedBox(height: 16),
-      _label('时间'),
+      _label('Time'),
       const SizedBox(height: 7),
       OutlinedButton(
         onPressed: () async {
@@ -646,7 +651,7 @@ class _LactationFields extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 16),
-      _label('侧别'),
+      _label('Side'),
       const SizedBox(height: 7),
       _choiceRow<BreastSide>(
         options: breastSideLabels,
@@ -656,7 +661,7 @@ class _LactationFields extends StatelessWidget {
       ),
       const SizedBox(height: 16),
       _label(
-        '${breastSideLabels[draft.side]}${draft.method == LactationMethod.pump ? '奶量' : '时长'}',
+        '${breastSideLabels[draft.side]} ${draft.method == LactationMethod.pump ? 'amount' : 'duration'}',
         optional: true,
       ),
       const SizedBox(height: 7),
@@ -678,7 +683,7 @@ class _LactationFields extends StatelessWidget {
             child: Center(
               widthFactor: 1,
               child: Text(
-                draft.method == LactationMethod.pump ? 'ml' : '分钟',
+                draft.method == LactationMethod.pump ? 'ml' : 'Minutes',
                 style: const TextStyle(
                   fontSize: 13,
                   color: MomHomeTokens.secondary,
@@ -702,12 +707,14 @@ class _LactationFields extends StatelessWidget {
           children: [
             const Expanded(
               child: Text(
-                '补充感受与备注',
+                'Feelings and notes',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
             ),
             Text(
-              draft.feeling != null || draft.note.isNotEmpty ? '已填写' : '可选',
+              draft.feeling != null || draft.note.isNotEmpty
+                  ? 'Added'
+                  : 'Optional',
               style: const TextStyle(
                 fontSize: 12,
                 color: MomHomeTokens.secondary,
@@ -732,7 +739,7 @@ class _LactationFields extends StatelessWidget {
           const Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              '本次乳房感受',
+              'How did your breasts feel?',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
           ),
@@ -761,8 +768,8 @@ class _LactationFields extends StatelessWidget {
             minLines: 2,
             maxLines: 4,
             decoration: const InputDecoration(
-              labelText: '备注（可选）',
-              hintText: '例如：右侧有些胀',
+              labelText: 'Notes (optional)',
+              hintText: 'For example, my right breast feels full',
             ),
             onChanged: (value) => onChanged(draft.copyWith(note: value)),
           ),
@@ -785,7 +792,7 @@ class _LactationFields extends StatelessWidget {
       ),
       if (optional)
         const Text(
-          '可选',
+          'Optional',
           style: TextStyle(fontSize: 12, color: MomHomeTokens.secondary),
         ),
     ],
@@ -860,19 +867,19 @@ class _DaySummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pump = _tile(
-      '泵奶',
+      'Pumping',
       summary.pumpCount == 0
-          ? '未记录'
-          : '${summary.measuredVolumeMl == null ? '' : '${compactNumber(summary.measuredVolumeMl!)} ml · '}${summary.pumpCount} 次',
+          ? 'Not recorded'
+          : '${summary.measuredVolumeMl == null ? '' : '${compactNumber(summary.measuredVolumeMl!)} ml · '}${summary.pumpCount} sessions',
       detail: summary.unmeasuredPumpCount == 0
           ? null
-          : '${summary.unmeasuredPumpCount} 次未填写奶量',
+          : '${summary.unmeasuredPumpCount} sessions without an amount',
     );
     final nursing = _tile(
-      '亲喂',
+      'Nursing',
       summary.nursingCount == 0
-          ? '未记录'
-          : '${summary.nursingCount} 次${summary.nursingMinutes == null ? '' : ' · ${summary.nursingMinutes} 分'}',
+          ? 'Not recorded'
+          : '${summary.nursingCount} sessions${summary.nursingMinutes == null ? '' : ' · ${summary.nursingMinutes} min'}',
     );
     return MediaQuery.textScalerOf(context).scale(1) > 1.4
         ? Column(
@@ -944,7 +951,7 @@ class _RecordRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${value is PumpObservation ? '泵奶' : '亲喂'} · ${breastSideLabels[value.side]}',
+                    '${value is PumpObservation ? 'Pumping' : 'Nursing'} · ${breastSideLabels[value.side]}',
                     style: MomHomeTokens.text(16, weight: FontWeight.w600),
                   ),
                   const SizedBox(height: 4),
@@ -979,8 +986,8 @@ class _RecordRow extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             for (final action in [
-              ('edit', '编辑', onEdit),
-              ('delete', '删除', onDelete),
+              ('edit', 'Edit', onEdit),
+              ('delete', 'Delete', onDelete),
             ])
               Padding(
                 padding: const EdgeInsets.only(left: 8),

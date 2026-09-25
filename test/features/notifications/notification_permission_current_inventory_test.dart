@@ -225,7 +225,7 @@ void main() {
       route: '/more',
     );
 
-    await tap(tester, find.text('通知'));
+    await tap(tester, find.text('Notifications'));
     expect(router.state.uri.path, '/notifications');
   }
 
@@ -254,7 +254,7 @@ void main() {
     String action,
   ) => capture(tester, name, action, route: settingsRoute);
   Future<void> returnMore(WidgetTester tester) async {
-    await tap(tester, find.byTooltip('返回'));
+    await tap(tester, find.byTooltip('Back'));
     await capture(
       tester,
       '$entry-inbox-return',

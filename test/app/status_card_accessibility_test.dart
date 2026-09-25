@@ -20,18 +20,18 @@ void main() {
                 height: 180,
                 child: MotherStatusCard(
                   kind: MotherCardKind.rest,
-                  label: '昨夜休息',
-                  value: '4–5 小时',
+                  label: 'Last night’s rest',
+                  value: '4–5 hours',
                   onTap: () {},
                 ),
               ),
               SizedBox(
                 height: 180,
                 child: BabyStatusCard(
-                  label: '喂养',
-                  value: '2 次',
+                  label: 'Feeding',
+                  value: '2 times',
                   hasRecord: true,
-                  detail: '最近一次 09:00',
+                  detail: 'Last fed at 09:00',
                   icon: MomCozyLineGlyph.drop,
                   gradient: MomCozyGradients.rest,
                   artwork: 'feeding',
@@ -44,7 +44,10 @@ void main() {
         ),
       ),
     );
-    for (final label in ['昨夜休息，4–5 小时', '今日喂养，2 次，最近一次 09:00']) {
+    for (final label in [
+      'Last night’s rest, 4–5 hours',
+      "Today's Feeding: 2 times. Last fed at 09:00",
+    ]) {
       expect(
         tester
             .getSemantics(find.bySemanticsLabel(label))

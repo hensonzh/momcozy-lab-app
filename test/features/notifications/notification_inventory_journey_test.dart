@@ -137,7 +137,27 @@ void main() {
     }
   }
 
-  Future<void> tap(WidgetTester tester, Finder target) async {
+  Future<void> tap(
+    WidgetTester tester,
+    Finder target, {
+    bool waitForResult = true,
+  }) async {
+    final scrollable = find
+        .byWidgetPredicate(
+          (widget) =>
+              widget is Scrollable &&
+              widget.restorationId != 'editable' &&
+              (widget.axisDirection == AxisDirection.down ||
+                  widget.axisDirection == AxisDirection.up),
+        )
+        .last;
+    if (target.evaluate().isEmpty) {
+      final position = tester.state<ScrollableState>(scrollable).position;
+      if (position.pixels > position.minScrollExtent) {
+        position.jumpTo(position.minScrollExtent);
+        await tester.pump();
+      }
+    }
     if (target.evaluate().isEmpty) {
       await tester.scrollUntilVisible(
         target,
@@ -156,8 +176,16 @@ void main() {
       await tester.ensureVisible(target);
     }
     await settle(tester);
+    if (target.hitTestable().evaluate().isEmpty) {
+      await tester.drag(scrollable, const Offset(0, -240));
+      await settle(tester);
+    }
     await tester.tap(target);
-    await settle(tester);
+    if (waitForResult) {
+      await settle(tester);
+    } else {
+      await tester.pump();
+    }
     expect(tester.takeException(), isNull);
   }
 
@@ -205,19 +233,19 @@ void main() {
   const bookingRoute = '/services/episodes/service-episode/booking';
   const settingsRoute = '/notifications/settings';
   Future<void> bookingEntry(WidgetTester tester) async {
-    await tap(tester, find.text('Me'));
     await tap(tester, find.byType(MomExpertPlanEntry));
-    await tap(tester, find.text('查看我的服务'));
-    await tap(tester, find.text('开始预约'));
+    await tap(tester, find.text('View my services'));
+    await tap(tester, find.text('Book an appointment'));
     expect(router.state.uri.path, bookingRoute);
   }
 
   Future<void> inboxEntry(WidgetTester tester) async {
-    await tap(tester, find.text('通知'));
+    await tap(tester, find.text('Notifications'));
     expect(router.state.uri.path, '/notifications');
   }
 
-  Finder reminderSwitch() => find.widgetWithText(SwitchListTile, '预约提醒');
+  Finder reminderSwitch() =>
+      find.widgetWithText(SwitchListTile, 'Appointment reminder');
   Future<void> dismissSnackbar(WidgetTester tester) async {
     await tester.pump(const Duration(seconds: 5));
     await tester.pumpAndSettle();
@@ -269,7 +297,7 @@ void main() {
       'Turn reminder off → persisted disabled state',
       route: bookingRoute,
     );
-    await tap(tester, find.text('通知设置'));
+    await tap(tester, find.text('Notification settings'));
     await capture(
       tester,
       'settings-allowed',
@@ -333,7 +361,7 @@ void main() {
         route: bookingRoute,
       );
       await dismissSnackbar(tester);
-      await tap(tester, find.text('通知设置'));
+      await tap(tester, find.text('Notification settings'));
       await capture(
         tester,
         'settings-denied',
@@ -398,7 +426,7 @@ void main() {
       transport.failingReads.clear();
       final gate = Completer<void>();
       transport.readGates['/v1/notifications/preferences'] = gate;
-      await tester.tap(find.text('Refresh status'));
+      await tap(tester, find.text('Refresh status'), waitForResult: false);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await capture(
@@ -527,7 +555,7 @@ void main() {
     );
     transport.failingReads.add(inventoryReminderPath);
     await bookingEntry(tester);
-    expect(find.text('暂时无法读取提醒状态'), findsOneWidget);
+    expect(find.text('Could not load reminder status'), findsOneWidget);
     await capture(
       tester,
       'reminder-read-error',
@@ -535,7 +563,7 @@ void main() {
       route: bookingRoute,
     );
     transport.failingReads.clear();
-    await tap(tester, find.text('重试'));
+    await tap(tester, find.text('Try again'));
     await capture(
       tester,
       'reminder-read-retry',
@@ -575,7 +603,7 @@ void main() {
       route: bookingRoute,
     );
     await dismissSnackbar(tester);
-    await tap(tester, find.text('通知设置'));
+    await tap(tester, find.text('Notification settings'));
     await capture(
       tester,
       'settings-push-unavailable',
@@ -624,14 +652,14 @@ void main() {
       await dismissSnackbar(tester);
       await tap(tester, find.text('Service update 2'));
       const route = '/services/appointments/$inventoryNotificationAppointment';
-      expect(find.text('预约详情'), findsOneWidget);
+      expect(find.text('Appointment details'), findsOneWidget);
       await capture(
         tester,
         'notification-to-appointment',
         'Open available update → validated UUID appointment route',
         route: route,
       );
-      await tap(tester, find.text('返回'));
+      await tap(tester, find.text('Back'));
       await capture(
         tester,
         'appointment-to-inbox',
@@ -654,8 +682,7 @@ void main() {
       await inboxEntry(tester);
       final pageGate = Completer<void>();
       transport.readGates['/v1/notifications'] = pageGate;
-      await tester.ensureVisible(find.text('Load more'));
-      await tester.tap(find.text('Load more'));
+      await tap(tester, find.text('Load more'), waitForResult: false);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await capture(
@@ -680,10 +707,8 @@ void main() {
         'pagination-retry',
         'Retry load more with same cursor → append second page',
       );
-      await tester.ensureVisible(find.text('Mark all read'));
-      await tester.pumpAndSettle();
       transport.writeGate = Completer<void>();
-      await tester.tap(find.text('Mark all read'));
+      await tap(tester, find.text('Mark all read'), waitForResult: false);
       await tester.pump();
       await capture(
         tester,

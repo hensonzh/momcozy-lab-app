@@ -130,26 +130,38 @@ void main() {
           }
 
           await shot('paid');
-          await click('预约咨询');
+          await click('Book a consultation');
           expect(destinations, ['book:episode']);
-          expect(find.text('填写信息'), findsOneWidget);
+          expect(find.text('Complete intake'), findsOneWidget);
           expect(find.textContaining('09:00 – 10:00 PDT'), findsOneWidget);
           expect(find.text('00:30:00'), findsOneWidget);
           await shot('intake');
-          await click('填写信息');
+          await click('Complete intake');
           expect(destinations.last, 'intake:${appointments.value.id}');
-          expect(find.text('查看预约'), findsOneWidget);
-          expect(find.text('填写信息'), findsNothing);
+          expect(find.text('View appointment'), findsOneWidget);
+          expect(find.text('Complete intake'), findsNothing);
           await shot('ready');
+          if (width == 320) {
+            expect(
+              tester
+                  .getSize(
+                    find.widgetWithText(FilledButton, 'View appointment'),
+                  )
+                  .width,
+              greaterThan(200),
+              reason:
+                  'Keep the full English action readable on a narrow screen.',
+            );
+          }
           now = now.add(const Duration(seconds: 1));
           await tester.pump(const Duration(seconds: 1));
           expect(find.text('00:29:59'), findsOneWidget);
-          await click('查看预约');
+          await click('View appointment');
           expect(destinations.last, 'detail:${appointments.value.id}');
           appointments.status = AppointmentStatus.inProgress;
-          await click('服务进度 ›');
-          expect(find.text('咨询中'), findsOneWidget);
-          await click('进入咨询');
+          await click('Service progress ›');
+          expect(find.text('In consultation'), findsOneWidget);
+          await click('Join consultation');
           expect(destinations.last, 'room:${appointments.value.id}');
           expect([care.createCalls, care.paymentCalls], [0, 0]);
           await tester.pumpWidget(const SizedBox());

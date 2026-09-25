@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/domain/care/care_episode.dart';
 import 'package:momcozy_flutter_app/domain/care/care_order.dart';
@@ -31,18 +32,21 @@ class _Repository extends fixture.CatalogFixture {
             )
             as Map<String, dynamic>;
     (json['packages'] as List).first.addAll({
-      'name': '持续喂养支持与个性化泌乳陪伴计划',
+      'name':
+          'Personalized Feeding and Lactation Support for Your Growing Family',
       'price_minor': 123456789,
       'currency': 'CAD',
     });
     json['providers'] = [
       {
         'user_id': 'expert',
-        'display_name': 'Alexandra Catherine · IBCLC 专家',
+        'display_name': 'Alexandra Catherine · IBCLC',
         'timezone': 'America/Toronto',
         'regions': ['CA'],
         'languages': ['English', '中文', 'Français'],
-        'bio': '提供个性化喂养支持，结合家庭安排讨论可持续的计划。' * 5,
+        'bio':
+            'Personalized feeding support that helps your family build a practical, sustainable routine.' *
+            5,
         'sandbox': true,
       },
     ];
@@ -124,7 +128,13 @@ void main() {
       (tester) async {
         final repo = _Repository()..readGate = Completer<void>();
         await mount(tester, repo);
-        expect(find.text('查看方案 →'), findsNothing);
+        if (scale == 2) {
+          final title = tester.renderObject<RenderParagraph>(
+            find.text('Expert support'),
+          );
+          expect(title.didExceedMaxLines, isFalse);
+        }
+        expect(find.text('View plans →'), findsNothing);
         await shot(tester, 'loading');
         repo.offline = true;
         repo.readGate!.complete();
@@ -132,16 +142,16 @@ void main() {
         await shot(tester, 'initial-error');
         repo.offline = false;
         repo.empty = true;
-        await tester.tap(find.text('重试'));
+        await tester.tap(find.text('Try again'));
         await tester.pumpAndSettle();
-        await reveal(tester, find.text('暂无可用的服务方案'));
+        await reveal(tester, find.text('No service plans available'));
         await shot(tester, 'empty');
         repo.empty = false;
         await tester.drag(find.byType(ListView), const Offset(0, 2500));
         await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, 500));
         await tester.pumpAndSettle();
-        await reveal(tester, find.text('喂养安心'));
+        await reveal(tester, find.text('Feeding Confidence'));
         expect(repo.createCalls, 0);
         expect(repo.paymentCalls, 0);
       },
@@ -157,10 +167,10 @@ void main() {
         ServicePackage? opened;
         await mount(tester, repo, onSelect: (p) => opened = p);
         await tester.pumpAndSettle();
-        expect(find.text('我的陪伴计划'), findsNothing);
-        await reveal(tester, find.text('继续付款'));
+        expect(find.text('My care plan'), findsNothing);
+        await reveal(tester, find.text('Continue to payment'));
         await shot(tester, 'pending-order');
-        await tester.tap(find.text('继续付款'));
+        await tester.tap(find.text('Continue to payment'));
         await tester.pumpAndSettle();
         expect(opened?.id, 'feeding-confidence');
         expect(repo.purchaseReads, 0);
@@ -172,16 +182,16 @@ void main() {
         await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, 500));
         await tester.pumpAndSettle();
-        await reveal(tester, find.text('查看我的服务'));
-        expect(find.text('继续付款'), findsNothing);
-        expect(find.text('服务已暂停'), findsOneWidget);
-        expect(find.text('当前阶段 · 持续跟进'), findsOneWidget);
-        expect(find.text('剩余 1 / 3 次咨询'), findsOneWidget);
-        expect(find.text('喂养安心'), findsOneWidget);
-        await reveal(tester, find.text('我的陪伴计划'), delta: 240);
+        await reveal(tester, find.text('View my services'));
+        expect(find.text('Continue to payment'), findsNothing);
+        expect(find.text('Care paused'), findsOneWidget);
+        expect(find.text('Current stage · Ongoing follow-up'), findsOneWidget);
+        expect(find.text('1 of 3 consultations left'), findsOneWidget);
+        expect(find.text('Feeding Confidence'), findsOneWidget);
+        await reveal(tester, find.text('My care plan'), delta: 240);
         await shot(tester, 'paused-plan');
-        await reveal(tester, find.text('查看我的服务'));
-        await tester.tap(find.text('查看我的服务'));
+        await reveal(tester, find.text('View my services'));
+        await tester.tap(find.text('View my services'));
         expect(opened?.id, 'feeding-confidence');
         expect(repo.createCalls, 0);
         expect(repo.paymentCalls, 0);
@@ -195,28 +205,29 @@ void main() {
         await mount(tester, repo, onSelect: (p) => opened = p);
         await tester.pumpAndSettle();
         await shot(tester, 'discovery');
-        await reveal(tester, find.text('了解团队'));
-        await tester.tap(find.text('了解团队'));
+        await reveal(tester, find.text('Meet the team'));
+        await tester.tap(find.text('Meet the team'));
         await tester.pumpAndSettle();
+        expect(find.text('English · Chinese · French'), findsOneWidget);
         await shot(tester, 'long-team');
         final dialogScroll = find.descendant(
           of: find.byType(Dialog),
           matching: find.byType(Scrollable),
         );
         await tester.scrollUntilVisible(
-          find.text('预约确认前，你会看到并确认本次具体专家。'),
+          find.text('You will see and confirm your consultant before booking.'),
           240,
           scrollable: dialogScroll,
         );
         await tester.pumpAndSettle();
         await shot(tester, 'team-bottom');
-        await tester.tap(find.text('关闭'));
+        await tester.tap(find.text('Close'));
         await tester.pumpAndSettle();
         expect(find.byType(Dialog), findsNothing);
         await reveal(tester, find.text('CAD 1234567.89'));
         await shot(tester, 'long-price');
-        await reveal(tester, find.text('查看方案 →').first);
-        await tester.tap(find.text('查看方案 →').first);
+        await reveal(tester, find.text('View plans →').first);
+        await tester.tap(find.text('View plans →').first);
         await tester.pumpAndSettle();
         expect(opened?.id, 'feeding-confidence');
         expect(opened?.currency, 'CAD');

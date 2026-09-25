@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/domain/care/appointment.dart';
 import 'package:momcozy_flutter_app/domain/care/care_episode.dart';
@@ -63,22 +64,27 @@ Future<void> _mountBooking(
 }
 
 Future<void> _clickBooking(WidgetTester tester, String text) async {
-  if (text == '关闭') {
+  if (text == 'Close') {
     await tester.tap(
       find.byWidgetPredicate(
-        (w) => w is IconButton && (w.tooltip?.startsWith('关闭') ?? false),
+        (w) => w is IconButton && (w.tooltip?.startsWith('Close') ?? false),
       ),
     );
     await tester.pumpAndSettle();
     return;
   }
   await tester.pumpAndSettle();
-  await Scrollable.ensureVisible(
-    tester.element(find.text(text)),
-    alignment: .5,
+  final target = find.text(text);
+  final scrollable = find.descendant(
+    of: find.byType(BookingPage),
+    matching: find.byType(Scrollable),
   );
+  if (target.evaluate().isEmpty && scrollable.evaluate().isNotEmpty) {
+    await tester.scrollUntilVisible(target, 200, scrollable: scrollable.first);
+  }
+  await Scrollable.ensureVisible(tester.element(target), alignment: .5);
   await tester.pumpAndSettle();
-  await tester.tap(find.text(text));
+  await tester.tap(target);
   await tester.pumpAndSettle();
 }
 
@@ -102,6 +108,17 @@ Future<void> _bookingShot(
   double scale,
 ) async {
   expect(tester.takeException(), isNull);
+  final appBar = tester.widget<AppBar>(find.byType(AppBar));
+  final title = (appBar.title! as Text).data!;
+  final titleFinder = find.descendant(
+    of: find.byType(AppBar),
+    matching: find.text(title),
+  );
+  expect(
+    tester.renderObject<RenderParagraph>(titleFinder).didExceedMaxLines,
+    isFalse,
+    reason: 'The booking title must not ellipsize at $width/$scale',
+  );
   if (scale == 1 || width == 320) {
     await expectLater(
       find.byKey(const ValueKey('booking-capture')),
@@ -133,7 +150,7 @@ const _provider = CareProvider(
   timezone: 'America/Los_Angeles',
   regions: ['CA'],
   languages: ['en'],
-  bio: '支持含乳、泵奶安排与喂养节奏。',
+  bio: 'Support with latching, pumping plans, and feeding routines.',
   sandbox: true,
 );
 BookingEligibility _eligible() => BookingEligibility(
@@ -281,7 +298,7 @@ void main() {
           scale: scale,
           settle: false,
         );
-        expect(find.text('正在加载预约…'), findsOneWidget);
+        expect(find.text('Loading appointments…'), findsOneWidget);
         await _bookingShot(tester, 'initial-loading', width, scale);
         gate.completeError(const ProductFailure(ProductFailureKind.offline));
         await tester.pumpAndSettle();
@@ -296,12 +313,21 @@ void main() {
             serverTime: _now,
           ),
         );
-        await _clickBooking(tester, '重试');
-        await tester.ensureVisible(find.text('暂无可选时间'));
+        await _clickBooking(tester, 'Try again');
+        await tester.scrollUntilVisible(
+          find.text('No times available'),
+          200,
+          scrollable: find
+              .descendant(
+                of: find.byType(BookingPage),
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        );
         await tester.pumpAndSettle();
         await _bookingShot(tester, 'empty-slots', width, scale);
         repo.nextAvailability = null;
-        await tester.tap(find.byTooltip('刷新预约'));
+        await tester.tap(find.byTooltip('Refresh appointment'));
         await tester.pumpAndSettle();
         await tester.ensureVisible(find.text('10:00 – 11:00 PDT'));
         await tester.pumpAndSettle();
@@ -320,12 +346,12 @@ void main() {
             _appointmentJson(status: 'confirmed', version: 2),
           );
         await _mountBooking(tester, repo, width: width, scale: scale);
-        expect(find.text('已确认 · IBCLC 咨询'), findsOneWidget);
+        expect(find.text('Confirmed · IBCLC'), findsOneWidget);
         await _bookingShot(tester, 'confirmed-top', width, scale);
-        await tester.ensureVisible(find.text('填写信息采集表'));
+        await tester.ensureVisible(find.text('Complete intake form'));
         await tester.pumpAndSettle();
         await _bookingShot(tester, 'confirmed-preparation', width, scale);
-        expect(find.text('填写信息采集表').hitTestable(), findsOneWidget);
+        expect(find.text('Complete intake form').hitTestable(), findsOneWidget);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox.shrink());
       },
@@ -362,11 +388,14 @@ void main() {
       repository.nextAvailability = availability.future;
       await _mountBooking(tester, repository);
       await _selectRegion(tester, 'California (CA)');
-      await _clickBooking(tester, '我需要的是哺乳或喂养相关的 IBCLC 咨询');
-      await _clickBooking(tester, '目前没有上述紧急情况');
+      await _clickBooking(
+        tester,
+        'I need IBCLC support with lactation or feeding.',
+      );
+      await _clickBooking(tester, 'None of these apply right now');
       // Pump one frame: the asynchronous availability request is intentionally pending.
-      await tester.ensureVisible(find.text('继续选择时间'));
-      await tester.tap(find.text('继续选择时间'));
+      await tester.ensureVisible(find.text('Continue to time selection'));
+      await tester.tap(find.text('Continue to time selection'));
       await tester.pump();
       expect(repository.prechecks, 1);
       expect(
@@ -380,7 +409,8 @@ void main() {
             .widget<IconButton>(
               find.byWidgetPredicate(
                 (w) =>
-                    w is IconButton && (w.tooltip?.startsWith('关闭') ?? false),
+                    w is IconButton &&
+                    (w.tooltip?.startsWith('Close') ?? false),
               ),
             )
             .onPressed,
@@ -419,9 +449,14 @@ void main() {
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pumpAndSettle();
-      expect(find.text('预约已确认'), findsOneWidget);
-      expect(find.text('所选时段的保留时间已到，请重新选择'), findsNothing);
-      await _clickBooking(tester, '继续填写信息采集表');
+      expect(find.text('Appointment confirmed'), findsOneWidget);
+      expect(
+        find.text(
+          'Your selected time is no longer on hold. Choose another time.',
+        ),
+        findsNothing,
+      );
+      await _clickBooking(tester, 'Continue intake form');
       expect(find.byType(BookingSelectionDialog), findsNothing);
       await tester.pumpWidget(const SizedBox.shrink());
     },
@@ -445,43 +480,50 @@ void main() {
         await _selectRegion(tester, 'California (CA)');
         await _bookingShot(tester, 'precheck', width, scale);
         await _selectRegion(tester, 'New York (NY)');
-        await _clickBooking(tester, '我需要的是哺乳或喂养相关的 IBCLC 咨询');
-        await _clickBooking(tester, '目前没有上述紧急情况');
+        await _clickBooking(
+          tester,
+          'I need IBCLC support with lactation or feeding.',
+        );
+        await _clickBooking(tester, 'None of these apply right now');
         expect(
           tester
-              .widget<FilledButton>(find.widgetWithText(FilledButton, '继续选择时间'))
+              .widget<FilledButton>(
+                find.widgetWithText(FilledButton, 'Continue to time selection'),
+              )
               .onPressed,
           isNull,
         );
         expect(repository.prechecks, 0);
         await _bookingShot(tester, 'unavailable', width, scale);
         await _selectRegion(tester, 'California (CA)');
-        await _clickBooking(tester, '有，或我不确定');
+        await _clickBooking(tester, 'Yes, or I am not sure');
         expect(
           tester
-              .widget<FilledButton>(find.widgetWithText(FilledButton, '继续选择时间'))
+              .widget<FilledButton>(
+                find.widgetWithText(FilledButton, 'Continue to time selection'),
+              )
               .onPressed,
           isNull,
         );
         await _bookingShot(tester, 'emergency', width, scale);
-        await _clickBooking(tester, '关闭');
+        await _clickBooking(tester, 'Close');
         expect(find.byType(BookingPrecheckDialog), findsNothing);
-        await _clickBooking(tester, '开始确认');
+        await _clickBooking(tester, 'Start check');
         expect(
           tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
           isTrue,
         );
-        await _clickBooking(tester, '目前没有上述紧急情况');
-        await _clickBooking(tester, '继续选择时间');
+        await _clickBooking(tester, 'None of these apply right now');
+        await _clickBooking(tester, 'Continue to time selection');
         expect(repository.prechecks, 1);
         expect(find.byType(BookingPrecheckDialog), findsNothing);
         await _clickBooking(tester, '09:00 – 10:00 PDT');
         expect(find.byType(BookingSelectionDialog), findsOneWidget);
         await _bookingShot(tester, 'held', width, scale);
-        await _clickBooking(tester, '关闭');
+        await _clickBooking(tester, 'Close');
         expect(repository.cancelVersions, isEmpty);
-        await _clickBooking(tester, '查看所选时间');
-        await _clickBooking(tester, '确认预约');
+        await _clickBooking(tester, 'View selected time');
+        await _clickBooking(tester, 'Confirm appointment');
         expect(intake?.status, AppointmentStatus.confirmed);
         expect(repository.holdKeys, hasLength(1));
         expect(repository.confirmVersions, [1]);
@@ -508,7 +550,7 @@ void main() {
       );
       final wait = Completer<CareAppointment>();
       repository.nextConfirm = wait.future;
-      await _clickBooking(tester, '确认预约');
+      await _clickBooking(tester, 'Confirm appointment');
       await tester.binding.handlePopRoute();
       await tester.pump();
       expect(find.byType(BookingSelectionDialog), findsOneWidget);
@@ -517,7 +559,8 @@ void main() {
             .widget<IconButton>(
               find.byWidgetPredicate(
                 (w) =>
-                    w is IconButton && (w.tooltip?.startsWith('关闭') ?? false),
+                    w is IconButton &&
+                    (w.tooltip?.startsWith('Close') ?? false),
               ),
             )
             .onPressed,
@@ -527,7 +570,7 @@ void main() {
       await tester.pumpAndSettle();
       final retry = find.descendant(
         of: find.byType(BookingSelectionDialog),
-        matching: find.text('重试上次提交'),
+        matching: find.text('Retry last submission'),
       );
       await tester.ensureVisible(retry);
       await _bookingShot(tester, 'confirm-uncertain', 390, 1);
@@ -552,10 +595,15 @@ void main() {
       clock = _now.add(const Duration(minutes: 11));
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
-      expect(find.text('确认预约'), findsNothing);
-      expect(find.text('所选时段的保留时间已到，请重新选择'), findsOneWidget);
+      expect(find.text('Confirm appointment'), findsNothing);
+      expect(
+        find.text(
+          'Your selected time is no longer on hold. Choose another time.',
+        ),
+        findsOneWidget,
+      );
       await _bookingShot(tester, 'hold-expired', 390, 1);
-      await _clickBooking(tester, '重新选择');
+      await _clickBooking(tester, 'Choose another time');
       expect(repository.cancelVersions, isEmpty);
       expect(find.byType(BookingSelectionDialog), findsNothing);
       await tester.pumpWidget(const SizedBox.shrink());
@@ -571,14 +619,14 @@ void main() {
       await _mountBooking(tester, repository);
       final wait = Completer<CareAppointment>();
       repository.nextCancel = wait.future;
-      await _clickBooking(tester, '重新选择');
+      await _clickBooking(tester, 'Choose another time');
       wait.completeError(const ProductFailure(ProductFailureKind.offline));
       await tester.pumpAndSettle();
       repository.nextCancel = null;
       await tester.tap(
         find.descendant(
           of: find.byType(BookingSelectionDialog),
-          matching: find.text('重试上次提交'),
+          matching: find.text('Retry last submission'),
         ),
       );
       await tester.pumpAndSettle();
@@ -723,14 +771,14 @@ void main() {
       expect(find.text('09:00 – 10:00 PDT'), findsOneWidget);
       await tester.tap(find.text('09:00 – 10:00 PDT'));
       await tester.pumpAndSettle();
-      expect(find.text('所选时间已暂时保留'), findsOneWidget);
-      await tester.tap(find.text('确认预约'));
+      expect(find.text('Your selected time is on hold'), findsOneWidget);
+      await tester.tap(find.text('Confirm appointment'));
       await tester.pumpAndSettle();
       expect(intake!.id, 'appointment');
-      expect(find.text('已确认 · IBCLC 咨询'), findsOneWidget);
-      await tester.tap(find.text('取消预约'));
+      expect(find.text('Confirmed · IBCLC'), findsOneWidget);
+      await tester.tap(find.text('Cancel appointment'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('确认取消'));
+      await tester.tap(find.text('Confirm cancellation'));
       await tester.pumpAndSettle();
       expect(closed, isTrue);
       expect(repository.cancelVersions, [2]);

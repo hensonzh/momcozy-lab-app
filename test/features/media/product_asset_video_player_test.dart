@@ -103,8 +103,8 @@ void main() {
           find.byKey(const ValueKey('product-asset-video-player')),
         );
         expect(tester.takeException(), isNull);
-        expect(find.byTooltip('全屏播放'), findsOneWidget);
-        expect(find.text('全屏播放'), findsNothing);
+        expect(find.byTooltip('Play full screen'), findsOneWidget);
+        expect(find.text('Play full screen'), findsNothing);
         for (final key in ['play-pause', 'volume', 'fullscreen']) {
           final size = tester.getSize(
             find.byKey(ValueKey('product-asset-video-$key')),
@@ -195,9 +195,9 @@ void main() {
         await tester.pumpAndSettle();
         videoPlatform.emitError(1, StateError('stream interrupted'));
         await tester.pumpAndSettle();
-        expect(find.text('视频播放中断'), findsOneWidget);
+        expect(find.text('Video playback interrupted'), findsOneWidget);
         await _captureVideo(tester, 'interrupted', width, scale);
-        await tester.tap(find.text('返回播放页'));
+        await tester.tap(find.text('Back to video'));
         await tester.pumpAndSettle();
         expect(
           find.byKey(const ValueKey('product-asset-video-immersive')),
@@ -262,8 +262,8 @@ void main() {
       await _captureVideo(tester, '$suffix-fullscreen', size.width, 2);
       videoPlatform.emitError(1, StateError('short screen failure'));
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('返回播放页'));
-      await tester.tap(find.text('返回播放页'));
+      await tester.ensureVisible(find.text('Back to video'));
+      await tester.tap(find.text('Back to video'));
       await tester.pumpAndSettle();
       final retry = find.byKey(const ValueKey('product-asset-video-retry'));
       await tester.ensureVisible(retry);
@@ -452,8 +452,8 @@ void main() {
     await tester.pumpAndSettle();
     videoPlatform.emitError(1, StateError('stream interrupted'));
     await tester.pumpAndSettle();
-    expect(find.text('视频播放中断'), findsOneWidget);
-    await tester.tap(find.text('返回播放页'));
+    expect(find.text('Video playback interrupted'), findsOneWidget);
+    await tester.tap(find.text('Back to video'));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('product-asset-video-retry')));
     await _pumpUntilFound(

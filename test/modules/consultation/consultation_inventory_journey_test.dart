@@ -91,14 +91,13 @@ void main() {
         );
       }
     });
-    await tester.tap(find.text('Me'));
     if (loading) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     } else {
       await tester.pumpAndSettle();
     }
-    expect(router.state.uri.path, '/me');
+    expect(router.state.uri.path, '/more');
     addTearDown(() async {
       for (final gate in transport.readGates.values) {
         if (!gate.isCompleted) gate.complete();
@@ -160,7 +159,7 @@ void main() {
       'previous_source': previous,
       'route': route,
       'trigger': action,
-      'root_entry': 'Authenticated More → tap Me bottom navigation',
+      'root_entry': 'Authenticated More → Expert support',
       'evidence':
           'Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media',
       'test':
@@ -183,14 +182,17 @@ void main() {
 
   Future<void> bookingEntry(WidgetTester tester) async {
     await tap(tester, find.byType(MomExpertPlanEntry));
-    await tap(tester, find.text('查看我的服务'));
-    await tap(tester, find.text('开始预约'));
+    await tap(tester, find.text('View my services'));
+    await tap(tester, find.text('Book an appointment'));
     expect(router.state.uri.path, bookingRoute);
   }
 
   Future<void> roomEntry(WidgetTester tester) async {
     await bookingEntry(tester);
-    await tap(tester, find.widgetWithText(OutlinedButton, '咨询前准备'));
+    await tap(
+      tester,
+      find.widgetWithText(OutlinedButton, 'Prepare for your consultation'),
+    );
     expect(router.state.uri.path, roomRoute);
   }
 
@@ -202,7 +204,11 @@ void main() {
   Future<void> deviceReady(WidgetTester tester) async {
     // Native EventChannel cleanup progresses outside the widget fake clock.
     // Bound the wait and assert readiness instead of treating a quiet frame as completion.
-    for (var i = 0; i < 30 && find.text('摄像头和麦克风均可用').evaluate().isEmpty; i++) {
+    for (
+      var i = 0;
+      i < 30 && find.text('Camera and microphone are ready').evaluate().isEmpty;
+      i++
+    ) {
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 20));
       });
@@ -210,17 +216,17 @@ void main() {
     }
     await tester.pumpAndSettle();
     expect(
-      find.text('摄像头和麦克风均可用'),
+      find.text('Camera and microphone are ready'),
       findsOneWidget,
       reason: devices.calls.join(', '),
     );
   }
 
   Future<void> enterReadyRoom(WidgetTester tester) async {
-    await tap(tester, find.text('开始咨询'));
+    await tap(tester, find.text('Start consultation'));
     await deviceReady(tester);
-    await tap(tester, find.text('继续确认'));
-    await tap(tester, find.text('确认并进入咨询室'));
+    await tap(tester, find.text('Continue'));
+    await tap(tester, find.text('Confirm and join'));
     expect(transport.connectionNumber, greaterThan(0));
   }
 
@@ -238,14 +244,14 @@ void main() {
       'preparation-intake-required',
       'Booking consultation preparation → missing intake blocks start',
     );
-    await tap(tester, find.text('查看信息采集表'));
+    await tap(tester, find.text('View intake form'));
     await capture(
       tester,
       'preparation-to-intake',
       'Preparation missing-information CTA → actual intake route',
       route: intakeRoute,
     );
-    await tap(tester, find.text('返回'));
+    await tap(tester, find.text('Back'));
     transport.roomData['intake_ready'] = true;
     transport.roomData['case_consent'] = false;
     await pollRoom(tester);
@@ -292,7 +298,7 @@ void main() {
       'preparation-window-expired',
       'Entry window elapsed → rebook action',
     );
-    await tap(tester, find.text('重新预约'));
+    await tap(tester, find.text('Book another appointment'));
     await capture(
       tester,
       'preparation-rebook',
@@ -314,7 +320,7 @@ void main() {
       );
       devices.denied = true;
       devices.gate = Completer<void>();
-      await tap(tester, find.text('开始咨询'));
+      await tap(tester, find.text('Start consultation'));
       await capture(
         tester,
         'device-checking',
@@ -327,9 +333,9 @@ void main() {
         'device-denied',
         'Start consultation → device API denial shown in check dialog',
       );
-      expect(find.text('检查未通过，请重试'), findsOneWidget);
+      expect(find.text('Check failed. Try again.'), findsOneWidget);
       devices.denied = false;
-      await tap(tester, find.text('开始检测'));
+      await tap(tester, find.text('Start check'));
       await deviceReady(tester);
       await capture(
         tester,
@@ -337,17 +343,17 @@ void main() {
         'Retry device APIs after permission recovery → ready',
       );
       expect(
-        find.text('摄像头和麦克风均可用'),
+        find.text('Camera and microphone are ready'),
         findsOneWidget,
         reason: devices.calls.join(', '),
       );
-      await tap(tester, find.text('继续确认'));
+      await tap(tester, find.text('Continue'));
       await capture(
         tester,
         'start-confirmation',
         'Device check success → location and missing video consent',
       );
-      await tap(tester, find.text('去授权'));
+      await tap(tester, find.text('Review consent'));
       await capture(
         tester,
         'video-consent',
@@ -359,26 +365,26 @@ void main() {
         'video-consent-selected',
         'Consent checked → confirmation enabled, no grant before submit',
       );
-      await tap(tester, find.text('确认视频授权'));
+      await tap(tester, find.text('Confirm video consent'));
       await capture(
         tester,
         'video-consent-granted',
         'Submit video consent → actual start confirmation restored',
       );
-      await tap(tester, find.text('确认并进入咨询室'));
+      await tap(tester, find.text('Confirm and join'));
       await capture(
         tester,
         'waiting-room',
         'Confirm location and enter → sandbox waiting room',
       );
       expect(transport.connectionNumber, 1);
-      await tap(tester, find.text('离开房间'));
+      await tap(tester, find.text('Leave room'));
       await capture(
         tester,
         'leave-confirmation',
         'Leave waiting room → confirmation overlay',
       );
-      await tap(tester, find.text('留在房间'));
+      await tap(tester, find.text('Stay in room'));
       await capture(
         tester,
         'leave-retained',
@@ -401,8 +407,8 @@ void main() {
         'consultation-active',
         'Server reports expert joined and consultation started → active room',
       );
-      await tap(tester, find.text('离开房间'));
-      await tap(tester, find.text('暂时离开'));
+      await tap(tester, find.text('Leave room'));
+      await tap(tester, find.text('Leave for now'));
       await capture(
         tester,
         'left-to-booking',
@@ -438,7 +444,7 @@ void main() {
         endReason: 'completed',
       );
       await pollRoom(tester);
-      await tap(tester, find.text('查看咨询总结'));
+      await tap(tester, find.text('View consultation summary'));
       const summaryRoute = '/services/appointments/service-appointment/summary';
       // Pending summary and preceding room states are already captured by G01/G02.
       previous =
@@ -452,15 +458,15 @@ void main() {
         'Periodic pending-summary refresh receives published plan',
         route: summaryRoute,
       );
-      await tap(tester, find.text('查看怎么做'));
-      expect(find.byTooltip('关闭行动详情'), findsOneWidget);
+      await tap(tester, find.text('See how'));
+      expect(find.byTooltip('Close action details'), findsOneWidget);
       await capture(
         tester,
         'current-summary-task-detail',
         'Published task → action detail and progress choices',
         route: summaryRoute,
       );
-      await tap(tester, find.text('进行中'));
+      await tap(tester, find.text('In progress'));
       await capture(
         tester,
         'current-summary-task-in-progress',
@@ -470,7 +476,7 @@ void main() {
       transport.failingWrites.add(
         '/v1/care/plan-publications/inventory-publication/tasks/log-observation',
       );
-      await tap(tester, find.text('已完成'));
+      await tap(tester, find.text('Completed'));
       await capture(
         tester,
         'current-summary-task-uncertain',
@@ -478,30 +484,33 @@ void main() {
         route: summaryRoute,
       );
       transport.failingWrites.clear();
-      await tap(tester, find.text('重试').last);
+      await tap(tester, find.text('Try again').last);
       await capture(
         tester,
         'current-summary-task-recovered',
         'Retry original progress update → completed state',
         route: summaryRoute,
       );
-      await tap(tester, find.text('暂时跳过'));
+      await tap(tester, find.text('Skip for now'));
       await capture(
         tester,
         'current-summary-task-skipped',
         'Change completed task to skipped → explicit progress state',
         route: summaryRoute,
       );
-      await tap(tester, find.byTooltip('关闭行动详情'));
+      await tap(tester, find.byTooltip('Close action details'));
       await capture(
         tester,
         'current-summary-task-return',
         'Close task detail → updated summary',
         route: summaryRoute,
       );
-      await tap(tester, find.text('查看完整行动计划 →'));
-      expect(find.text('暂时无法载入，请稍后重试'), findsNothing);
-      expect(find.text('日程'), findsWidgets);
+      await tap(tester, find.text('View full care plan →'));
+      expect(
+        find.text('Could not load right now. Please try again later.'),
+        findsNothing,
+      );
+      expect(find.text('Schedule'), findsWidgets);
       await capture(
         tester,
         'current-summary-full-plan',
@@ -511,14 +520,14 @@ void main() {
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       expect(router.state.uri.path, summaryRoute);
-      await tap(tester, find.text('咨询与服务信息'));
+      await tap(tester, find.text('Consultation & service details'));
       await capture(
         tester,
         'current-summary-service-information',
         'Expand consultation and service information → progress entry',
         route: summaryRoute,
       );
-      await tap(tester, find.text('查看服务进度'));
+      await tap(tester, find.text('View service progress'));
       await capture(
         tester,
         'current-summary-to-progress',
@@ -533,19 +542,24 @@ void main() {
   ) async {
     await mount(tester);
     await roomEntry(tester);
-    await tap(tester, find.text('开始咨询'));
+    await tap(tester, find.text('Start consultation'));
     await deviceReady(tester);
-    await tap(tester, find.text('继续确认'));
-    await tap(tester, find.text('去授权'));
+    await tap(tester, find.text('Continue'));
+    await tap(tester, find.text('Review consent'));
     await tap(tester, find.byKey(const ValueKey('room-video-consent')));
     final consentPollGate = Completer<void>();
     transport.readGates['/v1/care/appointments/service-appointment/room'] =
         consentPollGate;
     transport.failingWrites.add('/v1/care/episodes/service-episode/consents');
-    await tap(tester, find.text('确认视频授权'));
-    expect(find.byTooltip('关闭视频授权'), findsOneWidget);
+    await tap(tester, find.text('Confirm video consent'));
+    expect(find.byTooltip('Close video consent'), findsOneWidget);
     expect(transport.roomData['video_consent'], false);
-    expect(find.text('连接暂时中断，请重试。已提交的操作会继续核对。'), findsWidgets);
+    expect(
+      find.text(
+        'Connection interrupted. Try again. We will keep checking any actions already submitted.',
+      ),
+      findsWidgets,
+    );
     await capture(
       tester,
       'video-consent-error',
@@ -554,7 +568,7 @@ void main() {
     transport.failingWrites.clear();
     consentPollGate.complete();
     await tester.pumpAndSettle();
-    await tap(tester, find.text('确认视频授权'));
+    await tap(tester, find.text('Confirm video consent'));
     expect(transport.roomData['video_consent'], true);
     await capture(
       tester,
@@ -573,9 +587,14 @@ void main() {
       'location-selected',
       'Choose New York → current location draft changes',
     );
-    await tap(tester, find.text('确认并进入咨询室'));
+    await tap(tester, find.text('Confirm and join'));
     expect(transport.connectionNumber, 0);
-    expect(find.text('当前专家暂不支持你选择的州，请确认实际所在地，或返回预约页重新安排。'), findsOneWidget);
+    expect(
+      find.text(
+        'Your consultant does not currently support the selected state. Check your location or return to booking to reschedule.',
+      ),
+      findsOneWidget,
+    );
     await capture(
       tester,
       'location-rejected',
@@ -586,7 +605,7 @@ void main() {
     transport.failingWrites.add(
       '/v1/care/appointments/service-appointment/location-check',
     );
-    await tap(tester, find.text('确认并进入咨询室'));
+    await tap(tester, find.text('Confirm and join'));
     expect(transport.connectionNumber, 0);
     await capture(
       tester,
@@ -597,9 +616,9 @@ void main() {
     transport.failingWrites.add(
       '/v1/care/appointments/service-appointment/room/join',
     );
-    await tap(tester, find.text('确认并进入咨询室'));
+    await tap(tester, find.text('Confirm and join'));
     expect(transport.connectionNumber, 0);
-    expect(find.byTooltip('关闭咨询确认'), findsOneWidget);
+    expect(find.byTooltip('Close consultation confirmation'), findsOneWidget);
     await capture(
       tester,
       'join-request-error',
@@ -608,7 +627,7 @@ void main() {
     transport.failingWrites.clear();
     await pollRoom(tester);
     expect(transport.connectionNumber, 1);
-    expect(find.byTooltip('关闭咨询确认'), findsNothing);
+    expect(find.byTooltip('Close consultation confirmation'), findsNothing);
     await capture(
       tester,
       'join-poll-recovered',
@@ -616,7 +635,7 @@ void main() {
     );
     transport.roomData['video_consent'] = false;
     await pollRoom(tester);
-    expect(find.text('开始咨询'), findsOneWidget);
+    expect(find.text('Start consultation'), findsOneWidget);
     await capture(
       tester,
       'consent-revoked-in-room',
@@ -632,7 +651,9 @@ void main() {
       const path = '/v1/care/appointments/service-appointment/room';
       final gate = Completer<void>();
       transport.readGates[path] = gate;
-      await tester.tap(find.text('咨询前准备'));
+      await tester.tap(
+        find.widgetWithText(OutlinedButton, 'Prepare for your consultation'),
+      );
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
       await capture(
@@ -649,34 +670,34 @@ void main() {
         'Initial room request fails → retry state',
       );
       transport.failingReads.clear();
-      await tap(tester, find.text('重试'));
-      expect(find.text('开始咨询'), findsOneWidget);
+      await tap(tester, find.text('Try again'));
+      expect(find.text('Start consultation'), findsOneWidget);
       await capture(
         tester,
         'room-load-retry',
         'Retry room load → preparation ready',
       );
-      await tap(tester, find.text('开始咨询'));
+      await tap(tester, find.text('Start consultation'));
       await deviceReady(tester);
-      await tap(tester, find.byTooltip('关闭设备检测'));
+      await tap(tester, find.byTooltip('Close device check'));
       await capture(
         tester,
         'device-check-dismissed',
         'Close passed device check → preparation, no join',
       );
       expect(transport.connectionNumber, 0);
-      await tap(tester, find.text('开始咨询'));
+      await tap(tester, find.text('Start consultation'));
       await deviceReady(tester);
-      await tap(tester, find.text('继续确认'));
-      await tap(tester, find.text('去授权'));
-      await tap(tester, find.byTooltip('关闭视频授权'));
+      await tap(tester, find.text('Continue'));
+      await tap(tester, find.text('Review consent'));
+      await tap(tester, find.byTooltip('Close video consent'));
       await capture(
         tester,
         'video-consent-dismissed',
         'Close consent without granting → preflight still requires consent',
       );
       expect(transport.roomData['video_consent'], false);
-      await tap(tester, find.byTooltip('关闭咨询确认'));
+      await tap(tester, find.byTooltip('Close consultation confirmation'));
       await capture(
         tester,
         'preflight-dismissed',
@@ -695,8 +716,12 @@ void main() {
     const readPath = '/v1/care/appointments/service-appointment/room';
     final initial = Completer<void>();
     transport.readGates[readPath] = initial;
-    await tester.ensureVisible(find.widgetWithText(OutlinedButton, '咨询前准备'));
-    await tester.tap(find.widgetWithText(OutlinedButton, '咨询前准备'));
+    await tester.ensureVisible(
+      find.widgetWithText(OutlinedButton, 'Prepare for your consultation'),
+    );
+    await tester.tap(
+      find.widgetWithText(OutlinedButton, 'Prepare for your consultation'),
+    );
     await tester.pump(const Duration(milliseconds: 100));
     await capture(
       tester,
@@ -712,16 +737,16 @@ void main() {
       'Initial room read fails → retry feedback',
     );
     transport.failingReads.clear();
-    await tap(tester, find.text('重试'));
-    await tap(tester, find.text('开始咨询'));
+    await tap(tester, find.text('Try again'));
+    await tap(tester, find.text('Start consultation'));
     await deviceReady(tester);
-    await tap(tester, find.text('继续确认'));
-    await tap(tester, find.text('去授权'));
+    await tap(tester, find.text('Continue'));
+    await tap(tester, find.text('Review consent'));
     await tap(tester, find.byKey(const ValueKey('room-video-consent')));
     final consentGate = Completer<void>();
     transport.readGates[readPath] = consentGate;
     transport.failingWrites.add('/v1/care/episodes/service-episode/consents');
-    await tap(tester, find.text('确认视频授权'));
+    await tap(tester, find.text('Confirm video consent'));
     expect(transport.roomData['video_consent'], false);
     await capture(
       tester,
@@ -731,12 +756,12 @@ void main() {
     transport.failingWrites.clear();
     consentGate.complete();
     await tester.pumpAndSettle();
-    await tap(tester, find.text('确认视频授权'));
+    await tap(tester, find.text('Confirm video consent'));
     expect(transport.roomData['video_consent'], true);
     transport.failingWrites.add(
       '/v1/care/appointments/service-appointment/location-check',
     );
-    await tap(tester, find.text('确认并进入咨询室'));
+    await tap(tester, find.text('Confirm and join'));
     expect(transport.connectionNumber, 0);
     await capture(
       tester,
@@ -747,7 +772,7 @@ void main() {
     transport.failingWrites.add(
       '/v1/care/appointments/service-appointment/room/join',
     );
-    await tap(tester, find.text('确认并进入咨询室'));
+    await tap(tester, find.text('Confirm and join'));
     expect(transport.connectionNumber, 0);
     await capture(
       tester,
@@ -757,7 +782,7 @@ void main() {
     transport.failingWrites.clear();
     await pollRoom(tester);
     expect(transport.connectionNumber, 1);
-    expect(find.byTooltip('关闭咨询确认'), findsNothing);
+    expect(find.byTooltip('Close consultation confirmation'), findsNothing);
     // G02 already owns the connected-room image; keep the real recovery assertion.
     await tester.pumpWidget(const SizedBox());
   });
@@ -770,17 +795,17 @@ void main() {
     await roomEntry(tester);
     await enterReadyRoom(tester);
     // Waiting layout already captured by G01 current-before-outcome.
-    await tap(tester, find.text('离开房间'));
+    await tap(tester, find.text('Leave room'));
     await capture(
       tester,
       'current-live-leave-confirmation',
       'Me → service → booking → preparation → passed checks → room → Leave',
     );
-    await tap(tester, find.text('留在房间'));
+    await tap(tester, find.text('Stay in room'));
     expect(router.state.uri.path, roomRoute);
     expect(transport.connectionNumber, 1);
-    await tap(tester, find.text('离开房间'));
-    await tap(tester, find.byTooltip('关闭离开确认'));
+    await tap(tester, find.text('Leave room'));
+    await tap(tester, find.byTooltip('Close leave confirmation'));
     expect(router.state.uri.path, roomRoute);
     expect(transport.connectionNumber, 1);
     transport.consultation(status: 'in_progress');
@@ -790,8 +815,8 @@ void main() {
       'current-live-active',
       'Stay and close confirmation both retain the room; expert joins → active consultation',
     );
-    await tap(tester, find.text('离开房间'));
-    await tap(tester, find.text('暂时离开'));
+    await tap(tester, find.text('Leave room'));
+    await tap(tester, find.text('Leave for now'));
     // The production leave awaits endOfFrame before popping the room route.
     await tester.pumpAndSettle();
     await capture(
@@ -814,20 +839,23 @@ void main() {
       ),
       isTrue,
     );
-    await tap(tester, find.widgetWithText(OutlinedButton, '返回咨询室'));
+    await tap(
+      tester,
+      find.widgetWithText(OutlinedButton, 'Return to consultation room'),
+    );
     expect(router.state.uri.path, roomRoute);
-    expect(find.text('重新进入咨询室'), findsOneWidget);
+    expect(find.text('Rejoin consultation room'), findsOneWidget);
     await capture(
       tester,
       'current-live-reentry-preparation',
       'Booking → return to consultation → preparation offers re-entry',
     );
-    await tap(tester, find.text('重新进入咨询室'));
+    await tap(tester, find.text('Rejoin consultation room'));
     await deviceReady(tester);
-    await tap(tester, find.text('继续确认'));
-    await tap(tester, find.text('确认并进入咨询室'));
+    await tap(tester, find.text('Continue'));
+    await tap(tester, find.text('Confirm and join'));
     expect(transport.connectionNumber, 2);
-    expect(find.text('离开房间'), findsOneWidget);
+    expect(find.text('Leave room'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -838,32 +866,37 @@ void main() {
       name: 'technical',
       status: 'failed',
       reason: 'technical_failure',
-      title: '视频连接未能继续',
+      title: 'Video connection could not continue',
     ),
     (
       name: 'no-show',
       status: 'no_show',
       reason: 'user_no_show',
-      title: '这次咨询未能开始',
+      title: 'This consultation could not start',
     ),
     (
       name: 'safety',
       status: 'note_pending',
       reason: 'safety_escalation',
-      title: '本次咨询已结束',
+      title: 'This consultation has ended',
     ),
     (
       name: 'completed',
       status: 'note_pending',
       reason: 'completed',
-      title: '本次咨询已结束',
+      title: 'This consultation has ended',
     ),
-    (name: 'cancelled', status: 'note_pending', reason: null, title: '预约已取消'),
+    (
+      name: 'cancelled',
+      status: 'note_pending',
+      reason: null,
+      title: 'Appointment canceled',
+    ),
     (
       name: 'pending-record',
       status: 'note_pending',
       reason: null,
-      title: '本次咨询已结束',
+      title: 'This consultation has ended',
     ),
   ]) {
     for (final action
@@ -911,11 +944,13 @@ void main() {
           }
           final unsuccessful = ['technical', 'no-show'].contains(outcome.name);
           final button = action == 'primary'
-              ? (unsuccessful ? '重新预约' : '查看咨询总结')
-              : (unsuccessful ? '返回妈妈主页' : '重新预约');
-          final destination = button == '重新预约'
+              ? (unsuccessful
+                    ? 'Book another appointment'
+                    : 'View consultation summary')
+              : (unsuccessful ? 'Back to home' : 'Book another appointment');
+          final destination = button == 'Book another appointment'
               ? bookingRoute
-              : button == '返回妈妈主页'
+              : button == 'Back to home'
               ? '/me'
               : '/services/appointments/service-appointment/summary';
           await tap(tester, find.text(button));
@@ -927,9 +962,9 @@ void main() {
               (outcome.name == 'safety' && action == 'primary')) {
             await capture(
               tester,
-              button == '重新预约'
+              button == 'Book another appointment'
                   ? 'current-outcome-rebook'
-                  : button == '返回妈妈主页'
+                  : button == 'Back to home'
                   ? 'current-outcome-home'
                   : 'current-outcome-summary',
               'Outcome → $button; shared destination for equivalent outcome CTAs',

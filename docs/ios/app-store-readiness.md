@@ -50,7 +50,7 @@ flutter build ios \
   --no-pub \
   --build-name=1.0.0 \
   --build-number=57 \
-  --dart-define=MOMCOZY_ENV=test \
+  --dart-define=MOMCOZY_ENV=staging \
   --dart-define=MOMCOZY_API_BASE_URL=https://backend-test.lute-momcozylab.luteos.cloud:8443 \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```

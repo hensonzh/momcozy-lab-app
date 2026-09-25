@@ -27,7 +27,7 @@ void main() {
           await _golden('media-unavailable-$kind', width, scale);
           await tester.tap(find.byKey(const ValueKey('media-return-button')));
           await tester.pumpAndSettle();
-          expect(find.text('返回首页'), findsOneWidget);
+          expect(find.text('Back to home'), findsOneWidget);
         });
       }
       testWidgets('image loading failure retry and zoom $width / $scale', (
@@ -129,7 +129,7 @@ void main() {
         await _golden('media-pdf-loading', width, scale);
         pending.complete(_failure());
         await tester.pumpAndSettle();
-        expect(find.text('PDF 加载失败'), findsOneWidget);
+        expect(find.text('Could not load PDF'), findsOneWidget);
         await _golden('media-pdf-retry', width, scale);
         connector.response = () => retry.future;
         await tester.tap(find.byKey(const ValueKey('media-viewer-retry')));
@@ -143,7 +143,7 @@ void main() {
         await tester.pumpAndSettle();
         retry.complete(_failure());
         await tester.pumpAndSettle();
-        expect(find.text('返回首页'), findsOneWidget);
+        expect(find.text('Back to home'), findsOneWidget);
         expect(tester.takeException(), isNull);
       });
     }
@@ -170,27 +170,27 @@ void main() {
       final back = find.byKey(const ValueKey('media-return-button'));
       expect(tester.getSize(back).shortestSide, greaterThanOrEqualTo(44));
       if (kind != 'missing') {
-        expect(
-          find.byTooltip('喂养姿势与照护指南 · Feeding positions and care'),
-          findsOneWidget,
-        );
+        expect(find.byTooltip('Feeding positions and care'), findsOneWidget);
         final retry = find.byKey(const ValueKey('media-viewer-retry'));
         await tester.ensureVisible(retry);
         await tester.pumpAndSettle();
-        expect(find.text('重新加载'), findsOneWidget);
+        expect(find.text('Reload'), findsOneWidget);
         expect(tester.getSize(retry).height, greaterThanOrEqualTo(44));
         expect(tester.getBottomRight(retry).dy, lessThanOrEqualTo(568));
         await tester.tap(retry);
         await tester.pumpAndSettle();
         expect(connector.calls, 2);
       } else {
-        expect(find.text('请从资料卡片打开图片、视频或文档。'), findsOneWidget);
+        expect(
+          find.text('Open an image, video, or document from a resource card.'),
+          findsOneWidget,
+        );
       }
       expect(tester.takeException(), isNull);
       await _golden('media-short-$kind', 320, 2);
       await tester.tap(back);
       await tester.pumpAndSettle();
-      expect(find.text('返回首页'), findsOneWidget);
+      expect(find.text('Back to home'), findsOneWidget);
     });
   }
   for (final kind in ['image', 'pdf']) {
@@ -236,7 +236,7 @@ void main() {
           expect(connector.calls, status == 401 ? 2 : 1);
           await tester.tap(find.byKey(const ValueKey('media-return-button')));
           await tester.pumpAndSettle();
-          expect(find.text('返回首页'), findsOneWidget);
+          expect(find.text('Back to home'), findsOneWidget);
           expect(tester.takeException(), isNull);
         },
       );
@@ -261,14 +261,14 @@ Widget _app(
     routes: [
       GoRoute(
         path: '/',
-        builder: (_, _) => const Scaffold(body: Text('返回首页')),
+        builder: (_, _) => const Scaffold(body: Text('Back to home')),
       ),
       GoRoute(
         path: '/media-viewer',
         builder: (_, _) => Scaffold(
           body: MediaViewerPage(
             path: '/media-viewer',
-            title: '媒体',
+            title: 'Media',
             summary: '',
             icon: Icons.image_outlined,
             accent: MomCozyColors.primary,

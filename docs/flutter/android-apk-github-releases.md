@@ -28,12 +28,12 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 默认配置：
 
 ```text
-Download:  https://hensonzh.github.io/momcozy-lab-releases/unified
+Download:  https://hensonzh.github.io/momcozy-lab-releases/staging
 Releases:  hensonzh/momcozy-lab-releases
-Variant:   unified release (test runtime)
+Variant:   staging release (test runtime)
 ```
 
-`unified` 和 `production` 没有 API 默认值：必须显式提供两个非空、非
+`staging` 和 `production` 没有 API 默认值：必须显式提供两个非空、非
 loopback 的 HTTPS 地址，即 Product Backend `MOMCOZY_API_BASE_URL` 与 Agent
 Runtime `MOMCOZY_AGENT_API_BASE_URL`。两者必须分别配置。
 `local` 构建缺省使用 Product Backend `http://127.0.0.1:8769` 和 Agent Runtime
@@ -51,9 +51,9 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443 
 
 1. 构建 Flutter APK。
 2. 生成极简下载页、manifest 和带 “momcozy AI” 文本的二维码。
-3. 创建 `unified-android-v<version>-<build>` GitHub Release。
+3. 创建 `staging-android-v<version>-<build>` GitHub Release。
 4. 将 APK、SHA256 和 immutable provenance JSON 上传为 Release 资产。
-5. 更新公开仓库 `/unified/` 目录中的 GitHub Pages 文件。
+5. 更新公开仓库 `/staging/` 目录中的 GitHub Pages 文件。
 6. 输出 App 发布链接和邀请码管理后台链接。
 
 已存在 tag 时会校验同名 APK、SHA256 和 provenance 是否逐字一致；脚本不会覆盖或
@@ -109,9 +109,9 @@ dist/android-apk/
   index.html
   manifest.json
   assets/momcozy-lab-download-qr.svg
-  releases/momcozy-unified-android-test-<version>-<build>.apk
-  releases/momcozy-unified-android-test-<version>-<build>.apk.sha256
-  releases/momcozy-unified-android-test-<version>-<build>.apk.provenance.json
+  releases/momcozy-staging-android-<version>-<build>.apk
+  releases/momcozy-staging-android-<version>-<build>.apk.sha256
+  releases/momcozy-staging-android-<version>-<build>.apk.provenance.json
 ```
 
 已发布的 build 56 继续保留历史 `staging` 资产名和 provenance，不做覆盖或改名；下一次
@@ -122,7 +122,7 @@ dist/android-apk/
 发布后确认：
 
 - GitHub Pages 页面只显示简短说明、版本号和二维码。
-- 页面、manifest 和二维码只写入 `/unified/` 命名空间。
+- 页面、manifest 和二维码只写入 `/staging/` 命名空间。
 - `manifest.json` 中的 `apkUrl` 指向当前 GitHub Release 资产。
 - 点击或扫描二维码会跳转到 `github.com/.../releases/download/...`。
 - APK 下载支持中断恢复，SHA256 与本地产物一致。

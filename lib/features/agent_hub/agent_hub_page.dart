@@ -28,6 +28,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_p
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:video_player/video_player.dart';
+import 'presentation/assistant_display_text.dart';
 import 'presentation/agent_text_reveal.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
@@ -37,7 +38,8 @@ const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
 const _completedReplyRunSettlementTimeout = Duration(seconds: 2);
 const _completedReplyCancelTimeout = Duration(seconds: 2);
 const _agentRunAttachmentLimit = 20;
-const _unsupportedActionMessage = '当前版本暂不支持此操作，请继续提问。';
+const _unsupportedActionMessage =
+    'This action is not supported in this version. You can keep asking questions.';
 
 AgentStreamRunState _phaseOneRunState(AgentStreamRunState state) {
   if (state.phase != AgentStreamRunPhase.waitingForConfirmation) return state;
@@ -57,14 +59,17 @@ String _agentAssistantTextForState(
 
   return switch (state.phase) {
     AgentStreamRunPhase.idle => greeting,
-    AgentStreamRunPhase.streaming => '我已经收到你的消息啦～',
-    AgentStreamRunPhase.cancelRequested => '我正在停止这次回复。',
+    AgentStreamRunPhase.streaming => 'I have your message.',
+    AgentStreamRunPhase.cancelRequested => 'Stopping this response…',
     AgentStreamRunPhase.cancelled =>
-      state.cancelAcknowledged ? '已停止本次回复。' : '本地已停止，服务端取消未确认。',
+      state.cancelAcknowledged
+          ? 'Response stopped.'
+          : 'Stopped on this device. Server cancellation has not been confirmed.',
     AgentStreamRunPhase.waitingForConfirmation => _unsupportedActionMessage,
-    AgentStreamRunPhase.finished => '我已经处理完成，但这次没有返回可见内容。',
+    AgentStreamRunPhase.finished =>
+      'The request finished, but there was no response to show.',
     AgentStreamRunPhase.error ||
-    AgentStreamRunPhase.disconnected => '这次没有拿到回复。',
+    AgentStreamRunPhase.disconnected => 'No response this time.',
   };
 }
 
@@ -496,7 +501,7 @@ class _AgentHubPageState extends State<AgentHubPage>
         : interactionState.runState;
     _state = _restoreInterruptedRunState(
       restoredRunState,
-      disconnectedMessage: '连接中断，请重试',
+      disconnectedMessage: 'Connection lost. Try again.',
     );
     _historyMessages = _visibleAgentHubHistoryMessages(
       interactionState.historyMessages ?? widget.historyMessages,
@@ -662,7 +667,8 @@ class _AgentHubPageState extends State<AgentHubPage>
     _setRunState(
       _restoreInterruptedRunState(
         snapshot.runState,
-        disconnectedMessage: '连接已中断，可继续接收。',
+        disconnectedMessage:
+            'Connection interrupted. You can resume receiving.',
       ),
     );
     _historyMessages = _visibleAgentHubHistoryMessages(
@@ -1232,8 +1238,8 @@ class _AgentHubPageState extends State<AgentHubPage>
     final requestMessage = message.isNotEmpty
         ? message
         : (_attachedFiles.isNotEmpty && _attachedImages.isEmpty
-              ? '请查看这个文件'
-              : '请看这张图片');
+              ? 'Please review this file'
+              : 'Please look at this image');
     final sentImages = List<AgentStreamImageInput>.unmodifiable(
       _attachedImages,
     );
@@ -1411,7 +1417,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (failure != null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(_attachmentFeedback('图片上传失败，请重试。'));
+      ).showSnackBar(_attachmentFeedback('Image upload failed. Try again.'));
       return;
     }
     if (image == null) return;
@@ -1474,10 +1480,11 @@ class _AgentHubPageState extends State<AgentHubPage>
     _publishAttachmentUploadState();
     if (failure != null) {
       final message = switch (failure) {
-        AgentDocumentInputException(code: 'file_too_large') => '文件不能超过 10MB。',
+        AgentDocumentInputException(code: 'file_too_large') =>
+          'Files must be 10 MB or smaller.',
         AgentDocumentInputException(code: 'unsupported_file_type') =>
-          '暂仅支持 PDF 文件。',
-        _ => '文件上传失败，请重试。',
+          'Only PDF files are supported for now.',
+        _ => 'File upload failed. Try again.',
       };
       ScaffoldMessenger.of(context).showSnackBar(_attachmentFeedback(message));
       return;
@@ -2102,7 +2109,7 @@ class _AgentHubPageState extends State<AgentHubPage>
                         SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            '正在生成本次体态评估反馈…',
+                            'Preparing your posture assessment feedback…',
                             style: TextStyle(
                               color: MomCozyColors.foreground,
                               fontSize: MomCozyTypography.secondarySize,
@@ -2210,11 +2217,15 @@ class _AgentHubPageState extends State<AgentHubPage>
                                             child: TextButton(
                                               onPressed: _recoverConversation,
                                               child: const Text(
-                                                '历史消息加载失败，点击重试',
+                                                'Could not load earlier messages. Tap to try again.',
                                               ),
                                             ),
                                           )
-                                        : const Center(child: Text('正在恢复对话…')),
+                                        : const Center(
+                                            child: Text(
+                                              'Restoring conversation…',
+                                            ),
+                                          ),
                                   ),
                                 ),
                             ],
@@ -2231,7 +2242,7 @@ class _AgentHubPageState extends State<AgentHubPage>
                                 icon: const Icon(
                                   Icons.keyboard_arrow_down_rounded,
                                 ),
-                                label: const Text('回到最新消息'),
+                                label: const Text('Jump to latest message'),
                                 style: FilledButton.styleFrom(
                                   backgroundColor: MomHomeTokens.rose,
                                   foregroundColor: Colors.white,
@@ -2268,7 +2279,9 @@ class _AgentHubPageState extends State<AgentHubPage>
                             _hasLocalInteraction())
                           TextButton(
                             onPressed: _recoverConversation,
-                            child: const Text('历史同步失败，点击重试'),
+                            child: const Text(
+                              'Could not sync history. Tap to try again.',
+                            ),
                           ),
                         _AgentHomeShortcuts(
                           onSelected:
@@ -2354,8 +2367,14 @@ class _AgentHomeShortcuts extends StatelessWidget {
         runSpacing: 4,
         children: [
           for (final action in const [
-            ('奶量分析', '我想了解奶量和喂养情况，请先问我最重要的问题。'),
-            ('产后康复评估', '我想做一次产后身体恢复评估，请先从最重要的问题开始问我。'),
+            (
+              'Milk supply insights',
+              'I would like to understand my milk supply and feeding. Start by asking me the most important question.',
+            ),
+            (
+              'Postpartum recovery check-in',
+              'I would like a postpartum recovery check-in. Start with the most important question.',
+            ),
           ])
             OutlinedButton(
               onPressed: onSelected == null
@@ -2420,7 +2439,11 @@ class _AgentOlderConversationHistoryControl extends StatelessWidget {
                       : Icons.keyboard_arrow_up_rounded,
                   size: 18,
                 ),
-                label: Text(failed ? '加载失败，点击重试' : '加载更早消息'),
+                label: Text(
+                  failed
+                      ? 'Could not load. Tap to try again.'
+                      : 'Load earlier messages',
+                ),
               ),
       ),
     );
@@ -2666,7 +2689,7 @@ class _AgentAssistantTurn extends StatelessWidget {
               avatar,
               const SizedBox(width: 8),
               Text(
-                'Cozymate',
+                'Momcozy AI',
                 style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
               ),
             ],
@@ -2893,8 +2916,8 @@ class AgentHubHistoryMessage {
 
   String get roleLabel {
     return switch (role) {
-      AgentHubHistoryRole.user => '我',
-      AgentHubHistoryRole.assistant => '智能体',
+      AgentHubHistoryRole.user => 'Me',
+      AgentHubHistoryRole.assistant => 'Momcozy AI',
     };
   }
 }
@@ -3116,7 +3139,10 @@ class _AgentHistoryBubble extends StatelessWidget {
       return _AgentAssistantTurn(
         avatar: const _AgentAssistantAvatar(),
         child: _AgentAssistantBubble(
-          child: AgentMarkdownText(message.content, style: textStyle),
+          child: AgentMarkdownText(
+            assistantDisplayText(message.content),
+            style: textStyle,
+          ),
         ),
       );
     }
@@ -3228,14 +3254,14 @@ class AgentRunPhaseBadge extends StatelessWidget {
 
   String get _phaseLabel {
     return switch (phase) {
-      AgentStreamRunPhase.idle => '准备就绪',
-      AgentStreamRunPhase.streaming => '正在回复',
-      AgentStreamRunPhase.waitingForConfirmation => '待确认',
-      AgentStreamRunPhase.finished => '已完成',
-      AgentStreamRunPhase.error => '需要重试',
-      AgentStreamRunPhase.disconnected => '连接中断',
-      AgentStreamRunPhase.cancelRequested => '正在停止',
-      AgentStreamRunPhase.cancelled => '已停止',
+      AgentStreamRunPhase.idle => 'Ready',
+      AgentStreamRunPhase.streaming => 'Responding',
+      AgentStreamRunPhase.waitingForConfirmation => 'Awaiting confirmation',
+      AgentStreamRunPhase.finished => 'Completed',
+      AgentStreamRunPhase.error => 'Try again',
+      AgentStreamRunPhase.disconnected => 'Connection lost',
+      AgentStreamRunPhase.cancelRequested => 'Stopping',
+      AgentStreamRunPhase.cancelled => 'Stopped',
     };
   }
 
@@ -3357,9 +3383,11 @@ class AgentRunTranscript extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final text = state.textContent.isNotEmpty
-        ? (visibleText ?? _primaryText)
-        : _primaryText;
+    final text = assistantDisplayText(
+      state.textContent.isNotEmpty
+          ? (visibleText ?? _primaryText)
+          : _primaryText,
+    );
     final allowsSupplementaryContent =
         state.phase != AgentStreamRunPhase.error &&
         state.phase != AgentStreamRunPhase.cancelled;
@@ -3367,6 +3395,7 @@ class AgentRunTranscript extends StatelessWidget {
     final shouldRenderQuickReplies =
         allowsSupplementaryContent &&
         quickReplies.length == 3 &&
+        !quickReplies.any(containsUnsupportedAssistantText) &&
         !state.isAwaitingVisibleReply &&
         onQuickReplySelected != null;
     final avatarMode = _avatarMode;
@@ -3403,7 +3432,7 @@ class AgentRunTranscript extends StatelessWidget {
             Semantics(
               liveRegion: true,
               child: const Text(
-                '这次没有拿到回复。',
+                'No response this time.',
                 key: ValueKey('agent-run-failure-fallback'),
                 style: TextStyle(
                   fontSize: 14,
@@ -3454,7 +3483,7 @@ class AgentRunTranscript extends StatelessWidget {
               key: const ValueKey('agent-retry-button'),
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded),
-              label: const Text('重试'),
+              label: const Text('Try again'),
               style: FilledButton.styleFrom(
                 backgroundColor: MomHomeTokens.surface,
                 foregroundColor: MomHomeTokens.rose,
@@ -3509,7 +3538,9 @@ class AgentRunTranscript extends StatelessWidget {
     }
     if (state.phase == AgentStreamRunPhase.streaming &&
         state.textContent.trim().isNotEmpty) {
-      return const _AgentLoopDecorState(statusTitle: '正在组织答案～');
+      return const _AgentLoopDecorState(
+        statusTitle: 'Putting together a response…',
+      );
     }
     if (state.textContent.trim().isNotEmpty) {
       return const _AgentLoopDecorState();
@@ -3522,21 +3553,26 @@ class AgentRunTranscript extends StatelessWidget {
       return _unsupportedActionMessage;
     }
     if (state.phase == AgentStreamRunPhase.disconnected) {
-      return _safeAgentErrorText(state.errorMessage, fallback: '连接暂时中断，可重试') ??
-          '连接暂时中断，可重试';
+      return _safeAgentErrorText(
+            state.errorMessage,
+            fallback: 'Connection interrupted. You can try again.',
+          ) ??
+          'Connection interrupted. You can try again.';
     }
     if (state.phase == AgentStreamRunPhase.error) {
       return _safeAgentErrorText(
             state.errorMessage,
-            fallback: '服务执行失败，请稍后重试',
+            fallback: 'Could not complete the request. Please try again later.',
           ) ??
-          '服务执行失败，请稍后重试';
+          'Could not complete the request. Please try again later.';
     }
     if (state.phase == AgentStreamRunPhase.cancelRequested) {
-      return '正在请求服务端停止';
+      return 'Requesting server cancellation';
     }
     if (state.phase == AgentStreamRunPhase.cancelled) {
-      return state.cancelAcknowledged ? '已停止本次回复' : '本地已停止，服务端取消未确认';
+      return state.cancelAcknowledged
+          ? 'Response stopped'
+          : 'Stopped on this device. Server cancellation not confirmed';
     }
     return null;
   }
@@ -3616,7 +3652,7 @@ class AgentQuickRepliesBar extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                '猜你想说',
+                'You might ask',
                 key: const ValueKey('agent-quick-replies-title'),
                 style: labelStyle,
               ),
@@ -3674,14 +3710,7 @@ class _AgentQuickReplyPill extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Flexible(
-                  child: Text(
-                    text,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textStyle,
-                  ),
-                ),
+                Flexible(child: Text(text, softWrap: true, style: textStyle)),
                 const SizedBox(width: 6),
                 const Icon(
                   Icons.chevron_right_rounded,
@@ -3730,7 +3759,7 @@ class AgentMarkdownText extends StatelessWidget {
             softLineBreak: true,
             styleSheet: _momcozyMarkdownStyleSheet(context, baseStyle),
             imageBuilder: (uri, title, alt) => Text(
-              alt?.trim().isNotEmpty == true ? alt!.trim() : '图片',
+              alt?.trim().isNotEmpty == true ? alt!.trim() : 'Image',
               style: baseStyle,
             ),
           );
@@ -4633,7 +4662,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                   onChanged: onChanged,
                   scrollPadding: const EdgeInsets.only(bottom: 96),
                   decoration: InputDecoration(
-                    hintText: '和 Cozymate 聊聊...',
+                    hintText: 'Ask Momcozy AI anything...',
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -4695,8 +4724,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                             key: const ValueKey(
                               'agent-attachment-camera-button',
                             ),
-                            label: '相机',
-                            description: '拍摄一张照片',
+                            label: 'Camera',
+                            description: 'Take a photo',
                             iconAsset:
                                 'assets/images/cozymate_attachment_camera.png',
                             onPressed: canAttachImage
@@ -4707,8 +4736,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                             key: const ValueKey(
                               'agent-attachment-photo-button',
                             ),
-                            label: '照片',
-                            description: 'JPG、PNG、WebP',
+                            label: 'Photos',
+                            description: 'JPG, PNG, WebP',
                             iconAsset:
                                 'assets/images/cozymate_attachment_photo.svg',
                             onPressed: canAttachImage
@@ -4717,8 +4746,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                           ),
                           _attachmentMenuItem(
                             key: const ValueKey('agent-attachment-file-button'),
-                            label: '文件',
-                            description: 'PDF · 最大 10 MB',
+                            label: 'Files',
+                            description: 'PDF · Up to 10 MB',
                             iconAsset:
                                 'assets/images/cozymate_attachment_file.svg',
                             onPressed: canAttachFile ? widget.onPickFile : null,
@@ -4784,7 +4813,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                                           ),
                                         )
                                       : const Icon(Icons.add_rounded, size: 28),
-                                  tooltip: '添加附件',
+                                  tooltip: 'Add attachment',
                                   color: MomHomeTokens.secondary,
                                   visualDensity: VisualDensity.compact,
                                   constraints: const BoxConstraints.tightFor(
@@ -4844,7 +4873,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                                   ),
                                 ),
                               ),
-                              tooltip: sendIsStop ? '停止' : '发送',
+                              tooltip: sendIsStop ? 'Stop' : 'Send',
                               visualDensity: VisualDensity.compact,
                               constraints: const BoxConstraints.tightFor(
                                 width: _controlSize,
@@ -4906,7 +4935,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     TextStyle style,
   ) {
     final text = widget.controller.text.isEmpty
-        ? '和 Cozymate 聊聊...'
+        ? 'Ask Momcozy AI anything...'
         : widget.controller.text;
     final painter = TextPainter(
       text: TextSpan(text: text, style: style),
@@ -4945,13 +4974,13 @@ String? _safeAgentErrorText(String? errorMessage, {String? fallback}) {
   if (normalized == _unsupportedActionMessage) return normalized;
   final lower = normalized.toLowerCase();
   if (lower.contains('timeoutexception') || lower.contains('timeout')) {
-    return '请求超时，请稍后重试';
+    return 'Request timed out. Try again later.';
   }
   if (lower.contains('socketexception') ||
       lower.contains('failed host lookup') ||
       lower.contains('network is unreachable') ||
       lower.contains('offline')) {
-    return '网络不可用，请检查连接后重试';
+    return 'No network connection. Check your connection and try again.';
   }
   return fallback ?? normalized;
 }
@@ -4988,7 +5017,7 @@ String? _activeAgentStatusTitle(List<AgentStreamEvent> events) {
     switch (event.type) {
       case 'run.queued':
       case 'run.started':
-        return '我已经收到你的消息啦～';
+        return 'I have your message.';
       case 'run.progress':
         if (_isThinkingProgressEvent(event)) continue;
         final title = _visibleAgentStatusTitle(
@@ -5004,7 +5033,7 @@ String? _activeAgentStatusTitle(List<AgentStreamEvent> events) {
         continue;
     }
   }
-  return '我已经收到你的消息啦～';
+  return 'I have your message.';
 }
 
 String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
@@ -5028,7 +5057,7 @@ String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
                 _stringField(event.payload, 'message'),
               ]),
             ) ??
-            '我想一下';
+            'Let me think…';
       }
       if (phase == 'model_reasoning_after_tool') {
         return _visibleAgentStatusTitle(
@@ -5037,7 +5066,7 @@ String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
                 _stringField(event.payload, 'message'),
               ]),
             ) ??
-            '我想一下';
+            'Let me think…';
       }
       if (_runProgressClearsAgentThinking(event, phase)) return null;
     }
@@ -5126,11 +5155,11 @@ String? _semanticDisplayTitle(Map<String, Object?> semantic) {
 String? _runProgressStatusTitle(AgentStreamEvent event) {
   final phase = _stringField(event.payload, 'phase')?.trim();
   return switch (phase) {
-    'context_loading' => '我已经收到你的消息啦～',
-    'context_ready' => '我先理解一下你的需求～',
-    'model_followup' => '我接着处理下一步',
-    'response_finalizing' => '我在组织回复～',
-    'quick_replies_preparing' => '我在帮你准备下一轮的快捷输入～',
+    'context_loading' => 'I have your message.',
+    'context_ready' => 'Let me understand what you need…',
+    'model_followup' => 'Working on the next step…',
+    'response_finalizing' => 'Putting together a response…',
+    'quick_replies_preparing' => 'Preparing follow-up suggestions…',
     _ => null,
   };
 }
@@ -5148,12 +5177,12 @@ String? _visibleAgentStatusTitle(String? value) {
   };
   if (hidden.contains(normalized)) return null;
   return switch (normalized) {
-    'Cozymate 正在进入对话' => '我已经收到你的消息啦～',
-    '正在整理对话上下文' => '我已经收到你的消息啦～',
-    '已整理好相关信息' => '我先理解一下你的需求～',
-    'Cozymate 正在思考怎么帮你' => '我想一下',
-    '正在整理回复' => '我在组织回复～',
-    _ => normalized,
+    'Momcozy AI is joining the conversation' => 'I have your message.',
+    '正在整理对话上下文' => 'I have your message.',
+    '已整理好相关信息' => 'Let me understand what you need…',
+    'Momcozy AI is thinking about how to help' => 'Let me think…',
+    '正在整理回复' => 'Putting together a response…',
+    _ => containsUnsupportedAssistantText(normalized) ? null : normalized,
   };
 }
 

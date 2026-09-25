@@ -162,7 +162,7 @@ final momModuleRoutes = <GoRoute>[
         onManageBabies: () => context.push('/baby'),
         onPreconsult: (intake) => context.go(
           '/',
-          extra: {'agentPrefill': '我已完成咨询的信息采集，希望继续梳理这次咨询重点。'},
+          extra: {'agentPrefill': 'I\'ve completed my consultation intake. Can you help me prepare the key points to discuss?'},
         ),
       );
     },

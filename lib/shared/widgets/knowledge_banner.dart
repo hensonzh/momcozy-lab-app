@@ -88,7 +88,7 @@ class KnowledgeBanner extends StatelessWidget {
                             ),
                             child: Text(
                               splitTitle
-                                  ? article.title.replaceAll('，', '，\n')
+                                  ? article.title
                                   : article.title,
                               style: TextStyle(
                                 fontSize:
@@ -230,7 +230,7 @@ Future<void> showKnowledgeArticle(
   required KnowledgeArticle article,
   required String boundary,
   required VoidCallback onAsk,
-  String title = '每日知识',
+  String title = 'Daily insight',
   bool babyStyle = false,
   bool useMomStyle = false,
 }) => showDialog<void>(
@@ -329,7 +329,7 @@ Future<void> showKnowledgeArticle(
                     ),
                     if (useMomStyle)
                       IconButton(
-                        tooltip: '关闭',
+                        tooltip: 'Close',
                         onPressed: () => Navigator.pop(context),
                         icon: const Icon(
                           Icons.close,
@@ -352,7 +352,7 @@ Future<void> showKnowledgeArticle(
                                 MomCozyTypography.fontFamilyFallback,
                           ),
                         ),
-                        child: const Text('关闭'),
+                        child: const Text('Close'),
                       ),
                   ],
                 ),
@@ -506,7 +506,11 @@ Future<void> showKnowledgeArticle(
                             }
                             if (!opened && context.mounted) {
                               ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-                                const SnackBar(content: Text('暂时无法打开来源链接')),
+                                const SnackBar(
+                                  content: Text(
+                                    'Could not open the source link.',
+                                  ),
+                                ),
                               );
                             }
                           },
@@ -577,7 +581,7 @@ Future<void> showKnowledgeArticle(
                           children: [
                             Flexible(
                               child: Text(
-                                '问问 Cozymate',
+                                'Ask Momcozy AI',
                                 textAlign: TextAlign.center,
                                 style: MomHomeTokens.text(
                                   13,
@@ -614,7 +618,7 @@ Future<void> showKnowledgeArticle(
                               ),
                             ),
                             Text(
-                              '问问 Cozymate',
+                              'Ask Momcozy AI',
                               style: useMomStyle
                                   ? MomHomeTokens.text(
                                       13,

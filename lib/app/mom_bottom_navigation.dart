@@ -12,7 +12,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
   static const _tabs = [
     (label: 'Me', path: '/me', asset: 'ArtworkSoftMe.png'),
     (label: 'Baby', path: '/baby', asset: 'ArtworkSoftBaby.png'),
-    (label: 'Cozymate', path: '/', asset: 'AvatarCozymateNav.png'),
+    (label: 'Momcozy AI', path: '/', asset: 'AvatarCozymateNav.png'),
     (label: 'Schedule', path: '/schedule', asset: 'ArtworkColorSchedule.svg'),
     (label: 'More', path: '/more', asset: 'ArtworkColorMore.svg'),
   ];
@@ -41,18 +41,42 @@ class MomCozyBottomNavigation extends StatelessWidget {
       final width = constraints.maxWidth.clamp(0.0, MomCozyLayout.maxAppWidth);
       final itemWidth = (width - 16) / _tabs.length;
       final scaler = MediaQuery.textScalerOf(context);
-      final labelLines = scaler.scale(12) > 14.4 ? 2 : 1;
+      final compactLabels =
+          scaler.scale(1) > 1.3 &&
+          _tabs.any(
+            (tab) => tab.label.split(' ').any((word) {
+              final painter = TextPainter(
+                text: TextSpan(text: word, style: _labelStyle(tab.label, true)),
+                textDirection: Directionality.of(context),
+                textScaler: scaler,
+              )..layout();
+              final tooWide = painter.width > itemWidth - 2;
+              painter.dispose();
+              return tooWide;
+            }),
+          );
       var labelHeight = 16.0;
+      var selectedLabelWidth = itemWidth;
       for (final tab in _tabs) {
         final painter = TextPainter(
           text: TextSpan(text: tab.label, style: _labelStyle(tab.label, true)),
           textDirection: Directionality.of(context),
           textScaler: scaler,
-          maxLines: labelLines,
-        )..layout(maxWidth: itemWidth);
+        )..layout(maxWidth: compactLabels ? double.infinity : itemWidth);
         if (painter.height > labelHeight) labelHeight = painter.height;
+        if (tab.path == location && compactLabels) {
+          selectedLabelWidth = (painter.width + 12).clamp(
+            itemWidth,
+            width - 16,
+          );
+        }
         painter.dispose();
       }
+      final selectedIndex = _tabs.indexWhere((tab) => tab.path == location);
+      final selectedLabelLeft = selectedIndex < 0
+          ? 8.0
+          : (8 + itemWidth * (selectedIndex + .5) - selectedLabelWidth / 2)
+                .clamp(8.0, width - 8 - selectedLabelWidth);
       final extra = labelHeight - 16;
       final safeBottom = MediaQuery.paddingOf(context).bottom;
       // Reserve the raised avatar/shadow inside the hit region, so the entire
@@ -101,8 +125,8 @@ class MomCozyBottomNavigation extends StatelessWidget {
                               label: tab.label,
                               path: tab.path,
                               asset: tab.asset,
-                              labelLines: labelLines,
                               labelHeight: labelHeight,
+                              compactLabels: compactLabels,
                             ),
                           ),
                       ],
@@ -110,6 +134,24 @@ class MomCozyBottomNavigation extends StatelessWidget {
                   ),
                 ),
               ),
+              if (compactLabels && selectedIndex >= 0)
+                Positioned(
+                  top: 65,
+                  left: selectedLabelLeft,
+                  width: selectedLabelWidth,
+                  height: labelHeight,
+                  child: IgnorePointer(
+                    child: ExcludeSemantics(
+                      child: Text(
+                        _tabs[selectedIndex].label,
+                        key: const ValueKey('bottom-nav-selected-label'),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        style: _labelStyle(_tabs[selectedIndex].label, true),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -122,12 +164,13 @@ class MomCozyBottomNavigation extends StatelessWidget {
     required String label,
     required String path,
     required String asset,
-    required int labelLines,
     required double labelHeight,
+    required bool compactLabels,
   }) {
     final selected = location == path;
     final center = path == '/';
     return Semantics(
+      label: compactLabels ? label : null,
       selected: selected,
       button: true,
       child: InkWell(
@@ -192,18 +235,18 @@ class MomCozyBottomNavigation extends StatelessWidget {
                       ),
               ),
             ),
-            Positioned(
-              top: 65,
-              left: 0,
-              right: 0,
-              height: labelHeight,
-              child: Text(
-                label,
-                maxLines: labelLines,
-                textAlign: TextAlign.center,
-                style: _labelStyle(label, selected),
+            if (!compactLabels)
+              Positioned(
+                top: 65,
+                left: 0,
+                right: 0,
+                height: labelHeight,
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: _labelStyle(label, selected),
+                ),
               ),
-            ),
           ],
         ),
       ),

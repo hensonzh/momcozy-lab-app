@@ -20,8 +20,10 @@ const workspaceRoot = path.resolve(
 const backendRoot = path.join(workspaceRoot, "backend");
 const agentRoot = path.join(workspaceRoot, "agent");
 const resolvedAppRoot = path.join(workspaceRoot, "app");
-const backendEnv = path.join(backendRoot, "env", "compose.local.env");
-const agentEnv = path.join(agentRoot, "env", "compose.local.env");
+const backendEnv = path.join(backendRoot, "env", "local.env");
+const agentEnv = path.join(agentRoot, "env", "local.env");
+const legacyBackendEnv = path.join(backendRoot, "env", "compose.local.env");
+const legacyAgentEnv = path.join(agentRoot, "env", "compose.local.env");
 const dryRun = process.env.MOMCOZY_LOCAL_DEV_DRY_RUN === "1";
 const productUrl = (
   process.env.MOMCOZY_LOCAL_PRODUCT_URL || "http://127.0.0.1:8769"
@@ -56,9 +58,9 @@ Environment overrides:
 function validateWorkspace() {
   const required = [
     path.join(backendRoot, "docker-compose.local.yml"),
-    path.join(backendRoot, "env", "compose.local.env.example"),
+    path.join(backendRoot, "env", "local.env.example"),
     path.join(agentRoot, "docker-compose.local.yml"),
-    path.join(agentRoot, "env", "compose.local.env.example"),
+    path.join(agentRoot, "env", "local.env.example"),
   ];
   const missing = required.filter((item) => !existsSync(item));
   if (missing.length > 0) {
@@ -68,6 +70,21 @@ function validateWorkspace() {
         .join("\n")}`,
     );
   }
+}
+
+function migrateLegacyEnv(legacyPath, canonicalPath) {
+  if (!existsSync(legacyPath)) return;
+  if (existsSync(canonicalPath)) {
+    console.warn(
+      `WARN ignored legacy env still exists and is no longer used: ${path.relative(workspaceRoot, legacyPath)}`,
+    );
+    return;
+  }
+  renameSync(legacyPath, canonicalPath);
+  chmodSync(canonicalPath, 0o600);
+  console.log(
+    `Migrated ${path.relative(workspaceRoot, legacyPath)} -> ${path.relative(workspaceRoot, canonicalPath)}`,
+  );
 }
 
 function copyExampleIfMissing(destination) {
@@ -170,6 +187,8 @@ function requireEqual(backend, backendKey, agent, agentKey) {
 
 function initEnvironment() {
   validateWorkspace();
+  migrateLegacyEnv(legacyBackendEnv, backendEnv);
+  migrateLegacyEnv(legacyAgentEnv, agentEnv);
   copyExampleIfMissing(backendEnv);
   copyExampleIfMissing(agentEnv);
   synchronizeEnvDefaults(backendEnv);

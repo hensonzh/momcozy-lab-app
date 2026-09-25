@@ -57,7 +57,7 @@ void main() {
                 home: const Scaffold(
                   body: MediaViewerPage(
                     path: '/media-viewer',
-                    title: '媒体',
+                    title: 'Media',
                     summary: '',
                     icon: Icons.picture_as_pdf_outlined,
                     accent: MomCozyColors.primary,
@@ -104,8 +104,13 @@ void main() {
             ),
           );
         }
-        expect(find.text('第 1 / 2 页'), findsOneWidget);
-        for (final label in ['上一页', '下一页', '缩小文档', '放大文档']) {
+        expect(find.text('Page 1 of 2'), findsOneWidget);
+        for (final label in [
+          'Previous page',
+          'Next page',
+          'Zoom out',
+          'Zoom in',
+        ]) {
           final size = tester.getSize(find.byTooltip(label));
           expect(size.width, greaterThanOrEqualTo(44));
           expect(size.height, greaterThanOrEqualTo(44));
@@ -114,36 +119,36 @@ void main() {
           tester
               .widget<IconButton>(
                 find.byWidgetPredicate(
-                  (w) => w is IconButton && w.tooltip == '上一页',
+                  (w) => w is IconButton && w.tooltip == 'Previous page',
                 ),
               )
               .onPressed,
           isNull,
         );
-        await tester.tap(find.byTooltip('下一页'));
+        await tester.tap(find.byTooltip('Next page'));
         await tester.pumpAndSettle();
         expect(controller.pageNumber, 2);
-        expect(find.text('第 2 / 2 页'), findsOneWidget);
+        expect(find.text('Page 2 of 2'), findsOneWidget);
         await _capturePdf(tester, 'page-2', width, scale);
         expect(
           tester
               .widget<IconButton>(
                 find.byWidgetPredicate(
-                  (w) => w is IconButton && w.tooltip == '下一页',
+                  (w) => w is IconButton && w.tooltip == 'Next page',
                 ),
               )
               .onPressed,
           isNull,
         );
-        await tester.tap(find.byTooltip('上一页'));
+        await tester.tap(find.byTooltip('Previous page'));
         await tester.pumpAndSettle();
         expect(controller.pageNumber, 1);
         final originalZoom = controller.currentZoom;
-        await tester.tap(find.byTooltip('放大文档'));
+        await tester.tap(find.byTooltip('Zoom in'));
         await tester.pumpAndSettle();
         expect(controller.currentZoom, greaterThan(originalZoom));
         await _capturePdf(tester, 'zoomed', width, scale);
-        await tester.tap(find.byTooltip('缩小文档'));
+        await tester.tap(find.byTooltip('Zoom out'));
         await tester.pumpAndSettle();
         expect(controller.currentZoom, closeTo(originalZoom, .001));
         await _capturePdf(tester, 'reset', width, scale);

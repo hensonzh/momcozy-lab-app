@@ -48,8 +48,8 @@ void main() {
       expect(result.valueDegrees, closeTo(45, 0.2));
       expect(result.side, 'left');
       expect(result.classification, ForwardHeadClassification.forwardTendency);
-      expect(result.userMessage, isNot(contains('确诊')));
-      expect(result.userMessage, contains('当前画面'));
+      expect(result.userMessage, isNot(contains('diagnosis')));
+      expect(result.userMessage, contains('This view suggests'));
     },
   );
 

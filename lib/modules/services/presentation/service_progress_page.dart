@@ -98,8 +98,8 @@ class _ServiceProgressPageState extends State<ServiceProgressPage> {
             ? 96
             : 56,
         leadingWidth: MediaQuery.textScalerOf(context).scale(1) > 1.3 ? 88 : 72,
-        title: const Text('服务进度'),
-        leading: TextButton(onPressed: widget.onBack, child: const Text('返回')),
+        title: const Text('Service progress'),
+        leading: TextButton(onPressed: widget.onBack, child: const Text('Back')),
       ),
       body: ClipRect(
         child: SafeArea(
@@ -119,7 +119,7 @@ class _ServiceProgressPageState extends State<ServiceProgressPage> {
                   child: MomSettingsCard(
                     children: [
                       Text(
-                        '正在加载服务进度…',
+                        'Loading service progress…',
                         style: MomHomeTokens.text(16, weight: FontWeight.w700),
                       ),
                       const LinearProgressIndicator(),
@@ -142,11 +142,11 @@ class _ServiceProgressPageState extends State<ServiceProgressPage> {
                   child: MomSettingsCard(
                     children: [
                       Text(
-                        '暂时找不到这个服务包',
+                        'Could not find this package',
                         style: MomHomeTokens.text(16, weight: FontWeight.w700),
                       ),
                       Text(
-                        '服务信息可能已更新，请从妈妈主页重新进入。',
+                        'Your service details may have changed. Open it again from your home page.',
                         style: MomHomeTokens.text(
                           13,
                           color: MomHomeTokens.secondary,
@@ -154,7 +154,7 @@ class _ServiceProgressPageState extends State<ServiceProgressPage> {
                       ),
                       TextButton(
                         onPressed: widget.onBack,
-                        child: const Text('返回妈妈主页'),
+                        child: const Text('Back to home'),
                       ),
                     ],
                   ),

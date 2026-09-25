@@ -140,7 +140,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                           _AuthStep.verify =>
                             'Enter the code we sent to your email.',
                           _AuthStep.forgot =>
-                            'We’ll send a code to help you reset your password.',
+                            'We\'ll send a code to help you reset your password.',
                           _AuthStep.reset =>
                             'Choose a new password for your account.',
                         },

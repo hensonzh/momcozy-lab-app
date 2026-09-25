@@ -58,16 +58,26 @@ Future<void> verifyRoomOutcomes(
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(technical ? '视频连接未能继续' : '这次咨询未能开始'), findsOneWidget);
-    expect(find.widgetWithText(FilledButton, '重新预约'), findsOneWidget);
-    expect(find.text('查看咨询总结'), findsNothing);
-    expect(find.textContaining('本次未扣减咨询次数'), findsOneWidget);
+    expect(
+      find.text(
+        technical
+            ? 'Video connection could not continue'
+            : 'This consultation could not start',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.widgetWithText(FilledButton, 'Book another appointment'),
+      findsOneWidget,
+    );
+    expect(find.text('View consultation summary'), findsNothing);
+    expect(find.textContaining('No consultation was used'), findsOneWidget);
     await capture(technical ? 'technical-failure' : 'no-show');
-    await tester.ensureVisible(find.text('重新预约'));
-    await tester.tap(find.text('重新预约'));
+    await tester.ensureVisible(find.text('Book another appointment'));
+    await tester.tap(find.text('Book another appointment'));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('返回妈妈主页'));
-    await tester.tap(find.text('返回妈妈主页'));
+    await tester.ensureVisible(find.text('Back to home'));
+    await tester.tap(find.text('Back to home'));
     await tester.pumpAndSettle();
     expect(rebook, 1);
     expect(home, 1);

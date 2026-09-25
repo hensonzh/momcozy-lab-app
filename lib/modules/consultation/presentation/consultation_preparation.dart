@@ -75,13 +75,13 @@ class _ConsultationPreparationState extends State<ConsultationPreparation> {
     final countdown =
         '${two(seconds ~/ 3600)}:${two(seconds ~/ 60 % 60)}:${two(seconds % 60)}';
     final value = demo
-        ? '可提前进入'
+        ? 'You can join early'
         : past
-        ? '进入时间已过'
+        ? 'Join window has closed'
         : started
-        ? '已开始'
+        ? 'Started'
         : seconds >= 86400
-        ? '${seconds ~/ 86400}天 ${two(seconds ~/ 3600 % 24)}:${two(seconds ~/ 60 % 60)}'
+        ? '${seconds ~/ 86400} days ${two(seconds ~/ 3600 % 24)}:${two(seconds ~/ 60 % 60)}'
         : countdown;
     final color = past ? MomHomeTokens.secondary : MomHomeTokens.teal;
     final progress =
@@ -123,12 +123,12 @@ class _ConsultationPreparationState extends State<ConsultationPreparation> {
                   children: [
                     Text(
                       demo
-                          ? '测试模式'
+                          ? 'Test mode'
                           : past
-                          ? '咨询状态'
+                          ? 'Consultation status'
                           : started
-                          ? '咨询已开始'
-                          : '距离咨询',
+                          ? 'Consultation started'
+                          : 'Time until consultation',
                       style: MomHomeTokens.text(
                         12,
                         color: MomHomeTokens.secondary,
@@ -150,9 +150,9 @@ class _ConsultationPreparationState extends State<ConsultationPreparation> {
               ),
             ],
           ),
-          Text('开始前准备', style: MomHomeTokens.text(18, weight: FontWeight.w700)),
+          Text('Before you join', style: MomHomeTokens.text(18, weight: FontWeight.w700)),
           Text(
-            '开始前请确认当前所在州，并确保摄像头与麦克风可用。',
+            'Confirm your current state and make sure your camera and microphone work before joining.',
             style: MomHomeTokens.text(
               13,
               color: MomHomeTokens.secondary,
@@ -162,41 +162,41 @@ class _ConsultationPreparationState extends State<ConsultationPreparation> {
           if (!data.intakeReady || !data.caseConsent)
             _note(
               data.intakeReady
-                  ? '请确认向本次 IBCLC 共享资料。'
-                  : '开始前请先完成信息采集，让 IBCLC 了解你的喂养情况。',
+                  ? 'Confirm that your IBCLC may view the information for this consultation.'
+                  : 'Complete your intake form first so your IBCLC can understand your feeding situation.',
               action: TextButton(
                 onPressed: widget.busy ? null : widget.onIntake,
-                child: const Text('查看信息采集表'),
+                child: const Text('View intake form'),
               ),
             ),
           if (data.videoProvider == VideoProvider.disabled)
-            _note('视频咨询暂未开放，请稍后再试。'),
+            _note('Video consultations are not available yet. Try again later.'),
           if (past)
             _note(
-              '本次预约的进入时间已过，可以重新安排。',
+              'The join window for this appointment has closed. You can reschedule.',
               action: TextButton(
                 onPressed: widget.busy ? null : widget.onRebook,
-                child: const Text('重新预约'),
+                child: const Text('Book another appointment'),
               ),
             ),
           FilledButton(
             onPressed: ready ? widget.onStart : null,
             child: Text(
               widget.busy
-                  ? '请稍候…'
+                  ? 'Please wait…'
                   : data.active
-                  ? '重新进入咨询室'
-                  : '开始咨询',
+                  ? 'Rejoin consultation room'
+                  : 'Start consultation',
             ),
           ),
           if (widget.onCancel != null)
             OutlinedButton(
               onPressed: widget.busy ? null : widget.onCancel,
-              child: const Text('取消预约'),
+              child: const Text('Cancel appointment'),
             ),
           if (!open && now.isBefore(data.opensAt))
             Text(
-              '咨询室于 ${appointmentDay(data.opensAt, appointment.timezone)} ${zonedClock(data.opensAt, appointment.timezone)} 开放',
+              'The consultation room opens ${appointmentDay(data.opensAt, appointment.timezone)} at ${zonedClock(data.opensAt, appointment.timezone)}',
               style: MomHomeTokens.text(
                 12,
                 color: MomHomeTokens.secondary,
@@ -206,8 +206,8 @@ class _ConsultationPreparationState extends State<ConsultationPreparation> {
           if (data.videoProvider == VideoProvider.sandbox || demo)
             Text(
               data.videoProvider == VideoProvider.sandbox
-                  ? '当前为模拟咨询，不传输远程音视频。'
-                  : '测试模式允许提前进入咨询。',
+                  ? 'This is a simulated consultation. Remote audio and video are not transmitted.'
+                  : 'Test mode lets you join early.',
               style: MomHomeTokens.text(
                 12,
                 color: MomHomeTokens.secondary,

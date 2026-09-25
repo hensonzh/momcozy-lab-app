@@ -33,8 +33,8 @@ void main() {
         );
         for (final copy in [
           'Your saved notes will appear here.',
-          '网络未连接，请连接后重试',
-          '这次填写的内容仍然保留。',
+          'You\'re offline. Connect and try again.',
+          'Your entries are still here.',
           'Loading records',
         ]) {
           final paragraph = tester.renderObject<RenderParagraph>(

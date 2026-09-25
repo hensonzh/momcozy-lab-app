@@ -6,7 +6,8 @@ import 'package:momcozy_flutter_app/services/consultations/consultation_media.da
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import '../modules/consultation/room_test_support.dart';
 
-const leaveFailureCopy = '暂时无法离开咨询室，请再次点击离开房间重试。';
+const leaveFailureCopy =
+    'Could not leave the consultation room. Tap Leave Room again to try.';
 
 class RetryDisconnectMedia extends TestConsultationMedia {
   @override
@@ -59,8 +60,8 @@ Future<void> verifyRoomLeaveRecovery(
     await tester.pumpAndSettle();
   }
 
-  await click('离开房间');
-  await click('暂时离开');
+  await click('Leave room');
+  await click('Leave for now');
   expect(tester.takeException(), isNull);
   expect(returned, 0);
   expect(controller.inRoom, isTrue);
@@ -79,9 +80,9 @@ Future<void> verifyRoomLeaveRecovery(
   await tester.ensureVisible(find.text(leaveFailureCopy));
   await tester.pumpAndSettle();
   await capture('failure');
-  await click('离开房间');
+  await click('Leave room');
   await capture('retry-confirmation');
-  await click('暂时离开');
+  await click('Leave for now');
   expect(returned, 1);
   expect(media.attempts, 2);
   expect(controller.inRoom, isFalse);

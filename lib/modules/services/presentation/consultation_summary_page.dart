@@ -13,10 +13,10 @@ import '../../../shared/design_system/mom_settings_theme.dart';
 import '../../../shared/widgets/mom_settings_widgets.dart';
 
 const careTaskStatusLabels = <CareTaskStatus, String>{
-  CareTaskStatus.pending: '待完成',
-  CareTaskStatus.inProgress: '进行中',
-  CareTaskStatus.completed: '已完成',
-  CareTaskStatus.skipped: '暂时跳过',
+  CareTaskStatus.pending: 'To do',
+  CareTaskStatus.inProgress: 'In progress',
+  CareTaskStatus.completed: 'Completed',
+  CareTaskStatus.skipped: 'Skip for now',
 };
 
 class ConsultationSummaryPage extends StatefulWidget {
@@ -78,11 +78,11 @@ class _ConsultationSummaryPageState extends State<ConsultationSummaryPage>
             : 64,
         centerTitle: false,
         title: Text(
-          '本次咨询总结',
+          'Consultation summary',
           style: MomHomeTokens.text(20, weight: FontWeight.w700),
         ),
         leading: IconButton(
-          tooltip: '返回',
+          tooltip: 'Back',
           onPressed: widget.onBack,
           icon: const Icon(Icons.chevron_left),
           color: MomHomeTokens.rose,
@@ -99,8 +99,9 @@ class _ConsultationSummaryPageState extends State<ConsultationSummaryPage>
               children: [
                 if (controller.loading && controller.data == null)
                   const SummaryStateCard(
-                    title: '正在读取本次咨询总结',
-                    description: '请稍候，不需要重复操作。',
+                    title: 'Loading consultation summary',
+                    description:
+                        'Please wait. You do not need to repeat this action.',
                     loading: true,
                   )
                 else if (controller.loading || controller.busy)
@@ -108,11 +109,12 @@ class _ConsultationSummaryPageState extends State<ConsultationSummaryPage>
                 if (controller.failure case final failure?)
                   if (controller.data == null)
                     SummaryStateCard(
-                      title: '暂时无法读取总结',
-                      description: '请重新加载，核对最新的咨询总结。',
+                      title: 'Could not load summary',
+                      description:
+                          'Reload to see the latest consultation summary.',
                       action: OutlinedButton(
                         onPressed: controller.busy ? null : controller.retry,
-                        child: const Text('重新加载'),
+                        child: const Text('Reload'),
                       ),
                     )
                   else
@@ -125,12 +127,15 @@ class _ConsultationSummaryPageState extends State<ConsultationSummaryPage>
                       ),
                     ),
                 if (controller.failure?.code == 'plan_superseded')
-                  Text('专家发布了新方案，请重新载入后继续。', style: MomHomeTokens.text(13)),
+                  Text(
+                    'Your consultant published a new plan. Reload to continue.',
+                    style: MomHomeTokens.text(13),
+                  ),
                 if (controller.uncertain)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     child: Text(
-                      '反馈结果尚未确认，请重试这次更新。',
+                      'Your feedback has not been confirmed. Try updating it again.',
                       style: MomHomeTokens.text(13),
                     ),
                   ),
@@ -172,8 +177,8 @@ class _ConsultationSummaryPageState extends State<ConsultationSummaryPage>
           child: Theme(
             data: momSettingsTheme(Theme.of(context)),
             child: MomSettingsFlowDialog(
-              title: task?.content.title ?? '方案已更新',
-              closeLabel: '关闭行动详情',
+              title: task?.content.title ?? 'Plan updated',
+              closeLabel: 'Close action details',
               onClose: controller.busy ? null : () => Navigator.pop(context),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -189,7 +194,7 @@ class _ConsultationSummaryPageState extends State<ConsultationSummaryPage>
                       color: MomHomeTokens.mint,
                       children: [
                         Text(
-                          '${task.content.category} · ${task.content.dueLabel}',
+                          '${task.content.displayCategory} · ${task.content.displayDueLabel}',
                           style: MomHomeTokens.text(
                             12,
                             color: MomHomeTokens.secondary,
@@ -197,7 +202,7 @@ class _ConsultationSummaryPageState extends State<ConsultationSummaryPage>
                         ),
                         if (task.content.scheduledDate != null)
                           Text(
-                            '安排日期：${task.content.scheduledDate}',
+                            'Scheduled date: ${task.content.scheduledDate}',
                             style: MomHomeTokens.text(
                               12,
                               color: MomHomeTokens.secondary,
@@ -207,7 +212,7 @@ class _ConsultationSummaryPageState extends State<ConsultationSummaryPage>
                     ),
                     const SizedBox(height: 14),
                     Text(
-                      '我的进度',
+                      'My progress',
                       style: MomHomeTokens.text(14, weight: FontWeight.w700),
                     ),
                     const SizedBox(height: 14),
@@ -291,7 +296,7 @@ class _ConsultationSummaryPageState extends State<ConsultationSummaryPage>
                     ),
                   ] else
                     Text(
-                      '当前行动可能已调整，请关闭后查看最新总结。',
+                      'This action may have changed. Close it to review the latest summary.',
                       style: MomHomeTokens.text(13, height: 1.55),
                     ),
                   if (controller.busy)
@@ -303,7 +308,7 @@ class _ConsultationSummaryPageState extends State<ConsultationSummaryPage>
                     Padding(
                       padding: const EdgeInsets.only(top: 14),
                       child: Text(
-                        '反馈结果尚未确认，请重试这次更新。',
+                        'Your feedback has not been confirmed. Try updating it again.',
                         style: MomHomeTokens.text(13, height: 1.55),
                       ),
                     ),

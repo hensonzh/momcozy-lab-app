@@ -78,7 +78,7 @@ Future<void> showReportSource(
                 if (source.truncated)
                   const Padding(
                     padding: EdgeInsets.only(top: 16),
-                    child: Text('这条来源较长，此处保留了部分内容。'),
+                    child: Text('This source is long. Only an excerpt is shown here.'),
                   ),
               ],
             ),
@@ -88,7 +88,7 @@ Future<void> showReportSource(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('关闭'),
+          child: const Text('Close'),
         ),
       ],
     ),
@@ -155,7 +155,7 @@ class ReportFindings extends StatelessWidget {
                                 Icons.description_outlined,
                                 size: 14,
                               ),
-                              label: const Text('查看来源'),
+                              label: const Text('View source'),
                             ),
                           ],
                         ),
@@ -173,7 +173,7 @@ class ReportDialogueList extends StatelessWidget {
   @override
   Widget build(BuildContext context) => report.dialogues.isEmpty
       ? const Text(
-          '这个时间范围内暂无可分享的完整服务对话。',
+          'No complete service conversations are available to share for this period.',
           style: TextStyle(color: MomCozyColors.mutedForeground),
         )
       : Column(
@@ -191,7 +191,7 @@ class ReportDialogueList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '用户问题 ${(index + 1).toString().padLeft(2, '0')} · ${zonedClock(report.dialogues[index].questionAt, report.timezone)}',
+                      'Client question ${(index + 1).toString().padLeft(2, '0')} · ${zonedClock(report.dialogues[index].questionAt, report.timezone)}',
                       style: const TextStyle(
                         color: MomCozyColors.mutedForeground,
                         fontSize: 12,
@@ -209,7 +209,7 @@ class ReportDialogueList extends StatelessWidget {
                     ),
                     const Divider(height: 30),
                     const Text(
-                      '智能体回答',
+                      'AI response',
                       style: TextStyle(fontSize: 12, color: MomCozyColors.care),
                     ),
                     const SizedBox(height: 8),
@@ -223,7 +223,7 @@ class ReportDialogueList extends StatelessWidget {
                       const Padding(
                         padding: EdgeInsets.only(top: 12),
                         child: Text(
-                          '对话较长，显示的是原文摘录。',
+                          'This conversation is long. An excerpt from the original is shown.',
                           style: TextStyle(
                             fontSize: 12,
                             color: MomCozyColors.mutedForeground,

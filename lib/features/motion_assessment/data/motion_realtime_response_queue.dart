@@ -4,9 +4,9 @@ import 'dart:collection';
 typedef MotionRealtimeEventSender =
     Future<void> Function(Map<String, Object?> event);
 
-const _cozyMateIdentityInstructions =
-    '你始终以 CozyMate 的同一身份回应用户，延续 App 主对话中温和、自然、直接的语气。'
-    '不要自称独立教练，也不要提及内部模型、智能体分工、角色切换或结果交接。';
+const _momcozyAiIdentityInstructions =
+    'Keep the same Momcozy AI identity as the main app conversation, with a warm, natural, and direct tone. '
+    'Do not introduce yourself as a separate coach or mention internal models, agent roles, role changes, or handoffs.';
 
 class MotionRealtimeResponseQueue {
   MotionRealtimeResponseQueue({required this.sendEvent});
@@ -131,14 +131,13 @@ class MotionRealtimeResponseQueue {
     final createEventId = _nextClientEventId('response-create');
     _activeCreateEventId = createEventId;
     final responseInstructions = next.exactSpeech
-        ? '请只说下面这句中文，不要添加其他内容：${next.instructions}'
+        ? 'Say only the following line in English. Do not add anything: ${next.instructions}'
         : next.modelTurn
-        ? '默认使用简体中文回答；只有用户明确要求使用其他语言时才切换。'
-              '不要因为口音、语气词或孤立的外语词切换语言。'
-              '所有开场、动作指导、工具提示和结果保持同一语言。\n'
+        ? 'Use English for every response, even if the user asks for another language. '
+              'Keep introductions, movement guidance, tool updates, and results in English.\n'
               '${next.instructions}'
-        : '请用自然、简短的中文表达下面这条过程指导。保持事实和动作要求不变，'
-              '不要逐字朗读提示词，不要添加诊断或新的要求：${next.instructions}';
+        : 'Express this process guidance in natural, concise English. Preserve the facts and required action. '
+              'Do not read the prompt verbatim, add a diagnosis, or introduce new requirements: ${next.instructions}';
     try {
       await sendEvent({
         'event_id': createEventId,
@@ -146,7 +145,7 @@ class MotionRealtimeResponseQueue {
         'response': {
           'output_modalities': ['audio'],
           'instructions':
-              '$_cozyMateIdentityInstructions\n$responseInstructions',
+              '$_momcozyAiIdentityInstructions\n$responseInstructions',
         },
       });
     } catch (_) {
