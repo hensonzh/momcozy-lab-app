@@ -23,6 +23,24 @@ void main() {
     );
   });
 
+  test('personalizes the introduction with names in the user language', () {
+    for (final name in ['小美', 'さくら', 'Μαρία', 'מיכל', 'แม่']) {
+      final profile = AgentHubGreetingProfile(displayName: name, age: 29);
+      expect(
+        agentHubGreetingForProfile(profile),
+        agentHubDefaultGreeting.replaceFirst('Hi,', 'Hi $name,'),
+      );
+      expect(profile.displayName, name);
+    }
+  });
+
+  test('retired brand in a name does not appear in the greeting', () {
+    for (final name in ['Cozymate', 'Cozy Mate']) {
+      final profile = AgentHubGreetingProfile(displayName: name, age: 29);
+      expect(agentHubGreetingForProfile(profile), agentHubDefaultGreeting);
+    }
+  });
+
   test('missing names omit the name placeholder', () {
     for (final profile in [
       null,

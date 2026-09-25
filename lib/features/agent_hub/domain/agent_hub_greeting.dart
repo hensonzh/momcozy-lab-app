@@ -26,8 +26,18 @@ class AgentHubGreetingProfile {
 typedef AgentHubGreetingProfileLoader =
     Future<AgentHubGreetingProfile?> Function();
 
+// Keep the former product name out of generated greetings. User names in
+// any language are otherwise preserved.
+final _unsupportedGreetingName = RegExp(
+  r'cozy[\s-]*mate',
+  caseSensitive: false,
+  unicode: true,
+);
+
 String agentHubGreetingForProfile(AgentHubGreetingProfile? profile) {
   final name = profile?.displayName.trim() ?? '';
-  if (name.isEmpty) return agentHubDefaultGreeting;
+  if (name.isEmpty || _unsupportedGreetingName.hasMatch(name)) {
+    return agentHubDefaultGreeting;
+  }
   return 'Hi $name, I\'m Momcozy AI. It\'s lovely to meet you.\n\n$_agentHubIntroductionBody';
 }
