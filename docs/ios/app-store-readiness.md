@@ -1,6 +1,8 @@
 # momcozy AI — iOS App Store readiness
 
-Last verified: 2026-09-25
+Last verified: 2026-09-25 (historical pre-upload snapshot)
+
+> **2026-09-26 update:** Build 59 has been uploaded, but external TestFlight review and the public link have not been completed. Read [`testflight-staging-build-59-handoff.md`](testflight-staging-build-59-handoff.md) first; the "no signed build or TestFlight upload" assertions below are historical and must not be used as current status.
 
 ## Scope
 
