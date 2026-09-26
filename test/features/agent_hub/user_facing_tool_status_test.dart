@@ -5,16 +5,16 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dar
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 
 void main() {
-  testWidgets(
-    'without a tool status, the app supplies only one thinking line',
-    (tester) async {
-      await tester.pumpWidget(
-        _host(const AgentStreamRunState(phase: AgentStreamRunPhase.streaming)),
-      );
-      expect(find.text('Thinking…'), findsOneWidget);
-      expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
-    },
-  );
+  testWidgets('without a tool status, the app does not invent thinking text', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(const AgentStreamRunState(phase: AgentStreamRunPhase.streaming)),
+    );
+    expect(find.text('Thinking…'), findsNothing);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
+  });
 
   testWidgets(
     'tool outcome stays visible through a model progress event, then hides on first text',
