@@ -15,6 +15,38 @@ AgentWorkStatusProjection projectAgentWorkStatus(
   Duration completedHold = agentCompletedStatusHold,
 }) {
   final currentTime = (now ?? DateTime.now()).toUtc();
+  AgentStreamEvent? latestToolStatus;
+  for (final event in events) {
+    if (_isTerminalEvent(event)) {
+      return const AgentWorkStatusProjection(isTerminal: true);
+    }
+    if (event.toolStatusOutcome != null) {
+      latestToolStatus = event;
+      continue;
+    }
+    final outcome = switch (event.type) {
+      'tool.failed' || 'tool.blocked' => 'failure',
+      _ => null,
+    };
+    if (outcome == null ||
+        latestToolStatus?.toolStatusOutcome != 'running' ||
+        latestToolStatus?.toolStatusCallId !=
+            stringField(event.payload, 'call_id')) {
+      continue;
+    }
+    final confirmed = latestToolStatus!;
+    latestToolStatus = AgentStreamEvent({
+      ...confirmed.raw,
+      'payload': {...confirmed.payload, 'outcome': outcome},
+    });
+  }
+  if (latestToolStatus != null) {
+    return AgentWorkStatusProjection(
+      isTerminal: false,
+      statusEvent: latestToolStatus,
+    );
+  }
+
   final latestByMergeKey = <String, _IndexedSemanticEvent>{};
   var index = 0;
 

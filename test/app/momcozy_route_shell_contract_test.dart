@@ -10,6 +10,43 @@ import 'package:momcozy_flutter_app/app/baby_module_routes.dart';
 import '../support/fixture_reader.dart';
 
 void main() {
+  testWidgets('primary tabs do not jump when the keyboard appears', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    tester.view.padding = const FakeViewPadding(bottom: 34);
+    tester.view.viewPadding = const FakeViewPadding(bottom: 34);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPadding);
+    addTearDown(tester.view.resetViewPadding);
+    addTearDown(tester.view.resetViewInsets);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: MomCozyRouteShell(
+          location: '/',
+          child: TextField(key: ValueKey('nav-keyboard-input')),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final nav = find.byType(MomCozyBottomNavigation);
+    final selectedTab = find.byKey(const ValueKey('bottom-nav-momcozy ai'));
+    final initialTop = tester.getTopLeft(selectedTab).dy;
+    final initialHeight = tester.getSize(nav).height;
+
+    await tester.tap(find.byKey(const ValueKey('nav-keyboard-input')));
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+    tester.view.padding = FakeViewPadding.zero;
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(selectedTab).dy, initialTop);
+    expect(tester.getSize(nav).height, initialHeight);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('primary navigation is hidden on secondary pages', (
     tester,
   ) async {
@@ -106,8 +143,6 @@ void main() {
 
 const _documentedRoutePaths = {
   '/privacy',
-  '/services/renew',
-  '/services/episodes/:episodeId/renew',
   '/',
   '/me',
   '/baby',
@@ -119,6 +154,5 @@ const _documentedRoutePaths = {
 const _routeIntentFixtures = [
   'agent_artifact_and_feature_navigation_intents.json',
   'malformed_and_unknown_route_fallbacks.json',
-  'media_viewer_and_ibclc_return_intents.json',
   'pump_notification_intents.json',
 ];

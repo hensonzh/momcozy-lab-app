@@ -78,6 +78,49 @@ class AgentStreamEvent {
     return const {};
   }
 
+  String? get toolStatusCallId {
+    if (type != 'run.progress' ||
+        stringField(payload, 'phase') != 'tool_status') {
+      return null;
+    }
+    final callId = stringField(payload, 'call_id')?.trim();
+    return callId == null || callId.isEmpty ? null : callId;
+  }
+
+  String? get toolStatusOutcome {
+    if (type != 'run.progress' ||
+        stringField(payload, 'phase') != 'tool_status') {
+      return null;
+    }
+    final outcome = stringField(payload, 'outcome');
+    if (toolStatusCallId == null ||
+        !const {'running', 'success', 'failure'}.contains(outcome)) {
+      return null;
+    }
+    return outcome;
+  }
+
+  String? get userFacingStatus {
+    final outcome = toolStatusOutcome;
+    if (outcome == null) return null;
+    final status = payload['user_facing_status'];
+    if (status is! Map) return null;
+    final text = status[outcome];
+    if (text is! String) return null;
+    final normalized = text.trim();
+    if (normalized.isEmpty ||
+        normalized.contains(RegExp(r'[\r\n]')) ||
+        normalized.contains(
+          RegExp(
+            r'\b(?:api|database|endpoint|function|tool|error[_ -]?code|json|sql)\b|[a-z][a-z0-9]*(?:_[a-z0-9]+)+',
+            caseSensitive: false,
+          ),
+        )) {
+      return null;
+    }
+    return normalized;
+  }
+
   String? get semanticLabel =>
       stringField(semantic, 'label') ?? stringField(semantic, 'title');
   String? get semanticSurface => stringField(semantic, 'surface');

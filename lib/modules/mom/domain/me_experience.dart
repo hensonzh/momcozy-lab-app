@@ -1,7 +1,7 @@
 enum MeMetric {
   feed('Feeding', 'Feed'),
-  energy('Energy today', 'Energy'),
-  sleep('Sleep last night', 'Sleep'),
+  energy('Energy', 'Energy'),
+  sleep('Sleep', 'Sleep'),
   mood('Mood today', 'Mood'),
   pump('Pumping', 'Pump'),
   pain('Feeding pain', 'Pain'),
@@ -24,7 +24,6 @@ enum MeIssue {
   feeding('Feeding or latching has been difficult', [
     MeMetric.feed,
     MeMetric.latch,
-    MeMetric.bottle,
   ]),
   intake('Worried my baby is not getting enough', [
     MeMetric.feed,
@@ -32,16 +31,8 @@ enum MeIssue {
     MeMetric.weight,
   ]),
   supply('Concerned about my milk supply', [MeMetric.feed, MeMetric.pump]),
-  work('Preparing to return to work', [
-    MeMetric.pump,
-    MeMetric.storage,
-    MeMetric.bottle,
-  ]),
-  other('Something else / Not sure yet', [
-    MeMetric.energy,
-    MeMetric.sleep,
-    MeMetric.mood,
-  ]);
+  work('Preparing to return to work', [MeMetric.pump]),
+  other('Something else / Not sure yet', [MeMetric.energy, MeMetric.sleep]);
 
   const MeIssue(this.label, this.metrics);
   final String label;
@@ -97,31 +88,104 @@ class MeObservation {
   final DateTime occurredAt;
   final Map<String, Object?> fields;
 
-  // Older observations store selected Chinese choice labels as values. Keep
-  // their wire format intact while showing the same choices in English.
-  String get displayValue =>
-      const <String, String>{
-        '有力气': 'Energized',
-        '还撑得住': 'Managing',
-        '很疲惫': 'Exhausted',
-        '少于 3 小时': 'Less than 3 hours',
-        '3–4 小时': '3–4 hours',
-        '4–5 小时': '4–5 hours',
-        '5–6 小时': '5–6 hours',
-        '6 小时以上': 'Over 6 hours',
-        '不确定': 'Not sure',
-        '不太好': 'Having a hard day',
-        '一般': 'Okay',
-        '不错': 'Good',
-        '含得稳': 'Stayed latched',
-        '容易松开': 'Came off easily',
-        '含不住': 'Could not latch',
-        '愿意吃': 'Fed willingly',
-        '愿意吃一些': 'Took some',
-        '不太愿意': 'Reluctant',
-        '不愿意吃': 'Refused',
-      }[value] ??
-      value;
+  // Older observations store Chinese choice labels and can contain stale
+  // free-form value copy. Preserve the wire data and derive only safe labels.
+  String get displayValue {
+    final translated = const <String, String>{
+      '有力气': 'Energized',
+      '还撑得住': 'Managing',
+      '很疲惫': 'Exhausted',
+      '少于 3 小时': 'Less than 3 hours',
+      '3–4 小时': '3–4 hours',
+      '4–5 小时': '4–5 hours',
+      '5–6 小时': '5–6 hours',
+      '6 小时以上': 'Over 6 hours',
+      '不确定': 'Not sure',
+      '不太好': 'Having a hard day',
+      '一般': 'Okay',
+      '不错': 'Good',
+      '含得稳': 'Stayed latched',
+      '容易松开': 'Came off easily',
+      '含不住': 'Could not latch',
+      '愿意吃': 'Fed willingly',
+      '愿意吃一些': 'Took some',
+      '不太愿意': 'Reluctant',
+      '不愿意吃': 'Refused',
+    }[value];
+    final display = translated ?? value;
+    const unreviewed = 'Review saved record';
+    switch (kind) {
+      case MeMetric.energy:
+        return const {
+              'Energized',
+              'Managing',
+              'Exhausted',
+              'Doing well',
+              'Getting by',
+              'Feeling worn down',
+              'Worn down',
+            }.contains(display)
+            ? display
+            : unreviewed;
+      case MeMetric.sleep:
+        return const {
+              'Less than 3 hours',
+              '3–4 hours',
+              '4–5 hours',
+              '5–6 hours',
+              'Over 6 hours',
+              'Not sure',
+            }.contains(display)
+            ? display
+            : unreviewed;
+      case MeMetric.mood:
+        return const {'Having a hard day', 'Okay', 'Good'}.contains(display)
+            ? display
+            : unreviewed;
+      case MeMetric.latch:
+        return const {
+              'Stayed latched',
+              'Came off easily',
+              'Could not latch',
+            }.contains(display)
+            ? display
+            : unreviewed;
+      case MeMetric.bottle:
+        return const {
+              'Fed willingly',
+              'Took some',
+              'Reluctant',
+              'Refused',
+            }.contains(display)
+            ? display
+            : unreviewed;
+      case MeMetric.pain:
+        if (RegExp(r'^(?:[0-9]|10) / 10$').hasMatch(value)) return value;
+        final pain = fields['pain'];
+        return pain is int && pain >= 0 && pain <= 10
+            ? '$pain / 10'
+            : unreviewed;
+      case MeMetric.pump:
+      case MeMetric.storage:
+        if (RegExp(r'^\d+(?:\.\d+)? ml$').hasMatch(value)) return value;
+        final volume = fields['volume_ml'];
+        return volume is num && volume.isFinite && volume > 0
+            ? '$volume ml'
+            : unreviewed;
+      case MeMetric.feed:
+        return RegExp(r'^(?:\d+(?:\.\d+)?|—) (?:min|ml)$').hasMatch(value)
+            ? value
+            : unreviewed;
+      case MeMetric.diaper:
+        return RegExp(r'^\d+ (?:time|times|diaper changes)$').hasMatch(value)
+            ? value
+            : unreviewed;
+      case MeMetric.weight:
+        return RegExp(r'^\d+(?:\.\d+)? kg$').hasMatch(value)
+            ? value
+            : unreviewed;
+    }
+  }
 
   Map<String, Object?> toJson() => {
     'id': id,
@@ -158,7 +222,6 @@ class MeState {
       MeMetric.feed,
       MeMetric.energy,
       MeMetric.sleep,
-      MeMetric.mood,
       ...metricsFor(active.expand((e) => e.issues)),
     };
     return [

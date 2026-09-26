@@ -14,9 +14,7 @@ void main() {
   setUpAll(loadMomCozyTestFonts);
   for (final width in [320.0, 390.0, 430.0]) {
     for (final scale in [1.0, 2.0]) {
-      testWidgets('More navigation and privacy at $width / $scale', (
-        tester,
-      ) async {
+      testWidgets('More account layout at $width / $scale', (tester) async {
         tester.view.physicalSize = Size(width, 844);
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.resetPhysicalSize);
@@ -40,24 +38,19 @@ void main() {
               path: '/more',
               builder: (context, state) => MomCozyRuntimeScope(
                 apiRuntime: runtime,
-                child: const Scaffold(
-                  body: SafeArea(child: MorePage(onLogout: null)),
-                  bottomNavigationBar: MomCozyBottomNavigation(
+                child: Scaffold(
+                  body: SafeArea(
+                    child: MorePage(
+                      onLogout: null,
+                      onDeleteAccount: () async {},
+                    ),
+                  ),
+                  bottomNavigationBar: const MomCozyBottomNavigation(
                     location: '/more',
                   ),
                 ),
               ),
             ),
-            for (final path in [
-              '/account',
-              '/notifications',
-              '/services',
-              '/privacy',
-            ])
-              GoRoute(
-                path: path,
-                builder: (_, _) => Scaffold(body: Text(path)),
-              ),
           ],
         );
         addTearDown(router.dispose);
@@ -77,10 +70,7 @@ void main() {
         await tester.pumpAndSettle();
         final context = tester.element(find.byType(MorePage));
         await tester.runAsync(() async {
-          for (final asset in [
-            MomCozyAssets.agentAvatar,
-            'assets/images/mom_home/expert_group.png',
-          ]) {
+          for (final asset in [MomCozyAssets.agentAvatar]) {
             await precacheImage(AssetImage(asset), context);
           }
         });
@@ -96,31 +86,18 @@ void main() {
         }
         expect(find.text('Mia Chen'), findsOneWidget);
         expect(find.text('mia@example.test'), findsOneWidget);
-        final privacy = find.text('Privacy');
-        await tester.scrollUntilVisible(privacy, 240);
-        await tester.pumpAndSettle();
-        await tester.tap(privacy);
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        expect(find.text('/privacy'), findsOneWidget);
-        router.go('/more');
-        await tester.pumpAndSettle();
-        for (final entry in {
-          'Account settings': '/account',
-          'Notifications': '/notifications',
-          'Expert support': '/services',
-        }.entries) {
-          await tester.scrollUntilVisible(
-            find.text(entry.key),
-            entry.key == 'Account settings' ? -240 : 240,
-          );
-          await tester.pumpAndSettle();
-          await tester.tap(find.text(entry.key));
-          await tester.pumpAndSettle();
-          expect(find.text(entry.value), findsOneWidget);
-          router.go('/more');
-          await tester.pumpAndSettle();
+        expect(find.text('Privacy'), findsNothing);
+        for (final removed in [
+          'Account settings',
+          'Notifications',
+          'Expert support',
+          'Everyday settings',
+          'Expert care',
+        ]) {
+          expect(find.text(removed), findsNothing);
         }
+        expect(find.byKey(const ValueKey('account-delete')), findsOneWidget);
+        expect(find.text('Request account deletion'), findsOneWidget);
         await tester.pumpWidget(const SizedBox());
       });
     }

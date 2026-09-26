@@ -4,14 +4,6 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.d
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 
 void main() {
-  test('workbench retains its existing typography', () {
-    final theme = momCozyTheme(isWorkbench: true);
-    expect(theme.textTheme.headlineMedium?.fontSize, 26);
-    expect(theme.textTheme.headlineMedium?.fontFamily, 'DMSans');
-    expect(theme.textTheme.headlineMedium?.height, 1.43);
-    expect(theme.appBarTheme.titleTextStyle?.fontSize, 22);
-    expect(theme.dialogTheme.titleTextStyle?.fontSize, 22);
-  });
   test(
     'all native control families inherit the current Me visual language',
     () {

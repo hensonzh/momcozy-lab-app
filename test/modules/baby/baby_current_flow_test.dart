@@ -59,6 +59,13 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
+          expect(find.text('Girl · 3 weeks'), findsOneWidget);
+          if (width == 320 && scale == 2) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile('goldens/final-home-320-2x.png'),
+            );
+          }
           expect(find.textContaining('History'), findsNothing);
           expect(find.text('View all records'), findsNothing);
           expect(find.text('Sleep'), findsNothing);
@@ -85,6 +92,12 @@ void main() {
           await tester.tap(find.text('Luna'));
           await tester.pumpAndSettle();
           expect(find.text('Luna  · Current'), findsOneWidget);
+          if (width == 320 && scale == 2) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile('goldens/final-switcher-320-2x.png'),
+            );
+          }
           await tester.tapAt(const Offset(4, 4));
           await tester.pumpAndSettle();
           expect(find.text('Switch baby'), findsNothing);
@@ -169,6 +182,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(save().onPressed, isNull);
       await tester.tap(find.text('Breast milk'));
+      await tester.pump();
+      expect(save().onPressed, isNull);
+      await tester.enterText(
+        find.byKey(const ValueKey('feeding-volume')),
+        '90',
+      );
       await tester.pump();
       expect(save().onPressed, isNotNull);
       await tester.tap(find.text('Nursing'));

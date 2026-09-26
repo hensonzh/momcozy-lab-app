@@ -39,19 +39,27 @@ void main() {
         final transport = FixtureApiJsonTransport(_tokenResponse());
         final repository = MomCozyAuthApiRepository(transport: transport);
 
-        await repository.register(
-          email: 'new@example.test',
-          password: 'strong-password',
-        );
+        await repository.register(email: 'new@example.test');
 
         expect(transport.lastPath, '/v1/auth/register');
-        expect(transport.lastBody, {
-          'email': 'new@example.test',
-          'password': 'strong-password',
-        });
+        expect(transport.lastBody, {'email': 'new@example.test'});
         expect(transport.lastBody, isNot(containsPair('device_id', anything)));
       },
     );
+
+    test('registration checks mailbox code before sending chosen password', () async {
+      final transport = FixtureApiJsonTransport({'status': 'code_valid'});
+      final repository = MomCozyAuthApiRepository(transport: transport);
+      await repository.checkRegistrationCode(
+        email: 'new@example.test',
+        code: '12345678',
+      );
+      expect(transport.lastPath, '/v1/auth/verify-registration-code');
+      expect(transport.lastBody, {
+        'email': 'new@example.test',
+        'token': '12345678',
+      });
+    });
 
     test('invite login posts invite code and device id', () async {
       final transport = FixtureApiJsonTransport(_tokenResponse());

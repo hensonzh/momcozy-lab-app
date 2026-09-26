@@ -31,9 +31,7 @@ List<RouteIntent> routeIntentsFromAgentNavigationEvents(List<Object?> events) {
       .toList(growable: false);
 }
 
-List<RouteIntent> routeIntentsFromMediaAndIbclcInput(
-  Map<String, Object?> input,
-) {
+List<RouteIntent> routeIntentsFromMediaInput(Map<String, Object?> input) {
   final intents = <RouteIntent>[];
   final mediaLinks = input['mediaLinks'];
   if (mediaLinks is List) {
@@ -44,8 +42,6 @@ List<RouteIntent> routeIntentsFromMediaAndIbclcInput(
     );
   }
 
-  final ibclc = _record(input['ibclc']);
-  if (ibclc != null) intents.addAll(_routeIntentsFromIbclc(ibclc));
   return intents;
 }
 
@@ -118,25 +114,22 @@ RouteIntent routeIntentFromFallbackCase(Map<String, Object?> inputCase) {
         return const RouteIntent(
           type: 'MediaViewerMissingResource',
           path: '/media-viewer',
-          payload: {'message': 'Resource details are missing. Please open it from the resource card.'},
+          payload: {
+            'message':
+                'Resource details are missing. Please open it from the resource card.',
+          },
         );
       }
       if (_isRetiredSkillAssetUrl(url)) {
         return const RouteIntent(
           type: 'ShowToast',
-          payload: {'message': 'This resource has expired. Please request the latest version.'},
+          payload: {
+            'message':
+                'This resource has expired. Please request the latest version.',
+          },
         );
       }
       return RouteIntent(type: 'OpenMediaViewer', path: '/media-viewer');
-    case 'ibclc-return':
-      final returnTo = _string(inputCase['returnTo']) ?? '/';
-      if (_isUnsafeReturnTo(returnTo)) {
-        return const RouteIntent(
-          type: 'RejectUnsafeReturnTo',
-          payload: {'fallback': '/'},
-        );
-      }
-      return RouteIntent(type: 'IbclcReturnIntent', path: returnTo);
     case 'agent-artifact':
       final route = _string(inputCase['route']) ?? '';
       return RouteIntent(
@@ -158,7 +151,10 @@ RouteIntent _routeIntentFromMediaLink(Map<String, Object?> link) {
   if (_isRetiredSkillAssetUrl(url)) {
     return const RouteIntent(
       type: 'ShowToast',
-      payload: {'message': 'This resource has expired. Please request the latest version.'},
+      payload: {
+        'message':
+            'This resource has expired. Please request the latest version.',
+      },
     );
   }
   if (!_supportedMediaKinds.contains(kind) || url.isEmpty) {
@@ -173,49 +169,6 @@ RouteIntent _routeIntentFromMediaLink(Map<String, Object?> link) {
     path: '/media-viewer',
     payload: {'kind': kind, 'title': title, 'url': url},
   );
-}
-
-List<RouteIntent> _routeIntentsFromIbclc(Map<String, Object?> input) {
-  final intents = <RouteIntent>[];
-  final start = _record(input['start']);
-  if (start != null) {
-    intents.add(
-      RouteIntent(
-        type: 'OpenServiceCatalog',
-        path: '/services',
-        payload: {
-          'consultId': _string(start['consultId']) ?? '',
-          'threadId': _string(start['threadId']) ?? '',
-          'returnTo': _safeSameOriginPath(_string(start['returnTo'])) ?? '/',
-          'userId': _string(start['userId']) ?? '',
-        },
-      ),
-    );
-  }
-
-  final viewport = _record(input['storedReturnViewport']);
-  final completion = _record(input['completionPayload']);
-  final returnTo = _safeSameOriginPath(_string(viewport?['return_to']));
-  if (viewport != null && completion != null && returnTo != null) {
-    intents.add(
-      RouteIntent(
-        type: 'ReturnFromIbclc',
-        path: returnTo,
-        payload: {
-          'consultId':
-              _string(viewport['consult_id']) ??
-              _string(completion['consult_id']) ??
-              '',
-          'scrollTop': _int(viewport['scroll_top']),
-          'scrollHeight': _int(viewport['scroll_height']),
-          'completionEvent': _string(completion['event_type']) ?? '',
-        },
-        consume: 'once',
-      ),
-    );
-  }
-
-  return intents;
 }
 
 RouteIntent? _routeIntentFromAgentNavigationEvent(Map<String, Object?> event) {
@@ -271,16 +224,6 @@ bool _isRetiredSkillAssetUrl(String url) {
   return Uri.tryParse(url.trim())?.path.startsWith('/skill-assets/') == true;
 }
 
-String? _safeSameOriginPath(String? value) {
-  if (value == null || value.isEmpty || _isUnsafeReturnTo(value)) return null;
-  return value;
-}
-
-int _int(Object? value) {
-  if (value is num && value.isFinite) return value.toInt();
-  return 0;
-}
-
 Map<String, Object?>? _decodeObject(String? value) {
   if (value == null || value.trim().isEmpty) return null;
   try {
@@ -306,10 +249,6 @@ bool _isUnsafeRoute(String path) {
       lower.startsWith('http://') ||
       lower.startsWith('https://') ||
       lower.startsWith('//');
-}
-
-bool _isUnsafeReturnTo(String path) {
-  return _isUnsafeRoute(path) || !path.startsWith('/');
 }
 
 const _supportedMediaKinds = {'pdf', 'image', 'video'};

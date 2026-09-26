@@ -7,15 +7,93 @@ import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_
 import '../../support/fixture_api_transport.dart';
 
 void main() {
-  test('authenticated new user is held at the onboarding gate', () async {
-    final runtimeController = MomCozyRuntimeController(
-      MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransport(const {
+  test(
+    'new user is gated until profile is saved; infant selection follows',
+    () async {
+      final transport = FixtureApiJsonTransportByPath(
+        const {
+          '/v1/onboarding/me': {
+            'status': 'required',
+            'profile_confirmed': false,
+          },
+        },
+        writeResponsesByPath: const {
+          '/v1/onboarding/me/profile': {
+            'status': 'avatar_required',
+            'profile_confirmed': true,
+            'can_enter_app': false,
+            'primary_infant_id': 'baby-1',
+          },
+        },
+      );
+      final runtime = _runtime(transport);
+      final selected = <String>[];
+      final controller = OnboardingController(
+        runtimeController: runtime,
+        onPrimaryInfantSelected: (id) async => selected.add(id),
+      );
+      await controller.load();
+      expect(controller.requiresOnboardingFor('new-user'), isTrue);
+      expect(await controller.confirmProfile(_draft()), isTrue);
+      expect(controller.requiresOnboardingFor('new-user'), isFalse);
+      expect(selected, ['baby-1']);
+      expect(transport.mutationPaths, ['/v1/onboarding/me/profile']);
+      controller.dispose();
+      runtime.dispose();
+    },
+  );
+
+  test('rejected save retains required state and draft for retry', () async {
+    final transport = FixtureApiJsonTransportByPath(
+      const {
+        '/v1/onboarding/me': {'status': 'required', 'profile_confirmed': false},
+      },
+      writeResponsesByPath: const {
+        '/v1/onboarding/me/profile': {
           'status': 'required',
-          'current_step': 'profile',
           'profile_confirmed': false,
-        }),
-        multipartTransport: FixtureApiMultipartTransport(const {}),
+        },
+      },
+    );
+    final runtime = _runtime(transport);
+    final controller = OnboardingController(runtimeController: runtime);
+    await controller.load();
+    expect(await controller.confirmProfile(_draft()), isFalse);
+    expect(controller.requiresOnboardingFor('new-user'), isTrue);
+    expect(controller.errorMessage, isNotEmpty);
+    controller.dispose();
+    runtime.dispose();
+  });
+
+  test('already-confirmed profile passes the onboarding gate', () async {
+    final transport = FixtureApiJsonTransportByPath(const {
+      '/v1/onboarding/me': {
+        'status': 'avatar_generating',
+        'profile_confirmed': true,
+        'can_enter_app': false,
+      },
+    });
+    final runtime = _runtime(transport);
+    final controller = OnboardingController(runtimeController: runtime);
+    await controller.load();
+    expect(controller.state?.status, OnboardingStatus.completed);
+    expect(controller.requiresOnboardingFor('new-user'), isFalse);
+    controller.dispose();
+    runtime.dispose();
+  });
+}
+
+OnboardingProfileDraft _draft() => OnboardingProfileDraft(
+  displayName: 'Mia',
+  age: 32,
+  deliveryDate: DateTime(2026, 9, 20),
+  deliveryCount: 1,
+);
+
+MomCozyRuntimeController _runtime(FixtureApiJsonTransportByPath transport) =>
+    MomCozyRuntimeController(
+      MomCozyApiRuntime(
+        jsonTransport: transport,
         session: const MomCozySession(
           status: MomCozySessionStatus.authenticated,
           userId: 'new-user',
@@ -25,202 +103,3 @@ void main() {
         ),
       ),
     );
-    final controller = OnboardingController(
-      runtimeController: runtimeController,
-    );
-
-    await controller.load();
-
-    expect(controller.phase, OnboardingGatePhase.ready);
-    expect(controller.isResolvedFor('new-user'), isTrue);
-    expect(controller.requiresOnboardingFor('new-user'), isTrue);
-    controller.dispose();
-    runtimeController.dispose();
-  });
-
-  test('grandfathered or completed user passes the onboarding gate', () async {
-    final runtimeController = MomCozyRuntimeController(
-      MomCozyApiRuntime(
-        jsonTransport: FixtureApiJsonTransport(const {
-          'status': 'completed',
-          'current_step': 'done',
-          'profile_confirmed': true,
-          'can_enter_app': true,
-          'avatar_setup_completed': true,
-        }),
-        multipartTransport: FixtureApiMultipartTransport(const {}),
-        session: const MomCozySession(
-          status: MomCozySessionStatus.authenticated,
-          userId: 'existing-user',
-          babyId: 'baby',
-          locale: 'en-US',
-          accessToken: 'access',
-        ),
-      ),
-    );
-    final controller = OnboardingController(
-      runtimeController: runtimeController,
-    );
-
-    await controller.load();
-
-    expect(controller.requiresOnboardingFor('existing-user'), isFalse);
-    controller.dispose();
-    runtimeController.dispose();
-  });
-
-  test(
-    'avatar review allows app entry before one of four candidates is confirmed',
-    () async {
-      final transport = FixtureApiJsonTransportByPath(
-        const {
-          '/v1/onboarding/me': {
-            'status': 'avatar_review',
-            'current_step': 'review',
-            'current_stage': 'postpartum',
-            'profile_confirmed': true,
-            'can_enter_app': true,
-            'avatar_setup_completed': false,
-            'can_continue_with_default': true,
-            'avatar': {
-              'id': 'generation-id',
-              'stage': 'postpartum',
-              'status': 'succeeded',
-              'error_code': '',
-              'created_at': '2026-08-09T00:00:00Z',
-              'candidates': [
-                {'id': 'candidate-1', 'file_id': 'file-1', 'position': 1},
-                {'id': 'candidate-2', 'file_id': 'file-2', 'position': 2},
-                {'id': 'candidate-3', 'file_id': 'file-3', 'position': 3},
-                {'id': 'candidate-4', 'file_id': 'file-4', 'position': 4},
-              ],
-            },
-          },
-        },
-        writeResponsesByPath: const {
-          '/v1/onboarding/me/complete': {
-            'status': 'completed',
-            'current_step': 'done',
-            'current_stage': 'postpartum',
-            'profile_confirmed': true,
-            'can_enter_app': true,
-            'avatar_setup_completed': true,
-            'selected_avatar_file_id': 'file-2',
-            'primary_infant_id': 'infant-1',
-          },
-        },
-      );
-      final runtimeController = MomCozyRuntimeController(
-        MomCozyApiRuntime(
-          jsonTransport: transport,
-          multipartTransport: FixtureApiMultipartTransport(const {}),
-          session: const MomCozySession(
-            status: MomCozySessionStatus.authenticated,
-            userId: 'avatar-review-user',
-            babyId: '',
-            locale: 'en-US',
-            accessToken: 'access',
-          ),
-        ),
-      );
-      String? activatedAvatarFileId;
-      final activationOrder = <String>[];
-      final controller = OnboardingController(
-        runtimeController: runtimeController,
-        onPrimaryInfantSelected: (infantId) async {
-          activationOrder.add('infant:$infantId');
-        },
-        onAvatarActivated: (fileId) {
-          activatedAvatarFileId = fileId;
-          activationOrder.add('avatar:$fileId');
-        },
-      );
-
-      await controller.load();
-
-      expect(controller.requiresOnboardingFor('avatar-review-user'), isFalse);
-      expect(activatedAvatarFileId, isNull);
-      expect(transport.postedBodies, isEmpty);
-      expect(controller.hasAvatarSelection, isFalse);
-
-      controller.selectDefaultAvatar();
-      expect(controller.defaultAvatarSelected, isTrue);
-      expect(controller.selectedAvatarCandidateId, isNull);
-
-      controller.selectAvatarCandidate('candidate-2');
-      expect(controller.hasAvatarSelection, isTrue);
-      expect(controller.defaultAvatarSelected, isFalse);
-      expect(await controller.confirmAvatarSelection(), isTrue);
-      expect(activatedAvatarFileId, 'file-2');
-      expect(activationOrder, ['infant:infant-1', 'avatar:file-2']);
-      expect(transport.lastBody, {
-        'avatar_candidate_id': 'candidate-2',
-        'use_default_avatar': false,
-      });
-      expect(controller.requiresOnboardingFor('avatar-review-user'), isFalse);
-
-      controller.dispose();
-      runtimeController.dispose();
-    },
-  );
-
-  test(
-    'silent avatar refresh failure does not send the user back to onboarding',
-    () async {
-      final responses = <String, Map<String, Object?>>{
-        '/v1/onboarding/me': const {
-          'status': 'avatar_generating',
-          'current_step': 'generating',
-          'current_stage': 'postpartum',
-          'profile_confirmed': true,
-          'can_enter_app': true,
-          'avatar_setup_completed': false,
-          'avatar': {
-            'id': 'generation-id',
-            'stage': 'postpartum',
-            'status': 'generating',
-            'error_code': '',
-            'created_at': '2026-08-09T00:00:00Z',
-            'candidates': <Object?>[],
-          },
-        },
-      };
-      final runtimeController = MomCozyRuntimeController(
-        MomCozyApiRuntime(
-          jsonTransport: FixtureApiJsonTransportByPath(responses),
-          multipartTransport: FixtureApiMultipartTransport(const {}),
-          session: const MomCozySession(
-            status: MomCozySessionStatus.authenticated,
-            userId: 'silent-refresh-user',
-            babyId: '',
-            locale: 'en-US',
-            accessToken: 'access',
-          ),
-        ),
-      );
-      final controller = OnboardingController(
-        runtimeController: runtimeController,
-      );
-      await controller.load();
-      responses['/v1/onboarding/me'] = const {
-        'http_status': 503,
-        'status_text': 'Unavailable',
-        'body': {
-          'error': {
-            'code': 'server_unavailable',
-            'message': 'Try again later.',
-          },
-        },
-      };
-
-      await controller.load(silent: true);
-
-      expect(controller.phase, OnboardingGatePhase.ready);
-      expect(controller.requiresOnboardingFor('silent-refresh-user'), isFalse);
-      expect(controller.state?.status, OnboardingStatus.avatarGenerating);
-
-      controller.dispose();
-      runtimeController.dispose();
-    },
-  );
-}

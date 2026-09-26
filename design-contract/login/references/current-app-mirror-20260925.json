@@ -1,0 +1,31 @@
+{
+  "source": "Flutter auth widget goldens generated through 2026-09-26",
+  "figma": {
+    "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
+    "defaultFrame": "login / Login · Default / 858:157",
+    "statePage": "Auth · App states",
+    "stateFrameCount": 44,
+    "updatedFrames": "2026-09-26: Auth · App states frames 01–44 image fills match current Flutter goldens by SHA-1; 22 now has a distinct malformed-email regression capture; frame 12 visually reviewed.",
+    "onboarding": "Onboarding · App states / 24 frames, unchanged because registration does not enter onboarding until a session exists",
+    "syncStatus": "all 44 state image fills uploaded and individually verified by SHA-1; screenshot-mirror verification only, not independent visual parity. Frame 37 uses a 390×568 keyboard-short reference in a standard frame.",
+    "otherStatesSourceMap": "auth-other-states-20260926.json"
+  },
+  "app": {
+    "defaultCapture": "../comparisons/actual/flutter-login-approved-393x844.png",
+    "viewport": "393x844",
+    "authentication": "email + password; no Save password control; registration email → code → double password, without redundant continuation link or registration verification reset/change-email buttons; empty-email registration submit disabled",
+    "signupTextTop": "about 618",
+    "legalAndLanguage": "visible without scrolling on a standard viewport"
+  },
+  "limitation": "Figma is a mirror of Flutter captures, not independent design-to-App pixel evidence; state frames contain images, not editable controls.",
+  "registration": {
+    "sourceMap": "registration-code-first-20260925.json",
+    "flow": [
+      "email only /register",
+      "8-digit code /verify-registration-code (no session)",
+      "password and matching confirmation /verify-email (consumes code, saves session)",
+      "onboarding after session"
+    ],
+    "compatibility": "legacy /signup and unverified password login remain separate from the new registration path"
+  }
+}

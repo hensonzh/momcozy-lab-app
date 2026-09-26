@@ -239,7 +239,7 @@ class _MeConcernFlowState extends State<MeConcernFlow>
                       ),
                     ),
                     Text(
-                      reminder ? 'On' : 'Close',
+                      reminder ? 'On' : 'Off',
                       style: MeDesign.text(12, color: MeDesign.muted),
                     ),
                     const SizedBox(width: 12),
@@ -276,9 +276,23 @@ Future<bool?> showMeNotificationSettings(
   shape: const RoundedRectangleBorder(
     borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
   ),
-  builder: (context) => SafeArea(
-    top: false,
-    child: Padding(
+  builder: (context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(14) > 20;
+    final bell = Container(
+      width: 44,
+      height: 44,
+      padding: const EdgeInsets.all(9),
+      decoration: BoxDecoration(
+        color: const Color(0xfff6eaf1),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: MeDesign.asset('IconBell.svg', width: 26, height: 26),
+    );
+    final title = Text(
+      'Turn on notifications',
+      style: MeDesign.text(20, weight: FontWeight.w700),
+    );
+    final content = Padding(
       padding: const EdgeInsets.fromLTRB(24, 10, 24, 32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -295,35 +309,26 @@ Future<bool?> showMeNotificationSettings(
             ),
           ),
           const SizedBox(height: 22),
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                padding: const EdgeInsets.all(9),
-                decoration: BoxDecoration(
-                  color: const Color(0xfff6eaf1),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: MeDesign.asset('IconBell.svg', width: 26, height: 26),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  'Turn on notifications',
-                  style: MeDesign.text(20, weight: FontWeight.w700),
-                ),
-              ),
-            ],
-          ),
+          if (largeText) ...[
+            Align(alignment: Alignment.centerLeft, child: bell),
+            const SizedBox(height: 12),
+            title,
+          ] else
+            Row(
+              children: [
+                bell,
+                const SizedBox(width: 16),
+                Expanded(child: title),
+              ],
+            ),
           const SizedBox(height: 16),
           Text(
             'Allow Momcozy notifications in your device settings\nto receive the reminders you choose.',
             style: MeDesign.text(14, color: MeDesign.muted, line: 23),
           ),
           const SizedBox(height: 22),
-          SizedBox(
-            height: 48,
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
             child: MeButton(
               'Open settings',
               fontSize: 15,
@@ -331,8 +336,8 @@ Future<bool?> showMeNotificationSettings(
             ),
           ),
           const SizedBox(height: 8),
-          SizedBox(
-            height: 44,
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
             child: TextButton(
               style: TextButton.styleFrom(
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -346,8 +351,12 @@ Future<bool?> showMeNotificationSettings(
           ),
         ],
       ),
-    ),
-  ),
+    );
+    return SafeArea(
+      top: false,
+      child: largeText ? SingleChildScrollView(child: content) : content,
+    );
+  },
 );
 
 class MeConcernsPage extends StatelessWidget {

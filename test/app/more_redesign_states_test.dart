@@ -37,7 +37,7 @@ void main() {
       transport.reply.completeError(StateError('offline'));
       await tester.pumpAndSettle();
       expect(find.text('Manage your account information'), findsOneWidget);
-      expect(find.text('3'), findsOneWidget);
+      expect(find.text('Notifications'), findsNothing);
       expect(find.text('Mia Chen'), findsNothing);
       await expectLater(
         find.byType(MaterialApp),
@@ -55,10 +55,9 @@ void main() {
             .onPressed,
         isNull,
       );
-      await tester.scrollUntilVisible(find.text('Expert support'), -200);
-      await tester.tap(find.text('Expert support'));
-      await tester.pumpAndSettle();
-      expect(router.state.uri.path, '/services');
+      expect(find.text('Expert support'), findsNothing);
+      expect(find.text('Request account deletion'), findsOneWidget);
+      expect(router.state.uri.path, '/more');
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     });
@@ -80,6 +79,12 @@ void main() {
       );
       expect(find.text(name), findsOneWidget);
       expect(find.text(email), findsOneWidget);
+      if (scale == 2) {
+        expect(tester.getTopLeft(find.text(name)).dx, lessThan(65));
+      }
+      // A long unbroken email needs the full card width; beside the avatar
+      // its domain ends up squeezed into an orphan line on a phone.
+      expect(tester.getTopLeft(find.text(email)).dx, lessThan(65));
       expect(tester.takeException(), isNull);
       await expectLater(
         find.byType(MaterialApp),
@@ -148,7 +153,12 @@ Future<GoRouter> _host(
           child: NotificationScope(
             coordinator: coordinator,
             child: Scaffold(
-              body: SafeArea(child: MorePage(onLogout: onLogout)),
+              body: SafeArea(
+                child: MorePage(
+                  onLogout: onLogout,
+                  onDeleteAccount: () async {},
+                ),
+              ),
               bottomNavigationBar: const MomCozyBottomNavigation(
                 location: '/more',
               ),
@@ -179,10 +189,7 @@ Future<GoRouter> _host(
   );
   await tester.pumpAndSettle();
   await tester.runAsync(() async {
-    for (final asset in [
-      'assets/images/momcozy-agent.png',
-      'assets/images/mom_home/expert_group.png',
-    ]) {
+    for (final asset in ['assets/images/momcozy-agent.png']) {
       await precacheImage(
         AssetImage(asset),
         tester.element(find.byType(MorePage)),

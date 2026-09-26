@@ -2,9 +2,6 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../domain/care/appointment.dart';
-import '../../../domain/care/care_plan.dart';
-import '../../../domain/care/service_package.dart';
 import '../../../domain/shared/local_date.dart';
 import '../../../domain/shared/product_failure.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
@@ -23,28 +20,20 @@ class SchedulePage extends StatefulWidget {
     super.key,
     required this.repository,
     required this.timezoneProvider,
-    required this.catalogLoader,
-    this.onOpenAppointment,
-    this.onOpenPlan,
     this.now = DateTime.now,
   });
   final ScheduleRepository repository;
   final Future<String> Function() timezoneProvider;
-  final Future<ServiceCatalog> Function() catalogLoader;
-  final ValueChanged<CareAppointment>? onOpenAppointment;
-  final ValueChanged<String>? onOpenPlan;
   final DateTime Function() now;
   @override
   State<SchedulePage> createState() => _SchedulePageState();
 }
 
 class _SchedulePageState extends State<SchedulePage> {
-  bool _expanded = true, _taskBusy = false;
-  ProductFailure? _taskFailure;
+  bool _expanded = true;
   late final controller = ScheduleController(
     repository: widget.repository,
     timezoneProvider: widget.timezoneProvider,
-    catalogLoader: widget.catalogLoader,
     now: widget.now,
   );
   @override
@@ -96,7 +85,7 @@ class _SchedulePageState extends State<SchedulePage> {
                           else
                             _loading(),
                         ] else ...[
-                          if (state.error != null || _taskFailure != null) ...[
+                          if (state.error != null) ...[
                             _refreshNotice(),
                             const SizedBox(height: 14),
                           ],
@@ -138,9 +127,6 @@ class _SchedulePageState extends State<SchedulePage> {
                           else
                             ScheduleAgenda(
                               state: state,
-                              onAppointment: widget.onOpenAppointment,
-                              onPlan: widget.onOpenPlan,
-                              onTaskStatus: _taskBusy ? null : _updateTask,
                               onEdit: (entry) => _editPersonal(existing: entry),
                               onDelete: _deletePersonal,
                             ),
@@ -198,59 +184,89 @@ class _SchedulePageState extends State<SchedulePage> {
     ),
   );
 
-  Widget _header(bool ready) => Row(
-    children: [
-      Expanded(
-        child: Text(
-          'Schedule',
-          style: ScheduleDesign.text(24, bold: true, lineHeight: 34),
-        ),
-      ),
-      if (ready)
-        SizedBox(
-          width: 100,
-          height: 44,
-          child: OutlinedButton(
-            key: const ValueKey('schedule-calendar-toggle'),
-            onPressed: () => setState(() => _expanded = !_expanded),
-            style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: .8),
-              side: const BorderSide(color: Color(0xffe5d9e5)),
-              padding: EdgeInsets.zero,
-              shape: const StadiumBorder(),
-              minimumSize: const Size(100, 44),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Text(
-                    _expanded ? 'Collapse calendar' : 'Expand calendar',
-                    style: ScheduleDesign.text(
-                      12,
-                      bold: true,
-                      color: MomHomeTokens.rose,
-                      lineHeight: 18,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                RotatedBox(
-                  quarterTurns: _expanded ? 0 : 2,
-                  child: SvgPicture.asset(
-                    'assets/images/schedule_chevron.svg',
-                    width: 14,
-                    height: 14,
-                  ),
-                ),
-              ],
-            ),
+  Widget _header(bool ready) => LayoutBuilder(
+    builder: (context, constraints) {
+      final titleStyle = ScheduleDesign.text(24, bold: true, lineHeight: 34);
+      final labelStyle = ScheduleDesign.text(
+        12,
+        bold: true,
+        color: MomHomeTokens.rose,
+        lineHeight: 18,
+      );
+      final label = _expanded ? 'Collapse calendar' : 'Expand calendar';
+      final scaler = MediaQuery.textScalerOf(context);
+      double textWidth(String value, TextStyle style) {
+        final painter = TextPainter(
+          text: TextSpan(text: value, style: style),
+          textDirection: Directionality.of(context),
+          textScaler: scaler,
+        )..layout();
+        final width = painter.width;
+        painter.dispose();
+        return width;
+      }
+
+      final title = Text('Schedule', style: titleStyle);
+      if (!ready) {
+        return Row(
+          children: [
+            Expanded(child: title),
+            const SizedBox(height: 44),
+          ],
+        );
+      }
+      final buttonWidth = math.min(
+        constraints.maxWidth,
+        math.max(100.0, textWidth(label, labelStyle) + 52),
+      );
+      final button = SizedBox(
+        width: buttonWidth,
+        child: OutlinedButton(
+          key: const ValueKey('schedule-calendar-toggle'),
+          onPressed: () => setState(() => _expanded = !_expanded),
+          style: OutlinedButton.styleFrom(
+            backgroundColor: Colors.white.withValues(alpha: .8),
+            side: const BorderSide(color: Color(0xffe5d9e5)),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            shape: const StadiumBorder(),
+            minimumSize: const Size(100, 44),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-        )
-      else
-        const SizedBox(height: 44),
-    ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(child: Text(label, style: labelStyle)),
+              const SizedBox(width: 6),
+              RotatedBox(
+                quarterTurns: _expanded ? 0 : 2,
+                child: SvgPicture.asset(
+                  'assets/images/schedule_chevron.svg',
+                  width: 14,
+                  height: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      if (textWidth('Schedule', titleStyle) + 12 + buttonWidth >
+          constraints.maxWidth) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            title,
+            const SizedBox(height: 8),
+            Align(alignment: Alignment.centerRight, child: button),
+          ],
+        );
+      }
+      return Row(
+        children: [
+          Expanded(child: title),
+          button,
+        ],
+      );
+    },
   );
 
   Widget _loading() => Container(
@@ -269,7 +285,7 @@ class _SchedulePageState extends State<SchedulePage> {
         Text('Loading schedule', style: ScheduleDesign.text(18, bold: true)),
         const SizedBox(height: 14),
         Text(
-          'Your schedule and care tasks will appear here.',
+          'Your personal schedule items will appear here.',
           style: ScheduleDesign.text(13, color: MomHomeTokens.secondary),
         ),
         const SizedBox(height: 14),
@@ -299,13 +315,17 @@ class _SchedulePageState extends State<SchedulePage> {
         ),
         const SizedBox(height: 12),
         Text(
-          failure.kind == ProductFailureKind.offline ? 'Could not connect' : 'Could not load schedule',
+          failure.kind == ProductFailureKind.offline
+              ? 'Could not connect'
+              : 'Could not load schedule',
           textAlign: TextAlign.center,
           style: ScheduleDesign.text(18, bold: true, lineHeight: 26),
         ),
         const SizedBox(height: 12),
         Text(
-          failure.kind == ProductFailureKind.offline ? 'Connect to the internet to view your schedule' : 'Please try again later',
+          failure.kind == ProductFailureKind.offline
+              ? 'Connect to the internet to view your schedule'
+              : 'Please try again later',
           textAlign: TextAlign.center,
           style: ScheduleDesign.text(
             13,
@@ -354,7 +374,7 @@ class _SchedulePageState extends State<SchedulePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _taskFailure != null ? 'Could not update task' : 'Could not refresh',
+                'Could not refresh',
                 style: ScheduleDesign.text(14, bold: true, lineHeight: 20),
               ),
               const SizedBox(height: 4),
@@ -376,9 +396,6 @@ class _SchedulePageState extends State<SchedulePage> {
           child: TextButton(
             onPressed: () async {
               await controller.load();
-              if (mounted && controller.state.error == null) {
-                setState(() => _taskFailure = null);
-              }
             },
             style: TextButton.styleFrom(
               backgroundColor: const Color(0xfff7eff7),
@@ -392,31 +409,6 @@ class _SchedulePageState extends State<SchedulePage> {
       ],
     ),
   );
-
-  Future<void> _updateTask(
-    ScheduledPlan plan,
-    PublishedCareTask task,
-    CareTaskStatus status,
-  ) async {
-    if (_taskBusy) return;
-    setState(() {
-      _taskBusy = true;
-      _taskFailure = null;
-    });
-    try {
-      await controller.updateTask(plan, task, status);
-    } catch (error) {
-      if (mounted) {
-        setState(
-          () => _taskFailure = error is ProductFailure
-              ? error
-              : const ProductFailure(ProductFailureKind.unavailable),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _taskBusy = false);
-    }
-  }
 
   Future<void> _editPersonal({PersonalScheduleEntry? existing}) async {
     await showDialog<bool>(

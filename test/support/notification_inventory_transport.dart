@@ -1,56 +1,31 @@
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
-import 'consultation_inventory_transport.dart';
 import 'mom_inventory_transport.dart';
 
-const inventoryNotificationAppointment = '11111111-1111-4111-8111-111111111111';
-const inventoryReminderPath =
-    '/v1/notifications/appointments/$inventoryNotificationAppointment/reminder';
-
-/// HTTP boundary for production notification repository/controller/router.
-class NotificationInventoryTransport extends ConsultationInventoryTransport {
-  NotificationInventoryTransport() {
-    appointment!['id'] = inventoryNotificationAppointment;
-    appointment!['starts_at'] = inventoryMomNow
-        .add(const Duration(minutes: 45))
-        .toIso8601String();
-    appointment!['ends_at'] = inventoryMomNow
-        .add(const Duration(minutes: 105))
-        .toIso8601String();
-    intake!['appointment_id'] = inventoryNotificationAppointment;
-  }
-  final preferencesData = <String, bool>{
-    'appointments': true,
-    'consultations': true,
-    'expert_feedback': true,
-    'service_updates': true,
-  };
-  Map<String, Object?> reminderData = {'enabled': false, 'status': 'disabled'};
+/// Isolated HTTP boundary for generic inbox and conversation notifications.
+class NotificationInventoryTransport extends MomInventoryTransport {
   final notifications = <Map<String, Object?>>[];
+  final preferencesData = <String, bool>{'agent_updates': true};
   final unavailableTargets = <String>{};
   bool pushAvailable = true;
   int pageSize = 3;
-  String? reminderFailureCode;
 
   void seedInbox(int count) {
-    notifications.clear();
-    for (var i = 0; i < count; i++) {
-      notifications.add({
-        'id': 'notice-${i + 1}',
-        'notification_type': i.isEven
-            ? 'appointment_created'
-            : 'expert_feedback',
-        'title': 'Service update ${i + 1}',
-        'body':
-            'Your care service has an update. Open to review the appointment.',
-        'status': 'unread',
-        'source': 'care',
-        'payload': <String, Object?>{},
-        'created_at': inventoryMomNow
-            .subtract(Duration(hours: i * 12))
-            .toIso8601String(),
-        'read_at': null,
-      });
-    }
+    notifications
+      ..clear()
+      ..addAll([
+        for (var i = 0; i < count; i++)
+          {
+            'id': 'notice-${i + 1}',
+            'notification_type': 'agent_conversation',
+            'title': 'Momcozy AI update ${i + 1}',
+            'body': 'Open your conversation to see the latest update.',
+            'status': 'unread',
+            'source': 'agent',
+            'payload': <String, Object?>{},
+            'created_at': inventoryMomNow
+                .subtract(Duration(hours: i))
+                .toIso8601String(),
+          },
+      ]);
   }
 
   Future<void> readNotification(String path) async {
@@ -61,9 +36,8 @@ class NotificationInventoryTransport extends ConsultationInventoryTransport {
 
   Future<void> writeNotification(String path, Map<String, Object?> body) async {
     mutationPaths.add(path);
-    requests.add({'path': path, 'body': Map<String, Object?>.from(body)});
     await writeGate?.future;
-    check(failWrite || failingWrites.contains(path));
+    check(failWrite);
   }
 
   @override
@@ -71,25 +45,16 @@ class NotificationInventoryTransport extends ConsultationInventoryTransport {
     String path, {
     Map<String, Object?> query = const {},
   }) async {
-    if (path == '/v1/care/appointments/$inventoryNotificationAppointment') {
-      await readNotification(path);
-      return appointment!;
-    }
     if (!path.startsWith('/v1/notifications')) {
       return super.getJson(path, query: query);
     }
     await readNotification(path);
-    if (path.endsWith('/preferences')) {
-      return Map<String, Object?>.from(preferencesData);
-    }
-    if (path.endsWith('/reminder')) {
-      return Map<String, Object?>.from(reminderData);
-    }
+    if (path.endsWith('/preferences')) return Map.of(preferencesData);
     final start = int.tryParse(query['cursor']?.toString() ?? '') ?? 0;
     final limit = (query['limit'] as int? ?? pageSize).clamp(1, pageSize);
     final items = notifications.skip(start).take(limit).toList();
     return {
-      'items': items.map((e) => Map<String, Object?>.from(e)).toList(),
+      'items': items,
       'unread_count': notifications
           .where((n) => n['status'] == 'unread')
           .length,
@@ -117,49 +82,23 @@ class NotificationInventoryTransport extends ConsultationInventoryTransport {
       };
     }
     if (path.endsWith('/read-all')) {
-      for (final n in notifications) {
-        n['status'] = 'read';
-        n['read_at'] = inventoryMomNow.toIso8601String();
+      for (final item in notifications) {
+        item['status'] = 'read';
+        item['read_at'] = inventoryMomNow.toIso8601String();
       }
     }
     if (path.endsWith('/open')) {
-      final id = path.split('/')[3];
-      final n = notifications.singleWhere((e) => e['id'] == id);
-      n['status'] = 'read';
-      n['read_at'] = inventoryMomNow.toIso8601String();
+      final item = notifications.singleWhere(
+        (n) => n['id'] == path.split('/')[3],
+      );
+      item['status'] = 'read';
       return {
-        'notification': Map<String, Object?>.from(n),
-        'resource_available': !unavailableTargets.contains(id),
-        'route': '/services/appointments/$inventoryNotificationAppointment',
+        'notification': Map.of(item),
+        'resource_available': !unavailableTargets.contains(item['id']),
+        'route': null,
       };
     }
     return {};
-  }
-
-  @override
-  Future<Map<String, Object?>> putJson(
-    String path, {
-    Map<String, Object?> body = const {},
-    Map<String, String> headers = const {},
-  }) async {
-    if (path != inventoryReminderPath) {
-      return super.putJson(path, body: body, headers: headers);
-    }
-    await writeNotification(path, body);
-    if (reminderFailureCode case final code?) {
-      throw ApiHttpException(
-        statusCode: 409,
-        statusText: 'Conflict',
-        body: {
-          'error': {'code': code, 'message': 'Isolated reminder rejection'},
-        },
-      );
-    }
-    reminderData = {
-      'enabled': body['enabled'],
-      'status': body['enabled'] == true ? 'scheduled' : 'disabled',
-    };
-    return reminderData;
   }
 
   @override
@@ -173,7 +112,7 @@ class NotificationInventoryTransport extends ConsultationInventoryTransport {
     }
     await writeNotification(path, body);
     preferencesData[path.split('/').last] = body['enabled'] as bool;
-    return Map<String, Object?>.from(preferencesData);
+    return Map.of(preferencesData);
   }
 
   @override
@@ -185,7 +124,7 @@ class NotificationInventoryTransport extends ConsultationInventoryTransport {
       return super.deleteJson(path, headers: headers);
     }
     await writeNotification(path, const {});
-    notifications.removeWhere((n) => n['id'] == path.split('/').last);
+    notifications.removeWhere((item) => item['id'] == path.split('/').last);
     return {};
   }
 }

@@ -1,19 +1,22 @@
-import '../../../features/notifications/presentation/notification_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/momcozy_api_runtime.dart';
+import '../../../features/auth/presentation/auth_page.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/design_system/momcozy_design_system.dart';
+import '../../../shared/design_system/momcozy_motion.dart';
+import '../../../shared/design_system/momcozy_text_roles.dart';
+import '../../../shared/widgets/mom_settings_widgets.dart';
 import '../../../shared/widgets/mom_companion_widgets.dart';
-import '../../../shared/widgets/mom_settings_row.dart';
 
-/// The fifth tab is an account and service surface.  Health records belong in
-/// Me, Baby, or the service episode; More must not become another clinical
-/// profile store.
+/// The fifth tab is an account surface. Health records belong in
+/// Me or Baby; More must not become another clinical profile store.
 class MorePage extends StatefulWidget {
-  const MorePage({super.key, required this.onLogout});
+  const MorePage({super.key, required this.onLogout, this.onDeleteAccount});
 
   final Future<void> Function()? onLogout;
+  final Future<void> Function()? onDeleteAccount;
 
   @override
   State<MorePage> createState() => _MorePageState();
@@ -22,6 +25,8 @@ class MorePage extends StatefulWidget {
 class _MorePageState extends State<MorePage> {
   MomCozyApiRuntime? _runtime;
   Future<({String name, String email})>? _identity;
+  bool _deleting = false;
+  String? _deleteMessage;
 
   @override
   void didChangeDependencies() {
@@ -68,8 +73,6 @@ class _MorePageState extends State<MorePage> {
     required String email,
     required bool loading,
   }) {
-    final unread =
-        NotificationScope.maybeOf(context)?.inbox?.state.unreadCount ?? 0;
     return ColoredBox(
       key: const ValueKey('route-page-/more'),
       color: MomHomeTokens.background,
@@ -79,95 +82,22 @@ class _MorePageState extends State<MorePage> {
           vertical: 24,
         ),
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Semantics(
-                  header: true,
-                  child: Text(
-                    'More',
-                    style: MomHomeTokens.text(
-                      22,
-                      weight: FontWeight.w700,
-                      height: 26 / 22,
-                    ),
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () => context.push('/privacy'),
-                style: TextButton.styleFrom(
-                  minimumSize: const Size(44, 44),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  alignment: Alignment.topLeft,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 12,
-                  ),
-                  foregroundColor: MomHomeTokens.secondary,
-                  textStyle: MomHomeTokens.text(12, height: 14 / 12),
-                ),
-                child: const Text('Privacy'),
-              ),
-            ],
-          ),
-          const SizedBox(height: MomHomeTokens.gap),
-          Text(
-            'Care for yourself and stay in control of your support',
-            style: MomHomeTokens.text(
-              12,
-              color: MomHomeTokens.secondary,
-              height: 14 / 12,
+          Semantics(
+            header: true,
+            child: Text(
+              'More',
+              style: MomHomeTokens.text(26, weight: FontWeight.w700),
             ),
           ),
-          const SizedBox(height: MomHomeTokens.gap),
+          const SizedBox(height: 22),
           Semantics(
             label: 'Account information',
             child: _AccountCard(name: name, email: email, loading: loading),
           ),
-          const SizedBox(height: MomHomeTokens.gap),
-          const _SectionTitle('Everyday settings'),
-          const SizedBox(height: MomHomeTokens.gap),
-          Material(
-            color: MomHomeTokens.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
-              side: const BorderSide(color: MomHomeTokens.border),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: MomCardBackground(
-              decoration: MomCardDecoration.utility,
-              child: Column(
-                children: [
-                  MomSettingsRow(
-                    title: 'Account settings',
-                    subtitle: 'Sign-in methods and account management',
-                    onTap: () => context.push('/account'),
-                  ),
-                  const Divider(height: 1, color: MomHomeTokens.border),
-                  MomSettingsRow(
-                    title: 'Notifications',
-                    subtitle: 'View messages and service reminders',
-                    unreadCount: unread,
-                    onTap: () => context.push('/notifications?from=/more'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: MomHomeTokens.gap),
-          const _SectionTitle('Expert care'),
-          const SizedBox(height: MomHomeTokens.gap),
-          MomExpertPlanEntry(
-            settingsLayout: true,
-            title: 'Expert support',
-            trailingGap: MomHomeTokens.gap,
-            onTap: () => context.push('/services'),
-          ),
-          const SizedBox(height: MomHomeTokens.gap),
+          const SizedBox(height: 16),
           TextButton(
             key: const ValueKey('more-logout'),
-            onPressed: loading || widget.onLogout == null
+            onPressed: loading || _deleting || widget.onLogout == null
                 ? null
                 : () async {
                     final messenger = ScaffoldMessenger.of(context);
@@ -199,34 +129,140 @@ class _MorePageState extends State<MorePage> {
                     if (context.mounted) context.go('/login');
                   },
             style: TextButton.styleFrom(
-              foregroundColor: MomHomeTokens.secondary,
+              alignment: Alignment.centerLeft,
+              backgroundColor: MomHomeTokens.surface,
+              foregroundColor: MomHomeTokens.ink,
               disabledForegroundColor: MomHomeTokens.secondary.withValues(
                 alpha: .4,
               ),
-              minimumSize: const Size(44, 44),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              textStyle: MomHomeTokens.text(13, height: 16 / 13),
+              side: const BorderSide(color: MomHomeTokens.border),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              minimumSize: const Size.fromHeight(52),
+              textStyle: MomHomeTokens.text(14, weight: FontWeight.w600),
             ),
-            child: const Text('Sign out'),
+            child: const Row(
+              children: [
+                Icon(Icons.logout_rounded, size: 19),
+                SizedBox(width: 12),
+                Text('Sign out'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          MomHomeSurface(
+            gradient: const LinearGradient(
+              colors: [MomHomeTokens.surface, MomHomeTokens.surface],
+            ),
+            border: MomHomeTokens.border,
+            child: Padding(
+              padding: const EdgeInsets.all(MomHomeTokens.inset),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
+                children: [
+                  Text(
+                    'Delete account',
+                    style: MomHomeTokens.text(
+                      14,
+                      weight: FontWeight.w700,
+                      color: MomCozyColors.danger,
+                    ),
+                  ),
+                  Text(
+                    'Your access will end immediately. Account identifiers are removed and a request is created to erase associated data. Some records may require retention.',
+                    style: MomHomeTokens.text(
+                      12,
+                      color: MomHomeTokens.secondary,
+                      height: 1.5,
+                    ).merge(MomCozyTextRoles.paragraphOf(context)),
+                  ),
+                  TextButton(
+                    key: const ValueKey('account-delete'),
+                    onPressed: _deleting || widget.onDeleteAccount == null
+                        ? null
+                        : _delete,
+                    style: TextButton.styleFrom(
+                      foregroundColor: MomCozyColors.danger,
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(44, 44),
+                      textStyle: MomHomeTokens.text(
+                        13,
+                        weight: FontWeight.w600,
+                      ),
+                    ),
+                    child: const Text('Request account deletion'),
+                  ),
+                  if (_deleting)
+                    const LinearProgressIndicator(
+                      semanticsLabel: 'Deleting account',
+                    ),
+                  if (_deleteMessage != null)
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        _deleteMessage!,
+                        key: const ValueKey('account-message'),
+                        style: MomHomeTokens.text(
+                          13,
+                          color: MomHomeTokens.secondary,
+                          height: 1.55,
+                        ).merge(MomCozyTextRoles.paragraphOf(context)),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
-}
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle(this.title);
-  final String title;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-    header: true,
-    child: Text(
-      title,
-      style: MomHomeTokens.text(18, weight: FontWeight.w700, height: 30 / 18),
-    ),
-  );
+  Future<void> _delete() async {
+    if (_deleting || widget.onDeleteAccount == null) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      animationStyle: MomCozyMotion.animationStyle(context),
+      builder: (context) => MomSettingsDialog(
+        title: 'Delete your account?',
+        content: const Text(
+          'You will be signed out on every device and lose access to this account. Data erasure is processed separately. This cannot be undone.',
+        ),
+        primaryAction: FilledButton(
+          key: const ValueKey('account-confirm-delete'),
+          style: FilledButton.styleFrom(backgroundColor: MomCozyColors.danger),
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text('Delete account', textAlign: TextAlign.center),
+        ),
+        onCancel: () => Navigator.pop(context, false),
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() {
+      _deleting = true;
+      _deleteMessage = null;
+    });
+    try {
+      await widget.onDeleteAccount!();
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Account access removed. Your data erasure request is pending.',
+          ),
+        ),
+      );
+    } catch (error) {
+      if (mounted) {
+        setState(() => _deleteMessage = accountAuthErrorText(error));
+      }
+    } finally {
+      if (mounted) setState(() => _deleting = false);
+    }
+  }
 }
 
 class _AccountCard extends StatelessWidget {
@@ -275,60 +311,51 @@ class _AccountCard extends StatelessWidget {
         ),
       ),
     );
-    final identity = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          displayName,
-          style: MomHomeTokens.text(
-            19,
-            weight: FontWeight.w700,
-            height: 25 / 19,
-          ),
-        ),
-        const SizedBox(height: 5),
-        ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 25),
-          child: Text(
-            loading
-                ? 'Loading account…'
-                : email.isEmpty
-                ? 'Manage your account information'
-                : email,
-            style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
-          ),
-        ),
-      ],
-    );
     return LayoutBuilder(
       builder: (context, constraints) {
-        final vertical =
-            constraints.maxWidth < 328 ||
-            MediaQuery.textScalerOf(context).scale(1) > 1.3;
+        final largeText =
+            MediaQuery.textScalerOf(context).scale(1) > 1.3 ||
+            constraints.maxWidth < 280;
+        final nameText = Text(
+          displayName,
+          style: MomHomeTokens.text(18, weight: FontWeight.w700, height: 1.3),
+        );
         return MomHomeSurface(
           gradient: MomHomeTokens.milk,
           backgroundDecoration: MomCardDecoration.account,
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: MomHomeTokens.inset,
-              vertical: 22,
-            ),
-            child: vertical
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.all(MomHomeTokens.inset),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (largeText) ...[
+                  avatar,
+                  const SizedBox(height: 12),
+                  nameText,
+                ] else
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       avatar,
-                      const SizedBox(height: MomHomeTokens.gap),
-                      identity,
-                    ],
-                  )
-                : Row(
-                    children: [
-                      avatar,
-                      const SizedBox(width: MomHomeTokens.gap),
-                      Expanded(child: identity),
+                      const SizedBox(width: 12),
+                      Expanded(child: nameText),
                     ],
                   ),
+                const SizedBox(height: 10),
+                Text(
+                  loading
+                      ? 'Loading account…'
+                      : email.isEmpty
+                      ? 'Manage your account information'
+                      : email,
+                  style: MomHomeTokens.text(
+                    12,
+                    color: MomHomeTokens.secondary,
+                    height: 1.45,
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

@@ -3400,7 +3400,6 @@ class AgentRunTranscript extends StatelessWidget {
         onQuickReplySelected != null;
     final avatarMode = _avatarMode;
     final loopDecor = _loopDecorState;
-    final thinkingNoteTitle = loopDecor.thinkingTitle;
     final statusLineTitle = loopDecor.statusTitle;
     final shouldRenderPrimaryText = _shouldRenderPrimaryText;
     final isFailure =
@@ -3421,12 +3420,7 @@ class AgentRunTranscript extends StatelessWidget {
         children: [
           if (statusLineTitle != null) ...[
             AgentRunStatusLine(title: statusLineTitle),
-            if (thinkingNoteTitle != null || shouldRenderPrimaryText)
-              const SizedBox(height: 5),
-          ],
-          if (thinkingNoteTitle != null) ...[
-            AgentThinkingNote(title: thinkingNoteTitle),
-            if (shouldRenderPrimaryText) const SizedBox(height: 8),
+            if (shouldRenderPrimaryText) const SizedBox(height: 5),
           ],
           if (showFailureFallback)
             Semantics(
@@ -3529,23 +3523,15 @@ class AgentRunTranscript extends StatelessWidget {
   }
 
   _AgentLoopDecorState get _loopDecorState {
-    final supportsLoopDecor =
-        state.phase == AgentStreamRunPhase.streaming ||
-        state.phase == AgentStreamRunPhase.waitingForConfirmation ||
-        state.phase == AgentStreamRunPhase.error;
+    final supportsLoopDecor = state.phase == AgentStreamRunPhase.streaming;
     if (!supportsLoopDecor || state.hasCompletedAssistantMessage) {
       return const _AgentLoopDecorState();
-    }
-    if (state.phase == AgentStreamRunPhase.streaming &&
-        state.textContent.trim().isNotEmpty) {
-      return const _AgentLoopDecorState(
-        statusTitle: 'Putting together a response…',
-      );
     }
     if (state.textContent.trim().isNotEmpty) {
       return const _AgentLoopDecorState();
     }
-    return _agentLoopDecorStateFromEvents(state.events);
+    final projectedEvent = projectAgentWorkStatus(state.events).statusEvent;
+    return _AgentLoopDecorState(statusTitle: projectedEvent?.userFacingStatus);
   }
 
   String? get _supportingText {
@@ -3899,7 +3885,6 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     final title = widget.title;
 
     return Semantics(
@@ -3918,14 +3903,11 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
           sweepKey: const ValueKey('agent-run-status-title-sweep'),
           animation: _sweepController,
           colors: const [
-            MomCozyColors.violet,
-            MomCozyColors.primaryDark,
-            MomCozyColors.violet,
+            Color(0xff527768),
+            MomHomeTokens.teal,
+            Color(0xff527768),
           ],
-          style: textTheme.labelSmall?.copyWith(
-            height: 1.45,
-            fontWeight: FontWeight.w700,
-          ),
+          style: MomHomeTokens.text(13, weight: FontWeight.w500, height: 1.45),
         ),
       ),
     );
@@ -4499,7 +4481,6 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final onSend = widget.onSend;
     final onCancel = widget.onCancel;
     final sendIsStop = isRunning && !canSend;
-    final sendLooksActive = canSend || sendIsStop;
     const inputTextStyle = TextStyle(
       fontFamily: 'NotoSansSCHome',
       fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
@@ -4853,22 +4834,43 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                               icon: DecoratedBox(
                                 key: const ValueKey('agent-send-button-visual'),
                                 decoration: BoxDecoration(
-                                  color: sendLooksActive
+                                  color: sendIsStop
+                                      ? const Color(0xFFF9EDF2)
+                                      : canSend
                                       ? MomHomeTokens.rose
-                                      : MomHomeTokens.neutralSurface,
+                                      : const Color(0xFFFAF6F3),
                                   shape: BoxShape.circle,
+                                  border: canSend && !sendIsStop
+                                      ? null
+                                      : Border.all(
+                                          color: sendIsStop
+                                              ? const Color(0xFFEBCDD9)
+                                              : MomHomeTokens.border,
+                                        ),
+                                  boxShadow: canSend && !sendIsStop
+                                      ? [
+                                          BoxShadow(
+                                            color: MomHomeTokens.rose
+                                                .withValues(alpha: 0.18),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ]
+                                      : null,
                                 ),
                                 child: SizedBox.square(
-                                  dimension: _controlSize,
+                                  dimension: 36,
                                   child: Center(
                                     child: Icon(
                                       sendIsStop
                                           ? Icons.stop_rounded
                                           : Icons.arrow_upward_rounded,
-                                      size: sendIsStop ? 18 : 16,
-                                      color: sendLooksActive
+                                      size: sendIsStop ? 16 : 21,
+                                      color: sendIsStop
+                                          ? MomHomeTokens.rose
+                                          : canSend
                                           ? colorScheme.onPrimary
-                                          : MomCozyColors.mutedForeground,
+                                          : MomHomeTokens.secondary,
                                     ),
                                   ),
                                 ),
@@ -4955,19 +4957,6 @@ bool _hasServerRunSignal(AgentStreamRunState state) {
       state.provisionalTextContent.isNotEmpty;
 }
 
-String? _stringField(Map<String, Object?> map, String key, [String? alias]) {
-  return stringField(map, key) ??
-      (alias == null ? null : stringField(map, alias));
-}
-
-String? _firstNonEmpty(List<String?> values) {
-  for (final value in values) {
-    final normalized = value?.trim();
-    if (normalized != null && normalized.isNotEmpty) return normalized;
-  }
-  return null;
-}
-
 String? _safeAgentErrorText(String? errorMessage, {String? fallback}) {
   final normalized = errorMessage?.trim();
   if (normalized == null || normalized.isEmpty) return null;
@@ -4986,204 +4975,9 @@ String? _safeAgentErrorText(String? errorMessage, {String? fallback}) {
 }
 
 class _AgentLoopDecorState {
-  const _AgentLoopDecorState({this.statusTitle, this.thinkingTitle});
+  const _AgentLoopDecorState({this.statusTitle});
 
   final String? statusTitle;
-  final String? thinkingTitle;
-}
-
-_AgentLoopDecorState _agentLoopDecorStateFromEvents(
-  List<AgentStreamEvent> events,
-) {
-  return _AgentLoopDecorState(
-    statusTitle: _activeAgentStatusTitle(events),
-    thinkingTitle: _activeAgentThinkingTitle(events),
-  );
-}
-
-String? _activeAgentStatusTitle(List<AgentStreamEvent> events) {
-  final projection = projectAgentWorkStatus(events);
-  if (projection.isTerminal) return null;
-  final projectedEvent = projection.statusEvent;
-  if (projectedEvent != null) {
-    final projectedTitle = _semanticStatusTitle(projectedEvent);
-    if (projectedTitle != null) return projectedTitle;
-  }
-
-  for (final event in events.reversed) {
-    if (event.semantic.isNotEmpty) continue;
-    if (_eventStopsAgentLoopDecor(event)) return null;
-
-    switch (event.type) {
-      case 'run.queued':
-      case 'run.started':
-        return 'I have your message.';
-      case 'run.progress':
-        if (_isThinkingProgressEvent(event)) continue;
-        final title = _visibleAgentStatusTitle(
-          _firstNonEmpty([
-            _stringField(event.payload, 'label'),
-            _stringField(event.payload, 'message'),
-            _runProgressStatusTitle(event),
-          ]),
-        );
-        if (title != null) return title;
-        continue;
-      default:
-        continue;
-    }
-  }
-  return 'I have your message.';
-}
-
-String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
-  for (final event in events.reversed) {
-    if (event.semantic.isNotEmpty) {
-      final semanticThinkingTitle = _semanticThinkingTitle(event);
-      if (semanticThinkingTitle != null) return semanticThinkingTitle;
-      if (_semanticClearsAgentThinking(event) ||
-          _eventStopsAgentLoopDecor(event)) {
-        return null;
-      }
-      continue;
-    }
-
-    if (event.type == 'run.progress') {
-      final phase = _stringField(event.payload, 'phase')?.trim();
-      if (phase == 'model_reasoning') {
-        return _visibleAgentStatusTitle(
-              _firstNonEmpty([
-                _stringField(event.payload, 'label'),
-                _stringField(event.payload, 'message'),
-              ]),
-            ) ??
-            'Let me think…';
-      }
-      if (phase == 'model_reasoning_after_tool') {
-        return _visibleAgentStatusTitle(
-              _firstNonEmpty([
-                _stringField(event.payload, 'label'),
-                _stringField(event.payload, 'message'),
-              ]),
-            ) ??
-            'Let me think…';
-      }
-      if (_runProgressClearsAgentThinking(event, phase)) return null;
-    }
-
-    if (_eventStopsAgentLoopDecor(event)) return null;
-  }
-  return null;
-}
-
-bool _eventStopsAgentLoopDecor(AgentStreamEvent event) {
-  return (event.type == 'message.completed' && event.role != 'user') ||
-      event.type == 'run.completed' ||
-      event.type == 'run.failed' ||
-      event.type == 'run.cancelled';
-}
-
-bool _isThinkingProgressEvent(AgentStreamEvent event) {
-  if (event.semanticSurface == 'thinking_note') return true;
-  if (event.type != 'run.progress') return false;
-  final phase = _stringField(event.payload, 'phase')?.trim();
-  return phase == 'model_reasoning' || phase == 'model_reasoning_after_tool';
-}
-
-bool _runProgressClearsAgentThinking(AgentStreamEvent event, String? phase) {
-  if (phase != null && phase.isNotEmpty) {
-    return phase != 'model_reasoning' && phase != 'model_reasoning_after_tool';
-  }
-  final statusCandidates = [
-    _semanticStatusTitle(event),
-    _stringField(event.payload, 'label'),
-    _stringField(event.payload, 'message'),
-  ];
-  return statusCandidates.any(
-    (candidate) => _visibleAgentStatusTitle(candidate) != null,
-  );
-}
-
-bool _semanticClearsAgentThinking(AgentStreamEvent event) {
-  final semantic = event.semantic;
-  if (semantic.isEmpty) return false;
-  final surface = _stringField(semantic, 'surface')?.trim();
-  if (surface == 'thinking_note') return false;
-  if (_semanticTargetsAgentStatus(semantic)) {
-    return _semanticDisplayTitle(semantic) != null;
-  }
-  final lifecycle = _stringField(semantic, 'lifecycle')?.trim();
-  return lifecycle == 'completed' || lifecycle == 'failed';
-}
-
-String? _semanticStatusTitle(AgentStreamEvent event) {
-  final semantic = event.semantic;
-  if (semantic.isEmpty) return null;
-  if (event.semanticLifecycle == 'failed') return null;
-  final surface = _stringField(semantic, 'surface')?.trim();
-  if (surface == 'thinking_note' || surface == 'hidden') return null;
-  if (_semanticTargetsAgentStatus(semantic)) {
-    return _semanticDisplayTitle(semantic);
-  }
-  return null;
-}
-
-bool _semanticTargetsAgentStatus(Map<String, Object?> semantic) {
-  const visibleTargets = {'status_bar', 'work_item', 'artifact', 'action'};
-  final surface = _stringField(semantic, 'surface')?.trim();
-  if (surface == 'thinking_note' || surface == 'hidden') return false;
-  return visibleTargets.contains(surface);
-}
-
-String? _semanticThinkingTitle(AgentStreamEvent event) {
-  final semantic = event.semantic;
-  if (semantic.isEmpty) return null;
-  final surface = _stringField(semantic, 'surface')?.trim();
-  if (surface != 'thinking_note') return null;
-  return _semanticDisplayTitle(semantic);
-}
-
-String? _semanticDisplayTitle(Map<String, Object?> semantic) {
-  return _visibleAgentStatusTitle(
-    _firstNonEmpty([
-      _stringField(semantic, 'label'),
-      _stringField(semantic, 'title'),
-    ]),
-  );
-}
-
-String? _runProgressStatusTitle(AgentStreamEvent event) {
-  final phase = _stringField(event.payload, 'phase')?.trim();
-  return switch (phase) {
-    'context_loading' => 'I have your message.',
-    'context_ready' => 'Let me understand what you need…',
-    'model_followup' => 'Working on the next step…',
-    'response_finalizing' => 'Putting together a response…',
-    'quick_replies_preparing' => 'Preparing follow-up suggestions…',
-    _ => null,
-  };
-}
-
-String? _visibleAgentStatusTitle(String? value) {
-  final normalized = value?.trim();
-  if (normalized == null || normalized.isEmpty) return null;
-  const hidden = {
-    '开始处理请求。',
-    '正在处理请求。',
-    '正在处理请求',
-    'Agent loop started.',
-    'Requesting model response.',
-    'Requesting model response with tool outputs.',
-  };
-  if (hidden.contains(normalized)) return null;
-  return switch (normalized) {
-    'Momcozy AI is joining the conversation' => 'I have your message.',
-    '正在整理对话上下文' => 'I have your message.',
-    '已整理好相关信息' => 'Let me understand what you need…',
-    'Momcozy AI is thinking about how to help' => 'Let me think…',
-    '正在整理回复' => 'Putting together a response…',
-    _ => containsUnsupportedAssistantText(normalized) ? null : normalized,
-  };
 }
 
 String _messageIdentity(AgentHubHistoryMessage message) =>

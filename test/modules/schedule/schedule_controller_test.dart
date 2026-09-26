@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/domain/care/service_package.dart';
-import 'package:momcozy_flutter_app/domain/care/care_plan.dart';
 import 'package:momcozy_flutter_app/domain/shared/local_date.dart';
 import 'package:momcozy_flutter_app/modules/schedule/application/schedule_controller.dart';
 import 'package:momcozy_flutter_app/modules/schedule/data/schedule_api_repository.dart';
@@ -15,7 +13,6 @@ void main() {
       final controller = ScheduleController(
         repository: repository,
         timezoneProvider: () async => 'Asia/Shanghai',
-        catalogLoader: () async => _catalog,
         now: () => DateTime(2026, 9, 9, 10),
       );
       await controller.load();
@@ -35,7 +32,6 @@ void main() {
       final controller = ScheduleController(
         repository: repository,
         timezoneProvider: () async => 'UTC',
-        catalogLoader: () async => _catalog,
         now: () => DateTime(2026, 9, 9),
       );
       await controller.savePersonal(
@@ -54,7 +50,6 @@ void main() {
   ScheduleController controlled(_DeferredRepository repo) => ScheduleController(
     repository: repo,
     timezoneProvider: () async => 'UTC',
-    catalogLoader: () async => _catalog,
     now: () => DateTime(2026, 9, 9),
   );
   test(
@@ -133,27 +128,6 @@ void main() {
   );
 }
 
-final _catalog = ServiceCatalog(
-  packages: [
-    const ServicePackage(
-      id: 'feeding-confidence',
-      name: 'Feeding Confidence',
-      subtitle: '',
-      description: '',
-      durationDays: 7,
-      sessions: 2,
-      priceMinor: 1,
-      currency: 'USD',
-      highlights: [],
-      expertServices: [],
-      continuousServices: [],
-    ),
-  ],
-  providers: const [],
-  availableRegions: const ['US'],
-  paymentMode: PaymentMode.sandbox,
-);
-
 class _FakeScheduleRepository implements ScheduleRepository {
   LocalDate? lastStart, lastEnd;
   int readCount = 0;
@@ -180,9 +154,6 @@ class _FakeScheduleRepository implements ScheduleRepository {
     readCount++;
     return SchedulePageData(
       personal: [entry],
-      appointments: const [],
-      plans: const [],
-      episodes: const [],
       serverTime: DateTime.utc(2026, 9, 9),
       hasMore: false,
     );
@@ -212,14 +183,6 @@ class _FakeScheduleRepository implements ScheduleRepository {
   Future<void> delete(PersonalScheduleEntry entry) async {
     deletedId = entry.id;
   }
-
-  @override
-  Future<PublishedCarePlan> updateTask({
-    required String publicationId,
-    required String sourceKey,
-    required int expectedVersion,
-    required CareTaskStatus status,
-  }) async => throw UnimplementedError();
 }
 
 class _DeferredRepository extends _FakeScheduleRepository {
@@ -235,9 +198,6 @@ class _DeferredRepository extends _FakeScheduleRepository {
         updatedAt: DateTime.utc(2026, 9, 9),
       ),
     ],
-    appointments: [],
-    plans: [],
-    episodes: [],
     serverTime: DateTime.utc(2026, 9, 9),
     hasMore: false,
   );

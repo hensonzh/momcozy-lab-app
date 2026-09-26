@@ -11,17 +11,6 @@ class PushRegistration {
   final bool pushAvailable;
 }
 
-class AppointmentReminder {
-  const AppointmentReminder({
-    required this.enabled,
-    required this.status,
-    this.triggerAt,
-  });
-  final bool enabled;
-  final String status;
-  final DateTime? triggerAt;
-}
-
 abstract interface class NotificationDeliveryRepository {
   Future<PushRegistration> registerInstallation({
     required String id,
@@ -36,12 +25,6 @@ abstract interface class NotificationDeliveryRepository {
   Future<Map<String, bool>> preferences();
   Future<Map<String, bool>> setPreference(
     String category, {
-    required bool enabled,
-    String? installationId,
-  });
-  Future<AppointmentReminder> reminder(String appointmentId);
-  Future<AppointmentReminder> setReminder(
-    String appointmentId, {
     required bool enabled,
     String? installationId,
   });

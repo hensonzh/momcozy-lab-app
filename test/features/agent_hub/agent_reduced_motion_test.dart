@@ -5,6 +5,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -129,6 +130,12 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    await tester.runAsync(
+      () => precacheImage(
+        const AssetImage(MomCozyAssets.agentAvatar),
+        tester.element(find.byType(MaterialApp)),
+      ),
+    );
     state.value = AgentStreamRunState(
       phase: AgentStreamRunPhase.streaming,
       events: [

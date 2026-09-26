@@ -36,7 +36,10 @@ Update flow for API changes:
 ## Auth
 
 - `POST /v1/auth/invite-login`
-- `POST /v1/auth/signup`
+- `POST /v1/auth/register` (email only; request verification code)
+- `POST /v1/auth/verify-registration-code` (check code, no session)
+- `POST /v1/auth/verify-email` (set password and consume code)
+- `POST /v1/auth/signup` (legacy compatibility)
 - `POST /v1/auth/login`
 - `POST /v1/auth/refresh`
 - `POST /v1/auth/logout`
@@ -132,25 +135,19 @@ File upload uses multipart form data at `POST /v1/files/upload`. File metadata
 is owner-scoped and object bytes are stored through the configured object
 storage provider.
 
-## Schedule Projection And Care Plan Progress
+## Schedule Projection
 
 Schedule resources are owner-scoped and never accept a mobile-provided
-`user_id` as authority. The mobile app reads one projection that combines
-personal entries, appointments, episodes, and the latest published Care Plan:
+`user_id` as authority. The mobile app reads personal schedule entries through
+`GET /v1/schedule?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD&timezone=...`,
+which returns a bounded calendar window and a `has_more` cursor hint.
+`POST /v1/schedule/personal` creates an idempotent personal entry.
+`PATCH /v1/schedule/personal/{task_id}` uses `expected_updated_at` for
+optimistic concurrency; `DELETE` uses the same timestamp in the query.
 
-- `GET /v1/schedule?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD&timezone=...`
-  returns the bounded calendar window and a `has_more` cursor hint.
-- `POST /v1/schedule/personal` creates an idempotent personal entry.
-- `PATCH /v1/schedule/personal/{task_id}` uses `expected_updated_at` for
-  optimistic concurrency; `DELETE` uses the same timestamp in the query.
-- `PUT /v1/care/plan-publications/{publication_id}/tasks/{source_key}` accepts
-  the typed task state and `expected_version`, then returns the complete
-  authoritative publication. A stale write returns `version_conflict` and the
-  client reloads the schedule.
-
-The old `/v1/plans` surface remains deprecated. New Flutter clients use
-`/v1/schedule` and `/v1/care`. Prenatal plans, pregnancy cards and diaries have
-been removed; Runtime business tools are unavailable.
+The independent `/v1/plans` surface remains available. The retired Expert
+support package, appointment, consultation and Care Plan endpoints are not
+part of the Product contract.
 
 ## Product Assets
 

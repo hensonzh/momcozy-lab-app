@@ -38,8 +38,6 @@ import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/account_page.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_page.dart';
-import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_banner.dart';
-import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_controller.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -99,16 +97,11 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
           releasePolicy: widget.onboardingReleasePolicy,
         )
       : null;
-  late final AvatarTaskController? _avatarTaskController =
-      _onboardingController == null
-      ? null
-      : AvatarTaskController(onboardingController: _onboardingController);
   late final GoRouter _router =
       widget.router ??
       createMomCozyRouter(
         runtimeController: _runtimeController,
         onboardingController: _onboardingController,
-        avatarTaskController: _avatarTaskController,
         sessionStore: widget.sessionStore,
         authDeviceIdStore: widget.authDeviceIdStore,
         lastInviteCodeStore: widget.lastInviteCodeStore,
@@ -181,7 +174,6 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
       if (platform is AndroidRouteIntentPlatform) unawaited(platform.dispose());
     }
     if (widget.notificationCoordinator == null) _notifications?.dispose();
-    _avatarTaskController?.dispose();
     _onboardingController?.dispose();
     if (_ownsRuntimeController) _runtimeController.dispose();
     if (_ownsRouter) _router.dispose();
@@ -190,7 +182,6 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    _avatarTaskController?.setForeground(state == AppLifecycleState.resumed);
     if (state == AppLifecycleState.resumed) {
       unawaited(_notifications?.refresh());
     }
@@ -270,8 +261,6 @@ GoRouter createMomCozyRouter({
   String initialLocation = '/me',
   MomCozyRuntimeController? runtimeController,
   OnboardingController? onboardingController,
-  AvatarTaskController? avatarTaskController,
-  OnboardingAvatarImageLoader? avatarThumbnailLoader,
   MomCozySessionStore sessionStore = const FlutterSecureMomCozySessionStore(),
   MomCozyAuthDeviceIdStore authDeviceIdStore =
       const FlutterSecureMomCozyAuthDeviceIdStore(),
@@ -292,8 +281,8 @@ GoRouter createMomCozyRouter({
         : Listenable.merge([runtimeController, onboardingController]),
     redirect: (context, state) {
       if (runtimeController == null) return null;
-      if (onboardingController == null &&
-          _isOnboardingFlowPath(state.uri.path)) {
+      if (state.uri.path.startsWith('/avatar/')) return '/me';
+      if (onboardingController == null && state.uri.path == '/onboarding') {
         return '/';
       }
       final authRedirect = _authRedirect(runtimeController, state);
@@ -334,31 +323,6 @@ GoRouter createMomCozyRouter({
             controller: onboardingController,
             entryPath:
                 _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/me',
-            avatarThumbnailLoader: avatarThumbnailLoader,
-          ),
-        ),
-      if (runtimeController != null && onboardingController != null)
-        GoRoute(
-          path: '/avatar/review',
-          builder: (context, state) => OnboardingPage(
-            controller: onboardingController,
-            avatarTaskMode: true,
-            entryPath:
-                _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/me',
-            avatarThumbnailLoader: avatarThumbnailLoader,
-            onAvatarTaskCompleted: avatarTaskController?.showCompleted,
-          ),
-        ),
-      if (runtimeController != null && onboardingController != null)
-        GoRoute(
-          path: '/avatar/create',
-          builder: (context, state) => OnboardingPage(
-            controller: onboardingController,
-            avatarTaskMode: true,
-            entryPath:
-                _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/me',
-            avatarThumbnailLoader: avatarThumbnailLoader,
-            onAvatarTaskCompleted: avatarTaskController?.showCompleted,
           ),
         ),
       ...momModuleRoutes,
@@ -374,7 +338,6 @@ GoRouter createMomCozyRouter({
               uri: state.uri,
               extra: state.extra,
               agentHubBuilder: resolvedAgentHubBuilder,
-              avatarTaskController: avatarTaskController,
               child: child,
             ),
           );
@@ -403,6 +366,16 @@ GoRouter createMomCozyRouter({
                           : () => runtimeController.logout(
                               sessionStore: sessionStore,
                             ),
+                      onDeleteAccount: runtimeController == null
+                          ? null
+                          : () async {
+                              await runtimeController.runtime.authRepository
+                                  .deleteAccount();
+                              await runtimeController.logout(
+                                sessionStore: sessionStore,
+                                revokeRemote: false,
+                              );
+                            },
                       onBabySelected: runtimeController?.selectBaby,
                     ),
             ),
@@ -416,10 +389,6 @@ GoRouter createMomCozyRouter({
       );
     },
   );
-}
-
-bool _isOnboardingFlowPath(String path) {
-  return path == '/onboarding' || path.startsWith('/avatar/');
 }
 
 class _BackendCapabilityUnavailablePage extends StatelessWidget {
@@ -485,10 +454,6 @@ String? _onboardingRedirect(
     ).toString();
   }
   if (isOnboarding) {
-    if (onboardingController.state?.canEnterApp == true &&
-        onboardingController.state?.isCompleted == false) {
-      return null;
-    }
     return _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/me';
   }
   return null;
@@ -530,7 +495,6 @@ class MomCozyRouteShell extends StatefulWidget {
     this.uri,
     this.extra,
     this.agentHubBuilder,
-    this.avatarTaskController,
   });
 
   final String location;
@@ -538,7 +502,6 @@ class MomCozyRouteShell extends StatefulWidget {
   final Uri? uri;
   final Object? extra;
   final MomCozyAgentHubBuilder? agentHubBuilder;
-  final AvatarTaskController? avatarTaskController;
 
   @override
   State<MomCozyRouteShell> createState() => _MomCozyRouteShellState();
@@ -546,7 +509,6 @@ class MomCozyRouteShell extends StatefulWidget {
 
 class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   late bool _hasBuiltAgentHub = widget.location == '/';
-  bool _openingAvatarTask = false;
 
   @override
   void didUpdateWidget(covariant MomCozyRouteShell oldWidget) {
@@ -575,16 +537,6 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
         bottom: hideNavigation,
         child: Column(
           children: [
-            if (widget.avatarTaskController case final controller?)
-              ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: MomCozyLayout.maxAppWidth,
-                ),
-                child: AvatarTaskBanner(
-                  controller: controller,
-                  onOpen: () => unawaited(_openAvatarTask(context)),
-                ),
-              ),
             Expanded(child: MomCozyPageBody(safeArea: false, child: content)),
           ],
         ),
@@ -593,22 +545,6 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
           ? null
           : MomCozyBottomNavigation(location: location),
     );
-  }
-
-  Future<void> _openAvatarTask(BuildContext context) async {
-    if (_openingAvatarTask) return;
-    _openingAvatarTask = true;
-    final origin = widget.uri?.toString() ?? widget.location;
-    try {
-      await context.push(
-        Uri(
-          path: '/avatar/review',
-          queryParameters: origin == '/' ? null : {'from': origin},
-        ).toString(),
-      );
-    } finally {
-      _openingAvatarTask = false;
-    }
   }
 
   Widget _buildContent(BuildContext context) {
@@ -662,6 +598,7 @@ class MomCozyRoutePage extends StatelessWidget {
     this.uri,
     this.extra,
     this.onLogout,
+    this.onDeleteAccount,
     this.onBabySelected,
     this.extendedProductResourcesEnabled = false,
   });
@@ -670,6 +607,7 @@ class MomCozyRoutePage extends StatelessWidget {
   final Uri? uri;
   final Object? extra;
   final Future<void> Function()? onLogout;
+  final Future<void> Function()? onDeleteAccount;
   final Future<void> Function(String babyId)? onBabySelected;
   final bool extendedProductResourcesEnabled;
 
@@ -680,7 +618,7 @@ class MomCozyRoutePage extends StatelessWidget {
       return buildBabyHome(context, onBabySelected: onBabySelected);
     }
     if (route.path == '/more') {
-      return MorePage(onLogout: onLogout);
+      return MorePage(onLogout: onLogout, onDeleteAccount: onDeleteAccount);
     }
 
     if (route.path == '/') {
@@ -697,6 +635,7 @@ class MomCozyRoutePage extends StatelessWidget {
       routeUri: uri,
       routeExtra: extra,
       onLogout: onLogout,
+      onDeleteAccount: onDeleteAccount,
       onBabySelected: onBabySelected,
       extendedProductResourcesEnabled: extendedProductResourcesEnabled,
     );
@@ -904,7 +843,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/',
     title: 'Momcozy AI',
-    summary: 'AI support, connected records, and expert services.',
+    summary: 'AI support and connected records.',
     icon: Icons.auto_awesome_rounded,
     accent: Color(0xff9f6378),
     priority: 'P0',
@@ -912,7 +851,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/me',
     title: 'Me',
-    summary: 'Your profile, lactation records, and expert support.',
+    summary: 'Your profile and lactation records.',
     icon: Icons.person_rounded,
     accent: Color(0xff862644),
     priority: 'P0',
@@ -928,7 +867,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/schedule',
     title: 'Schedule',
-    summary: 'Appointments, care tasks, and your schedule.',
+    summary: 'Your personal schedule.',
     icon: Icons.event_note_rounded,
     accent: Color(0xffb2773b),
     priority: 'P0',
@@ -936,7 +875,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/more',
     title: 'More',
-    summary: 'Account, services, notifications, and privacy settings.',
+    summary: 'Account and privacy settings.',
     icon: Icons.more_horiz_rounded,
     accent: Color(0xffa21849),
     priority: 'P0',
@@ -944,7 +883,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/notifications',
     title: 'Notifications',
-    summary: 'Appointment, task, and service reminders.',
+    summary: 'Conversation and account updates.',
     icon: Icons.notifications_rounded,
     accent: Color(0xff862644),
     priority: 'P1',

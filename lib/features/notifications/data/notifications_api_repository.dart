@@ -118,24 +118,6 @@ class NotificationsApiRepository
     ),
   );
   @override
-  Future<AppointmentReminder> reminder(String appointmentId) async => _reminder(
-    await transport.getJson(
-      '$notificationsEndpoint/appointments/${Uri.encodeComponent(appointmentId)}/reminder',
-    ),
-  );
-  @override
-  Future<AppointmentReminder> setReminder(
-    String appointmentId, {
-    required bool enabled,
-    String? installationId,
-  }) async => _reminder(
-    await _mutationTransport.putJson(
-      '$notificationsEndpoint/appointments/${Uri.encodeComponent(appointmentId)}/reminder',
-      body: {'enabled': enabled, 'installation_id': ?installationId},
-    ),
-  );
-
-  @override
   Future<List<MomCozyNotification>> fetchNotifications({
     String? status,
     int limit = 100,
@@ -214,10 +196,3 @@ String _text(Object? value) => value is String ? value.trim() : '';
 DateTime? _dateTime(Object? value) {
   return value is String ? DateTime.tryParse(value) : null;
 }
-
-AppointmentReminder _reminder(Map<String, Object?> value) =>
-    AppointmentReminder(
-      enabled: value['enabled'] == true,
-      status: value['status']! as String,
-      triggerAt: _dateTime(value['trigger_at']),
-    );

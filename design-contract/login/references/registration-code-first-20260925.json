@@ -1,0 +1,98 @@
+{
+  "date": "2026-09-25",
+  "figmaFileKey": "ePIoJkiMiXiug9ibpcgRbl",
+  "page": "Auth · App states",
+  "frameCount": 44,
+  "viewport": "390 × 844 Figma frames; 390 × 844 or 393 × 844 Flutter captures. Wider captures are center-cropped by Figma image-fill (no page scaling).",
+  "frames": [
+    {
+      "name": "07 · Register Default",
+      "source": "test/goldens/design_system/auth-register-390.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "08 · Register Validation",
+      "source": "test/goldens/design_system/auth-register-validation-390.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "09 · Register Submitting",
+      "source": "test/goldens/ui_inventory/auth-followup-register-pending-393-1x.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "10 · Register Email Unavailable",
+      "source": "test/goldens/ui_inventory/auth-followup-register-email-unavailable-393-1x.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "11 · Verify Default",
+      "source": "test/goldens/design_system/auth-verify-390.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "12 · Verify Invalid Code",
+      "source": "test/goldens/ui_inventory/auth-journey-code-expired-393.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload; 12 visually reviewed"
+    },
+    {
+      "name": "13 · Verify Code Validation",
+      "source": "test/goldens/ui_inventory/auth-journey-code-validation-393.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "14 · Verify Resend Cooldown",
+      "source": "test/goldens/ui_inventory/auth-journey-resend-cooldown-393.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "15 · Verify Resend Email Required",
+      "source": "test/goldens/ui_inventory/auth-followup-verify-resend-email-required-393-1x.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "16 · Verify Resend Rate Limited",
+      "source": "test/goldens/ui_inventory/auth-followup-verify-resend-rate-limited-393-1x.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "17 · Verify Resend Pending",
+      "source": "test/goldens/ui_inventory/auth-followup-verify-resend-pending-393-1x.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "18 · Verify Resend Accepted",
+      "source": "test/goldens/ui_inventory/auth-followup-verify-resend-success-393-1x.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "19 · Registration Code Submitting",
+      "source": "test/goldens/ui_inventory/auth-followup-registration-code-pending-393-1x.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "41 · Set Password Default",
+      "source": "test/goldens/ui_inventory/auth-journey-set-password-393.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "42 · Set Password Mismatch",
+      "source": "test/goldens/ui_inventory/auth-journey-password-mismatch-393.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "43 · Set Password Submitting",
+      "source": "test/goldens/ui_inventory/auth-followup-verify-submit-pending-393-1x.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    },
+    {
+      "name": "44 · Legacy Email Verification",
+      "source": "test/goldens/ui_inventory/auth-followup-verify-from-login-393-1x.png",
+      "status": "2026-09-26: Flutter golden regenerated; Figma image-fill SHA-1 matched source after upload"
+    }
+  ],
+  "onboarding": "Existing 24 Onboarding · App states frames retained; registration changes only the entry order before authenticated onboarding.",
+  "limitation": "The Figma boards contain screenshot/image fills, not editable Flutter controls. Current screenshots mirror Flutter goldens; they do not independently establish Figma-to-App pixel parity.",
+  "latestFeedback": "2026-09-26: registration submit disabled for blank email; registration verification removes reset-password and change-email actions; invalid-code state hides the initial inbox notice. Flutter regression and 390/393 screenshots verified.",
+  "figmaSyncStatus": "frames 07–19 and 41–44 updated in Figma and each image fill SHA-1 matched its Flutter golden; frame 12 visually reviewed. Screenshot-mirror verification only, not independent Figma-to-App parity. Onboarding frames unchanged."
+}

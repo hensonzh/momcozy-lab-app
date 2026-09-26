@@ -65,8 +65,7 @@ void main() {
         expect(actual[1].path, '/unknown-old-page');
         expect(actual[1].payload, containsPair('fallback', 'AgentHub'));
         expect(actual[3].type, 'ShowToast');
-        expect(actual[4].payload, containsPair('fallback', '/'));
-        expect(actual[5].payload, containsPair('status', 'unknown'));
+        expect(actual[4].payload, containsPair('status', 'unknown'));
       },
     );
 
@@ -104,19 +103,21 @@ void main() {
       _expectIntentsMatchExpected(actual, expected);
     });
 
-    test('map media viewer and IBCLC return inputs to typed intents', () {
-      final fixture = readFixtureMap(
-        'route_intents/media_viewer_and_ibclc_return_intents.json',
-      );
-      final input = Map<String, Object?>.from(fixture['input']! as Map);
-      final expected = List<Object?>.from(fixture['expectedIntents']! as List)
-          .whereType<Map>()
-          .map((value) => Map<String, Object?>.from(value))
-          .toList(growable: false);
-
-      final actual = routeIntentsFromMediaAndIbclcInput(input);
-
-      _expectIntentsMatchExpected(actual, expected);
+    test('media links do not create service routes', () {
+      final intents = routeIntentsFromMediaInput({
+        'mediaLinks': [
+          {
+            'kind': 'pdf',
+            'url': 'https://example.test/resource.pdf',
+            'title': 'Guide',
+          },
+        ],
+        'ibclc': {
+          'start': {'baseUrl': '/services'},
+        },
+      });
+      expect(intents, hasLength(1));
+      expect(intents.single.path, '/media-viewer');
     });
   });
 }

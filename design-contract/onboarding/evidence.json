@@ -1,0 +1,51 @@
+{
+  "date": "2026-09-26",
+  "designFile": "ePIoJkiMiXiug9ibpcgRbl",
+  "figmaPage": "Onboarding · App states (868:193)",
+  "retiredFigmaFrames": "01–02: dedicated loading/retry; 07–24: avatar creation and follow-up states",
+  "currentFigmaFrameIds": {
+    "03": "871:47",
+    "04": "871:46",
+    "05": "871:45",
+    "06": "871:44"
+  },
+  "intendedReplacementFiles": [
+    "design-contract/onboarding/comparisons/actual/03-profile-basics.png",
+    "design-contract/onboarding/comparisons/actual/04-delivery-date.png",
+    "design-contract/onboarding/comparisons/actual/05-birth-details.png",
+    "design-contract/onboarding/comparisons/actual/06-birth-details-error.png"
+  ],
+  "localConditionalVariant": "design-contract/onboarding/comparisons/actual/05-birth-details-repeat.png",
+  "appVerification": {
+    "flutterAnalyze": "lib + integration_test passed on 2026-09-26",
+    "onboardingTests": "39 passed, 2 skipped on 2026-09-26; first delivery omits prior-cesarean question, repeat delivery displays it and persists the answer",
+    "fullSuite": "Earlier run: 1237 pass, 8 skipped, 17 failures outside onboarding; not repeated for this clarification",
+    "goldens": "390/1× and 320/2× repeat-delivery screenshots verified without DEBUG banner or rendering overflow"
+  },
+  "figmaVerification": "2026-09-26: Figma page 868:193 was reopened in an independent Chrome tab and reloaded. Only frames 03–06 remain. Each frame visibly displays its updated 390×844 three-step screenshot (03 1/3, 04 2/3, 05/06 3/3); 03 explicitly asks how many deliveries including this birth. The new image layers 902:3, 902:6, 902:11, 902:14 are positioned at (0,0) in their respective frames. Original four-step images were hidden, not deleted, to preserve a reversible reference. The independent-tab reload confirmed the visible replacement persisted.",
+  "deviceVerification": "Not run.",
+  "figmaDeletion": {
+    "confirmedByUser": true,
+    "deletedFrameRange": "07–24 inclusive",
+    "count": 18,
+    "verifiedAfterReload": true,
+    "remainingFrames": [
+      "03 · Profile basics",
+      "04 · Delivery date",
+      "05 · Birth details",
+      "06 · Birth details error"
+    ],
+    "additionalDeletedFrameRange": "01–02 inclusive, two dedicated loading/retry frames, independently verified in a new tab on 2026-09-25"
+  },
+  "figmaImageReplacement": "SYNCED: four local 390×844 PNGs were pasted as Figma image layers 03-profile-basics-v2 (902:3), 04-delivery-date-v2 (902:6), 05-birth-details-v2 (902:11), 06-birth-details-error-v2 (902:14) under their existing frames. Old screenshots are hidden. The conditional repeat-delivery image remains a local variant, not a new Figma frame. No independent Figma export/pixel overlay was produced, so strict visual parity is not claimed.",
+  "backendContract": "Local Product Backend now includes GET /v1/onboarding/me and PUT /v1/onboarding/me/profile, atomic profile/baby creation, idempotent same-payload retries, owner scope, and migrations 20260926_0022/0023. Prior cesarean means only before the current birth; ambiguous legacy cesarean=true data becomes unknown. Backend full suite: 712 passed, 22 skipped without a Postgres URL; targeted isolated Postgres onboarding, HTTP and migration tests: 11 passed. The public staging OpenAPI was rechecked 2026-09-26 and still has no onboarding paths; no CI/main deployment has occurred. Existing 154+ unrelated Backend and 1600+ App worktree changes prevent a clean, isolated release. The App gate remains off by default and release-reset endpoint remains unimplemented; do not activate the gate or claim online API completion.",
+  "genericFeedback": "Runtime uses shared ProductLoadingView and ProductErrorView with retry; widget regression exercises delayed load, failure, and successful retry.",
+  "figmaGenericFeedback": "The dedicated Figma frames 01 and 02 were deleted and their absence verified in a newly opened Figma tab on 2026-09-25. App runtime continues using the shared loading/error components.",
+  "figmaReplacementLayerIds": {
+    "03": "902:3",
+    "04": "902:6",
+    "05": "902:11",
+    "06": "902:14"
+  },
+  "figmaReloadScreenshot": "design-contract/onboarding/comparisons/figma-page-20260926.png"
+}

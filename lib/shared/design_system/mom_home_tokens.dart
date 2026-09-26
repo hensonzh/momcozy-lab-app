@@ -12,7 +12,6 @@ abstract final class MomHomeTokens {
   static const secondary = Color(0xff776e69);
   static const muted = Color(0xff958a84);
   static const rose = Color(0xffb54f78);
-  static const expertAction = Color(0xff8a607f);
   static const border = Color(0xffe9e1dc);
   static const mint = Color(0xffe8f3ef);
   static const teal = Color(0xff3e7180);
@@ -34,10 +33,6 @@ abstract final class MomHomeTokens {
   );
   static const mood = LinearGradient(
     colors: [Color(0xfffbece8), Color(0xfff7e3df)],
-  );
-  static const expert = LinearGradient(
-    colors: [Color(0xfffffdf9), Color(0xfff7f6ee), Color(0xffeaf4ef)],
-    stops: [0, .56, 1],
   );
   static const plan = LinearGradient(
     colors: [Color(0xfffffdfb), Color(0xfffff8f5), Color(0xfff3f8f5)],
@@ -62,6 +57,5 @@ abstract final class MomHomeTokens {
 abstract final class MomHomeAssets {
   static const root = 'assets/images/mom_home/';
   static const cozymate = '${root}cozymate_avatar.png';
-  static const experts = '${root}expert_group.png';
   static String exported(String name) => '$root$name.svg';
 }

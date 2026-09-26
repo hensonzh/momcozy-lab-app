@@ -1,9 +1,5 @@
 import '../../../core/network/api_json_transport.dart';
-import '../../../domain/care/care_plan.dart';
 import '../../../domain/shared/local_date.dart';
-import '../../../services/appointments/appointment_codec.dart';
-import '../../../services/care/care_codec.dart';
-import '../../../services/documentation/documentation_codec.dart';
 import '../../../services/shared/json_value.dart';
 import '../../../services/shared/product_failure_mapper.dart';
 import '../domain/schedule.dart';
@@ -31,12 +27,6 @@ abstract interface class ScheduleRepository {
     required String note,
   });
   Future<void> delete(PersonalScheduleEntry entry);
-  Future<PublishedCarePlan> updateTask({
-    required String publicationId,
-    required String sourceKey,
-    required int expectedVersion,
-    required CareTaskStatus status,
-  });
 }
 
 class ScheduleApiRepository implements ScheduleRepository {
@@ -63,16 +53,6 @@ class ScheduleApiRepository implements ScheduleRepository {
     );
     return SchedulePageData(
       personal: jsonList(json['personal'], _personal),
-      appointments: jsonList(json['appointments'], readAppointment),
-      plans: jsonList(
-        json['plans'],
-        (item) => ScheduledPlan(
-          episodeId: jsonString(item['episode_id']),
-          appointmentId: jsonString(item['appointment_id']),
-          publication: readPublication(jsonObject(item['publication'])),
-        ),
-      ),
-      episodes: jsonList(json['episodes'], readCareEpisode),
       serverTime: jsonInstant(json['server_time']),
       hasMore: jsonBool(json['has_more']),
     );
@@ -130,24 +110,6 @@ class ScheduleApiRepository implements ScheduleRepository {
       '/v1/schedule/personal/${Uri.encodeComponent(entry.id)}?expected_updated_at=${Uri.encodeQueryComponent(entry.updatedAt.toUtc().toIso8601String())}',
     );
   });
-
-  @override
-  Future<PublishedCarePlan> updateTask({
-    required String publicationId,
-    required String sourceKey,
-    required int expectedVersion,
-    required CareTaskStatus status,
-  }) => withProductFailure(
-    () async => readPublication(
-      await (transport as ApiJsonMutationTransport).putJson(
-        '/v1/care/plan-publications/${Uri.encodeComponent(publicationId)}/tasks/${Uri.encodeComponent(sourceKey)}',
-        body: {
-          'expected_version': expectedVersion,
-          'status': careTaskStatusWire.write(status),
-        },
-      ),
-    ),
-  );
 }
 
 PersonalScheduleEntry _personal(Map<String, Object?> json) =>

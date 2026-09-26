@@ -14,9 +14,6 @@ void main() {
       'lib/features/agent_hub/domain/agent_conversation.dart': RegExp(
         r'\[系统流程触发\]|用户刚完成',
       ),
-      'lib/features/agent_hub/agent_hub_page.dart': RegExp(
-        r"^\s*'(?:开始处理请求|正在处理请求|正在整理对话上下文|已整理好相关信息|正在整理回复)",
-      ),
     };
     final han = RegExp(r'[\u3400-\u9fff]');
     final errors = <String>[];

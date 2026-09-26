@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'fixture_api_transport.dart';
 
@@ -15,15 +13,6 @@ class MomInventoryTransport extends FixtureApiJsonTransportByPath {
           'actual_delivery_date': '2026-08-24',
           'current_delivery_method': 'vaginal',
         },
-        '/v1/care/catalog': Map<String, Object?>.from(
-          jsonDecode(
-                File(
-                  'test/fixtures/product_baseline/care_catalog.json',
-                ).readAsStringSync(),
-              )
-              as Map,
-        ),
-        '/v1/care/overview': {'orders': [], 'episodes': []},
       });
   final records = <Map<String, Object?>>[];
   final deleted = <String, Map<String, Object?>>{};
@@ -81,46 +70,6 @@ class MomInventoryTransport extends FixtureApiJsonTransportByPath {
     };
     records.add(row);
     return row;
-  }
-
-  void seedPlan() {
-    final episode = <String, Object?>{
-      'id': 'inventory-episode',
-      'order_id': 'inventory-order',
-      'package_id': 'feeding-confidence',
-      'status': 'active',
-      'stage': 'preparation',
-      'total_sessions': 2,
-      'remaining_sessions': 2,
-      'starts_at': inventoryMomNow.toIso8601String(),
-      'ends_at': inventoryMomNow.add(const Duration(days: 7)).toIso8601String(),
-      'version': 1,
-    };
-    responsesByPath['/v1/care/overview'] = {
-      'orders': [
-        {
-          'id': 'inventory-order',
-          'package_id': 'feeding-confidence',
-          'status': 'paid',
-          'price_minor': 21900,
-          'currency': 'USD',
-          'duration_days': 7,
-          'total_sessions': 2,
-          'payment_mode': 'sandbox',
-          'region': 'CA',
-          'version': 1,
-          'created_at': inventoryMomNow.toIso8601String(),
-          'updated_at': inventoryMomNow.toIso8601String(),
-        },
-      ],
-      'episodes': [episode],
-    };
-    responsesByPath['/v1/care/episodes/inventory-episode/booking'] = {
-      'episode': episode,
-      'providers': [],
-      'appointments': [],
-      'server_time': inventoryMomNow.toIso8601String(),
-    };
   }
 
   @override

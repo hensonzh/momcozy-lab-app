@@ -59,13 +59,11 @@ class MeSharedRecordSheet extends StatelessWidget {
             : diaper
             ? 'Log a diaper change'
             : 'Log your baby\'s weight';
-        final help = feed
+        final help = feed || diaper
             ? 'This record will also appear on your baby\'s page.'
-            : diaper
-            ? 'This record is shared with your baby\'s page. No need to enter it twice.'
             : 'Add a record when you have a new measurement. Daily weighing is not necessary.';
         Widget field(String title, Widget child) => Padding(
-          padding: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.only(bottom: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -74,7 +72,15 @@ class MeSharedRecordSheet extends StatelessWidget {
                 style: MeDesign.text(12, color: MeDesign.muted, line: 18),
               ),
               const SizedBox(height: 8),
-              child,
+              LayoutBuilder(
+                builder: (context, box) => Align(
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                    width: box.maxWidth > 300 ? 300 : box.maxWidth,
+                    child: child,
+                  ),
+                ),
+              ),
             ],
           ),
         );
@@ -87,17 +93,25 @@ class MeSharedRecordSheet extends StatelessWidget {
           title,
           DropdownButtonFormField<T>(
             initialValue: selected,
+            isExpanded: true,
+            isDense: MediaQuery.textScalerOf(context).scale(14) < 21,
             onChanged: c.busy ? null : changed,
             items: [
               for (final e in options.entries)
                 DropdownMenuItem(value: e.key, child: Text(e.value)),
             ],
-            decoration: const InputDecoration(hintText: 'Please select'),
+            decoration: const InputDecoration(
+              hintText: 'Please select',
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 10,
+              ),
+            ),
             style: MeDesign.text(14),
           ),
         );
         Future<void> date() async {
-          final day = feed || diaper
+          final day = feed
               ? c.occurredAt
               : DateTime(
                   c.recordedOn.year,
@@ -111,7 +125,7 @@ class MeSharedRecordSheet extends StatelessWidget {
             lastDate: c.now(),
           );
           if (selected == null || !context.mounted) return;
-          if (!feed && !diaper) {
+          if (!feed) {
             c.setDate(LocalDate.fromDateTime(selected));
             return;
           }
@@ -165,9 +179,10 @@ class MeSharedRecordSheet extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        SizedBox(
-                          height: 42,
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 42),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
                                 child: Text(
@@ -201,32 +216,30 @@ class MeSharedRecordSheet extends StatelessWidget {
                             line: 18,
                           ),
                         ),
-                        const SizedBox(height: 18),
-                        field(
-                          feed
-                              ? 'Feeding time'
-                              : diaper
-                              ? 'Diaper change time'
-                              : 'Measurement date',
-                          OutlinedButton(
-                            onPressed: c.busy ? null : date,
-                            style: OutlinedButton.styleFrom(
-                              alignment: Alignment.centerLeft,
-                            ),
-                            child: Text(
-                              feed || diaper
-                                  ? '${c.occurredAt.month}/${c.occurredAt.day} ${c.occurredAt.hour.toString().padLeft(2, '0')}:${c.occurredAt.minute.toString().padLeft(2, '0')}'
-                                  : c.recordedOn.toString(),
-                              style: MeDesign.text(14),
+                        const SizedBox(height: 14),
+                        if (!diaper)
+                          field(
+                            feed ? 'Feeding time' : 'Measurement date',
+                            OutlinedButton(
+                              onPressed: c.busy ? null : date,
+                              style: OutlinedButton.styleFrom(
+                                alignment: Alignment.centerLeft,
+                              ),
+                              child: Text(
+                                feed
+                                    ? '${c.occurredAt.month}/${c.occurredAt.day} ${c.occurredAt.hour.toString().padLeft(2, '0')}:${c.occurredAt.minute.toString().padLeft(2, '0')}'
+                                    : c.recordedOn.toString(),
+                                style: MeDesign.text(14),
+                              ),
                             ),
                           ),
-                        ),
                         if (feed) ...[
                           select(
                             'How did you feed your baby?',
                             const {
                               BabyFeedingMethod.breastfeeding: 'Nursing',
-                              BabyFeedingMethod.expressedMilk: 'Bottle-fed breast milk',
+                              BabyFeedingMethod.expressedMilk:
+                                  'Bottle-fed breast milk',
                               BabyFeedingMethod.formula: 'Bottle-fed formula',
                             },
                             c.feedingMethod,
@@ -257,7 +270,7 @@ class MeSharedRecordSheet extends StatelessWidget {
                             ),
                           ] else
                             field(
-                              'How much did your baby drink?',
+                              'How much did your baby drink? *',
                               TextField(
                                 enabled: c.editable,
                                 keyboardType:
@@ -266,34 +279,29 @@ class MeSharedRecordSheet extends StatelessWidget {
                                     ),
                                 onChanged: c.setVolume,
                                 decoration: const InputDecoration(
+                                  hintText: 'Enter amount',
                                   suffixText: 'ml',
                                 ),
                               ),
                             ),
                         ],
-                        if (diaper) ...[
-                          select(
-                            'What was in the diaper?',
-                            const {
-                              DiaperKind.wet: 'Wet only',
-                              DiaperKind.dirty: 'Dirty only',
-                              DiaperKind.both: 'Wet and dirty',
-                            },
-                            c.diaperKind,
-                            c.setDiaperKind,
-                          ),
+                        if (diaper)
                           field(
-                            'Additional notes (optional)',
-                            TextField(
+                            'What was in the diaper?',
+                            BabyChoices<DiaperKind>(
+                              options: const {
+                                DiaperKind.wet: 'Wet',
+                                DiaperKind.dirty: 'Dirty',
+                                DiaperKind.both: 'Both',
+                              },
+                              selected: c.diaperKind,
+                              onChanged: c.setDiaperKind,
+                              columns: 3,
+                              height: 44,
+                              radius: 22,
                               enabled: c.editable,
-                              onChanged: c.setNote,
-                              maxLength: 500,
-                              decoration: const InputDecoration(
-                                hintText: 'Add a note',
-                              ),
                             ),
                           ),
-                        ],
                         if (!feed && !diaper) ...[
                           field(
                             'Weight measurement',
@@ -321,20 +329,7 @@ class MeSharedRecordSheet extends StatelessWidget {
                             c.setMeasurementSource,
                           ),
                         ],
-                        const SizedBox(height: 48),
-                        Text(
-                          feed
-                              ? 'No need to enter milliliters for nursing.'
-                              : diaper
-                              ? 'Your home page shows the number of diaper changes you logged.'
-                              : 'The measurement date will appear with the weight.',
-                          style: MeDesign.text(
-                            11,
-                            color: MeDesign.muted,
-                            line: 17,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 4),
                         if (c.failure != null) ...[
                           const MeError(),
                           const SizedBox(height: 12),

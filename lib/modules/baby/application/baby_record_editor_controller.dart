@@ -281,6 +281,10 @@ class BabyRecordEditorController extends ChangeNotifier {
           validation = 'Select the nursing side.';
           return null;
         }
+        if (!breast && volume.trim().isEmpty) {
+          validation = 'Enter the amount bottle-fed.';
+          return null;
+        }
         if (breast &&
                 duration.trim().isNotEmpty &&
                 int.tryParse(duration.trim()) == null ||
@@ -300,9 +304,7 @@ class BabyRecordEditorController extends ChangeNotifier {
             occurredAt: occurredAt,
             method: feedingMethod!,
             side: breast ? feedingSide : null,
-            volumeMl: breast || volume.trim().isEmpty
-                ? null
-                : double.parse(volume.trim()),
+            volumeMl: breast ? null : double.parse(volume.trim()),
             durationMinutes: !breast || duration.trim().isEmpty
                 ? null
                 : int.parse(duration.trim()),
@@ -412,7 +414,7 @@ class BabyRecordEditorController extends ChangeNotifier {
           : errors.containsKey('ended_at')
           ? 'The wake time must be after the sleep time and cannot be in the future.'
           : errors.containsKey('volume_ml')
-          ? 'The bottle amount must be greater than 0 and no more than 1,000 ml, or you can leave it blank.'
+          ? 'The bottle amount must be greater than 0 and no more than 1,000 ml.'
           : errors.containsKey('duration_minutes')
           ? 'Nursing duration must be 1–240 minutes, or you can leave it blank.'
           : errors.containsKey('note')

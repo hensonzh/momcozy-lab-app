@@ -171,6 +171,7 @@ class BabyRecordFields extends StatelessWidget {
             value: c.volume,
             onChanged: c.setVolume,
             unit: 'ml',
+            required: true,
           ),
       ]);
     } else if (c.isDaily) {

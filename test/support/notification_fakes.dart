@@ -90,13 +90,8 @@ class FakeRepository
   int lastRevision = 0;
   String? lastLocale;
   bool serverPushAvailable = true;
-  AppointmentReminder reminderValue = const AppointmentReminder(
-    enabled: false,
-    status: 'disabled',
-  );
   Object? openError;
-  String targetRoute =
-      '/services/appointments/11111111-1111-1111-1111-111111111111';
+  String targetRoute = '/?conversationId=11111111-1111-4111-8111-111111111111';
   @override
   Future<PushRegistration> registerInstallation({
     required String id,
@@ -131,29 +126,13 @@ class FakeRepository
   }
 
   @override
-  Future<Map<String, bool>> preferences() async => {'appointments': true};
+  Future<Map<String, bool>> preferences() async => {'agent_updates': true};
   @override
   Future<Map<String, bool>> setPreference(
     String category, {
     required bool enabled,
     String? installationId,
   }) async => {category: enabled};
-  @override
-  Future<AppointmentReminder> reminder(String appointmentId) async =>
-      reminderValue;
-  @override
-  Future<AppointmentReminder> setReminder(
-    String appointmentId, {
-    required bool enabled,
-    String? installationId,
-  }) async {
-    events.add('reminder:$enabled');
-    return reminderValue = AppointmentReminder(
-      enabled: enabled,
-      status: enabled ? 'scheduled' : 'disabled',
-    );
-  }
-
   @override
   Future<NotificationPageData> fetchPage({
     String? cursor,

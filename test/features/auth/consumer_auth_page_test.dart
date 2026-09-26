@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/core/auth/google_sign_in_gateway.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
@@ -14,23 +13,12 @@ class _DeviceId implements MomCozyAuthDeviceIdStore {
   Future<String> readOrCreateDeviceId() async => 'test-device';
 }
 
-class _CancelledGoogle implements GoogleSignInGateway {
-  @override
-  Future<String?> signIn() async => null;
-}
-
-class _UnavailableGoogle implements GoogleSignInGateway {
-  @override
-  Future<String?> signIn() async => throw const GoogleSignInUnavailable();
-}
-
 void main() {
   Future<MomCozyRuntimeController> mount(
     WidgetTester tester,
     ApiJsonTransport transport,
-    MomCozySessionStore store, {
-    GoogleSignInGateway? googleSignIn,
-  }) async {
+    MomCozySessionStore store,
+  ) async {
     final controller = MomCozyRuntimeController(
       MomCozyApiRuntime(jsonTransport: transport),
     );
@@ -42,7 +30,6 @@ void main() {
           sessionStore: store,
           internalInviteOnly: false,
           authDeviceIdStore: _DeviceId(),
-          googleSignIn: googleSignIn ?? _CancelledGoogle(),
         ),
       ),
     );
@@ -125,44 +112,28 @@ void main() {
     },
   );
 
-  testWidgets(
-    'Google failure stays beside Google login and email remains usable',
-    (tester) async {
-      final transport = FixtureApiJsonTransport({
-        'access_token': 'access',
-        'refresh_token': 'refresh',
-        'expires_in': 900,
-        'user': {'id': 'mia'},
-      });
-      final store = MemoryMomCozySessionStore();
-      await mount(tester, transport, store, googleSignIn: _UnavailableGoogle());
-      final google = find.byKey(const ValueKey('auth-google-button'));
-      await tester.ensureVisible(google);
-      await tester.tap(google);
-      await tester.pumpAndSettle();
-      final error = find.byKey(const ValueKey('auth-error-text'));
-      expect(error, findsOneWidget);
-      expect(
-        tester.getTopLeft(error).dy,
-        greaterThan(tester.getBottomLeft(google).dy),
-      );
-      expect(
-        tester.getBottomLeft(error).dy,
-        lessThan(
-          tester.getTopLeft(find.byKey(const ValueKey('auth-email-field'))).dy,
-        ),
-      );
-      expect(transport.postedBodies, isEmpty);
-      await fill(tester);
-      await tester.ensureVisible(
-        find.byKey(const ValueKey('auth-submit-button')),
-      );
-      await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
-      await tester.pumpAndSettle();
-      expect(error, findsNothing);
-      expect((await store.readSession())?.userId, 'mia');
-    },
-  );
+  testWidgets('Google entry is absent and email login remains usable', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransport({
+      'access_token': 'access',
+      'refresh_token': 'refresh',
+      'expires_in': 900,
+      'user': {'id': 'mia'},
+    });
+    final store = MemoryMomCozySessionStore();
+    await mount(tester, transport, store);
+    expect(find.byKey(const ValueKey('auth-google-button')), findsNothing);
+    expect(find.text('Continue with Google'), findsNothing);
+    expect(transport.postedBodies, isEmpty);
+    await fill(tester);
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-submit-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+    await tester.pumpAndSettle();
+    expect((await store.readSession())?.userId, 'mia');
+  });
 
   testWidgets('unverified login opens verification without a separate entry', (
     tester,
@@ -184,7 +155,10 @@ void main() {
     });
     final store = MemoryMomCozySessionStore();
     final controller = await mount(tester, transport, store);
-    expect(find.text('Verify an existing account'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('auth-resume-verification')),
+      findsNothing,
+    );
     expect(find.byKey(const ValueKey('auth-code-field')), findsNothing);
     await fill(tester);
     await tester.ensureVisible(
@@ -197,7 +171,11 @@ void main() {
       '/v1/auth/resend-verification',
     ]);
     expect(find.text('Verify your email'), findsOneWidget);
-    expect(find.text('Resend code'), findsOneWidget);
+    expect(find.text('Request another code in 60s'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('auth-verify-forgot-button')),
+      findsOneWidget,
+    );
     expect(controller.currentSession.isAuthenticated, isFalse);
     expect(
       tester
@@ -222,6 +200,164 @@ void main() {
     expect((await store.readSession())?.userId, 'mia');
   });
 
+  testWidgets(
+    'returning user can resume verification without a saved password',
+    (tester) async {
+      final transport = FixtureApiJsonTransportByPath({
+        '/v1/auth/register': {'status': 'verification_required'},
+        '/v1/auth/verify-registration-code': {'status': 'code_valid'},
+        '/v1/auth/verify-email': {
+          'access_token': 'access',
+          'refresh_token': 'refresh',
+          'expires_in': 900,
+          'user': {'id': 'mia'},
+        },
+      });
+      final store = MemoryMomCozySessionStore();
+      await mount(tester, transport, store);
+      expect(
+        find.byKey(const ValueKey('auth-resume-verification')),
+        findsNothing,
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-register-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-register-button')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('auth-resume-verification')),
+        findsNothing,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-email-field')),
+        'mia@example.com',
+      );
+      await tester.pump();
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-submit-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('auth-code-field')), findsOneWidget);
+      expect(transport.mutationPaths, ['/v1/auth/register']);
+      expect(find.text('Request another code in 60s'), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-code-field')),
+        '12345678',
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-submit-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+      await tester.pumpAndSettle();
+      expect(transport.lastPath, '/v1/auth/verify-registration-code');
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-password-field')),
+        'secret123',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        'secret123',
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-submit-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+      await tester.pumpAndSettle();
+      expect((await store.readSession())?.userId, 'mia');
+    },
+  );
+
+  testWidgets('registration verification only offers sign in as an exit', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransport({
+      'status': 'verification_required',
+    });
+    await mount(tester, transport, MemoryMomCozySessionStore());
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-register-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-register-button')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-email-field')),
+      'mia@example.com',
+    );
+    await tester.pump();
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-submit-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Check your inbox and spam folder'),
+      findsOneWidget,
+    );
+    expect(find.text('Already registered? Reset password'), findsNothing);
+    expect(find.text('Change email'), findsNothing);
+    expect(find.text('Back to sign in'), findsOneWidget);
+    await tester.ensureVisible(find.text('Back to sign in'));
+    await tester.tap(find.text('Back to sign in'));
+    await tester.pumpAndSettle();
+    expect(find.text('Momcozy'), findsOneWidget);
+    expect(find.byKey(const ValueKey('auth-forgot-button')), findsOneWidget);
+  });
+
+  testWidgets('invalid registration code hides the initial inbox notice', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransportByPath({
+      '/v1/auth/register': {'status': 'verification_required'},
+      '/v1/auth/verify-registration-code': {
+        'http_status': 400,
+        'body': {
+          'error': {'code': 'invalid_or_expired_code'},
+        },
+      },
+    });
+    await mount(tester, transport, MemoryMomCozySessionStore());
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-register-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-register-button')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-email-field')),
+      'mia@example.com',
+    );
+    await tester.pump();
+    final submit = find.byKey(const ValueKey('auth-submit-button'));
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Check your inbox and spam folder'),
+      findsOneWidget,
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-code-field')),
+      '12345678',
+    );
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(transport.lastPath, '/v1/auth/verify-registration-code');
+    expect(
+      find.text(
+        'This code is invalid or expired. Request a new code and try again.',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Check your inbox and spam folder'),
+      findsNothing,
+    );
+    expect(find.text('Already registered? Reset password'), findsNothing);
+    expect(find.text('Change email'), findsNothing);
+    expect(find.text('Back to sign in'), findsOneWidget);
+  });
+
   testWidgets('password visibility can be toggled and resets on navigation', (
     tester,
   ) async {
@@ -235,11 +371,12 @@ void main() {
       of: password,
       matching: find.byType(TextField),
     );
-    final remember = find.byKey(const ValueKey('auth-remember-me'));
-    expect(tester.widget<CheckboxListTile>(remember).value, isFalse);
-    await tester.tap(remember);
-    await tester.pumpAndSettle();
-    expect(tester.widget<CheckboxListTile>(remember).value, isTrue);
+    expect(find.byKey(const ValueKey('auth-remember-me')), findsNothing);
+    expect(find.text('Save password'), findsNothing);
+    expect(
+      tester.widget<AutofillGroup>(find.byType(AutofillGroup)).onDisposeAction,
+      AutofillContextAction.cancel,
+    );
     final visibility = find.byKey(const ValueKey('auth-password-visibility'));
     expect(visibility, findsOneWidget);
     await tester.enterText(password, 'secret123');
@@ -264,38 +401,219 @@ void main() {
     );
     await tester.tap(find.byKey(const ValueKey('auth-register-button')));
     await tester.pumpAndSettle();
-    expect(tester.widget<TextField>(passwordInput).obscureText, isTrue);
+    expect(password, findsNothing);
+    expect(find.byKey(const ValueKey('auth-code-field')), findsNothing);
   });
 
   testWidgets(
-    'email login saves a session and Google cancellation does not sign in',
+    'registration proves email before choosing and confirming password',
     (tester) async {
-      final transport = FixtureApiJsonTransport({
-        'access_token': 'access',
-        'refresh_token': 'refresh',
-        'expires_in': 900,
-        'user': {'id': 'mia'},
+      final transport = FixtureApiJsonTransportByPath({
+        '/v1/auth/register': {'status': 'verification_required'},
+        '/v1/auth/verify-registration-code': {'status': 'code_valid'},
+        '/v1/auth/verify-email': {
+          'access_token': 'access',
+          'refresh_token': 'refresh',
+          'expires_in': 900,
+          'user': {'id': 'mia'},
+        },
       });
       final store = MemoryMomCozySessionStore();
-      final controller = await mount(tester, transport, store);
-      await tester.ensureVisible(
-        find.byKey(const ValueKey('auth-google-button')),
+      await mount(tester, transport, store);
+      Future<void> tapAction(String key) async {
+        final action = find.byKey(ValueKey(key));
+        await tester.ensureVisible(action);
+        await tester.pumpAndSettle();
+        await tester.tap(action);
+        await tester.pumpAndSettle();
+      }
+
+      await tapAction('auth-register-button');
+      expect(find.byKey(const ValueKey('auth-password-field')), findsNothing);
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-email-field')),
+        'mia@example.com',
       );
-      await tester.tap(find.byKey(const ValueKey('auth-google-button')));
-      await tester.pumpAndSettle();
-      expect(find.text('Google sign-in was canceled.'), findsOneWidget);
-      expect(controller.currentSession.isAuthenticated, isFalse);
-      await fill(tester);
-      await tester.ensureVisible(
-        find.byKey(const ValueKey('auth-submit-button')),
+      await tapAction('auth-submit-button');
+      expect(transport.mutationPaths, ['/v1/auth/register']);
+      expect(transport.lastBody, {'email': 'mia@example.com'});
+      expect(find.byKey(const ValueKey('auth-code-field')), findsOneWidget);
+      expect(find.byKey(const ValueKey('auth-password-field')), findsNothing);
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-code-field')),
+        '12345678',
       );
-      await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
-      await tester.pumpAndSettle();
-      expect(transport.lastPath, '/v1/auth/login');
+      await tapAction('auth-submit-button');
+      expect(transport.mutationPaths, [
+        '/v1/auth/register',
+        '/v1/auth/verify-registration-code',
+      ]);
+      expect(find.byKey(const ValueKey('auth-code-field')), findsNothing);
+      expect(find.byKey(const ValueKey('auth-password-field')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        findsOneWidget,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-password-field')),
+        'secret123',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        'different123',
+      );
+      await tapAction('auth-submit-button');
+      expect(find.text('Passwords do not match.'), findsOneWidget);
+      expect(transport.mutationPaths.length, 2);
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        'secret123',
+      );
+      await tapAction('auth-submit-button');
+      expect(transport.lastPath, '/v1/auth/verify-email');
+      expect(transport.lastBody, {
+        'email': 'mia@example.com',
+        'token': '12345678',
+        'password': 'secret123',
+        'confirm_password': 'secret123',
+        'device_id': 'test-device',
+      });
       expect((await store.readSession())?.userId, 'mia');
-      expect(controller.currentSession.locale, 'en-US');
     },
   );
+
+  testWidgets('email login saves a session without Google entry', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransport({
+      'access_token': 'access',
+      'refresh_token': 'refresh',
+      'expires_in': 900,
+      'user': {'id': 'mia'},
+    });
+    final store = MemoryMomCozySessionStore();
+    final controller = await mount(tester, transport, store);
+    expect(find.byKey(const ValueKey('auth-google-button')), findsNothing);
+    expect(controller.currentSession.isAuthenticated, isFalse);
+    await fill(tester);
+    final autofillSaveRequests = <Object?>[];
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(SystemChannels.textInput, (call) async {
+      if (call.method == 'TextInput.finishAutofillContext') {
+        autofillSaveRequests.add(call.arguments);
+      }
+      return null;
+    });
+    addTearDown(
+      () => messenger.setMockMethodCallHandler(SystemChannels.textInput, null),
+    );
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-submit-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(const SizedBox());
+    expect(autofillSaveRequests, isNot(contains(true)));
+    expect(transport.lastPath, '/v1/auth/login');
+    expect((await store.readSession())?.userId, 'mia');
+    expect(controller.currentSession.locale, 'en-US');
+  });
+  testWidgets(
+    'expired code after password entry returns to verification without a session',
+    (tester) async {
+      final transport = FixtureApiJsonTransportByPath({
+        '/v1/auth/register': {'status': 'verification_required'},
+        '/v1/auth/verify-registration-code': {'status': 'code_valid'},
+        '/v1/auth/verify-email': {
+          'http_status': 401,
+          'body': {
+            'error': {'code': 'invalid_or_expired_code'},
+          },
+        },
+      });
+      final store = MemoryMomCozySessionStore();
+      final runtime = await mount(tester, transport, store);
+      Future<void> submit() async {
+        final button = find.byKey(const ValueKey('auth-submit-button'));
+        await tester.ensureVisible(button);
+        await tester.tap(button);
+        await tester.pumpAndSettle();
+      }
+
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-register-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-register-button')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-email-field')),
+        'mia@example.com',
+      );
+      await tester.pump();
+      await submit();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-code-field')),
+        '12345678',
+      );
+      await submit();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-password-field')),
+        'secret123',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        'secret123',
+      );
+      await submit();
+      expect(transport.lastPath, '/v1/auth/verify-email');
+      expect(find.text('Verify your email'), findsOneWidget);
+      expect(find.textContaining('Code expired or invalid'), findsOneWidget);
+      expect(find.byKey(const ValueKey('auth-password-field')), findsNothing);
+      expect(
+        tester
+            .widget<TextFormField>(
+              find.byKey(const ValueKey('auth-code-field')),
+            )
+            .controller
+            ?.text,
+        isEmpty,
+      );
+      expect(runtime.currentSession.isAuthenticated, isFalse);
+      expect(await store.readSession(), isNull);
+    },
+  );
+
+  testWidgets('registration submit is disabled until email is entered', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransport({
+      'status': 'verification_required',
+    });
+    await mount(tester, transport, MemoryMomCozySessionStore());
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-register-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-register-button')));
+    await tester.pumpAndSettle();
+    final submit = find.byKey(const ValueKey('auth-submit-button'));
+    final email = find.byKey(const ValueKey('auth-email-field'));
+    expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+    expect(find.text('Continue email verification'), findsNothing);
+    expect(transport.postedBodies, isEmpty);
+
+    await tester.enterText(email, '   ');
+    await tester.pump();
+    expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+    await tester.enterText(email, 'mia@example.com');
+    await tester.pump();
+    expect(tester.widget<FilledButton>(submit).onPressed, isNotNull);
+    await tester.enterText(email, '');
+    await tester.pump();
+    expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+    expect(transport.postedBodies, isEmpty);
+  });
+
   testWidgets(
     'register requires email proof and invalid input sends no request',
     (tester) async {
@@ -309,14 +627,20 @@ void main() {
       );
       await tester.tap(find.byKey(const ValueKey('auth-register-button')));
       await tester.pumpAndSettle();
-      await fill(tester, password: 'weak');
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-email-field')),
+        'invalid',
+      );
       await tester.ensureVisible(
         find.byKey(const ValueKey('auth-submit-button')),
       );
       await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
       await tester.pumpAndSettle();
       expect(transport.postedBodies, isEmpty);
-      await fill(tester);
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-email-field')),
+        'mia@example.com',
+      );
       await tester.ensureVisible(
         find.byKey(const ValueKey('auth-submit-button')),
       );

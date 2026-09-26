@@ -8,68 +8,63 @@
   "source": {
     "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
     "fileUrl": "https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/",
-    "version": "user-brand-expansion-2026-09-24",
-    "exportedAt": "2026-09-24T14:54:44+08:00",
-    "referenceType": "userProvidedImageWithApprovedAdditiveOverride",
-    "referenceChecksum": "1cbcc44b6a51bb9b590a63787116e262a4969c30ae629e1869ae0ceb338ef20a"
+    "version": "auth-app-sync-2026-09-25",
+    "exportedAt": "2026-09-25T18:11:03+08:00",
+    "referenceType": "FlutterGoldenMirroredToFigmaNotIndependentVisualEvidence"
   },
   "tokens": {
     "color": {
-      "background": "#FFFFFF",
+      "backgroundGradient": [
+        "#F5EDF4",
+        "#FAF5F8",
+        "#FFFDFC"
+      ],
       "surface": "#FFFFFF",
       "ink": "#111111",
-      "secondary": "#747487",
+      "secondary": "#8A7180",
       "border": "#D8DAE1",
-      "button": "#111111",
+      "button": "#A44569",
       "buttonText": "#FFFFFF",
-      "brandWordmark": "#B54F78"
+      "brandWordmark": "#B54F78",
+      "link": "#8A607F"
     },
     "typography": {
       "title": {
-        "family": "Noto Sans SC",
-        "size": 28,
-        "weight": 700,
-        "lineHeight": 36
+        "family": "Libre Caslon Display",
+        "size": 48,
+        "weight": 400,
+        "lineHeight": 58
       },
       "button": {
-        "family": "Noto Sans SC",
+        "family": "Inter",
         "size": 16,
         "weight": 600,
         "lineHeight": 24
       },
       "input": {
-        "family": "Noto Sans SC",
+        "family": "Inter",
         "size": 16,
         "weight": 400,
         "lineHeight": 24
       },
       "support": {
-        "family": "Noto Sans SC",
+        "family": "Inter",
         "size": 14,
         "weight": 400,
         "lineHeight": 20
-      },
-      "brand": {
-        "family": "Libre Caslon Display",
-        "size": 32,
-        "weight": 400,
-        "lineHeight": 44
       }
     },
     "spacing": {
       "page": 24,
-      "titleTop": 24,
-      "heroGap": 40,
-      "section": 24,
-      "field": 16,
-      "brandTitleGap": 12,
-      "brandPanelHeight": 92,
-      "brandLoginGap": 24
+      "headerTop": 96,
+      "headerBottom": 64,
+      "field": 24,
+      "submitTop": 34,
+      "signupTop": 72
     },
     "radius": {
       "control": 12,
-      "button": 12,
-      "brandPanel": 24
+      "button": 12
     }
   },
   "screens": [
@@ -91,51 +86,49 @@
       },
       "shell": {
         "scrollable": true,
-        "background": "white",
+        "background": "rose mist vertical gradient",
         "horizontalPadding": 24,
         "maxContentWidth": 440,
         "bottomNavigation": null
       },
       "designSpec": {
-        "title": "Welcome back",
-        "googleButton": "Continue with Google",
-        "divider": "OR",
+        "title": "Momcozy",
+        "subtitle": "Care and support, every step of the way.",
+        "titleStyle": "48px Libre Caslon Display Regular #B54F78; centered",
+        "subtitleStyle": "14px Inter Regular #8A7180; centered",
+        "background": "vertical linear gradient #F5EDF4 0%, #FAF5F8 50%, #FFFDFC 100%",
+        "googleButton": null,
+        "divider": null,
+        "topBrandPanel": null,
         "emailPlaceholder": "Email",
         "passwordPlaceholder": "Password",
-        "rememberLabel": "Remember me",
         "forgotLabel": "Forgot your password?",
         "submitLabel": "Sign in",
         "signupPrompt": "Don't have an account?",
         "signupLabel": "Sign up now",
-        "legalPlacement": "below initial viewport in the scroll region",
-        "rememberBehavior": "Controls OS autofill credential saving; authenticated session persistence remains unchanged.",
-        "brand": {
-          "text": "Momcozy",
-          "placement": "a separate full-width brand panel above the unchanged centered login composition",
-          "family": "Libre Caslon Display",
-          "size": 36,
-          "lineHeight": 44,
-          "color": "#B54F78",
-          "presentation": "Prominent rose wordmark paired with the existing mother-and-baby illustration on a soft Momcozy gradient panel.",
-          "panelHeight": 92,
-          "panelRadius": 24,
-          "illustration": "assets/images/auth_mother_baby.png",
-          "preservedComposition": "From Welcome back through Sign up now, controls, typography, and internal spacing remain unchanged from references/user-login-base-20260924.png; the complete login composition moves down as one block."
+        "legalPlacement": "below signup; Terms, Privacy and language fully visible at 393x844 without scrolling",
+        "geometry393x844": {
+          "titleTop": 96,
+          "emailTop": 246,
+          "passwordTop": 326,
+          "submitTop": 478,
+          "submitHeight": 56,
+          "signupTextTop": "about 618"
         }
       },
       "states": [
         {
           "id": "default",
           "figmaNodeId": "858:157",
-          "reference": "references/user-login-base-20260924.png",
-          "status": "visuallyVerified",
+          "reference": "references/current-app-mirror-20260925.json",
+          "status": "implemented",
           "fixture": {
             "email": "",
             "password": "",
-            "rememberMe": false,
             "busy": false
           },
-          "referenceScope": "unchanged login composition below the additive Momcozy brand panel"
+          "appCapture": "comparisons/actual/flutter-login-approved-393x844.png",
+          "referenceScope": "Current Flutter screenshot mirrored to Figma login and Auth · App states; independent design-to-App visual parity not claimed"
         },
         {
           "id": "validation-error",
@@ -143,7 +136,6 @@
           "fixture": {
             "email": "invalid",
             "password": "",
-            "rememberMe": false,
             "busy": false
           }
         }
@@ -154,27 +146,11 @@
   "components": [],
   "interactions": [
     {
-      "id": "login.google",
-      "screen": "login.main",
-      "trigger": "tap:auth-google-button",
-      "from": "default",
-      "to": "authenticated-or-inline-error",
-      "status": "interactionVerified"
-    },
-    {
       "id": "login.toggle-password",
       "screen": "login.main",
       "trigger": "tap:auth-password-visibility",
       "from": "default",
       "to": "password-visible",
-      "status": "interactionVerified"
-    },
-    {
-      "id": "login.toggle-remember",
-      "screen": "login.main",
-      "trigger": "tap:auth-remember-me",
-      "from": "default",
-      "to": "remember-choice-updated",
       "status": "interactionVerified"
     },
     {
@@ -214,33 +190,10 @@
       "design contract validation",
       "flutter analyze",
       "auth widget tests",
-      "same-size login-content geometry checks",
-      "updated golden verification",
-      "Android emulator install and cold-launch check"
-    ],
-    "comparisonMetric": {
-      "meanAbsoluteChannelDifference": 0.0,
-      "comparison": "comparisons/login-content-preservation/comparison.json",
-      "scope": "unchanged login composition after uniform 116px translation; additive brand panel separately checked on emulator"
-    },
-    "loginCompositionPreservation": {
-      "reference": "references/login-form-baseline-393x844.png",
-      "referenceCrop": [
-        0,
-        0,
-        393,
-        728
-      ],
-      "actual": "comparisons/actual/flutter-login-393x844.png",
-      "actualCrop": [
-        0,
-        116,
-        393,
-        844
-      ],
-      "comparison": "comparisons/login-content-preservation/comparison.json",
-      "result": "zero pixel difference after uniform 116 px downward translation"
-    }
+      "393x844 layout and visual review",
+      "narrow and large-text state tests",
+      "Android emulator cold-launch check pending"
+    ]
   },
   "overrides": [
     {
@@ -253,27 +206,20 @@
     },
     {
       "id": "login.legal-retention",
-      "reason": "Existing Terms and Privacy actions remain available below the initially visible reference composition.",
+      "reason": "Terms, Privacy and language actions now fit in the initial 393x844 viewport, after the signup row, without scrolling.",
       "impact": [
         "login.main.default"
       ],
       "reviewedAt": "2026-09-24"
     },
     {
-      "id": "login.brand-wordmark",
-      "reason": "User found the compact centered bitmap wordmark too subtle and requested the original login treatment: a prominent left-aligned rose Momcozy label in Libre Caslon Display.",
+      "id": "login.user-approved-2026-09-25",
+      "reason": "User approved the final Figma login frame: remove old top brand panel and Google/OR entry, replace Welcome back with a larger centered Momcozy wordmark, and adopt the rose mist gradient and matching rose actions. This supersedes prior brand-panel overrides.",
       "impact": [
-        "login.main.default"
+        "login.main.default",
+        "login.main.validation-error"
       ],
-      "reviewedAt": "2026-09-24"
-    },
-    {
-      "id": "login.brand-panel-expansion",
-      "reason": "User requested more visible Momcozy elements while preserving the supplied login composition unchanged. Add a separate top brand panel with the Momcozy wordmark and existing mother-and-baby illustration, then move the original login composition down as a unit.",
-      "impact": [
-        "login.main.default"
-      ],
-      "reviewedAt": "2026-09-24"
+      "reviewedAt": "2026-09-25"
     }
   ]
 }

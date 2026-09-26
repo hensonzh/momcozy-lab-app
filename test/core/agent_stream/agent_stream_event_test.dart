@@ -341,5 +341,31 @@ void main() {
 
       expect(event.completedText, 'Durable reply');
     });
+
+    test('renders a long tool status without requiring other phases', () {
+      final longText = List.filled(30, '正在核对记录。').join();
+      final running = AgentStreamEvent({
+        'type': 'run.progress',
+        'payload': {
+          'phase': 'tool_status',
+          'call_id': 'records-1',
+          'outcome': 'running',
+          'user_facing_status': {'running': longText},
+        },
+      });
+      final success = AgentStreamEvent({
+        'type': 'run.progress',
+        'payload': {
+          'phase': 'tool_status',
+          'call_id': 'records-1',
+          'outcome': 'success',
+          'user_facing_status': {'running': longText},
+        },
+      });
+
+      expect(longText.length, greaterThan(120));
+      expect(running.userFacingStatus, longText);
+      expect(success.userFacingStatus, isNull);
+    });
   });
 }

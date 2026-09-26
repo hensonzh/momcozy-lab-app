@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
 import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';
@@ -14,207 +12,98 @@ void main() {
       'deleted_file_count': 3,
       'object_cleanup_queued': true,
     });
-    final repository = OnboardingApiRepository(
-      transport: transport,
-      multipartTransport: FixtureApiMultipartTransport(const {}),
-    );
-
+    final repository = OnboardingApiRepository(transport: transport);
     final result = await repository.resetForRelease('1.0.0+27');
-
     expect(transport.lastPath, onboardingReleaseResetEndpoint);
-    expect(transport.lastBody, {'release_id': '1.0.0+27'});
     expect(result.status, OnboardingReleaseResetStatus.reset);
-    expect(result.deletedFileCount, 3);
-    expect(result.objectCleanupQueued, isTrue);
+    expect(result.releaseId, '1.0.0+27');
   });
 
-  test('maps required onboarding state', () async {
-    final repository = OnboardingApiRepository(
-      transport: FixtureApiJsonTransport(const {
-        'status': 'required',
-        'current_step': 'profile',
-        'profile_confirmed': false,
-      }),
-      multipartTransport: FixtureApiMultipartTransport(const {}),
-    );
-
-    final state = await repository.fetchState();
-
-    expect(state.status, OnboardingStatus.required);
-    expect(state.profileConfirmed, isFalse);
-    expect(state.canEnterApp, isFalse);
-    expect(state.avatarSetupCompleted, isFalse);
-  });
-
-  test('preserves the avatar worker phase for truthful progress UI', () {
-    for (final (raw, expected) in const [
-      ('queued', OnboardingAvatarGenerationPhase.queued),
-      ('generating', OnboardingAvatarGenerationPhase.generating),
-    ]) {
-      final state = OnboardingState.fromMap({
-        'status': 'avatar_generating',
-        'current_step': 'generating',
-        'current_stage': 'postpartum',
-        'profile_confirmed': true,
-        'can_enter_app': true,
-        'avatar_setup_completed': false,
-        'avatar': {
-          'id': 'generation-$raw',
-          'stage': 'postpartum',
-          'status': raw,
-          'error_code': '',
-          'created_at': '2026-08-09T00:00:00Z',
-          'candidates': <Object?>[],
-        },
-      });
-
-      expect(state.status, OnboardingStatus.avatarGenerating);
-      expect(state.pendingAvatar?.phase, expected);
-      expect(state.canEnterApp, isTrue);
-      expect(state.avatarSetupCompleted, isFalse);
-    }
-  });
-
-  test('serializes one shared postpartum delivery and infant set', () async {
-    final transport = FixtureApiJsonTransport(const {
-      'status': 'avatar_required',
-      'current_step': 'avatar',
-      'current_stage': 'postpartum',
-      'profile_confirmed': true,
+  test('required state blocks entry; confirmed profile allows entry', () {
+    final required = OnboardingState.fromMap(const {
+      'status': 'required',
+      'profile_confirmed': false,
     });
-    final repository = OnboardingApiRepository(
-      transport: transport,
-      multipartTransport: FixtureApiMultipartTransport(const {}),
-    );
+    final confirmed = OnboardingState.fromMap(const {
+      'status': 'avatar_required', // A previously deployed response.
+      'profile_confirmed': true,
+      'can_enter_app': false,
+      'primary_infant_id': 'baby-1',
+    });
+    expect(required.canEnterApp, isFalse);
+    expect(confirmed.canEnterApp, isTrue);
+    expect(confirmed.status, OnboardingStatus.completed);
+    expect(confirmed.primaryInfantId, 'baby-1');
+  });
+
+  test('first delivery cannot persist a previous cesarean history', () {
     final draft = OnboardingProfileDraft(
       displayName: 'Mia',
       age: 32,
       deliveryDate: DateTime(2026, 7, 19),
+      deliveryCount: 2,
+      hasCesareanHistory: true,
       deliveryType: 'cesarean',
-      infantCount: 2,
-      infants: [
-        OnboardingInfantDraft(nickname: 'A', sex: 'female'),
-        OnboardingInfantDraft(nickname: 'B'),
-      ],
     );
-
-    final state = await repository.confirmProfile(draft);
-
-    expect(transport.lastPath, '$onboardingMeEndpoint/profile');
-    expect(transport.lastMethod, 'PUT');
-    expect(transport.lastBody, {
-      'stage': 'postpartum',
-      'display_name': 'Mia',
-      'age': 32,
-      'delivery_date': '2026-07-19',
-      'delivery_type': 'cesarean',
-      'infant_count': 2,
-      'infants': [
-        {'nickname': 'A', 'sex': 'female'},
-        {'nickname': 'B', 'sex': null},
-      ],
-    });
-    expect(state.status, OnboardingStatus.avatarRequired);
+    draft.setDeliveryCount(1);
+    expect(draft.hasCesareanHistory, isNull);
+    expect(draft.toMap()['has_cesarean_history'], false);
+    expect(draft.toMap()['delivery_type'], 'cesarean');
+    expect(draft.toMap()['delivery_count'], 1);
   });
 
-  test('uploads portrait to dedicated endpoint before generation', () async {
-    final multipart = FixtureApiMultipartTransport(const {
-      'id': 'portrait-file-id',
-    });
-    final repository = OnboardingApiRepository(
-      transport: FixtureApiJsonTransport(const {}),
-      multipartTransport: multipart,
+  test('prior cesarean history is independent of this delivery method', () {
+    final draft = OnboardingProfileDraft(
+      displayName: 'Mia',
+      deliveryDate: DateTime(2026, 7, 19),
+      deliveryCount: 2,
+      hasCesareanHistory: false,
+      deliveryType: 'cesarean',
     );
-
-    final id = await repository.uploadPortrait(
-      OnboardingPortrait(
-        bytes: Uint8List.fromList([1, 2, 3]),
-        name: 'me.jpg',
-        mimeType: 'image/jpeg',
-      ),
-    );
-
-    expect(id, 'portrait-file-id');
-    expect(multipart.lastPath, '$onboardingMeEndpoint/portrait');
-    expect(multipart.lastFile?.mimeType, 'image/jpeg');
-    expect(multipart.lastFile?.sizeBytes, 3);
+    expect(draft.toMap()['has_cesarean_history'], false);
+    expect(draft.toMap()['delivery_type'], 'cesarean');
   });
 
   test(
-    'maps four avatar candidates and completes with one candidate',
+    'serializes postpartum delivery and infant set on profile save',
     () async {
       final transport = FixtureApiJsonTransport(const {
         'status': 'completed',
-        'current_step': 'done',
         'profile_confirmed': true,
-        'can_enter_app': true,
-        'avatar_setup_completed': true,
-        'active_avatar_file_id': 'output-id',
       });
-      final repository = OnboardingApiRepository(
-        transport: transport,
-        multipartTransport: FixtureApiMultipartTransport(const {}),
+      final repository = OnboardingApiRepository(transport: transport);
+      final state = await repository.confirmProfile(
+        OnboardingProfileDraft(
+          displayName: 'Mia',
+          age: 32,
+          deliveryDate: DateTime(2026, 7, 19),
+          deliveryCount: 2,
+          hasCesareanHistory: true,
+          deliveryType: 'cesarean',
+          infantCount: 2,
+          infants: [
+            OnboardingInfantDraft(nickname: 'A', sex: 'female'),
+            OnboardingInfantDraft(nickname: 'B'),
+          ],
+        ),
       );
-
-      final state = await repository.completeWithAvatar('candidate-2');
-
-      expect(transport.lastPath, '$onboardingMeEndpoint/complete');
+      expect(transport.lastPath, '$onboardingMeEndpoint/profile');
+      expect(transport.lastMethod, 'PUT');
       expect(transport.lastBody, {
-        'avatar_candidate_id': 'candidate-2',
-        'use_default_avatar': false,
+        'stage': 'postpartum',
+        'display_name': 'Mia',
+        'age': 32,
+        'delivery_date': '2026-07-19',
+        'delivery_count': 2,
+        'has_cesarean_history': true,
+        'delivery_type': 'cesarean',
+        'infant_count': 2,
+        'infants': [
+          {'nickname': 'A', 'sex': 'female'},
+          {'nickname': 'B', 'sex': null},
+        ],
       });
-      expect(state.isCompleted, isTrue);
-      expect(state.activeAvatarFileId, 'output-id');
-      expect(state.pendingAvatar, isNull);
-    },
-  );
-
-  test('completes with the explicit MomCozy default selection', () async {
-    final transport = FixtureApiJsonTransport(const {
-      'status': 'completed',
-      'current_step': 'done',
-      'profile_confirmed': true,
-      'can_enter_app': true,
-      'avatar_setup_completed': true,
-    });
-    final repository = OnboardingApiRepository(
-      transport: transport,
-      multipartTransport: FixtureApiMultipartTransport(const {}),
-    );
-
-    await repository.completeWithDefault();
-
-    expect(transport.lastBody, {
-      'avatar_candidate_id': null,
-      'use_default_avatar': true,
-    });
-  });
-
-  test(
-    'dismisses a pending replacement without changing the active avatar',
-    () async {
-      final transport = FixtureApiJsonTransport(const {
-        'status': 'completed',
-        'current_step': 'done',
-        'profile_confirmed': true,
-        'can_enter_app': true,
-        'avatar_setup_completed': true,
-        'active_avatar_file_id': 'active-file',
-      });
-      final repository = OnboardingApiRepository(
-        transport: transport,
-        multipartTransport: FixtureApiMultipartTransport(const {}),
-      );
-
-      final state = await repository.dismissPendingAvatar();
-
-      expect(transport.lastMethod, 'DELETE');
-      expect(
-        transport.lastPath,
-        '$onboardingMeEndpoint/avatar-generations/pending',
-      );
-      expect(state.activeAvatarFileId, 'active-file');
-      expect(state.pendingAvatar, isNull);
+      expect(state.canEnterApp, isTrue);
     },
   );
 }

@@ -1,21 +1,4 @@
-import 'dart:typed_data';
-
-enum OnboardingStatus {
-  required,
-  avatarRequired,
-  avatarGenerating,
-  avatarReview,
-  avatarFailed,
-  completed,
-}
-
-enum OnboardingAvatarGenerationPhase {
-  queued,
-  generating,
-  succeeded,
-  failed,
-  unknown,
-}
+enum OnboardingStatus { required, completed }
 
 enum OnboardingReleaseResetStatus { reset, alreadyReset }
 
@@ -57,138 +40,31 @@ class OnboardingReleaseReset {
   final bool objectCleanupQueued;
 }
 
-class OnboardingAvatarCandidate {
-  const OnboardingAvatarCandidate({
-    required this.id,
-    required this.fileId,
-    required this.position,
-  });
-
-  factory OnboardingAvatarCandidate.fromMap(Map<String, Object?> map) {
-    final id = _string(map['id']).trim();
-    final fileId = _string(map['file_id']).trim();
-    final position = map['position'];
-    if (id.isEmpty ||
-        fileId.isEmpty ||
-        position is! int ||
-        position < 1 ||
-        position > 4) {
-      throw const FormatException('Invalid avatar candidate response.');
-    }
-    return OnboardingAvatarCandidate(
-      id: id,
-      fileId: fileId,
-      position: position,
-    );
-  }
-
-  final String id;
-  final String fileId;
-  final int position;
-}
-
-class OnboardingAvatarGeneration {
-  const OnboardingAvatarGeneration({
-    required this.id,
-    required this.status,
-    required this.phase,
-    this.outputFileId,
-    this.errorCode = '',
-    this.candidates = const [],
-  });
-
-  factory OnboardingAvatarGeneration.fromMap(Map<String, Object?> map) {
-    final rawStatus = _string(map['status']).trim();
-    final rawCandidates = map['candidates'];
-    final candidates = rawCandidates is List
-        ? rawCandidates
-              .map(
-                (value) => value is Map
-                    ? OnboardingAvatarCandidate.fromMap(
-                        Map<String, Object?>.from(value),
-                      )
-                    : throw const FormatException(
-                        'Invalid avatar candidate response.',
-                      ),
-              )
-              .toList()
-        : <OnboardingAvatarCandidate>[];
-    candidates.sort((left, right) => left.position.compareTo(right.position));
-    final status = _status(rawStatus);
-    if (status == OnboardingStatus.avatarReview &&
-        (candidates.length != 4 ||
-            candidates.map((value) => value.position).toSet().length != 4)) {
-      throw const FormatException(
-        'Avatar generation did not return four candidates.',
-      );
-    }
-    return OnboardingAvatarGeneration(
-      id: _string(map['id']),
-      status: status,
-      phase: _avatarGenerationPhase(rawStatus),
-      outputFileId: _nullableString(map['output_file_id']),
-      errorCode: _string(map['error_code']),
-      candidates: List.unmodifiable(candidates),
-    );
-  }
-
-  final String id;
-  final OnboardingStatus status;
-  final OnboardingAvatarGenerationPhase phase;
-  final String? outputFileId;
-  final String errorCode;
-  final List<OnboardingAvatarCandidate> candidates;
-}
-
 class OnboardingState {
   const OnboardingState({
     required this.status,
     required this.profileConfirmed,
-    this.canEnterApp = false,
-    this.avatarSetupCompleted = false,
-    this.canContinueWithDefault = false,
     this.primaryInfantId,
-    this.activeAvatarFileId,
-    this.pendingAvatar,
   });
 
   factory OnboardingState.fromMap(Map<String, Object?> map) {
-    final status = _status(_string(map['status']));
-    final avatarSetupCompleted =
-        map['avatar_setup_completed'] == true ||
-        status == OnboardingStatus.completed;
-    final pendingAvatar =
-        map['pending_avatar'] ?? (avatarSetupCompleted ? null : map['avatar']);
+    final confirmed =
+        map['profile_confirmed'] == true || map['status'] == 'completed';
     return OnboardingState(
-      status: status,
-      profileConfirmed: map['profile_confirmed'] == true,
-      canEnterApp:
-          map['can_enter_app'] == true || status == OnboardingStatus.completed,
-      avatarSetupCompleted: avatarSetupCompleted,
-      canContinueWithDefault: map['can_continue_with_default'] == true,
+      status: confirmed
+          ? OnboardingStatus.completed
+          : OnboardingStatus.required,
+      profileConfirmed: confirmed,
       primaryInfantId: _nullableString(map['primary_infant_id']),
-      activeAvatarFileId: _nullableString(
-        map['active_avatar_file_id'] ?? map['selected_avatar_file_id'],
-      ),
-      pendingAvatar: pendingAvatar is Map
-          ? OnboardingAvatarGeneration.fromMap(
-              Map<String, Object?>.from(pendingAvatar),
-            )
-          : null,
     );
   }
 
   final OnboardingStatus status;
   final bool profileConfirmed;
-  final bool canEnterApp;
-  final bool avatarSetupCompleted;
-  final bool canContinueWithDefault;
   final String? primaryInfantId;
-  final String? activeAvatarFileId;
-  final OnboardingAvatarGeneration? pendingAvatar;
 
-  bool get isCompleted =>
-      avatarSetupCompleted || status == OnboardingStatus.completed;
+  bool get canEnterApp => profileConfirmed;
+  bool get isCompleted => profileConfirmed;
 }
 
 class OnboardingInfantDraft {
@@ -205,6 +81,8 @@ class OnboardingProfileDraft {
     this.displayName = '',
     this.age,
     this.deliveryDate,
+    this.deliveryCount,
+    this.hasCesareanHistory,
     this.deliveryType,
     this.infantCount = 1,
     List<OnboardingInfantDraft>? infants,
@@ -213,9 +91,20 @@ class OnboardingProfileDraft {
   String displayName;
   int? age;
   DateTime? deliveryDate;
+
+  /// Number of births including the current delivery.
+  int? deliveryCount;
+
+  /// Cesarean history before the current delivery (not its delivery method).
+  bool? hasCesareanHistory;
   String? deliveryType;
   int infantCount;
   final List<OnboardingInfantDraft> infants;
+
+  void setDeliveryCount(int value) {
+    deliveryCount = value;
+    if (value == 1) hasCesareanHistory = null;
+  }
 
   void setInfantCount(int value) {
     infantCount = value;
@@ -228,6 +117,9 @@ class OnboardingProfileDraft {
   }
 
   Map<String, Object?> toMap() {
+    if (deliveryCount == null || deliveryCount! < 1 || deliveryCount! > 20) {
+      throw const FormatException('Choose which delivery this is.');
+    }
     return <String, Object?>{
       // The backend still requires the single supported care-stage value.
       // It is a transport compatibility field, not an app-side stage model.
@@ -235,44 +127,14 @@ class OnboardingProfileDraft {
       'display_name': displayName.trim(),
       'age': age,
       'delivery_date': _date(deliveryDate!),
+      'delivery_count': deliveryCount,
+      'has_cesarean_history': deliveryCount == 1 ? false : hasCesareanHistory,
       'delivery_type': deliveryType,
       'infant_count': infantCount,
       'infants': infants.map((infant) => infant.toMap()).toList(),
     };
   }
 }
-
-class OnboardingPortrait {
-  const OnboardingPortrait({
-    required this.bytes,
-    required this.name,
-    required this.mimeType,
-  });
-
-  final Uint8List bytes;
-  final String name;
-  final String mimeType;
-}
-
-OnboardingStatus _status(String value) => switch (value) {
-  'avatar_required' => OnboardingStatus.avatarRequired,
-  'avatar_generating' ||
-  'queued' ||
-  'generating' => OnboardingStatus.avatarGenerating,
-  'avatar_review' || 'succeeded' => OnboardingStatus.avatarReview,
-  'avatar_failed' || 'failed' => OnboardingStatus.avatarFailed,
-  'completed' => OnboardingStatus.completed,
-  _ => OnboardingStatus.required,
-};
-
-OnboardingAvatarGenerationPhase _avatarGenerationPhase(String value) =>
-    switch (value) {
-      'queued' => OnboardingAvatarGenerationPhase.queued,
-      'generating' => OnboardingAvatarGenerationPhase.generating,
-      'succeeded' => OnboardingAvatarGenerationPhase.succeeded,
-      'failed' => OnboardingAvatarGenerationPhase.failed,
-      _ => OnboardingAvatarGenerationPhase.unknown,
-    };
 
 String _string(Object? value) => value is String ? value : '';
 

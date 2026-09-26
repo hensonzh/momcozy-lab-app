@@ -1,0 +1,21 @@
+{
+  "source": "Figma file ePIoJkiMiXiug9ibpcgRbl / login / Login · Default / node 858:157",
+  "approval": "User-confirmed final Figma layout on 2026-09-25",
+  "frame": {"width": 393, "height": 844},
+  "content": {
+    "title": "Momcozy",
+    "titleFont": "Libre Caslon Display Regular 48px",
+    "titleColor": "#B54F78",
+    "subtitle": "Care and support, every step of the way.",
+    "subtitleFont": "Inter Regular 14px",
+    "subtitleColor": "#8A7180",
+    "background": "vertical gradient #F5EDF4 0%, #FAF5F8 50%, #FFFDFC 100%",
+    "inputFields": "white email and password fields",
+    "primaryAction": "Sign in button, #A44569, 345x56px",
+    "secondaryActionColor": "#8A607F",
+    "removed": ["top brand panel", "mother and baby illustration", "Google sign-in", "OR divider"]
+  },
+  "approximateY": {"title": 104, "subtitle": 172, "email": 246.5, "password": 326.5, "remember": 415, "submit": 478, "signup": 724},
+  "referenceType": "approved-design-parameter-manifest",
+  "limitation": "The final Figma frame is not yet exported as a PNG; this manifest is not visual evidence."
+}

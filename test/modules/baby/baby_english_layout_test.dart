@@ -10,6 +10,82 @@ import 'package:momcozy_flutter_app/modules/baby/presentation/baby_profile_edito
 import 'baby_test_repositories.dart';
 
 void main() {
+  testWidgets('switcher fits long English names at 320px and 2x', (
+    tester,
+  ) async {
+    const currentName = 'Luna Catherine Chen With A Long Display Name';
+    const secondName = 'Alexander Benjamin Taylor With A Long Name';
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+    final profiles = BabyTestProfiles()
+      ..values = [
+        BabyProfile(
+          id: 'current',
+          name: currentName,
+          birthDate: babyTestProfile.birthDate,
+          sex: babyTestProfile.sex,
+        ),
+        BabyProfile(
+          id: 'second',
+          name: secondName,
+          birthDate: babyTestProfile.birthDate,
+          sex: babyTestProfile.sex,
+        ),
+      ];
+    final home = BabyHomeController(
+      profileRepository: profiles,
+      recordRepository: BabyTestRecords(),
+      timezoneProvider: () async => 'America/Los_Angeles',
+      now: () => babyTestNow,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: BabyHomePage(controller: home, onAsk: (_) {}),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(currentName));
+    await tester.pumpAndSettle();
+
+    final selectedName = find.text('$currentName  · Current');
+    expect(selectedName, findsOneWidget);
+    final selectedParagraph = tester.renderObject<RenderParagraph>(
+      find.descendant(of: selectedName, matching: find.byType(RichText)),
+    );
+    expect(selectedParagraph.didExceedMaxLines, isFalse);
+    expect(
+      selectedParagraph.size.height,
+      greaterThanOrEqualTo(
+        selectedParagraph.getMaxIntrinsicHeight(selectedParagraph.size.width) -
+            1,
+      ),
+    );
+    final otherName = find.text(secondName);
+    expect(otherName, findsOneWidget);
+    await tester.ensureVisible(otherName);
+    final otherParagraph = tester.renderObject<RenderParagraph>(
+      find.descendant(of: otherName, matching: find.byType(RichText)),
+    );
+    expect(otherParagraph.didExceedMaxLines, isFalse);
+    expect(
+      otherParagraph.size.height,
+      greaterThanOrEqualTo(
+        otherParagraph.getMaxIntrinsicHeight(otherParagraph.size.width) - 1,
+      ),
+    );
+    await tester.tap(otherName);
+    await tester.pumpAndSettle();
+    expect(find.text(secondName), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('long baby names remain readable at 320px and 2x', (
     tester,
   ) async {

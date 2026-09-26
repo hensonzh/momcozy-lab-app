@@ -9,6 +9,10 @@ void main() {
       englishErrorText('Reset failed.', fallback: fallback),
       'Reset failed.',
     );
+    expect(
+      englishErrorText('Your résumé was saved 👶', fallback: fallback),
+      'Your résumé was saved 👶',
+    );
   });
 
   test('falls back for untranslated or retired-brand error details', () {
@@ -20,6 +24,9 @@ void main() {
       '잠시 후 다시 시도해 주세요.',
       'Попробуйте позже.',
       'حاول مرة أخرى.',
+      'Δοκιμάστε ξανά.',
+      'נסה שוב.',
+      'โปรดลองอีกครั้ง',
       '  ',
       null,
     ]) {

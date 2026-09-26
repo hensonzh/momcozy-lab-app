@@ -49,6 +49,31 @@ void main() {
       expect(nursing.durationMinutes, 12);
     },
   );
+  test('bottle feeding requires a positive measured amount', () async {
+    for (final method in [
+      BabyFeedingMethod.expressedMilk,
+      BabyFeedingMethod.formula,
+    ]) {
+      final repo = BabyTestRecords();
+      final c = editor(repo, BabyRecordKind.feeding);
+      addTearDown(c.dispose);
+      c.setFeedingMethod(method);
+      expect(c.canSave, isFalse);
+      expect(await c.save(), isNull);
+      expect(c.validation, contains('amount'));
+      expect(repo.values, isEmpty);
+      c.setVolume('0');
+      expect(c.canSave, isFalse);
+      c.setVolume('1001');
+      expect(c.canSave, isFalse);
+      c.setVolume('90');
+      expect(c.canSave, isTrue);
+      final saved = (await c.save())!.single as BabyFeedingRecord;
+      expect(saved.method, method);
+      expect(saved.volumeMl, 90);
+    }
+  });
+
   test(
     'failed growth batch retries the unchanged measurements with the same key',
     () async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/mom_bottom_navigation.dart';
 import 'package:momcozy_flutter_app/modules/mom/application/me_controller.dart';
@@ -85,6 +86,82 @@ Future<void> _pumpHome(
 void main() {
   setUpAll(loadMomCozyTestFonts);
 
+  testWidgets('postpartum stage appears below the day in profile shortcut', (
+    tester,
+  ) async {
+    final controller = _controller(_MeHomeRepository());
+    await _pumpHome(tester, controller, size: const Size(393, 844), scale: 1);
+    final summary = find.text('Postpartum day 21\nEarly recovery');
+    expect(summary, findsOneWidget);
+    expect(tester.widget<Text>(summary).textAlign, TextAlign.right);
+    expect(find.text('Postpartum day 21 · Early recovery'), findsNothing);
+  });
+
+  testWidgets('Manage records is right aligned with the section title', (
+    tester,
+  ) async {
+    final controller = _controller(_MeHomeRepository());
+    await _pumpHome(tester, controller, size: const Size(393, 844), scale: 1);
+    final title = tester.getRect(find.text("Today's records"));
+    final action = tester.getRect(find.text('Manage records ›'));
+    expect(action.right, closeTo(393 - 16, 1));
+    expect(action.center.dy, closeTo(title.center.dy, 1));
+  });
+
+  for (final width in [320.0, 393.0, 430.0]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('empty metric value stays on one line at $width/$scale', (
+        tester,
+      ) async {
+        final cardWidth = (width - 44) / 2;
+        tester.view.physicalSize = Size(width, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        for (final kind in [
+          MeMetric.feed,
+          MeMetric.energy,
+          MeMetric.sleep,
+          MeMetric.mood,
+        ]) {
+          await tester.pumpWidget(
+            MaterialApp(
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(scale)),
+                child: child!,
+              ),
+              home: Scaffold(
+                body: SizedBox(
+                  width: cardWidth,
+                  child: MeHomeMetric(
+                    kind: kind,
+                    width: cardWidth,
+                    onTap: () {},
+                  ),
+                ),
+              ),
+            ),
+          );
+          final text = find.text('No entry yet');
+          expect(text, findsOneWidget);
+          expect(tester.widget<Text>(text).maxLines, 1);
+          expect(
+            tester.renderObject<RenderParagraph>(text).didExceedMaxLines,
+            isFalse,
+          );
+          final card = tester.getRect(find.byType(MeHomeMetric));
+          expect(
+            tester.getRect(text).right,
+            lessThanOrEqualTo(card.right - 10),
+          );
+          expect(tester.takeException(), isNull);
+        }
+      });
+    }
+  }
+
   for (final width in [320.0, 390.0, 430.0]) {
     testWidgets('Me home empty state matches Figma at ${width.toInt()}px', (
       tester,
@@ -95,15 +172,15 @@ void main() {
       expect(find.text('Choose what you\'d like to work on'), findsOneWidget);
       if (width < 400) {
         await tester.scrollUntilVisible(
-          find.text('Energy today'),
+          find.text('Energy'),
           180,
           scrollable: find.byType(Scrollable).first,
         );
-        expect(find.text('Not recorded yet'), findsAtLeastNWidgets(1));
+        expect(find.text('No entry yet'), findsAtLeastNWidgets(1));
         await tester.drag(find.byType(ListView), const Offset(0, 4000));
         await tester.pumpAndSettle();
       } else {
-        expect(find.text('Not recorded yet'), findsNWidgets(4));
+        expect(find.text('No entry yet'), findsNWidgets(3));
       }
       await expectLater(
         find.byType(MaterialApp),
@@ -123,7 +200,8 @@ void main() {
       final repository = _MeHomeRepository(
         initial: _MeHomeRepository._emptyState.copyWith(
           profile: {
-            'preferred_name': 'Alexandra-Margaret',
+            'preferred_name':
+                'Alexandra-Margaret Catherine Elizabeth Chen Richardson',
             'actual_delivery_date': '2026-08-30',
           },
         ),
@@ -134,10 +212,25 @@ void main() {
         size: Size(width, 844),
         scale: 2,
       );
-      expect(find.textContaining('Alexandra-Margaret'), findsOneWidget);
+      final greeting = find.textContaining(
+        'Alexandra-Margaret Catherine Elizabeth Chen Richardson',
+      );
+      final profile = find.text('My profile ›');
+      expect(greeting, findsOneWidget);
+      expect(profile, findsOneWidget);
+      final paragraph = tester.renderObject<RenderParagraph>(
+        find.descendant(of: greeting, matching: find.byType(RichText)),
+      );
+      expect(paragraph.didExceedMaxLines, isFalse);
+      final titleBounds = tester.getRect(greeting);
+      final profileBounds = tester.getRect(profile);
+      expect(titleBounds.left, greaterThanOrEqualTo(0));
+      expect(titleBounds.right, lessThanOrEqualTo(width));
+      expect(profileBounds.right, lessThanOrEqualTo(width));
+      expect(titleBounds.overlaps(profileBounds), isFalse);
       expect(tester.takeException(), isNull);
       await tester.scrollUntilVisible(
-        find.text('Energy today'),
+        find.text('Energy'),
         160,
         scrollable: find.byType(Scrollable).first,
       );
@@ -158,7 +251,7 @@ void main() {
     await _pumpHome(tester, controller, size: const Size(393, 844), scale: 1);
     expect(find.text('Discomfort while nursing or pumping'), findsOneWidget);
     expect(find.text('My focus ›'), findsOneWidget);
-    expect(find.text('Not recorded yet'), findsNWidgets(6));
+    expect(find.text('No entry yet'), findsNWidgets(5));
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../../goldens/me_home/me-home-active-393.png'),

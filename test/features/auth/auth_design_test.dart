@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
@@ -42,10 +41,6 @@ void main() {
             ),
             precacheImage(
               const AssetImage('assets/images/momcozy_logo.png'),
-              context,
-            ),
-            precacheImage(
-              const AssetImage('assets/images/google_sign_in.png'),
               context,
             ),
           ]);
@@ -114,15 +109,15 @@ void main() {
           'mia@example.com',
         );
         await tester.enterText(
-          find.byKey(const ValueKey('auth-password-field')),
-          'weak',
+          find.byKey(const ValueKey('auth-email-field')),
+          'invalid',
         );
         await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
         expect(transport.postedBodies, isEmpty);
         await capture(tester, 'auth-register-validation');
         await tester.enterText(
-          find.byKey(const ValueKey('auth-password-field')),
-          'secret123',
+          find.byKey(const ValueKey('auth-email-field')),
+          'mia@example.com',
         );
         await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
         expect(transport.lastPath, '/v1/auth/register');
@@ -131,6 +126,18 @@ void main() {
         await tester.ensureVisible(find.text('Verify your email'));
         await tester.pumpAndSettle();
         await capture(tester, 'auth-verify');
+        await tester.enterText(
+          find.byKey(const ValueKey('auth-code-field')),
+          '12345678',
+        );
+        await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
+        expect(transport.lastPath, '/v1/auth/verify-registration-code');
+        expect(find.text('Set your password'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('auth-confirm-password-field')),
+          findsOneWidget,
+        );
+        await capture(tester, 'auth-set-password');
       });
       testWidgets('reset form with keyboard at $width / $scale', (
         tester,
@@ -232,37 +239,8 @@ void main() {
           ),
         );
         await capture(tester, 'account');
-        await tap(tester, find.byKey(const ValueKey('account-link-google')));
-        await capture(tester, 'account-link-password');
-        tester.view.viewInsets = const FakeViewPadding(bottom: 300);
-        addTearDown(tester.view.resetViewInsets);
-        await tester.enterText(
-          find.byKey(const ValueKey('account-link-password')),
-          'password123',
-        );
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        await capture(tester, 'account-link-password-keyboard');
-        await tap(tester, find.text('Cancel'));
-        tester.view.resetViewInsets();
-        await tester.pumpAndSettle();
-        await tester.scrollUntilVisible(
-          find.byKey(const ValueKey('account-delete')),
-          300,
-        );
-        expect(
-          tester
-              .renderObject<RenderParagraph>(
-                find.textContaining('Your access will end immediately.'),
-              )
-              .text
-              .style!
-              .height,
-          1.55,
-        );
-        await tap(tester, find.byKey(const ValueKey('account-delete')));
-        await capture(tester, 'account-delete');
-        await tap(tester, find.text('Cancel'));
+        expect(find.byKey(const ValueKey('account-delete')), findsNothing);
+        expect(find.text('Request account deletion'), findsNothing);
         expect(transport.mutationPaths, isEmpty);
       });
     }

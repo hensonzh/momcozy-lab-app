@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/momcozy_api_runtime.dart';
-import '../../domain/care/appointment.dart';
 import '../../features/media/presentation/media_viewer_page.dart';
 import '../../features/notifications/presentation/notifications_page.dart';
 import '../../modules/schedule/presentation/schedule_page.dart';
@@ -24,6 +23,7 @@ class MomCozyFeaturePage extends StatelessWidget {
     this.routeUri,
     this.routeExtra,
     this.onLogout,
+    this.onDeleteAccount,
     this.onBabySelected,
     this.extendedProductResourcesEnabled = false,
   });
@@ -37,6 +37,7 @@ class MomCozyFeaturePage extends StatelessWidget {
   final Uri? routeUri;
   final Object? routeExtra;
   final Future<void> Function()? onLogout;
+  final Future<void> Function()? onDeleteAccount;
   final Future<void> Function(String babyId)? onBabySelected;
   final bool extendedProductResourcesEnabled;
 
@@ -49,17 +50,10 @@ class MomCozyFeaturePage extends StatelessWidget {
           key: ValueKey('schedule-page-${runtime.currentSession.userId}'),
           repository: runtime.scheduleRepository,
           timezoneProvider: runtime.timezoneProvider,
-          catalogLoader: runtime.careRepository.catalog,
           now: runtime.now,
-          onOpenAppointment: (appointment) => context.push(
-            appointment.status == AppointmentStatus.completed
-                ? '/services/appointments/${appointment.id}/summary'
-                : '/services/appointments/${appointment.id}/room',
-          ),
-          onOpenPlan: (id) => context.push('/services/episodes/$id'),
         );
       case '/more':
-        return MorePage(onLogout: onLogout);
+        return MorePage(onLogout: onLogout, onDeleteAccount: onDeleteAccount);
       case '/media-viewer':
         return MediaViewerPage(
           path: path,

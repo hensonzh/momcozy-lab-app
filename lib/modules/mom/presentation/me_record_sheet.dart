@@ -22,8 +22,15 @@ Future<void> showMeRecordSheet(
   builder: (context) => MeRecordSheet(controller: controller, kind: kind),
 );
 const meQuickOptions = {
-  MeMetric.energy: ['Energized', 'Managing', 'Exhausted'],
-  MeMetric.sleep: ['Less than 3 hours', '3–4 hours', '4–5 hours', '5–6 hours', 'Over 6 hours', 'Not sure'],
+  MeMetric.energy: ['Doing well', 'Getting by', 'Worn down'],
+  MeMetric.sleep: [
+    'Less than 3 hours',
+    '3–4 hours',
+    '4–5 hours',
+    '5–6 hours',
+    'Over 6 hours',
+    'Not sure',
+  ],
   MeMetric.mood: ['Having a hard day', 'Okay', 'Good'],
 };
 
@@ -45,20 +52,14 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
   final amount = TextEditingController(),
       note = TextEditingController(),
       duration = TextEditingController();
-  String? value, side, phase, impact, swallow, carer;
+  String? value, side, phase, impact, carer;
   String action = 'Add a bag';
   double pain = 0;
   bool busy = false, failed = false;
   late DateTime at = widget.controller.now();
   late final MeObservation? linkedFeed = _linkedFeed();
   MeObservation? _linkedFeed() {
-    if (![
-      MeMetric.pain,
-      MeMetric.latch,
-      MeMetric.bottle,
-    ].contains(widget.kind)) {
-      return null;
-    }
+    if (widget.kind != MeMetric.bottle) return null;
     final today = widget.controller.now();
     final records =
         (widget.controller.state?.records ?? const <MeObservation>[])
@@ -68,10 +69,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                   e.occurredAt.year == today.year &&
                   e.occurredAt.month == today.month &&
                   e.occurredAt.day == today.day &&
-                  (widget.kind == MeMetric.pain ||
-                      (widget.kind == MeMetric.latch
-                          ? e.fields['feeding_method'] == 'breastfeeding'
-                          : e.fields['feeding_method'] != 'breastfeeding')),
+                  e.fields['feeding_method'] != 'breastfeeding',
             )
             .toList()
           ..sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
@@ -82,13 +80,11 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
     final record = linkedFeed!;
     final time =
         '${record.occurredAt.hour.toString().padLeft(2, '0')}:${record.occurredAt.minute.toString().padLeft(2, '0')}';
-    final method = record.fields['feeding_method'] == 'breastfeeding'
-        ? 'Nursing'
-        : 'Bottle feeding';
-    return 'Linked to your $method record from today at $time.';
+    return 'Linked to your Bottle feeding record from today at $time.';
   }
 
   bool get quick => meQuickOptions.containsKey(widget.kind);
+  bool get compactForm => !quick;
   bool get valid => quick
       ? value != null
       : widget.kind == MeMetric.pain
@@ -130,10 +126,9 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
             if (side != null) 'side': side,
             if (phase != null) 'phase': phase,
             if (impact != null) 'impact': impact,
-            if (swallow != null) 'swallow': swallow,
             if (carer != null) 'carer': carer,
             if (widget.kind == MeMetric.pain) 'pain': pain.round(),
-            if (!quick) 'note': note.text,
+            if (!quick && widget.kind != MeMetric.latch) 'note': note.text,
             if (widget.kind == MeMetric.storage) 'action': action,
             if (amount.text.isNotEmpty) 'volume_ml': double.parse(amount.text),
             if (duration.text.isNotEmpty)
@@ -153,13 +148,24 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
   }
 
   Widget field(String title, Widget child) => Padding(
-    padding: const EdgeInsets.only(bottom: 17),
+    padding: EdgeInsets.only(bottom: compactForm ? 12 : 17),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(title, style: MeDesign.text(12, color: MeDesign.muted, line: 18)),
-        const SizedBox(height: 8),
-        child,
+        SizedBox(height: compactForm ? 6 : 8),
+        if (compactForm)
+          LayoutBuilder(
+            builder: (context, box) => Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: box.maxWidth > 300 ? 300 : box.maxWidth,
+                child: child,
+              ),
+            ),
+          )
+        else
+          child,
       ],
     ),
   );
@@ -172,11 +178,21 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
     title,
     DropdownButtonFormField<String>(
       initialValue: current,
+      isExpanded: true,
+      isDense: compactForm && MediaQuery.textScalerOf(context).scale(14) < 21,
       items: options
           .map((e) => DropdownMenuItem(value: e, child: Text(e)))
           .toList(),
       onChanged: busy ? null : changed,
-      decoration: const InputDecoration(hintText: 'Please select'),
+      decoration: compactForm
+          ? const InputDecoration(
+              hintText: 'Please select',
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 10,
+              ),
+            )
+          : const InputDecoration(hintText: 'Please select'),
       style: MeDesign.text(14),
     ),
   );
@@ -184,10 +200,10 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
   Widget build(BuildContext context) {
     final kind = widget.kind;
     final title = switch (kind) {
-      MeMetric.energy => 'How is your energy today?',
+      MeMetric.energy => 'How are you holding up today?',
       MeMetric.sleep => 'About how long did you sleep last night?',
       MeMetric.mood => 'How are you feeling right now?',
-      MeMetric.pain => 'Did feeding hurt this time?',
+      MeMetric.pain => 'Did feeding or pumping hurt today?',
       MeMetric.latch => 'How was your baby\'s latch?',
       MeMetric.bottle => 'How did your baby take the bottle?',
       MeMetric.storage => 'Update stored milk',
@@ -230,9 +246,10 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        SizedBox(
-                          height: 42,
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 42),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
                                 child: Text(
@@ -267,14 +284,21 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                         const SizedBox(height: 2),
                         if (quick) ...[
                           Text(
-                            'Record how you feel right now. You can update it later.',
+                            switch (kind) {
+                              MeMetric.energy =>
+                                'Think about your energy across the day so far. You can update it later.',
+                              MeMetric.sleep =>
+                                'Record last night’s sleep. You can update it later.',
+                              _ =>
+                                'Record how you feel right now. You can update it later.',
+                            },
                             style: MeDesign.text(
                               12,
                               color: MeDesign.muted,
                               line: 18,
                             ),
                           ),
-                          const SizedBox(height: 27),
+                          const SizedBox(height: 18),
                           LayoutBuilder(
                             builder: (context, box) {
                               final columns =
@@ -338,29 +362,32 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                               );
                             },
                           ),
-                          const SizedBox(height: 74),
-                          Text(
-                            'You do not need to fill out the other items.',
-                            style: MeDesign.text(12, color: MeDesign.muted),
-                          ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 12),
                         ] else ...[
-                          Text(
-                            linkedFeed != null
-                                ? linkedHelp
-                                : switch (kind) {
-                                    MeMetric.pump => 'Record the amount you pumped, without setting a target you have to meet.',
-                                    MeMetric.storage => 'Track bags you add or use to keep your stored milk up to date.',
-                                    MeMetric.bottle => 'Link an existing bottle feeding instead of logging the amount again.',
-                                    _ => 'Record how this feeding felt for you.',
-                                  },
-                            style: MeDesign.text(
-                              12,
-                              color: MeDesign.muted,
-                              line: 18,
+                          if (kind == MeMetric.pain || kind == MeMetric.latch)
+                            const SizedBox(height: 16)
+                          else ...[
+                            Text(
+                              linkedFeed != null
+                                  ? linkedHelp
+                                  : switch (kind) {
+                                      MeMetric.pump =>
+                                        'Record the amount you pumped, without setting a target you have to meet.',
+                                      MeMetric.storage =>
+                                        'Track bags you add or use to keep your stored milk up to date.',
+                                      MeMetric.bottle =>
+                                        'Link an existing bottle feeding instead of logging the amount again.',
+                                      _ =>
+                                        'Record how this feeding felt for you.',
+                                    },
+                              style: MeDesign.text(
+                                12,
+                                color: MeDesign.muted,
+                                line: 18,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 18),
+                            const SizedBox(height: 18),
+                          ],
                           if (kind == MeMetric.pain) ...[
                             field(
                               'Which side feels uncomfortable?',
@@ -380,7 +407,12 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                             ),
                             dropdown(
                               'When did it hurt?',
-                              ['When latching', 'During feeding', 'After feeding', 'While pumping'],
+                              [
+                                'When latching',
+                                'During feeding',
+                                'After feeding',
+                                'While pumping',
+                              ],
                               phase,
                               (v) => setState(() => phase = v),
                             ),
@@ -409,18 +441,23 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        '0 No pain',
-                                        style: MeDesign.text(
-                                          11,
-                                          color: MeDesign.muted,
+                                      Flexible(
+                                        child: Text(
+                                          '0 No pain',
+                                          style: MeDesign.text(
+                                            11,
+                                            color: MeDesign.muted,
+                                          ),
                                         ),
                                       ),
-                                      Text(
-                                        '10 Most severe',
-                                        style: MeDesign.text(
-                                          11,
-                                          color: MeDesign.muted,
+                                      Flexible(
+                                        child: Text(
+                                          '10 Most severe',
+                                          textAlign: TextAlign.right,
+                                          style: MeDesign.text(
+                                            11,
+                                            color: MeDesign.muted,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -430,29 +467,38 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                             ),
                             dropdown(
                               'How did it affect feeding?',
-                              ['Could continue', 'Needed a break', 'Could not continue'],
+                              [
+                                'Could continue',
+                                'Needed a break',
+                                'Could not continue',
+                              ],
                               impact,
                               (v) => setState(() => impact = v),
                             ),
                           ],
-                          if (kind == MeMetric.latch) ...[
-                            dropdown(
-                              'How was the latch?',
-                              ['Stayed latched', 'Came off easily', 'Could not latch'],
-                              value,
-                              (v) => setState(() => value = v),
+                          if (kind == MeMetric.latch)
+                            BabyChoices<String>(
+                              options: const {
+                                'Stayed latched': 'Stayed latched',
+                                'Came off easily': 'Came off easily',
+                                'Could not latch': 'Could not latch',
+                              },
+                              selected: value,
+                              onChanged: (v) => setState(() => value = v),
+                              columns: 1,
+                              height: 44,
+                              radius: 16,
+                              enabled: !busy,
                             ),
-                            dropdown(
-                              'Did you notice swallowing? (optional)',
-                              ['Yes', 'No', 'Not sure'],
-                              swallow,
-                              (v) => setState(() => swallow = v),
-                            ),
-                          ],
                           if (kind == MeMetric.bottle) ...[
                             dropdown(
                               'How did your baby respond?',
-                              ['Fed willingly', 'Took some', 'Reluctant', 'Refused'],
+                              [
+                                'Fed willingly',
+                                'Took some',
+                                'Reluctant',
+                                'Refused',
+                              ],
                               value,
                               (v) => setState(() => value = v),
                             ),
@@ -521,7 +567,9 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                             ),
                             if (kind != MeMetric.bottle)
                               field(
-                                kind == MeMetric.storage ? 'How much is in this bag?' : 'How much did you pump?',
+                                kind == MeMetric.storage
+                                    ? 'How much is in this bag?'
+                                    : 'How much did you pump?',
                                 TextFormField(
                                   controller: amount,
                                   enabled: !busy,
@@ -571,7 +619,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                               ),
                             ),
                           ],
-                          if (kind == MeMetric.pain || kind == MeMetric.latch)
+                          if (kind == MeMetric.pain)
                             field(
                               'Changes or notes (optional)',
                               TextFormField(
@@ -581,7 +629,7 @@ class _MeRecordSheetState extends State<MeRecordSheet> {
                                 maxLines: 2,
                               ),
                             ),
-                          const SizedBox(height: 32),
+                          SizedBox(height: compactForm ? 8 : 32),
                         ],
                         if (failed) ...[
                           const MeError(),

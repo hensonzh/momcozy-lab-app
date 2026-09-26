@@ -1,123 +1,71 @@
 {
-  "updatedAt": "2026-09-24",
+  "updatedAt": "2026-09-26",
   "figma": {
     "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
     "page": "login",
     "frame": "Login · Default",
     "nodeId": "858:157",
     "viewport": "393x844",
-    "editableLayersVerified": true,
-    "reference": "references/figma-login-frame-393x844.png",
-    "brandNodeId": "858:159"
+    "approvedByUser": true,
+    "reference": "references/current-app-mirror-20260925.json",
+    "referenceStatus": "Auth · App states: 44 screenshot image fills individually matched current Flutter goldens by SHA-1; screenshot mirror is not independent parity. Frame 37 uses a 390×568 keyboard-short reference.",
+    "registrationStates": "references/registration-code-first-20260925.json",
+    "otherStates": "references/auth-other-states-20260926.json"
   },
   "flutter": {
     "screen": "MomCozyAuthPage",
     "route": "/login",
-    "actual": "comparisons/actual/flutter-login-393x844.png",
-    "emulator": "emulator-5554",
-    "package": "com.momcozymai.app.flutterpoc.local",
-    "version": "1.0.0+57",
-    "emulatorActual": "comparisons/actual/emulator-login-final-1280x2856.png",
-    "apk": {
-      "path": "build/app/outputs/flutter-apk/app-local-debug.apk",
-      "sha256": "e796895a9ca285f2e39110d85ffe182fb4026067f9116e694249e807cbf2b8bd",
-      "sizeBytes": 328496622,
-      "flavor": "local",
-      "mode": "debug",
-      "productApi": "http://10.0.2.2:8769",
-      "agentApi": "http://10.0.2.2:8010",
-      "installedAt": "2026-09-24T17:02:31+08:00",
-      "source": "Built in an isolated worktree at 63e20ccb with only the two login presentation files overlaid; the temporary SDK AAPT2 override was not committed."
-    },
-    "androidStudio": {
-      "project": "app/android",
-      "gradleSync": "passed",
-      "completedAt": "2026-09-24T08:48:00+08:00",
-      "warnings": [
-        "AGP/Kotlin built-in migration warnings remain; sync completed successfully.",
-        "A CMake pdfium scope warning remains; sync completed successfully."
-      ]
-    },
-    "brandWordmark": {
-      "type": "text",
-      "text": "Momcozy",
-      "key": "auth-brand-wordmark",
-      "fontFamily": "LibreCaslonDisplay",
-      "fontSize": 36,
-      "color": "#B54F78",
-      "alignment": "left",
-      "panel": "auth-brand-panel",
-      "illustration": "assets/images/auth_mother_baby.png"
+    "actual": "comparisons/actual/flutter-login-approved-393x844.png",
+    "implementation": "Login-only gradient, 48px Libre Caslon Display title, Inter support text, rose action colors; Google and OR removed from login. Email, password, forgot, signup, legal and language remain functional. Password-save checkbox and explicit autofill persistence removed.",
+    "fontAsset": "assets/fonts/InterVariable.ttf (SIL OFL in assets/fonts/Inter-OFL.txt)",
+    "emulator": {
+      "device": "emulator-5554",
+      "build": "build/app/outputs/flutter-apk/app-local-debug.apk",
+      "install": "passed",
+      "coldLaunch": "passed",
+      "activity": "com.momcozymai.momcozy_flutter_app.MainActivity",
+      "screenshot": "comparisons/actual/emulator-current-session-cold-launch-1280x2856.png",
+      "sessionNote": "Existing app session is signed in, so the device screenshot shows the Me home screen; it is NOT a native login visual check.",
+      "apkSha256": "01c7cfaf6fdaa8d5ff5018ad0fa4037fb495bd2327e905eee93abc05abcc8cad",
+      "apkSizeBytes": 363423318
     }
   },
   "visual": {
-    "comparison": "comparisons/login-content-preservation/comparison.json",
-    "sideBySide": "comparisons/login-content-preservation/side-by-side.png",
-    "overlay": "comparisons/login-content-preservation/overlay.png",
-    "difference": "comparisons/login-content-preservation/difference.png",
-    "meanAbsoluteChannelDifference": 0.0,
-    "status": "brand-panel-visually-checked-on-emulator; pre-existing-login-content-pixel-identical-after-116px-shift",
-    "emulatorStatus": "verified-on-emulator-5554-with-brand-panel",
-    "emulatorScreenshot": "comparisons/actual/emulator-login-final-1280x2856.png",
-    "emulatorScreenshotSha256": "faab90aaed8739b3771c3eade43f8dbd95a2518aef21fa7d9c8922f96e9644b6",
-    "loginCompositionPreservation": {
-      "reference": "references/login-form-baseline-393x844.png",
-      "comparison": "comparisons/login-content-preservation/comparison.json",
-      "meanAbsoluteChannelDifference": 0.0,
-      "uniformDownwardShiftPx": 116,
-      "status": "verified-for-visible-unchanged-content"
-    }
+    "status": "Flutter auth goldens regenerated and Auth · App states 44 image fills verified by SHA-1; frame 12 visually reviewed; independent Figma-to-App parity and current native device login visual check not claimed.",
+    "targetGeometry393x844": {
+      "titleTop": 96,
+      "emailTop": 246,
+      "passwordTop": 326,
+      "submitTop": 478,
+      "signupTop": "about 618"
+    },
+    "oldComparisons": "Existing comparisons/default and comparisons/login-content-preservation belong to 2026-09-24 design and are not evidence for this revision.",
+    "appScreenshot": "comparisons/actual/flutter-login-approved-393x844.png"
   },
   "interaction": {
-    "google": "verified by auth tests",
-    "emailPassword": "verified by auth tests",
-    "passwordVisibility": "verified by auth tests",
-    "rememberMe": "verified toggle; controls OS autofill save choice",
-    "forgotPassword": "verified by auth tests",
-    "registration": "verified by auth tests",
-    "legalAndLanguage": "retained below the initial viewport and verified by auth tests"
+    "status": "auth widget tests and inventory journey passed",
+    "emailPassword": "verified",
+    "googleLoginEntry": "absent",
+    "passwordVisibility": "verified",
+    "forgotPassword": "verified",
+    "registration": "email → code pre-check → password + confirmation → session; blank email disables registration submit; verification hides reset/change-email actions; invalid code hides initial inbox notice.",
+    "legalAndLanguage": "visible at 393x844 with zero scroll extent; short screens may scroll",
+    "googleAccountLink": "untouched in account settings"
+  },
+  "verification": {
+    "contract": "updated for the current App-to-Figma mirror; independent Figma export/overlay not used",
+    "flutterAnalyze": "passed: targeted Auth presentation and tests",
+    "targetedTests": "2026-09-26: Flutter Auth + Onboarding test suite passed (112 tests, 2 skips); targeted Auth source/test analysis passed. Full flutter analyze reports 5 unrelated existing issues outside Auth.",
+    "androidInstallAndColdLaunch": "passed on emulator-5554; login page not visually checked on device because existing session was retained"
   },
   "notes": [
-    "The user reference uses Username/Email, but the product backend accepts email only, so the implemented placeholder is Email.",
-    "The Figma frame uses Inter while Flutter uses the app's registered NotoSansSCHome family; the remaining visual delta is primarily font metrics and screenshot resampling.",
-    "Terms, Privacy, and Language remain available below the initially visible composition.",
-    "The legacy Auth golden baseline was repaired in isolation: 75 stale UI-inventory images were regenerated on commit 1380f506, two missing-pump race conditions were fixed, and the combined login branch now passes all 69 Auth and route-motion tests.",
-    "The compact centered wordmark was replaced with the original prominent 32px Libre Caslon Display Momcozy treatment at the upper left; the simplified login form remains unchanged.",
-    "The original prominent Momcozy treatment was rebuilt into the local-debug APK, installed on emulator-5554, cold-launched, and checked without fatal Android, Flutter, or local-network errors.",
-    "The new 92px Momcozy gradient panel uses the existing mother-and-baby illustration; original login composition matches the pre-brand Flutter baseline exactly after a uniform 116px downward translation. This is a product override, not a Figma 1:1 match for the brand panel.",
-    "The prior Figma default comparison was produced for an older brand header; the current brand panel is a user-directed override, verified on emulator, not claimed as Figma pixel parity."
-  ],
-  "verification": {
-    "contract": "passed",
-    "flutterAnalyze": "passed (full app)",
-    "targetedTests": {
-      "status": "passed",
-      "count": 69,
-      "scope": [
-        "test/features/auth",
-        "test/shared/route_motion_test.dart"
-      ]
-    },
-    "localStack": "passed",
-    "androidInstallAndColdLaunch": "passed on emulator-5554 with local-debug APK and actual screenshot",
-    "fatalLogScan": "passed: no FATAL EXCEPTION or E/flutter after login cold launch",
-    "legacyGoldenBaseline": {
-      "status": "resolved",
-      "sourceCommit": "1380f506",
-      "baselineTestCount": 68,
-      "baselineGoldenRepairs": 75,
-      "loginRedesignGoldenChanges": 28,
-      "finalGoldenChanges": 103,
-      "testTimingFixes": [
-        "Pump after entering the password before locating the conditionally rendered visibility action in auth_followup_inventory_test.dart.",
-        "Pump after filling credentials before locating the conditionally rendered visibility action in auth_inventory_journey_test.dart."
-      ]
-    },
-    "brandGoldenUpdates": 23
-  },
-  "userFeedback": {
-    "reference": "references/user-login-base-20260924.png",
-    "sha256": "1cbcc44b6a51bb9b590a63787116e262a4969c30ae629e1869ae0ceb338ef20a",
-    "decision": "Add a separate prominent Momcozy brand panel above the login composition, leaving the form visually unchanged and shifting it down together."
-  }
+    "The Figma login image is derived from the same App golden, so image matching is not independent proof of design parity.",
+    "The original editable login layers were archived hidden in the frame; the visible frame fill and Auth · App states use App captures. Onboarding frames were unchanged.",
+    "Earlier emulator screenshot/APK and pixel comparison are historical and not valid for this new design.",
+    "Default Maven AAPT2 daemon failed on this Mac; local debug build succeeded after process-only override to SDK build-tools/36.0.0/aapt2 (no Gradle project changes).",
+    "Existing signed-in emulator session was not cleared or signed out; native login screenshot remains pending.",
+    "Auth · App states now contains 44 frames, including 41–43 for two-password registration and 44 for the legacy unverified-login continuation; 07–19 were refreshed for the code-first flow.",
+    "2026-09-25 feedback: fixed cropped email label, removed redundant verification continuation, retained Terms and Privacy links. Figma UI synchronization is partial: 09 uses the final capture; 07–08 use post-unclipping captures with earlier legal wording; other Auth frames remain stale. Native file chooser became unavailable during the sync.",
+    "2026-09-26: Auth · App states frames 01–44 re-synced to current Flutter goldens; each Figma image fill SHA-1 matched corresponding source. Verification is a screenshot mirror, not independent design parity; frame 37 uses a shorter keyboard reference."
+  ]
 }

@@ -10,11 +10,8 @@ enum MomCardDecoration {
   measurement,
   chart,
   calendar,
-  appointment,
-  task,
   personal,
   account,
-  plan,
   utility,
   resource,
   monitor,
@@ -115,35 +112,9 @@ class MomCardBackground extends StatelessWidget {
                       color: const Color(0xffc9ded5),
                     ),
                   ],
-                  MomCardDecoration.appointment => [
-                    element('mint', w - 70, -23, 116, .28),
-                    element(
-                      'leaves',
-                      w - 77,
-                      h - 81,
-                      65,
-                      .30,
-                      color: const Color(0xffb9d4c7),
-                    ),
-                  ],
-                  MomCardDecoration.task => [
-                    element('mint', w - 72, -23, 116, .38),
-                    element(
-                      'ring',
-                      w - 80,
-                      h - 73,
-                      96,
-                      .55,
-                      color: Colors.white,
-                    ),
-                  ],
                   MomCardDecoration.personal || MomCardDecoration.account => [
                     element('blush', w - 94, -21, 138, .34),
                     element('wave', w - 198, h - 55, 218, .60),
-                  ],
-                  MomCardDecoration.plan => [
-                    element('warm', w - 68, h - 60, 100, .52),
-                    element('ring', w - 57, h - 67, 94, .56),
                   ],
                   MomCardDecoration.utility => [
                     element('mint', w - 72, -29, 112, .22),

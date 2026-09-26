@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'momcozy_design_system.dart';
 import 'momcozy_text_roles.dart';
 
-ThemeData momCozyTheme({bool isWorkbench = false}) {
+ThemeData momCozyTheme() {
   final colorScheme = const ColorScheme.light(
     primary: MomCozyColors.primary,
     onPrimary: MomCozyColors.background,
@@ -34,8 +34,8 @@ ThemeData momCozyTheme({bool isWorkbench = false}) {
     scaffoldBackgroundColor: MomCozyColors.background,
     fontFamily: MomCozyTypography.fontFamily,
     fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-    textTheme: _textTheme(isWorkbench),
-    extensions: [if (!isWorkbench) const MomCozyTextRoles()],
+    textTheme: _textTheme(),
+    extensions: [const MomCozyTextRoles()],
     dividerTheme: const DividerThemeData(
       color: MomCozyColors.border,
       thickness: 1,
@@ -54,13 +54,11 @@ ThemeData momCozyTheme({bool isWorkbench = false}) {
       centerTitle: false,
       toolbarHeight: MomCozyLayout.headerHeight,
       titleTextStyle: TextStyle(
-        fontFamily: isWorkbench
-            ? MomCozyTypography.fontFamily
-            : MomCozyTypography.displayFontFamily,
+        fontFamily: MomCozyTypography.displayFontFamily,
         fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-        fontSize: isWorkbench ? MomCozyTypography.headingSize : 21,
-        height: isWorkbench ? null : 1.2,
-        letterSpacing: isWorkbench ? null : -.525,
+        fontSize: 21,
+        height: 1.2,
+        letterSpacing: -.525,
         fontWeight: FontWeight.w700,
         color: MomCozyColors.foreground,
       ),
@@ -73,13 +71,11 @@ ThemeData momCozyTheme({bool isWorkbench = false}) {
       ),
       insetPadding: const EdgeInsets.all(MomCozySpacing.content),
       titleTextStyle: TextStyle(
-        fontFamily: isWorkbench
-            ? MomCozyTypography.fontFamily
-            : MomCozyTypography.displayFontFamily,
+        fontFamily: MomCozyTypography.displayFontFamily,
         fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-        fontSize: isWorkbench ? MomCozyTypography.headingSize : 21,
-        height: isWorkbench ? null : 1.2,
-        letterSpacing: isWorkbench ? null : -.525,
+        fontSize: 21,
+        height: 1.2,
+        letterSpacing: -.525,
         fontWeight: FontWeight.w700,
         color: MomCozyColors.foreground,
       ),
@@ -308,7 +304,7 @@ ThemeData momCozyTheme({bool isWorkbench = false}) {
   );
 }
 
-TextTheme _textTheme(bool isWorkbench) {
+TextTheme _textTheme() {
   final base = Typography.blackCupertino
       .merge(
         const TextTheme(
@@ -333,7 +329,6 @@ TextTheme _textTheme(bool isWorkbench) {
         fontFamily: MomCozyTypography.fontFamily,
         fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
       );
-  if (isWorkbench) return base;
   // styles.css h1/h2/h3 and the approved 16-18px section-heading range.
   TextStyle heading(
     TextStyle style,

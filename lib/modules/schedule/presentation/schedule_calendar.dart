@@ -53,7 +53,6 @@ class ScheduleCalendar extends StatelessWidget {
                 '‹',
                 expanded ? 'Previous month' : 'Previous week',
                 () => onShift(-1),
-                fontSize: expanded ? 13 : 24,
               ),
               Expanded(
                 child: InkWell(
@@ -75,7 +74,7 @@ class ScheduleCalendar extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'A dot means there is something scheduled that day',
+                          'Dots mark days with events.',
                           textAlign: TextAlign.center,
                           style: ScheduleDesign.text(
                             11,
@@ -92,27 +91,63 @@ class ScheduleCalendar extends StatelessWidget {
                 '›',
                 expanded ? 'Next month' : 'Next week',
                 () => onShift(1),
-                fontSize: expanded ? 13 : 24,
               ),
             ],
           ),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              for (final day in const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
-                Expanded(
-                  child: Text(
-                    day,
-                    textAlign: TextAlign.center,
-                    style: ScheduleDesign.text(
-                      11,
-                      bold: true,
-                      color: MomHomeTokens.secondary,
-                      lineHeight: 15,
+          LayoutBuilder(
+            builder: (context, constraints) {
+              const full = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+              const compact = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+              const initials = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+              const spoken = [
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday',
+              ];
+              final style = ScheduleDesign.text(
+                11,
+                bold: true,
+                color: MomHomeTokens.secondary,
+                lineHeight: 15,
+              );
+              bool fits(List<String> labels) => labels.every((day) {
+                final painter = TextPainter(
+                  text: TextSpan(text: day, style: style),
+                  textDirection: Directionality.of(context),
+                  textScaler: MediaQuery.textScalerOf(context),
+                )..layout();
+                final fits = painter.width <= constraints.maxWidth / 7 - 2;
+                painter.dispose();
+                return fits;
+              });
+              final visible = fits(full)
+                  ? full
+                  : fits(compact)
+                  ? compact
+                  : initials;
+              return Row(
+                children: [
+                  for (var index = 0; index < 7; index++)
+                    Expanded(
+                      child: Semantics(
+                        label: spoken[index],
+                        child: ExcludeSemantics(
+                          child: Text(
+                            visible[index],
+                            textAlign: TextAlign.center,
+                            style: style,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-            ],
+                ],
+              );
+            },
           ),
           for (var row = 0; row < rows; row++) ...[
             const SizedBox(height: 10),
@@ -128,35 +163,31 @@ class ScheduleCalendar extends StatelessWidget {
     );
   }
 
-  Widget _arrow(
-    String glyph,
-    String tooltip,
-    VoidCallback action, {
-    required double fontSize,
-  }) => SizedBox.square(
-    dimension: 44,
-    child: Tooltip(
-      message: tooltip,
-      child: Material(
-        color: Colors.white.withValues(alpha: .65),
-        shape: const CircleBorder(),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: action,
-          child: Center(
-            child: Text(
-              glyph,
-              style: ScheduleDesign.text(
-                fontSize,
-                bold: true,
-                color: MomHomeTokens.rose,
+  Widget _arrow(String glyph, String tooltip, VoidCallback action) =>
+      SizedBox.square(
+        dimension: 44,
+        child: Tooltip(
+          message: tooltip,
+          child: Material(
+            color: Colors.white.withValues(alpha: .65),
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: action,
+              child: Center(
+                child: Text(
+                  glyph,
+                  style: ScheduleDesign.text(
+                    24,
+                    bold: true,
+                    color: MomHomeTokens.rose,
+                  ),
+                ),
               ),
             ),
           ),
         ),
-      ),
-    ),
-  );
+      );
 
   Widget _day(BuildContext context, LocalDate date, Set<LocalDate> events) {
     final selected = date == state.selected;
@@ -166,7 +197,8 @@ class ScheduleCalendar extends StatelessWidget {
         button: true,
         selected: selected,
         excludeSemantics: true,
-        label: '${date.month}/${date.day}/${date.year}${marked ? ' · Has events' : ''}',
+        label:
+            '${date.month}/${date.day}/${date.year}${marked ? ' · Has events' : ''}',
         onTap: () => onSelect(date),
         child: InkWell(
           key: ValueKey('schedule-day-$date'),

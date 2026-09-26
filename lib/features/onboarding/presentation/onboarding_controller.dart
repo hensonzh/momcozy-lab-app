@@ -14,7 +14,6 @@ class OnboardingController extends ChangeNotifier {
   OnboardingController({
     required this.runtimeController,
     this.onPrimaryInfantSelected,
-    this.onAvatarActivated,
     this.releasePolicy = const NoopOnboardingReleasePolicy(),
   }) {
     runtimeController.addListener(_handleRuntimeChanged);
@@ -23,7 +22,6 @@ class OnboardingController extends ChangeNotifier {
 
   final MomCozyRuntimeController runtimeController;
   final Future<void> Function(String infantId)? onPrimaryInfantSelected;
-  final ValueChanged<String?>? onAvatarActivated;
   final OnboardingReleasePolicy releasePolicy;
   OnboardingGatePhase _phase = OnboardingGatePhase.idle;
   OnboardingState? _state;
@@ -35,19 +33,12 @@ class OnboardingController extends ChangeNotifier {
   String? _resetReleaseId;
   Future<void>? _resetInFlight;
   String? _resetInFlightUserId;
-  String? _selectedAvatarCandidateId;
-  bool _defaultAvatarSelected = false;
 
   OnboardingGatePhase get phase => _phase;
   OnboardingState? get state => _state;
   String get errorMessage => _errorMessage;
   bool get busy => _busy;
   String? get loadedUserId => _loadedUserId;
-  String? get selectedAvatarCandidateId => _selectedAvatarCandidateId;
-  bool get defaultAvatarSelected => _defaultAvatarSelected;
-  bool get hasAvatarSelection =>
-      _selectedAvatarCandidateId != null || _defaultAvatarSelected;
-
   bool isResolvedFor(String userId) =>
       _loadedUserId == userId && _phase == OnboardingGatePhase.ready;
 
@@ -56,10 +47,7 @@ class OnboardingController extends ChangeNotifier {
 
   OnboardingApiRepository get _repository {
     final runtime = runtimeController.runtime;
-    return OnboardingApiRepository(
-      transport: runtime.jsonTransport,
-      multipartTransport: runtime.multipartTransport,
-    );
+    return OnboardingApiRepository(transport: runtime.jsonTransport);
   }
 
   void _handleRuntimeChanged() {
@@ -68,7 +56,6 @@ class OnboardingController extends ChangeNotifier {
       _clearResetTracking();
       _loadedUserId = null;
       _state = null;
-      _clearAvatarSelection();
       _phase = OnboardingGatePhase.idle;
       _notify();
       return;
@@ -77,7 +64,6 @@ class OnboardingController extends ChangeNotifier {
       _clearResetTracking();
       _loadedUserId = null;
       _state = null;
-      _clearAvatarSelection();
       _phase = OnboardingGatePhase.idle;
       _errorMessage = '';
       _notify();
@@ -119,71 +105,12 @@ class OnboardingController extends ChangeNotifier {
   }
 
   Future<bool> confirmProfile(OnboardingProfileDraft draft) async {
-    return _run(() async {
-      _applyState(await _repository.confirmProfile(draft));
-      _phase = OnboardingGatePhase.ready;
-    });
-  }
-
-  Future<bool> uploadAndGenerate(OnboardingPortrait portrait) async {
-    return _run(() async {
-      final fileId = await _repository.uploadPortrait(portrait);
-      final next = await _repository.generateAvatar(fileId);
-      await _markReleaseCompletedIfNeeded(
-        runtimeController.currentSession.userId,
-        next,
-      );
-      _applyState(next);
-    });
-  }
-
-  void selectAvatarCandidate(String candidateId) {
-    final normalized = candidateId.trim();
-    final candidates = _state?.pendingAvatar?.candidates ?? const [];
-    if (_state?.pendingAvatar?.status != OnboardingStatus.avatarReview ||
-        !candidates.any((candidate) => candidate.id == normalized)) {
-      return;
-    }
-    if (_selectedAvatarCandidateId == normalized && !_defaultAvatarSelected) {
-      return;
-    }
-    _selectedAvatarCandidateId = normalized;
-    _defaultAvatarSelected = false;
-    _notify();
-  }
-
-  void selectDefaultAvatar() {
-    if (!(_state?.canContinueWithDefault ?? false)) return;
-    if (_defaultAvatarSelected && _selectedAvatarCandidateId == null) return;
-    _selectedAvatarCandidateId = null;
-    _defaultAvatarSelected = true;
-    _notify();
-  }
-
-  Future<bool> confirmAvatarSelection() {
-    if (_defaultAvatarSelected) return completeWithDefaultAvatar();
-    final candidateId = _selectedAvatarCandidateId;
-    if (candidateId == null || candidateId.isEmpty) {
-      return Future.value(false);
-    }
-    return _complete(() => _repository.completeWithAvatar(candidateId));
-  }
-
-  Future<bool> completeWithDefaultAvatar() {
-    return _complete(_repository.completeWithDefault);
-  }
-
-  Future<bool> dismissPendingAvatar() {
-    return _run(() async {
-      _applyState(await _repository.dismissPendingAvatar());
-      _phase = OnboardingGatePhase.ready;
-    });
-  }
-
-  Future<bool> _complete(Future<OnboardingState> Function() action) async {
     final userId = runtimeController.currentSession.userId;
     final succeeded = await _run(() async {
-      final next = await action();
+      final next = await _repository.confirmProfile(draft);
+      if (!next.profileConfirmed) {
+        throw const FormatException('Profile confirmation was not accepted.');
+      }
       await _markReleaseCompletedIfNeeded(userId, next);
       _applyState(next);
       _phase = OnboardingGatePhase.ready;
@@ -194,17 +121,8 @@ class OnboardingController extends ChangeNotifier {
       try {
         await onPrimaryInfantSelected?.call(infantId);
       } catch (_) {
-        // Completion is authoritative on the server; baby selection can recover
-        // from the returned primary id on the next session refresh.
+        // The confirmed profile remains authoritative; selection can recover.
       }
-    }
-    try {
-      // Baby selection can replace the account runtime and its scoped caches,
-      // so publish the avatar only after that transition has completed.
-      onAvatarActivated?.call(_state?.activeAvatarFileId);
-    } catch (_) {
-      // The server selection is authoritative; local projections can refresh
-      // again when their page is next opened.
     }
     _notify();
     return true;
@@ -266,22 +184,7 @@ class OnboardingController extends ChangeNotifier {
   }
 
   void _applyState(OnboardingState next) {
-    final previousGenerationId = _state?.pendingAvatar?.id;
     _state = next;
-    final candidates = next.pendingAvatar?.candidates ?? const [];
-    final selectionIsStillValid =
-        next.pendingAvatar?.status == OnboardingStatus.avatarReview &&
-        previousGenerationId == next.pendingAvatar?.id &&
-        (_selectedAvatarCandidateId == null ||
-            candidates.any(
-              (candidate) => candidate.id == _selectedAvatarCandidateId,
-            ));
-    if (!selectionIsStillValid) _clearAvatarSelection();
-  }
-
-  void _clearAvatarSelection() {
-    _selectedAvatarCandidateId = null;
-    _defaultAvatarSelected = false;
   }
 
   Future<bool> _run(Future<void> Function() action) async {

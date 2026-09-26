@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import '../../../domain/care/care_plan.dart';
-import '../../../domain/care/service_package.dart';
 import '../../../domain/shared/local_date.dart';
 import '../../../domain/shared/product_failure.dart';
 import '../data/schedule_api_repository.dart';
@@ -15,20 +13,17 @@ final class ScheduleState {
     required this.month,
     required this.selected,
     this.page,
-    this.catalog,
     this.error,
   });
   final SchedulePhase phase;
   final LocalDate month, selected;
   final SchedulePageData? page;
-  final ServiceCatalog? catalog;
   final ProductFailure? error;
   ScheduleState copyWith({
     SchedulePhase? phase,
     LocalDate? month,
     LocalDate? selected,
     SchedulePageData? page,
-    ServiceCatalog? catalog,
     ProductFailure? error,
     bool clearError = false,
   }) => ScheduleState(
@@ -36,7 +31,6 @@ final class ScheduleState {
     month: month ?? this.month,
     selected: selected ?? this.selected,
     page: page ?? this.page,
-    catalog: catalog ?? this.catalog,
     error: clearError ? null : error ?? this.error,
   );
 }
@@ -45,7 +39,6 @@ final class ScheduleController extends ChangeNotifier {
   ScheduleController({
     required this.repository,
     required this.timezoneProvider,
-    required this.catalogLoader,
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now {
     final today = _now();
@@ -58,7 +51,6 @@ final class ScheduleController extends ChangeNotifier {
   }
   final ScheduleRepository repository;
   final Future<String> Function() timezoneProvider;
-  final Future<ServiceCatalog> Function() catalogLoader;
   final DateTime Function() _now;
   late ScheduleState state;
   bool _disposed = false;
@@ -212,46 +204,6 @@ final class ScheduleController extends ChangeNotifier {
       clearError: true,
       page: state.page!.copyWith(
         personal: state.page!.personal.where((e) => e.id != entry.id).toList(),
-      ),
-    );
-    notifyListeners();
-    if (_loadedMonth != state.month) {
-      await load();
-    }
-  }
-
-  Future<void> updateTask(
-    ScheduledPlan plan,
-    PublishedCareTask task,
-    CareTaskStatus status,
-  ) async {
-    final publication = await repository.updateTask(
-      publicationId: plan.publication.id,
-      sourceKey: task.content.sourceKey,
-      expectedVersion: task.progressVersion,
-      status: status,
-    );
-    if (_disposed) return;
-    _invalidateReads();
-    if (state.page == null) {
-      await load();
-      return;
-    }
-    state = state.copyWith(
-      phase: SchedulePhase.ready,
-      clearError: true,
-      page: state.page!.copyWith(
-        plans: [
-          for (final p in state.page!.plans)
-            if (p.publication.id == publication.id)
-              ScheduledPlan(
-                episodeId: p.episodeId,
-                appointmentId: p.appointmentId,
-                publication: publication,
-              )
-            else
-              p,
-        ],
       ),
     );
     notifyListeners();

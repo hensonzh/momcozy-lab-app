@@ -85,7 +85,7 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tester.tap(find.text('Service update 1'));
+        await tester.tap(find.text('Momcozy AI update 1'));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         expect(find.byType(ErrorWidget), findsNothing);
@@ -140,7 +140,7 @@ void main() {
               'previous_source': null,
               'route': router.state.uri.toString(),
               'trigger':
-                  'Notification list → Service update 1 → target transcript loads without history-management controls',
+                  'Notification list → Momcozy AI update 1 → target transcript loads without history-management controls',
               'root_entry': 'Authenticated notification list',
               'evidence':
                   'Actual default MomCozyFlutterApp/createMomCozyRouter; isolated HTTP and native channels; target transcript loads; session list and history drawer are removed',

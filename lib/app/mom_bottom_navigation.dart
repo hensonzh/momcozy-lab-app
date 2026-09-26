@@ -78,7 +78,8 @@ class MomCozyBottomNavigation extends StatelessWidget {
           : (8 + itemWidth * (selectedIndex + .5) - selectedLabelWidth / 2)
                 .clamp(8.0, width - 8 - selectedLabelWidth);
       final extra = labelHeight - 16;
-      final safeBottom = MediaQuery.paddingOf(context).bottom;
+      // Keep the bar's height stable when the keyboard consumes bottom padding.
+      final safeBottom = MediaQuery.viewPaddingOf(context).bottom;
       // Reserve the raised avatar/shadow inside the hit region, so the entire
       // image is tappable. The colored chrome remains the design's 82px.
       return Material(

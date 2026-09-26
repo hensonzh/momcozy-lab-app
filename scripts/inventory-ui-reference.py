@@ -174,8 +174,8 @@ for line in rows.strip().splitlines():
     add(id,title,component,impl,route,kind,images.get(id))
 
 # Keep the user's later approved email/password design, without reverting auth to demo OTP.
-for step,title in [('login','邮箱和 Google 登录'),('register','注册'),('verify','验证邮箱'),('forgot','忘记密码'),('reset','重置密码'),('language','语言选择'),('legal','条款和隐私链接')]:
-    row=add('auth/'+step,title,'AuthPage','lib/features/auth/presentation/auth_page.dart','/login','page' if step=='login' else 'state',note='设计工程为演示邮箱 OTP；当前真实邮箱密码/Google 流程和用户 2026-09-12 已确认稿优先保留，按统一视觉复核，禁止改回固定验证码。')
+for step,title in [('login','邮箱密码登录'),('register','注册'),('verify','验证邮箱'),('forgot','忘记密码'),('reset','重置密码'),('language','语言选择'),('legal','条款和隐私链接')]:
+    row=add('auth/'+step,title,'AuthPage','lib/features/auth/presentation/auth_page.dart','/login','page' if step=='login' else 'state',note='设计工程为演示邮箱 OTP；当前真实邮箱密码流程和用户 2026-09-12 已确认稿优先保留，按统一视觉复核，禁止改回固定验证码。')
     if step == 'login':
         approved = Path('/Users/lute/Downloads/ChatGPT Image 2026年9月12日 10_24_17.png')
         target = OUT/'auth/reference/user-approved-login.png'

@@ -96,11 +96,9 @@ void main() {
       for (final asset in [
         MomCozyAssets.agentAvatar,
         'assets/images/mom_home/cozymate_avatar.png',
-        'assets/images/mom_home/expert_group.png',
         'assets/images/mom/milk-hero.png',
         'assets/images/auth_mother_baby.png',
         'assets/images/momcozy_logo.png',
-        'assets/images/google_sign_in.png',
       ]) {
         await precacheImage(
           AssetImage(asset),
@@ -210,19 +208,6 @@ void main() {
     await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
   }
 
-  Future<void> back(WidgetTester tester, String state, String route) async {
-    final target = find.byType(BackButton).evaluate().isNotEmpty
-        ? find.byType(BackButton)
-        : find.byTooltip('Back').evaluate().isNotEmpty
-        ? find.byTooltip('Back')
-        : find.byTooltip('Back').evaluate().isNotEmpty
-        ? find.byTooltip('Back')
-        : find.text('Back');
-    await tap(tester, target.first);
-    await tester.pumpAndSettle();
-    await capture(tester, state, 'Tap page Back → $route', route: route);
-  }
-
   for (final narrow in [false, true]) {
     testWidgets('inventory current More routes ${narrow ? '320/2x' : '393/1x'}', (
       tester,
@@ -236,94 +221,35 @@ void main() {
         'routes-ready',
         'More current identity and three unread notifications',
       );
-      await tap(tester, find.text('Privacy'));
-      await capture(
-        tester,
-        'privacy',
-        'More privacy → real privacy page',
-        route: '/privacy',
-      );
-      await back(tester, 'privacy-return', '/more');
-      await tap(tester, find.text('Account settings'));
-      expect(find.text('Email verified'), findsOneWidget);
-      await capture(
-        tester,
-        'account',
-        'Account settings row → real account details and methods',
-        route: '/account',
-      );
-      await tap(tester, find.byKey(const ValueKey('account-link-google')));
-      await capture(
-        tester,
-        'account-link-confirm',
-        'Link Google → password confirmation, before native sign in',
-        route: '/account',
-      );
-      await tap(tester, find.text('Cancel'));
-      await capture(
-        tester,
-        'account-link-cancel',
-        'Cancel password confirmation → account unchanged',
-        route: '/account',
-      );
+      expect(find.text('Privacy'), findsNothing);
+      for (final removed in [
+        'Account settings',
+        'Notifications',
+        'Expert support',
+        'Everyday settings',
+        'Expert care',
+      ]) {
+        expect(find.text(removed), findsNothing);
+      }
+      expect(find.text('Request account deletion'), findsOneWidget);
       await tap(tester, find.byKey(const ValueKey('account-delete')));
       await capture(
         tester,
         'account-delete-confirm',
-        'Request account deletion → confirmation only',
-        route: '/account',
+        'Request account deletion from More → confirmation only',
+        route: '/more',
       );
       await tap(tester, find.text('Cancel'));
+      expect(
+        transport.mutationPaths.where((path) => path == '/v1/auth/me'),
+        isEmpty,
+      );
       await capture(
         tester,
         'account-delete-cancel',
-        'Cancel deletion → account retained',
-        route: '/account',
+        'Cancel deletion → account retained on More',
+        route: '/more',
       );
-      await back(tester, 'account-return', '/more');
-      await tap(tester, find.text('Notifications'));
-      expect(router.state.uri.queryParameters['from'], '/more');
-      await capture(
-        tester,
-        'inbox-unread',
-        'Notifications row → real inbox preserving from=/more',
-        route: '/notifications',
-      );
-      await tap(tester, find.text('Mark all read'));
-      expect(coordinator.inbox!.state.unreadCount, 0);
-      await capture(
-        tester,
-        'inbox-read',
-        'Mark all read → inbox read and count zero',
-        route: '/notifications',
-      );
-      await tap(tester, find.byTooltip('Notification settings'));
-      await capture(
-        tester,
-        'notification-settings',
-        'Inbox settings → real preferences and authorization state',
-        route: '/notifications/settings',
-      );
-      await back(tester, 'settings-return', '/notifications');
-      await back(tester, 'inbox-return', '/more');
-      expect(coordinator.inbox!.state.unreadCount, 0);
-      expect(find.text('3'), findsNothing);
-      await tap(tester, find.text('Expert support'));
-      await capture(
-        tester,
-        'expert-catalog',
-        'Expert support card → real service catalog',
-        route: '/services',
-      );
-      await tap(tester, find.text('View my services'));
-      await capture(
-        tester,
-        'expert-package',
-        'My service → purchased package details',
-        route: '/services/feeding-confidence',
-      );
-      await back(tester, 'package-return', '/services');
-      await back(tester, 'catalog-return', '/more');
       final logout = find.byKey(const ValueKey('more-logout'));
       await tester.ensureVisible(logout);
       await tester.pumpAndSettle();

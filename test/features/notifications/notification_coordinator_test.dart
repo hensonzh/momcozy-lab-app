@@ -62,11 +62,7 @@ void main() {
       final inbox = coordinator.inbox;
       final pauses = gateway.pauses;
       final revision = store.revision;
-      final replacement = FakeRepository()
-        ..reminderValue = const AppointmentReminder(
-          enabled: true,
-          status: 'scheduled',
-        );
+      final replacement = FakeRepository();
 
       await coordinator.setAccount(
         key: 'user-session',
@@ -81,7 +77,6 @@ void main() {
       expect(coordinator.pushReady, isTrue);
       expect(coordinator.inbox, same(inbox));
       expect(coordinator.inbox!.repository, same(replacement));
-      expect((await coordinator.reminder('appointment'))!.enabled, isTrue);
       await coordinator.refresh();
       expect(replacement.events, ['register:authorized']);
       expect(replacement.lastLocale, 'fr');
@@ -134,7 +129,7 @@ void main() {
       deliveryRepository: repository,
     );
     expect(store.pending, isNull);
-    expect(routes.last, startsWith('/services/appointments/'));
+    expect(routes.last, startsWith('/?conversationId='));
   });
   test(
     'offline click survives retry and payload cannot supply an external route',
@@ -175,85 +170,6 @@ void main() {
     expect(foreground.map((value) => value.notificationId), ['n2']);
   });
   test(
-    'startup checks only; consent and token registration precede executable reminder',
-    () async {
-      await login();
-      expect(platform.requests, 0);
-      expect(gateway.tokenCalls, 0);
-      expect(
-        await coordinator.setReminder(
-          'appointment',
-          enabled: true,
-          explain: () async => true,
-          offerSettings: () async => false,
-        ),
-        isTrue,
-      );
-      expect(platform.requests, 1);
-      expect(
-        repository.events,
-        containsAllInOrder(['register:authorized', 'reminder:true']),
-      );
-      await coordinator.setReminder(
-        'appointment',
-        enabled: true,
-        explain: () => throw StateError('repeat education'),
-        offerSettings: () async => false,
-      );
-      expect(platform.requests, 1);
-    },
-  );
-  test(
-    'denial prevents tasks; settings recovery enables only after fresh OS check',
-    () async {
-      platform.next = NotificationPermission.denied;
-      await login();
-      expect(
-        await coordinator.setReminder(
-          'a',
-          enabled: true,
-          explain: () async => true,
-          offerSettings: () async => false,
-        ),
-        isFalse,
-      );
-      expect(
-        repository.events.where((e) => e.startsWith('reminder:')),
-        isEmpty,
-      );
-      await coordinator.setReminder(
-        'a',
-        enabled: true,
-        explain: () async => true,
-        offerSettings: () async => true,
-      );
-      expect(platform.requests, 1);
-      expect(platform.settings, 1);
-      platform.value = NotificationPermission.authorized;
-      await coordinator.refresh();
-      expect(coordinator.pushReady, isTrue);
-      platform.value = NotificationPermission.denied;
-      await coordinator.refresh();
-      expect(coordinator.pushReady, isFalse);
-      expect(repository.events.last, 'register:denied');
-    },
-  );
-  test('missing provider or token never creates a sendable task', () async {
-    platform.value = NotificationPermission.authorized;
-    gateway.available = false;
-    await login();
-    expect(
-      await coordinator.setReminder(
-        'a',
-        enabled: true,
-        explain: () async => true,
-        offerSettings: () async => false,
-      ),
-      isFalse,
-    );
-    expect(repository.events.where((e) => e.startsWith('reminder:')), isEmpty);
-  });
-  test(
     'cold click persists through login; route comes from authenticated API',
     () async {
       const intent = NotificationPushIntent(
@@ -267,7 +183,7 @@ void main() {
       await login();
       expect(
         routes.last,
-        '/services/appointments/11111111-1111-1111-1111-111111111111',
+        '/?conversationId=11111111-1111-4111-8111-111111111111',
       );
       expect(repository.opened, ['n1']);
       expect(store.pending, isNull);

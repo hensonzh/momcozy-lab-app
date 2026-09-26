@@ -175,12 +175,11 @@ class _ReadingInbox extends FakeRepository {
   MomCozyNotification get item => MomCozyNotification(
     id: 'reading',
     createdAt: DateTime.utc(2026, 9, 12, 1, 30),
-    type: 'appointment_created',
-    title: 'Your appointment has been confirmed',
-    body:
-        'Your IBCLC expert is ready to meet with you. Review the appointment details and prepare any questions you would like to discuss.',
+    type: 'agent_conversation',
+    title: 'Your conversation has an update',
+    body: 'Open Momcozy AI to see the latest reply in your conversation.',
     status: read ? 'read' : 'unread',
-    source: 'care',
+    source: 'agent',
     payload: const {},
   );
   @override

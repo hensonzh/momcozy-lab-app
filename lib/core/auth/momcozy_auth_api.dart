@@ -18,13 +18,17 @@ class MomCozyAuthApiRepository {
   }) =>
       transport.postJson(path, body: body).timeout(const Duration(seconds: 15));
 
-  Future<void> register({
+  Future<void> register({required String email}) async {
+    await _post('/v1/auth/register', body: {'email': email.trim()});
+  }
+
+  Future<void> checkRegistrationCode({
     required String email,
-    required String password,
+    required String code,
   }) async {
     await _post(
-      '/v1/auth/register',
-      body: {'email': email.trim(), 'password': password},
+      '/v1/auth/verify-registration-code',
+      body: {'email': email.trim(), 'token': code.trim()},
     );
   }
 
@@ -32,18 +36,20 @@ class MomCozyAuthApiRepository {
     required String email,
     required String code,
     required String password,
+    String? confirmPassword,
     String deviceId = '',
   }) async {
+    final body = <String, Object?>{
+      'email': email.trim(),
+      'token': code.trim(),
+      'password': password,
+      'device_id': deviceId,
+    };
+    if (confirmPassword != null) {
+      body['confirm_password'] = confirmPassword;
+    }
     return MomCozyAuthTokenResponse.fromMap(
-      await _post(
-        '/v1/auth/verify-email',
-        body: {
-          'email': email.trim(),
-          'token': code.trim(),
-          'password': password,
-          'device_id': deviceId,
-        },
-      ),
+      await _post('/v1/auth/verify-email', body: body),
     );
   }
 
@@ -67,28 +73,6 @@ class MomCozyAuthApiRepository {
         'token': code.trim(),
         'new_password': password,
       },
-    );
-  }
-
-  Future<MomCozyAuthTokenResponse> googleLogin({
-    required String idToken,
-    String deviceId = '',
-  }) async {
-    return MomCozyAuthTokenResponse.fromMap(
-      await _post(
-        '/v1/auth/google',
-        body: {'id_token': idToken, 'device_id': deviceId},
-      ),
-    );
-  }
-
-  Future<void> linkGoogle({
-    required String idToken,
-    required String password,
-  }) async {
-    await _post(
-      '/v1/auth/google/link',
-      body: {'id_token': idToken, 'password': password},
     );
   }
 

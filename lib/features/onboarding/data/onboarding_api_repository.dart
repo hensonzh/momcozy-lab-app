@@ -5,13 +5,9 @@ const onboardingMeEndpoint = '/v1/onboarding/me';
 const onboardingReleaseResetEndpoint = '$onboardingMeEndpoint/release-reset';
 
 class OnboardingApiRepository {
-  const OnboardingApiRepository({
-    required this.transport,
-    required this.multipartTransport,
-  });
+  const OnboardingApiRepository({required this.transport});
 
   final ApiJsonTransport transport;
-  final ApiMultipartTransport multipartTransport;
 
   Future<OnboardingReleaseReset> resetForRelease(String releaseId) async {
     final normalizedReleaseId = releaseId.trim();
@@ -48,64 +44,6 @@ class OnboardingApiRepository {
         '$onboardingMeEndpoint/profile',
         body: draft.toMap(),
       ),
-    );
-  }
-
-  Future<String> uploadPortrait(OnboardingPortrait portrait) async {
-    final response = await multipartTransport.uploadMultipart(
-      '$onboardingMeEndpoint/portrait',
-      file: ApiUploadFile(
-        name: portrait.name,
-        mimeType: portrait.mimeType,
-        sizeBytes: portrait.bytes.length,
-        bytes: portrait.bytes,
-      ),
-    );
-    final id = response['id'];
-    if (id is! String || id.trim().isEmpty) {
-      throw const FormatException('Portrait upload response has no file id.');
-    }
-    return id.trim();
-  }
-
-  Future<OnboardingState> generateAvatar(String portraitFileId) async {
-    return OnboardingState.fromMap(
-      await transport.postJson(
-        '$onboardingMeEndpoint/avatar-generations',
-        body: {'portrait_file_id': portraitFileId},
-      ),
-    );
-  }
-
-  Future<OnboardingState> completeWithAvatar(String candidateId) async {
-    return _complete({
-      'avatar_candidate_id': candidateId,
-      'use_default_avatar': false,
-    });
-  }
-
-  Future<OnboardingState> completeWithDefault() async {
-    return _complete(const {
-      'avatar_candidate_id': null,
-      'use_default_avatar': true,
-    });
-  }
-
-  Future<OnboardingState> dismissPendingAvatar() async {
-    final mutation = transport;
-    if (mutation is! ApiJsonMutationTransport) {
-      throw StateError('Onboarding avatar mutation is not configured.');
-    }
-    return OnboardingState.fromMap(
-      await (mutation as ApiJsonMutationTransport).deleteJson(
-        '$onboardingMeEndpoint/avatar-generations/pending',
-      ),
-    );
-  }
-
-  Future<OnboardingState> _complete(Map<String, Object?> body) async {
-    return OnboardingState.fromMap(
-      await transport.postJson('$onboardingMeEndpoint/complete', body: body),
     );
   }
 }

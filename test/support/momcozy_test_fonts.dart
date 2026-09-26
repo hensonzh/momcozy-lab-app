@@ -20,6 +20,9 @@ Future<void> loadMomCozyTestFonts() async {
           ..addFont(rootBundle.load('assets/fonts/NotoSansCJKsc-Regular.otf'))
           ..addFont(rootBundle.load('assets/fonts/NotoSansCJKsc-Bold.otf')))
         .load(),
+    (FontLoader(
+      'Inter',
+    )..addFont(rootBundle.load('assets/fonts/InterVariable.ttf'))).load(),
     (FontLoader('LibreCaslonDisplay')..addFont(
           rootBundle.load('assets/fonts/LibreCaslonDisplay-Regular.ttf'),
         ))

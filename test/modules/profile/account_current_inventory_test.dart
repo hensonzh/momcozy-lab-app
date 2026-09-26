@@ -96,11 +96,9 @@ void main() {
       for (final asset in [
         MomCozyAssets.agentAvatar,
         'assets/images/mom_home/cozymate_avatar.png',
-        'assets/images/mom_home/expert_group.png',
         'assets/images/mom/milk-hero.png',
         'assets/images/auth_mother_baby.png',
         'assets/images/momcozy_logo.png',
-        'assets/images/google_sign_in.png',
       ]) {
         await precacheImage(
           AssetImage(asset),
@@ -202,7 +200,11 @@ void main() {
     }
   }
 
-  Future<void> start(WidgetTester tester, String stem) async {
+  Future<void> start(
+    WidgetTester tester,
+    String stem, {
+    bool account = true,
+  }) async {
     await capture(
       tester,
       '$stem-mom',
@@ -213,11 +215,13 @@ void main() {
     await capture(
       tester,
       '$stem-more',
-      'More before Account settings',
+      'More before account deep link or deletion',
       route: '/more',
     );
-    await tap(tester, find.text('Account settings'));
-    await tester.pump(const Duration(milliseconds: 500));
+    if (account) {
+      router.push('/account');
+      await tester.pumpAndSettle();
+    }
   }
 
   Future<void> back(WidgetTester tester, String state, String route) async {
@@ -238,10 +242,12 @@ void main() {
     await settle(tester);
   }
 
-  void busy(WidgetTester tester) {
+  void busy(WidgetTester tester, {bool onMore = false}) {
     expect(
       tester
-          .widget<TextButton>(find.byKey(const ValueKey('account-sign-out')))
+          .widget<TextButton>(
+            find.byKey(ValueKey(onMore ? 'more-logout' : 'account-sign-out')),
+          )
           .onPressed,
       isNull,
     );
@@ -254,9 +260,13 @@ void main() {
   }
 
   for (final narrow in [false, true]) {
-    Future<void> open(WidgetTester tester, String name) async {
+    Future<void> open(
+      WidgetTester tester,
+      String name, {
+      bool account = true,
+    }) async {
       await mount(tester, width: narrow ? 320 : 393, scale: narrow ? 2 : 1);
-      await start(tester, name);
+      await start(tester, name, account: account);
     }
 
     testWidgets('inventory current Account read recovery $narrow', (
@@ -271,21 +281,14 @@ void main() {
         'More before account read failure',
         route: '/more',
       );
-      transport.readGates['/v1/auth/me'] = Completer<void>();
-      await tap(tester, find.text('Account settings'));
-      expect(find.text('Loading account…'), findsOneWidget);
-      await capture(tester, 'loading', 'Account GET pending → loading');
       transport.failingReads.add('/v1/auth/me');
-      transport.readGates['/v1/auth/me']!.complete();
-      await settle(tester);
+      router.push('/account');
+      await tester.pumpAndSettle();
       expect(find.text('Account unavailable'), findsOneWidget);
       await capture(tester, 'read-error', 'GET 503 → account error and Retry');
       transport.failingReads.clear();
-      transport.readGates['/v1/auth/me'] = Completer<void>();
       await tap(tester, find.text('Retry'));
-      await capture(tester, 'retry-pending', 'Retry → loading again');
-      transport.readGates['/v1/auth/me']!.complete();
-      await settle(tester);
+      expect(find.text('Email verified'), findsOneWidget);
       await capture(
         tester,
         'retry-ready',
@@ -294,86 +297,22 @@ void main() {
       await back(tester, 'read-return', '/more');
       await tester.pumpWidget(const SizedBox());
     });
-    testWidgets('inventory current Account Google local unavailable $narrow', (
-      tester,
-    ) async {
-      await open(tester, 'password');
-      await capture(tester, 'password-ready', 'Email-only account');
-      await tap(tester, find.byKey(const ValueKey('account-link-google')));
-      await capture(
-        tester,
-        'password-empty',
-        'Link Google → empty password confirmation',
-      );
-      await tap(tester, find.text('Continue'));
-      expect(find.byKey(const ValueKey('account-link-password')), findsNothing);
-      expect(find.byKey(const ValueKey('account-message')), findsNothing);
-      await capture(
-        tester,
-        'password-empty-dismissed',
-        'Continue empty password → silently return without mutation',
-      );
-      await tap(tester, find.byKey(const ValueKey('account-link-google')));
-      await tester.enterText(
-        find.byKey(const ValueKey('account-link-password')),
-        'fixture-password',
-      );
-      await capture(
-        tester,
-        'password-entered',
-        'Enter password → obscured input',
-      );
-      await tap(tester, find.text('Cancel'));
-      await capture(
-        tester,
-        'password-cancelled',
-        'Cancel filled password → no binding',
-      );
-      await tap(tester, find.byKey(const ValueKey('account-link-google')));
-      await tester.enterText(
-        find.byKey(const ValueKey('account-link-password')),
-        'fixture-password',
-      );
-      await tap(tester, find.text('Continue'));
-      expect(
-        find.text('Google sign-in is unavailable. Try again or use email.'),
-        findsOneWidget,
-      );
-      expect(
-        transport.mutationPaths.where((p) => p.contains('/auth/google')),
-        isEmpty,
-      );
-      await message(tester);
-      await capture(
-        tester,
-        'google-unavailable',
-        'Native gateway lacks build client ID → inline unavailable feedback',
-      );
-      await tap(tester, find.byKey(const ValueKey('account-link-google')));
-      await capture(
-        tester,
-        'google-reopen',
-        'Retry Link Google → password dialog reopens',
-      );
-      await tap(tester, find.text('Cancel'));
-      await capture(
-        tester,
-        'google-retry-cancelled',
-        'Cancel retry → previous error remains',
-      );
-      await back(tester, 'password-return', '/more');
-      await tester.pumpWidget(const SizedBox());
-    });
     testWidgets('inventory current Account delete recovery success $narrow', (
       tester,
     ) async {
-      await open(tester, 'delete');
-      await capture(tester, 'delete-ready', 'Account before deletion');
+      await open(tester, 'delete', account: false);
+      await capture(
+        tester,
+        'delete-ready',
+        'More before deletion',
+        route: '/more',
+      );
       await tap(tester, find.byKey(const ValueKey('account-delete')));
       await capture(
         tester,
         'delete-confirm',
         'Request deletion → confirmation',
+        route: '/more',
       );
       await tap(tester, find.text('Cancel'));
       expect(transport.deleteCalls, 0);
@@ -381,16 +320,18 @@ void main() {
         tester,
         'delete-cancelled',
         'Cancel deletion → no mutation',
+        route: '/more',
       );
       await tap(tester, find.byKey(const ValueKey('account-delete')));
       transport.deleteGate = Completer<void>();
       transport.failDelete = true;
       await tap(tester, find.byKey(const ValueKey('account-confirm-delete')));
-      busy(tester);
+      busy(tester, onMore: true);
       await capture(
         tester,
         'delete-pending',
-        'Confirm → DELETE pending, account actions disabled',
+        'Confirm → DELETE pending, More actions disabled',
+        route: '/more',
       );
       transport.deleteGate!.complete();
       await settle(tester);
@@ -404,6 +345,7 @@ void main() {
         tester,
         'delete-error',
         'DELETE 503 → account retained with inline error',
+        route: '/more',
       );
       transport.failDelete = false;
       transport.deleteGate = Completer<void>();
@@ -412,14 +354,16 @@ void main() {
         tester,
         'delete-retry-confirm',
         'Retry deletion → confirmation again',
+        route: '/more',
       );
       await tap(tester, find.byKey(const ValueKey('account-confirm-delete')));
-      busy(tester);
+      busy(tester, onMore: true);
       expect(find.byKey(const ValueKey('account-message')), findsNothing);
       await capture(
         tester,
         'delete-retry-pending',
         'Confirm retry → clear error and disable actions',
+        route: '/more',
       );
       transport.deleteGate!.complete();
       await tester.pumpAndSettle();

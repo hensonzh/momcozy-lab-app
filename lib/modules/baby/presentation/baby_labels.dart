@@ -1,3 +1,4 @@
+import '../../../domain/baby/baby_age_label.dart';
 import '../../../domain/baby/baby_profile.dart';
 import '../../../domain/baby/baby_record.dart';
 import '../../../domain/shared/local_date.dart';
@@ -20,18 +21,8 @@ String growthMetricLabel(GrowthMetric metric) => switch (metric) {
   GrowthMetric.headCircumference => 'Head circumference',
 };
 String babyAgeLabel(BabyProfile baby, LocalDate today) {
-  final birth = baby.birthDate;
-  final days = baby.ageDays(today);
-  if (birth == null || days == null) return 'Age not set';
-  if (days == 0) return 'Newborn';
-  var months = (today.year - birth.year) * 12 + today.month - birth.month;
-  if (birth.addMonths(months).compareTo(today) > 0) months--;
-  if (months >= 24) {
-    return '${months ~/ 12} yr${months % 12 == 0 ? '' : ' ${months % 12} mo'}';
-  }
-  if (months >= 3) return '$months mo';
-  if (days < 14) return '$days days';
-  return '${days ~/ 7} wk${days % 7 == 0 ? '' : ' ${days % 7} days'}';
+  if (baby.ageDays(today) == null) return 'Age not set';
+  return formatBabyAge(baby.birthDate, today);
 }
 
 String babyDuration(Duration duration) {

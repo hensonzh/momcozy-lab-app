@@ -147,16 +147,6 @@ class MomCozyColors {
   static const navigationAvatar = Color(0xfff0e7f6);
   static const navigationAvatarRing = Color(0xffe8d8f7);
   static const navigationAvatarSelectedRing = Color(0xffbf9de1);
-  static const expertDialogBarrier = Color(0x55202b31);
-  static const expertAccent = Color(0xff416874);
-  static const expertPreviewSurface = Color(0xfff4f9f9);
-  static const expertPreviewBorder = Color(0xffc8dde0);
-  static const expertSurface = Color(0xfffdfdfc);
-  static const expertBorder = Color(0xffdde1e1);
-  static const expertInk = Color(0xff303536);
-  static const expertMuted = Color(0xff777c7d);
-  static const expertSoft = Color(0xffedf1f1);
-  static const expertCountdownSurface = Color(0xfff0f0ee);
   static const warmFormSurface = Color(0xfff8f3ed);
   static const warmFormField = Color(0xfffffaf6);
   static const warmFormBorder = Color(0xffe4d6c8);
@@ -264,7 +254,6 @@ class MomCozyLayout {
   static const buttonHeight = 44.0;
   static const primaryButtonHeight = 48.0;
   static const headerHeight = 56.0;
-  static const workbenchWidth = 1400.0;
 }
 
 class MomCozyAssets {
@@ -278,8 +267,6 @@ class MomCozyAssets {
   static const agentAwakenAvatar = 'assets/images/momcozy-agent-awaken.gif';
   static const agentThinkingAvatar = 'assets/images/momcozy-agent-thinking.mp4';
   static const pumpM9 = 'assets/images/M9.png';
-  static const ibclcConsultantAvatar =
-      'assets/images/ibclc-consultant-avatar.jpg';
   static const momcozyLogo = 'assets/images/momcozy_logo.png';
 }
 
@@ -292,7 +279,7 @@ class MomCozyTypography {
   static const fontFamily = bodyFontFamily;
   static const fontFamilyFallback = ['NotoSansSC', 'PingFang SC', 'Arial'];
 
-  // Retained for workbench and explicit local component styles. User App
+  // Retained for explicit local component styles. User App
   // heading metrics are set separately by momCozyTheme.
   static const lineHeight = 1.43;
   static const letterSpacing = 0.25;
