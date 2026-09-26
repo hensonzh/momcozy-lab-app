@@ -10,7 +10,6 @@ import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
-import 'package:momcozy_flutter_app/shared/widgets/mom_companion_widgets.dart';
 import '../../support/mom_inventory_transport.dart';
 import '../../support/fixture_api_transport.dart';
 import '../../support/momcozy_test_fonts.dart';
@@ -75,7 +74,6 @@ void main() {
       for (final asset in [
         MomCozyAssets.agentAvatar,
         'assets/images/mom_home/cozymate_avatar.png',
-        'assets/images/mom_home/expert_group.png',
         'assets/images/mom/milk-hero.png',
       ]) {
         await precacheImage(
@@ -285,9 +283,7 @@ void main() {
     },
   );
 
-  testWidgets('inventory Mom AI card to Momcozy AI draft and service catalog', (
-    tester,
-  ) async {
+  testWidgets('inventory Mom AI card to Momcozy AI draft', (tester) async {
     await mount(tester);
     await tap(tester, find.text('Chat with Momcozy AI'));
     await capture(
@@ -300,21 +296,6 @@ void main() {
     expect(
       find.text('I\'d like to talk about feeding and recovery today.'),
       findsOneWidget,
-    );
-    await tap(tester, find.text('More').last);
-    await tap(tester, find.byType(MomExpertPlanEntry));
-    await capture(
-      tester,
-      'service-catalog',
-      'More Expert support → real service catalog',
-      route: '/services',
-    );
-    await tap(tester, find.text('Back'));
-    await capture(
-      tester,
-      'service-return-home',
-      'Service catalog Back → More',
-      route: '/more',
     );
     await tester.pumpWidget(const SizedBox());
   });
@@ -598,57 +579,4 @@ void main() {
     );
     await tester.pumpWidget(const SizedBox());
   });
-
-  testWidgets(
-    'inventory Mom purchased home service progress and booking entry',
-    (tester) async {
-      await mount(tester, prepare: (t) => t.seedPlan());
-      await capture(
-        tester,
-        'purchased-home',
-        'Me with active plan; expert care is accessed from More',
-        route: '/me',
-      );
-      await tap(tester, find.text('More'));
-      await tap(tester, find.byType(MomExpertPlanEntry));
-      await tap(tester, find.text('View my services'));
-      await tap(tester, find.text('View service progress'));
-      await capture(
-        tester,
-        'purchased-progress',
-        'Owned plan → actual service timeline route',
-        route: '/services/episodes/inventory-episode',
-      );
-      await tap(tester, find.text('Back'));
-      await capture(
-        tester,
-        'purchased-progress-return',
-        'Timeline back → owned service plan',
-        route: '/services/feeding-confidence',
-      );
-      await tap(tester, find.text('Book an appointment'));
-      await capture(
-        tester,
-        'purchased-booking-precheck',
-        'Book from home → actual booking route and suitability dialog',
-        route: '/services/episodes/inventory-episode/booking',
-      );
-      await tap(tester, find.byTooltip('Close booking check'));
-      await capture(
-        tester,
-        'purchased-booking-cancel-precheck',
-        'Cancel suitability check → booking page',
-        route: '/services/episodes/inventory-episode/booking',
-      );
-      await tap(tester, find.text('Back'));
-      await capture(
-        tester,
-        'purchased-booking-return',
-        'Booking back → active service plan unchanged',
-        route: '/services/feeding-confidence',
-      );
-      expect(transport.mutationPaths, isEmpty);
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
 }

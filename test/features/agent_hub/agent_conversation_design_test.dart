@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import '../../support/agent_conversation_scenarios.dart';
 import '../../support/fake_video_player_platform.dart';
@@ -10,6 +11,69 @@ import '../../support/momcozy_test_fonts.dart';
 void main() {
   setUpAll(loadMomCozyTestFonts);
   setUp(() => VideoPlayerPlatform.instance = FakeVideoPlayerPlatform());
+  testWidgets(
+    'composer send, disabled, and stop visuals retain a 44dp target',
+    (tester) async {
+      final controller = TextEditingController();
+      addTearDown(controller.dispose);
+
+      Widget composer({required bool canSend, required bool isRunning}) =>
+          MaterialApp(
+            theme: momCozyTheme(),
+            home: Scaffold(
+              body: AgentComposerBar(
+                controller: controller,
+                canSend: canSend,
+                isRunning: isRunning,
+                isInputLocked: false,
+                images: const [],
+                files: const [],
+                canAttachImage: false,
+                canAttachFile: false,
+                isAttachmentPending: false,
+                attachmentUploadProgress: null,
+                onChanged: (_) {},
+                onSend: () {},
+                onCancel: () {},
+                onTakePhoto: () {},
+                onPickPhoto: () {},
+                onPickFile: () {},
+                onRemoveImage: (_) {},
+                onRemoveFile: (_) {},
+              ),
+            ),
+          );
+
+      BoxDecoration decoration() =>
+          tester
+                  .widget<DecoratedBox>(
+                    find.byKey(const ValueKey('agent-send-button-visual')),
+                  )
+                  .decoration
+              as BoxDecoration;
+
+      await tester.pumpWidget(composer(canSend: false, isRunning: false));
+      final send = find.byKey(const ValueKey('agent-send-button'));
+      final visual = find.byKey(const ValueKey('agent-send-button-visual'));
+      expect(tester.getSize(send), const Size(44, 44));
+      expect(tester.getSize(visual), const Size(36, 36));
+      expect(decoration().color, const Color(0xFFFAF6F3));
+      expect(tester.widget<IconButton>(send).onPressed, isNull);
+
+      controller.text = 'Hello';
+      await tester.pumpWidget(composer(canSend: true, isRunning: false));
+      expect(decoration().color, MomHomeTokens.rose);
+      expect(decoration().boxShadow, isNotEmpty);
+      expect(tester.widget<IconButton>(send).onPressed, isNotNull);
+
+      controller.clear();
+      await tester.pumpWidget(composer(canSend: false, isRunning: true));
+      expect(find.byKey(const ValueKey('agent-stop-button')), findsOneWidget);
+      expect(decoration().color, const Color(0xFFF9EDF2));
+      expect(decoration().border, isNotNull);
+    },
+  );
+
   testWidgets(
     'large text placeholder and drafts keep composer controls below the text',
     (tester) async {

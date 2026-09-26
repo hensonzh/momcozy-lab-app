@@ -260,49 +260,56 @@ class MeMetricRow extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Ink(
-        height: 64,
         decoration: BoxDecoration(
           gradient: MeDesign.metricGradient(kind),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white.withValues(alpha: .65)),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            children: [
-              Positioned(
-                left: -12,
-                top: -24,
-                child: MeDesign.asset(
-                  'DecorationAmbientRing.svg',
-                  width: 114,
-                  height: 114,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 64),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: -12,
+                  top: -24,
+                  child: MeDesign.asset(
+                    'DecorationAmbientRing.svg',
+                    width: 114,
+                    height: 114,
+                  ),
                 ),
-              ),
-              Positioned(
-                right: -16,
-                top: 36,
-                child: MeDesign.asset(
-                  'DecorationAmbientPetal.svg',
-                  width: 132,
-                  height: 62,
+                Positioned(
+                  right: -16,
+                  top: 36,
+                  child: MeDesign.asset(
+                    'DecorationAmbientPetal.svg',
+                    width: 132,
+                    height: 62,
+                  ),
                 ),
-              ),
-              Positioned(
-                left: 14,
-                top: 8,
-                child: Opacity(opacity: .84, child: MeDesign.art(kind, 48)),
-              ),
-              Positioned(
-                left: 78,
-                right: 18,
-                top: 23,
-                child: Text(
-                  kind.label,
-                  style: MeDesign.text(14, weight: FontWeight.w500, line: 18),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 8, 18, 8),
+                  child: Row(
+                    children: [
+                      Opacity(opacity: .84, child: MeDesign.art(kind, 48)),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          kind.label,
+                          style: MeDesign.text(
+                            14,
+                            weight: FontWeight.w500,
+                            line: 18,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

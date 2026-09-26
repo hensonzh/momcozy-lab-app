@@ -28,10 +28,6 @@
         }
       },
       {
-        "source": "ibclc-return",
-        "returnTo": "https://evil.example.com/me"
-      },
-      {
         "source": "agent-artifact",
         "route": "/deprecated-prototype"
       }
@@ -62,12 +58,6 @@
       "type": "ShowToast",
       "payload": {
         "message": "This resource has expired. Please request the latest version."
-      }
-    },
-    {
-      "type": "RejectUnsafeReturnTo",
-      "payload": {
-        "fallback": "/"
       }
     },
     {

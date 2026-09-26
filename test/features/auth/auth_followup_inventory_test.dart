@@ -60,6 +60,7 @@ class _Transport extends FixtureApiJsonTransportByPath {
         '/v1/auth/verify-email': _tokens,
         '/v1/auth/me': _account,
         '/v1/auth/register': {'status': 'verification_required'},
+        '/v1/auth/verify-registration-code': {'status': 'code_valid'},
         '/v1/auth/resend-verification': {'status': 'verification_if_required'},
         '/v1/auth/forgot-password': {'status': 'reset_if_available'},
         '/v1/auth/reset-password': {'status': 'reset'},
@@ -129,7 +130,9 @@ void main() {
       for (final asset in [
         'auth_mother_baby.png',
         'momcozy_logo.png',
-        'google_sign_in.png',
+        'navigation_figma/ArtworkSoftMe.png',
+        'navigation_figma/ArtworkSoftBaby.png',
+        'navigation_figma/AvatarCozymateNav.png',
       ]) {
         await precacheImage(AssetImage('assets/images/$asset'), context);
       }
@@ -289,6 +292,15 @@ void main() {
         'forgot-validation',
         'Submit empty recovery email → validation',
       );
+      await tester.enterText(email, 'invalid');
+      await tap(tester, submit);
+      expect(find.text('Enter a valid email address.'), findsOneWidget);
+      expect(transport.mutationPaths, isEmpty);
+      await snap(
+        tester,
+        'forgot-email-validation',
+        'Submit malformed recovery email → validation without network request',
+      );
       await tester.enterText(email, 'inventory@example.test');
       transport.disconnected.add('/v1/auth/forgot-password');
       await tap(tester, submit);
@@ -332,11 +344,7 @@ void main() {
         'reset-code-form',
         'Recovery accepted → reset code and new password form',
       );
-      await tap(tester, find.text('Resend code'));
-      expect(
-        find.text('Please wait 60 seconds before requesting another code.'),
-        findsOneWidget,
-      );
+      expect(find.text('Request another code in 60s'), findsOneWidget);
       await snap(
         tester,
         'reset-resend-cooldown',
@@ -425,7 +433,7 @@ void main() {
   ) async {
     await mount(tester);
     await tap(tester, find.byKey(const ValueKey('auth-register-button')));
-    await fill(tester);
+    await tester.enterText(email, 'inventory@example.test');
     transport.responsesByPath['/v1/auth/register'] = _error(
       'auth_email_unavailable',
       503,
@@ -450,6 +458,23 @@ void main() {
     await tap(tester, submit);
     expect(find.text('Verify your email'), findsOneWidget);
     await tester.enterText(code, '12345678');
+    await submitWaiting(
+      tester,
+      '/v1/auth/verify-registration-code',
+      'registration-code-pending',
+    );
+    await release(tester, '/v1/auth/verify-registration-code');
+    expect(find.text('Set your password'), findsOneWidget);
+    await snap(
+      tester,
+      'registration-set-password',
+      'Valid code → password form',
+    );
+    await tester.enterText(password, 'Inventory123');
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-confirm-password-field')),
+      'Inventory123',
+    );
     await submitWaiting(
       tester,
       '/v1/auth/verify-email',
@@ -490,10 +515,15 @@ void main() {
     await snap(
       tester,
       'verify-from-login',
-      'Retry unverified login → code sent and verification form',
+      'Retry unverified login → code requested and verification form',
     );
+    await tap(tester, find.text('Back to sign in'));
+    await tap(tester, find.byKey(const ValueKey('auth-register-button')));
+    await tap(tester, submit);
+    expect(find.text('Verify your email'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 61));
     await tester.enterText(email, '');
-    await tap(tester, find.text('Resend code'));
+    await tap(tester, find.text('Request another code'));
     expect(find.text('Enter your email first.'), findsOneWidget);
     await snap(
       tester,
@@ -505,7 +535,7 @@ void main() {
       'rate_limited',
       429,
     );
-    await tap(tester, find.text('Resend code'));
+    await tap(tester, find.text('Request another code'));
     await snap(
       tester,
       'verify-resend-rate-limited',
@@ -516,7 +546,7 @@ void main() {
     };
     final gate = transport.gates['/v1/auth/resend-verification'] =
         Completer<void>();
-    await tester.tap(find.text('Resend code'));
+    await tester.tap(find.text('Request another code'));
     await tester.pump(const Duration(milliseconds: 100));
     await snap(
       tester,
@@ -526,7 +556,9 @@ void main() {
     gate.complete();
     await tester.pumpAndSettle();
     expect(
-      find.text('If your account is eligible, a new code is on its way.'),
+      find.text(
+        'If this email is eligible, check your inbox and spam folder. A request within 60 seconds may not send another code.',
+      ),
       findsOneWidget,
     );
     await snap(
@@ -535,6 +567,13 @@ void main() {
       'Resend accepted → success message',
     );
     await tester.enterText(code, '12345678');
+    await tap(tester, submit);
+    expect(find.text('Set your password'), findsOneWidget);
+    await tester.enterText(password, 'Sample123');
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-confirm-password-field')),
+      'Sample123',
+    );
     await tap(tester, submit);
     expect(runtime.currentSession.isAuthenticated, isTrue);
     await capture(

@@ -140,7 +140,10 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                           ),
                           if (days != null && days >= 0)
                             Text(
-                              formatPostpartumDay(days),
+                              formatPostpartumDay(
+                                days,
+                              ).replaceFirst(' · ', '\n'),
+                              textAlign: TextAlign.right,
                               style: MeDesign.text(
                                 11,
                                 color: const Color(0xff756966),
@@ -295,7 +298,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
               ),
               const SizedBox(height: 18),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: Text(
@@ -308,19 +311,23 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                     ),
                   ),
                   Flexible(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () => page(MeManageRecords(controller: c)),
-                      child: Text(
-                        'Manage records ›',
-                        style: MeDesign.text(
-                          12,
-                          color: MeDesign.rose,
-                          line: 18,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        onPressed: () => page(MeManageRecords(controller: c)),
+                        child: Text(
+                          'Manage records ›',
+                          textAlign: TextAlign.right,
+                          style: MeDesign.text(
+                            12,
+                            color: MeDesign.rose,
+                            line: 18,
+                          ),
                         ),
                       ),
                     ),
@@ -339,7 +346,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
               const SizedBox(height: 12),
               LayoutBuilder(
                 builder: (context, box) {
-                  final count = MediaQuery.textScalerOf(context).scale(14) > 21
+                  final count = MediaQuery.textScalerOf(context).scale(14) >= 21
                       ? 1
                       : 2;
                   final width = (box.maxWidth - (count - 1) * 12) / count;
@@ -352,6 +359,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                           width: width,
                           child: MeHomeMetric(
                             kind: kind,
+                            width: width,
                             observation: c.latest(kind),
                             failed: state.failedMetrics.contains(kind),
                             onTap: () => record(kind),
@@ -387,30 +395,80 @@ class MeHomeMetric extends StatelessWidget {
   const MeHomeMetric({
     super.key,
     required this.kind,
+    required this.width,
     required this.onTap,
     this.observation,
     this.failed = false,
   });
   final MeMetric kind;
+  final double width;
   final VoidCallback onTap;
   final MeObservation? observation;
   final bool failed;
   @override
   Widget build(BuildContext context) {
     final date = observation?.occurredAt;
-    final verticalScale = (MediaQuery.textScalerOf(context).scale(22) / 22)
-        .clamp(1.0, double.infinity);
+    final scaler = MediaQuery.textScalerOf(context);
+    final verticalScale = (scaler.scale(22) / 22).clamp(1.0, double.infinity);
+    final emptyValue = observation == null && !failed;
+    final valueText =
+        observation?.displayValue ??
+        (failed ? 'Could not load' : 'No entry yet');
+    final valueStyle = MeDesign.text(
+      observation == null ? 16 : 22,
+      weight: FontWeight.w700,
+      color: observation == null ? const Color(0xff807975) : MeDesign.ink,
+    );
+    final valueWidth = (width - (emptyValue ? 26 : 73)).clamp(
+      1.0,
+      double.infinity,
+    );
+    final painter = TextPainter(
+      text: TextSpan(text: valueText, style: valueStyle),
+      textDirection: Directionality.of(context),
+      textScaler: scaler,
+    )..layout(maxWidth: emptyValue ? double.infinity : valueWidth);
+    final fitScale = emptyValue && painter.width > valueWidth
+        ? valueWidth / painter.width
+        : 1.0;
+    final valueHeight = painter.height * fitScale;
+    painter.dispose();
+    final titleStyle = MeDesign.text(14, color: const Color(0xff776e69));
+    final titlePainter = TextPainter(
+      text: TextSpan(text: kind.label, style: titleStyle),
+      textDirection: Directionality.of(context),
+      textScaler: scaler,
+    )..layout(maxWidth: (width - 26).clamp(1.0, double.infinity));
+    final titleHeight = titlePainter.height;
+    titlePainter.dispose();
+    final valueTop = emptyValue
+        ? (11 * verticalScale + titleHeight + 4).clamp(
+            35 * verticalScale,
+            double.infinity,
+          )
+        : 35 * verticalScale;
+    final minimumHeight = 106 * verticalScale;
+    final contentHeight =
+        valueTop +
+        valueHeight +
+        (date == null
+            ? emptyValue
+                  ? 56
+                  : 8
+            : 13 * verticalScale + scaler.scale(12) * 1.4 + 8);
+    final cardHeight = contentHeight > minimumHeight
+        ? contentHeight
+        : minimumHeight;
     return Semantics(
       button: true,
-      label:
-          '${kind.label}, ${observation?.displayValue ?? (failed ? 'Could not load' : 'Not recorded yet')}',
+      label: '${kind.label}, $valueText',
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(22),
           child: Ink(
-            height: 106 * verticalScale,
+            height: cardHeight,
             decoration: BoxDecoration(
               gradient: MeDesign.metricGradient(kind),
               borderRadius: BorderRadius.circular(22),
@@ -440,12 +498,15 @@ class MeHomeMetric extends StatelessWidget {
                   ),
                   Positioned(
                     right: 10,
-                    top: 26,
+                    top: emptyValue ? null : 26,
+                    bottom: emptyValue ? 8 : null,
                     child: Opacity(
                       opacity: .84,
                       child: MeDesign.art(
                         kind,
-                        kind == MeMetric.energy
+                        emptyValue
+                            ? 40
+                            : kind == MeMetric.energy
                             ? 44
                             : (kind == MeMetric.sleep || kind == MeMetric.mood)
                             ? 48
@@ -455,27 +516,26 @@ class MeHomeMetric extends StatelessWidget {
                   ),
                   Positioned(
                     left: 13,
+                    right: 13,
                     top: 11 * verticalScale,
-                    child: Text(
-                      kind.label,
-                      style: MeDesign.text(14, color: const Color(0xff776e69)),
-                    ),
+                    child: Text(kind.label, style: titleStyle),
                   ),
                   Positioned(
                     left: 13,
-                    right: 60,
-                    top: 35 * verticalScale,
-                    child: Text(
-                      observation?.displayValue ??
-                          (failed ? 'Could not load' : 'Not recorded yet'),
-                      style: MeDesign.text(
-                        observation == null ? 16 : 22,
-                        weight: FontWeight.w700,
-                        color: observation == null
-                            ? const Color(0xff807975)
-                            : MeDesign.ink,
-                      ),
-                    ),
+                    right: emptyValue ? 13 : 60,
+                    top: valueTop,
+                    child: emptyValue
+                        ? FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              valueText,
+                              maxLines: 1,
+                              softWrap: false,
+                              style: valueStyle,
+                            ),
+                          )
+                        : Text(valueText, style: valueStyle),
                   ),
                   if (date != null)
                     Positioned(

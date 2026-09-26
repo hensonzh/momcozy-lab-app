@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/core/auth/google_sign_in_gateway.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/account_page.dart';
@@ -24,11 +23,7 @@ void main() {
   for (final size in [(393.0, 1.0), (320.0, 2.0)]) {
     final suffix = '${size.$1.toInt()}-${size.$2.toInt()}x';
 
-    Future<void> mount(
-      WidgetTester tester,
-      _Transport transport, {
-      GoogleSignInGateway? google,
-    }) async {
+    Future<void> mount(WidgetTester tester, _Transport transport) async {
       tester.view.physicalSize = Size(size.$1, 844);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
@@ -58,7 +53,6 @@ void main() {
               builder: (_) => MomCozyAccountPage(
                 runtimeController: runtime,
                 sessionStore: MemoryMomCozySessionStore(),
-                googleSignIn: google ?? _Google(),
               ),
             ),
           ],
@@ -108,7 +102,10 @@ void main() {
       await tap(tester, find.text('Retry'));
       expect(find.text('Deletion requested'), findsOneWidget);
       await capture(tester, 'long-identity');
-      await tester.ensureVisible(find.byKey(const ValueKey('account-delete')));
+      expect(find.byKey(const ValueKey('account-delete')), findsNothing);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('account-sign-out')),
+      );
       await tester.pumpAndSettle();
       await capture(tester, 'long-bottom');
       await tap(tester, find.byTooltip('Back'));
@@ -116,100 +113,22 @@ void main() {
       expect(transport.mutationPaths, isEmpty);
     });
 
-    testWidgets('account link pending, success and delete error $suffix', (
-      tester,
-    ) async {
-      final transport = _Transport(_profile());
+    testWidgets('legacy account recovery guidance $suffix', (tester) async {
+      final transport = _Transport(
+        _profile()..addAll({
+          'auth_providers': ['google'],
+          'account_status': 'active',
+          'email_verified': true,
+        }),
+      );
       await mount(tester, transport);
       await tester.pumpAndSettle();
-      await tap(tester, find.byKey(const ValueKey('account-link-google')));
-      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
-      addTearDown(tester.view.resetViewInsets);
-      await tester.enterText(
-        find.byKey(const ValueKey('account-link-password')),
-        'test-password',
-      );
-      await tester.pumpAndSettle();
-      await capture(tester, 'password-keyboard');
-      tester.view.resetViewInsets();
-      await tester.pumpAndSettle();
-      transport.writeGate = Completer<void>();
-      await tester.ensureVisible(find.text('Continue'));
-      await tester.tap(find.text('Continue'));
-      await tester.pump(const Duration(milliseconds: 600));
       expect(
-        tester
-            .widget<OutlinedButton>(
-              find.byKey(const ValueKey('account-link-google')),
-            )
-            .onPressed,
-        isNull,
+        find.textContaining('This account has no email password'),
+        findsOneWidget,
       );
-      expect(
-        tester
-            .widget<TextButton>(find.byKey(const ValueKey('account-delete')))
-            .onPressed,
-        isNull,
-      );
-      await capture(tester, 'link-pending');
-      transport.response['auth_providers'] = ['email', 'google'];
-      transport.writeGate!.complete();
-      await tester.pumpAndSettle();
-      expect(transport.mutationPaths, ['/v1/auth/google/link']);
-      expect(transport.lastBody?['password'], 'test-password');
       expect(find.byKey(const ValueKey('account-link-google')), findsNothing);
-      await tester.ensureVisible(find.text('Google account linked.'));
-      await tester.pumpAndSettle();
-      await capture(tester, 'linked');
-      await tap(tester, find.byKey(const ValueKey('account-delete')));
-      await capture(tester, 'delete-confirm');
-      await tap(tester, find.text('Cancel'));
-      expect(transport.mutationPaths, ['/v1/auth/google/link']);
-      transport.deleteFails = true;
-      await tap(tester, find.byKey(const ValueKey('account-delete')));
-      await tap(tester, find.byKey(const ValueKey('account-confirm-delete')));
-      expect(find.byType(MomCozyAccountPage), findsOneWidget);
-      expect(
-        find.text('Unable to continue. Please try again shortly.'),
-        findsOneWidget,
-      );
-      await tester.ensureVisible(find.byKey(const ValueKey('account-message')));
-      await tester.pumpAndSettle();
-      await capture(tester, 'delete-error');
-      expect(
-        tester
-            .widget<TextButton>(find.byKey(const ValueKey('account-delete')))
-            .onPressed,
-        isNotNull,
-      );
-    });
-
-    testWidgets('account Google unavailable feedback $suffix', (tester) async {
-      final transport = _Transport(_profile());
-      await mount(tester, transport, google: _UnavailableGoogle());
-      await tester.pumpAndSettle();
-      await tap(tester, find.byKey(const ValueKey('account-link-google')));
-      await tester.enterText(
-        find.byKey(const ValueKey('account-link-password')),
-        'test-password',
-      );
-      await tap(tester, find.text('Continue'));
-      expect(
-        find.text('Google sign-in is unavailable. Try again or use email.'),
-        findsOneWidget,
-      );
-      expect(transport.mutationPaths, isEmpty);
-      expect(
-        tester
-            .widget<OutlinedButton>(
-              find.byKey(const ValueKey('account-link-google')),
-            )
-            .onPressed,
-        isNotNull,
-      );
-      await tester.ensureVisible(find.byKey(const ValueKey('account-message')));
-      await tester.pumpAndSettle();
-      await capture(tester, 'google-unavailable');
+      await capture(tester, 'legacy-password-recovery');
     });
 
     testWidgets('account disabled and missing providers $suffix', (
@@ -230,16 +149,6 @@ void main() {
       await capture(tester, 'no-providers');
     });
   }
-}
-
-class _Google implements GoogleSignInGateway {
-  @override
-  Future<String?> signIn() async => 'fixture-google-token';
-}
-
-class _UnavailableGoogle implements GoogleSignInGateway {
-  @override
-  Future<String?> signIn() async => throw const GoogleSignInUnavailable();
 }
 
 class _Transport extends FixtureApiJsonTransport {

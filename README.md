@@ -87,6 +87,14 @@ make local-dev-start
 账号缺少资料时会补入示例姓名 `Mia`，以及初始化当天往前 21 天的分娩日期，
 让首页显示姓名和产后阶段。后续启动保留已填写的资料，产后天数随日期递增。
 
+每次需要重新构建并刷新 Android Studio Emulator，且自动登录一个全新测试账号时，使用：
+
+```bash
+make local-dev-refresh
+```
+
+该命令会启动并验证本地双服务、重新构建 `local` debug APK、创建一个唯一且已验证的本地邮箱账号、清除模拟器中旧 local App 的数据、安装并自动登录新账号。完成后打印新账号凭据，并将账号和首页截图保存到 `build/emulator-refresh/`。不会发布 APK 或修改云端。
+
 在登录页使用上述账号即可进入 App，无需邮件验证码。仅在 `APP_ENV=local` 下创建，
 不授予管理员权限。重复启动保留已有账号、修改后的密码和业务数据。
 统一启动入口默认保留 App 数据，首次登录后后续启动恢复保存的会话。
@@ -151,16 +159,13 @@ cannot block login or the main App shell. Enable it only in a compatible
 environment with `--dart-define=MOMCOZY_ENABLE_ONBOARDING=true`. When enabled,
 authenticated users whose backend onboarding state is incomplete are held on
 the full-screen `/onboarding` route before the main App shell is available. The
-flow collects a stage-exclusive maternal profile, the fields required by that
-stage, and one shared delivery/infant set for postpartum users. It then offers
-camera or gallery portrait capture, polls the asynchronous avatar job, lets the
-user review the result, and keeps the stage-specific MomCozy character as an
-explicit fallback.
-
-The client uses `/v1/onboarding/me` and its profile, portrait, generation, and
-completion sub-routes. Portraits are sent only through authenticated multipart
-transport; the backend normalizes them and applies its temporary privacy
-lifecycle.
+flow now collects the postpartum name and age, delivery date, optional delivery
+method and infant count in three steps. Saving the profile completes onboarding
+and opens the App directly. Portrait upload, avatar generation, review and the
+avatar task/banner routes have been retired. The client uses only
+`GET /v1/onboarding/me` and `PUT /v1/onboarding/me/profile` for this flow.
+The split Product Backend currently does not publish these onboarding endpoints,
+so keep the capability disabled until a compatible service is available.
 
 The destructive internal-test release reset is disabled by default and runs
 only when **both** `MOMCOZY_ENABLE_ONBOARDING=true` and
@@ -228,7 +233,7 @@ Current Dart test coverage:
 - Android route intent adapter covers pending route consumption and native active route events.
 - P0 native fake platform interfaces cover BLE permission/settings/scan failure/notification/read/write/subscribe flows, pump protocol command schemas, pump foreground lifecycle/notice events, wake lock reference counting, and one-shot route consumption/active dispatch.
 - Android MethodChannel adapter fixtures cover `MmcBle` BLE method schemas/events and `PumpSessionNotification` foreground method schemas.
-- Onboarding fixtures cover stage-exclusive serialization, postpartum delivery/infant collection, route gating, portrait upload, avatar selection, and completed-user bypass.
+- Onboarding fixtures cover postpartum profile serialization, delivery/infant collection, three-step route gating, save failure/retry, and completed-user bypass.
 - Pump agent upload MethodChannel adapter fixtures cover native method schemas and failure events.
 - Pump agent upload fake platform fixtures cover method schemas, call/failure streams, sensitive failure redaction, and duplicate upload dedupe keys.
 - Agent Hub runtime fixtures cover default SSE runner injection, production run payload generation, and route-shell composer send-ready state.

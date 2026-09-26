@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../domain/care/appointment.dart';
-import '../../../domain/care/care_plan.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
 import '../application/schedule_controller.dart';
 import '../domain/schedule.dart';
@@ -14,16 +12,9 @@ class ScheduleAgenda extends StatelessWidget {
     required this.state,
     required this.onEdit,
     required this.onDelete,
-    this.onAppointment,
-    this.onPlan,
-    this.onTaskStatus,
   });
   final ScheduleState state;
   final ValueChanged<PersonalScheduleEntry> onEdit, onDelete;
-  final ValueChanged<CareAppointment>? onAppointment;
-  final ValueChanged<String>? onPlan;
-  final void Function(ScheduledPlan, PublishedCareTask, CareTaskStatus)?
-  onTaskStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +24,12 @@ class ScheduleAgenda extends StatelessWidget {
         borderInside: true,
         backgroundDecoration: MomCardDecoration.utility,
         children: [
-          Text('Nothing scheduled for this day', style: ScheduleDesign.text(16, bold: true)),
           Text(
-            'Schedule items, IBCLC consultations, and care tasks will appear here.',
+            'Nothing scheduled for this day',
+            style: ScheduleDesign.text(16, bold: true),
+          ),
+          Text(
+            'Your personal schedule items will appear here.',
             style: ScheduleDesign.text(13, color: MomHomeTokens.secondary),
           ),
         ],
@@ -54,37 +48,8 @@ class ScheduleAgenda extends StatelessWidget {
 
   Widget _entry(ScheduleAgendaEntry entry) {
     final personal = entry.personal;
-    final appointment = entry.appointment;
-    final task = entry.task;
-    final kind = personal != null
-        ? ScheduleCardKind.personal
-        : appointment != null
-        ? ScheduleCardKind.appointment
-        : ScheduleCardKind.task;
-    final actions = <String, String>{};
-    if (personal != null) {
-      actions.addAll({'edit': 'Edit', 'delete': 'Delete'});
-    } else if (appointment != null && onAppointment != null) {
-      actions['appointment'] = switch (appointment.status) {
-        AppointmentStatus.held => 'Confirm appointment',
-        AppointmentStatus.completed => 'View consultation summary',
-        _ => 'View appointment',
-      };
-    } else if (task != null) {
-      if (onTaskStatus != null) {
-        for (final action in const {
-          CareTaskStatus.pending: 'Mark as pending',
-          CareTaskStatus.inProgress: 'Mark in progress',
-          CareTaskStatus.completed: 'Mark completed',
-          CareTaskStatus.skipped: 'Skip for now',
-        }.entries) {
-          if (action.key != task.task.status) {
-            actions[action.key.name] = action.value;
-          }
-        }
-      }
-      if (onPlan != null) actions['plan'] = 'View care plan';
-    }
+    const kind = ScheduleCardKind.personal;
+    final actions = <String, String>{'edit': 'Edit', 'delete': 'Delete'};
     return Container(
       key: ValueKey('schedule-entry-${entry.key}'),
       decoration: BoxDecoration(
@@ -171,23 +136,8 @@ class ScheduleAgenda extends StatelessWidget {
                 position: PopupMenuPosition.under,
                 offset: const Offset(12, -16),
                 menuPadding: const EdgeInsets.symmetric(vertical: 8),
-                onSelected: (value) {
-                  if (personal != null) {
-                    value == 'edit' ? onEdit(personal) : onDelete(personal);
-                  } else if (appointment != null) {
-                    onAppointment?.call(appointment);
-                  } else if (task != null) {
-                    if (value == 'plan') {
-                      onPlan?.call(task.plan.episodeId);
-                    } else {
-                      onTaskStatus?.call(
-                        task.plan,
-                        task.task,
-                        CareTaskStatus.values.byName(value),
-                      );
-                    }
-                  }
-                },
+                onSelected: (value) =>
+                    value == 'edit' ? onEdit(personal) : onDelete(personal),
                 itemBuilder: (_) => [
                   for (var i = 0; i < actions.length; i++) ...[
                     if (i > 0)

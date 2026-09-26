@@ -1425,8 +1425,8 @@ void main() {
     await tester.pump();
 
     expect(client.requests, hasLength(1));
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('I have your message.'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.text('Thinking…'), findsNothing);
     expect(find.byKey(const ValueKey('agent-stop-button')), findsOneWidget);
 
     await tester.pumpWidget(_host(const SizedBox.shrink()));
@@ -1722,8 +1722,7 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('Putting together a response…'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     expect(find.text('Partial answer'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
@@ -2454,8 +2453,7 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('Putting together a response…'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('agent-stop-button')));
     await tester.pump();
@@ -3039,11 +3037,7 @@ void main() {
         ),
       );
 
-      expect(
-        find.byKey(const ValueKey('agent-run-status-line')),
-        findsOneWidget,
-      );
-      expect(find.text('Putting together a response…'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
       expect(find.text('I can help'), findsOneWidget);
 
       await tester.pumpWidget(
@@ -3054,11 +3048,8 @@ void main() {
         ),
       );
 
-      expect(
-        find.byKey(const ValueKey('agent-run-status-line')),
-        findsOneWidget,
-      );
-      expect(find.text('I have your message.'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+      expect(find.text('Thinking…'), findsNothing);
 
       await tester.pumpWidget(
         _host(
@@ -3193,7 +3184,7 @@ milk_total: 120ml
     );
   });
 
-  testWidgets('Agent Hub status line uses progress events before final text', (
+  testWidgets('Agent Hub shows no copy until an approved tool status arrives', (
     tester,
   ) async {
     final state = AgentStreamRunState(
@@ -3207,15 +3198,27 @@ milk_total: 120ml
     );
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.text('Thinking…'), findsNothing);
 
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text("Checking today's records…"),
-      ),
-      findsOneWidget,
+    final withToolStatus = state.applyEvent(
+      AgentStreamEvent({
+        'type': 'run.progress',
+        'payload': {
+          'phase': 'tool_status',
+          'call_id': 'records-1',
+          'outcome': 'running',
+          'user_facing_status': {
+            'running': '正在核对与你的问题相关的记录。',
+            'success': '已核对相关记录，正在结合你的情况分析。',
+            'failure': '暂时无法读取相关记录。',
+          },
+        },
+      }),
     );
+    await tester.pumpWidget(_host(AgentHubPage(state: withToolStatus)));
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+    expect(find.text('正在核对与你的问题相关的记录。'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('agent-run-status-title-sweep')),
       findsOneWidget,
@@ -3239,10 +3242,10 @@ milk_total: 120ml
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
     expect(find.text('正在处理请求'), findsNothing);
-    expect(find.text('I have your message.'), findsOneWidget);
+    expect(find.text('Thinking…'), findsNothing);
   });
 
-  testWidgets('Agent Hub uses the approved context-ready fallback copy', (
+  testWidgets('Agent Hub does not invent context-ready status copy', (
     tester,
   ) async {
     final state = AgentStreamRunState(
@@ -3257,14 +3260,7 @@ milk_total: 120ml
     );
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
-
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('Let me understand what you need…'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     expect(find.text('我看一下你的信息'), findsNothing);
   });
 
@@ -3289,7 +3285,8 @@ milk_total: 120ml
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
-    expect(find.text('Putting together a response…'), findsOneWidget);
+    expect(find.text('Thinking…'), findsNothing);
+    expect(find.text('Putting together a response…'), findsNothing);
     expect(find.text('正在处理请求。'), findsNothing);
   });
 
@@ -3312,7 +3309,7 @@ milk_total: 120ml
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
     expect(find.text('不应通过旧字段展示'), findsNothing);
-    expect(find.text('I have your message.'), findsOneWidget);
+    expect(find.text('Thinking…'), findsNothing);
   });
 
   testWidgets('Agent Hub keeps thinking note semantic out of status line', (
@@ -3333,24 +3330,11 @@ milk_total: 120ml
     );
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
-
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('I have your message.'),
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-thinking-note')),
-        matching: find.text('Let me think…'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
   });
 
-  testWidgets('Agent Hub renders model reasoning as a thinking note', (
+  testWidgets('Agent Hub does not invent status from model reasoning', (
     tester,
   ) async {
     final state = AgentStreamRunState(
@@ -3366,22 +3350,9 @@ milk_total: 120ml
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('I have your message.'),
-      ),
-      findsOneWidget,
-    );
-    expect(find.byKey(const ValueKey('agent-thinking-note')), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-thinking-note')),
-        matching: find.text('Let me think…'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
+    expect(find.text('Let me think…'), findsNothing);
   });
 
   testWidgets('Agent Hub clears thinking note on later progress phases', (
@@ -3405,50 +3376,38 @@ milk_total: 120ml
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
     expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('Putting together a response…'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
   });
 
-  testWidgets('Agent Hub uses tool semantic labels for loop status', (
-    tester,
-  ) async {
-    final state =
-        const AgentStreamRunState(
-          phase: AgentStreamRunPhase.streaming,
-        ).applyEvent(
-          AgentStreamEvent({
-            'type': 'tool.started',
-            'payload': {
-              'tool_call_id': 'tool-milk-status',
-              'tool_name': 'records.milk_status.read',
-              'label': '奶量状态',
-              'semantic': {
-                'label': 'Checking your milk supply records…',
-                'surface': 'work_item',
-                'lifecycle': 'running',
+  testWidgets(
+    'Agent Hub ignores tool semantic labels without approved status',
+    (tester) async {
+      final state =
+          const AgentStreamRunState(
+            phase: AgentStreamRunPhase.streaming,
+          ).applyEvent(
+            AgentStreamEvent({
+              'type': 'tool.started',
+              'payload': {
+                'tool_call_id': 'tool-milk-status',
+                'tool_name': 'records.milk_status.read',
+                'label': '奶量状态',
+                'semantic': {
+                  'label': 'Checking your milk supply records…',
+                  'surface': 'work_item',
+                  'lifecycle': 'running',
+                },
               },
-            },
-          }),
-        );
+            }),
+          );
 
-    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+      await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('Checking your milk supply records…'),
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('正在读取奶量状态'), findsNothing);
-  });
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+      expect(find.text('正在读取奶量状态'), findsNothing);
+      expect(find.text('Checking your milk supply records…'), findsNothing);
+    },
+  );
 
   testWidgets(
     'Agent Hub keeps a fast tool completion ahead of immediate generic progress',
@@ -3491,10 +3450,8 @@ milk_total: 120ml
 
       await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
-      expect(
-        find.text("I've checked your milk supply records."),
-        findsOneWidget,
-      );
+      expect(find.text("I've checked your milk supply records."), findsNothing);
+      expect(find.text('Thinking…'), findsNothing);
       expect(find.text('Working on the next step…'), findsNothing);
     },
   );
@@ -3532,6 +3489,14 @@ milk_total: 120ml
 
     expect(statusLine.padding, const EdgeInsets.symmetric(vertical: 4));
     expect(
+      tester.widget<Text>(find.text('I have your message.')).style?.fontSize,
+      13,
+    );
+    expect(
+      tester.widget<Text>(find.text('I have your message.')).style?.fontWeight,
+      FontWeight.w500,
+    );
+    expect(
       find.descendant(
         of: find.byKey(const ValueKey('agent-run-status-line')),
         matching: find.byType(Row),
@@ -3562,10 +3527,11 @@ milk_total: 120ml
         final avatar = tester.getRect(
           find.byKey(const ValueKey('agent-assistant-avatar')),
         );
-        final title = tester.getRect(find.text('Putting together a response…'));
-        expect(title.top, greaterThanOrEqualTo(avatar.top));
-        expect(title.bottom, lessThanOrEqualTo(avatar.bottom));
-        expect(title.center.dy, closeTo(avatar.center.dy, 2.1));
+        expect(
+          find.byKey(const ValueKey('agent-run-status-line')),
+          findsNothing,
+        );
+        expect(avatar.width, greaterThan(0));
         await tester.pumpWidget(
           _host(
             const AgentHubPage(
@@ -3619,11 +3585,11 @@ milk_total: 120ml
       ),
     );
 
-    expect(find.byKey(const ValueKey('agent-thinking-note')), findsOneWidget);
+    expect(find.text('Thinking…'), findsNothing);
 
     await tester.pump(const Duration(milliseconds: 2201));
 
-    expect(find.byKey(const ValueKey('agent-thinking-note')), findsOneWidget);
+    expect(find.text('Thinking…'), findsNothing);
   });
 
   testWidgets(
@@ -3657,17 +3623,7 @@ milk_total: 120ml
       );
 
       expect(find.text('Working on the next step…'), findsNothing);
-      expect(
-        find.byKey(const ValueKey('agent-run-status-line')),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(
-          of: find.byKey(const ValueKey('agent-run-status-line')),
-          matching: find.text('I have your message.'),
-        ),
-        findsOneWidget,
-      );
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     },
   );
 
@@ -3701,21 +3657,8 @@ milk_total: 120ml
     );
 
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
-
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('Working on the next step…'),
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-thinking-note')),
-        matching: find.text('Let me think…'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
   });
 
   testWidgets('Agent Hub renders artifact and action semantic status', (
@@ -3748,7 +3691,8 @@ milk_total: 120ml
       ),
     );
 
-    expect(find.text('Your lactation support plan is ready.'), findsOneWidget);
+    expect(find.text('Your lactation support plan is ready.'), findsNothing);
+    expect(find.text('Thinking…'), findsNothing);
 
     await tester.pumpWidget(
       _host(
@@ -3768,7 +3712,8 @@ milk_total: 120ml
       ),
     );
 
-    expect(find.text('Please confirm before I continue.'), findsOneWidget);
+    expect(find.text('Please confirm before I continue.'), findsNothing);
+    expect(find.text('Thinking…'), findsNothing);
   });
 
   testWidgets('Agent Hub does not render failed semantic status', (
@@ -3818,7 +3763,7 @@ milk_total: 120ml
 
     expect(find.text('这段载荷文案不应展示'), findsNothing);
     expect(find.text('内部完成事件'), findsNothing);
-    expect(find.text('I have your message.'), findsOneWidget);
+    expect(find.text('Thinking…'), findsNothing);
   });
 
   testWidgets('Agent Hub clears thinking note on later labeled progress', (
@@ -3842,14 +3787,7 @@ milk_total: 120ml
     await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
     expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('Putting together a response…'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
   });
 
   testWidgets('Agent Hub switches status copy after reply text starts', (
@@ -3871,12 +3809,11 @@ milk_total: 120ml
 
     expect(find.text('I can suggest a first step.'), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-thinking-note')), findsNothing);
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(find.text('Putting together a response…'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
   });
 
   testWidgets(
-    'Agent Hub keeps status through user persistence and token streaming',
+    'Agent Hub shows no copy until tool status and hides it on first token',
     (tester) async {
       final client = _ControllableAgentStreamClient();
       addTearDown(client.dispose);
@@ -3906,11 +3843,8 @@ milk_total: 120ml
       );
       await tester.pump();
 
-      expect(
-        find.byKey(const ValueKey('agent-run-status-line')),
-        findsOneWidget,
-      );
-      expect(find.text('I have your message.'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+      expect(find.text('Thinking…'), findsNothing);
 
       client.emit(
         0,
@@ -3926,11 +3860,8 @@ milk_total: 120ml
       );
       await tester.pump();
 
-      expect(
-        find.byKey(const ValueKey('agent-run-status-line')),
-        findsOneWidget,
-      );
-      expect(find.text('I have your message.'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+      expect(find.text('Thinking…'), findsNothing);
 
       client.emit(
         0,
@@ -3946,10 +3877,31 @@ milk_total: 120ml
       await tester.pump();
       await tester.pump();
 
-      expect(
-        find.text('Preparing your lactation intake form…'),
-        findsOneWidget,
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+
+      client.emit(
+        0,
+        AgentStreamEvent({
+          'event_id': 'evt-tool-status',
+          'type': 'run.progress',
+          'thread_id': 'thread-progress',
+          'run_id': 'run-progress',
+          'sequence': 4,
+          'payload': {
+            'phase': 'tool_status',
+            'call_id': 'records-1',
+            'outcome': 'running',
+            'user_facing_status': {
+              'running': '正在核对与你的问题相关的记录。',
+              'success': '已核对相关记录，正在结合你的情况分析。',
+              'failure': '暂时无法读取相关记录。',
+            },
+          },
+        }),
       );
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('正在核对与你的问题相关的记录。'), findsOneWidget);
 
       client.emit(
         0,
@@ -3959,7 +3911,7 @@ milk_total: 120ml
           'thread_id': 'thread-progress',
           'run_id': 'run-progress',
           'message_id': 'msg-progress',
-          'sequence': 4,
+          'sequence': 5,
           'payload': {'text': 'I can help'},
         }),
       );
@@ -3967,11 +3919,7 @@ milk_total: 120ml
       await tester.pump();
 
       expect(find.text('I can help'), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('agent-run-status-line')),
-        findsOneWidget,
-      );
-      expect(find.text('Putting together a response…'), findsOneWidget);
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
 
       client.emit(
         0,
@@ -3981,7 +3929,7 @@ milk_total: 120ml
           'thread_id': 'thread-progress',
           'run_id': 'run-progress',
           'message_id': 'msg-progress',
-          'sequence': 5,
+          'sequence': 6,
           'payload': {
             'role': 'assistant',
             'text': 'I can help. I have organized the notes.',
@@ -3999,31 +3947,25 @@ milk_total: 120ml
     },
   );
 
-  testWidgets('Agent Hub status line uses queued and started events', (
-    tester,
-  ) async {
-    final state = AgentStreamRunState(
-      phase: AgentStreamRunPhase.streaming,
-      events: [
-        AgentStreamEvent({
-          'type': 'run.queued',
-          'payload': {'label': '正在排队准备'},
-        }),
-        AgentStreamEvent({'type': 'run.started'}),
-      ],
-    );
+  testWidgets(
+    'Agent Hub ignores queued and started labels before tool status',
+    (tester) async {
+      final state = AgentStreamRunState(
+        phase: AgentStreamRunPhase.streaming,
+        events: [
+          AgentStreamEvent({
+            'type': 'run.queued',
+            'payload': {'label': '正在排队准备'},
+          }),
+          AgentStreamEvent({'type': 'run.started'}),
+        ],
+      );
 
-    await tester.pumpWidget(_host(AgentHubPage(state: state)));
+      await tester.pumpWidget(_host(AgentHubPage(state: state)));
 
-    expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-run-status-line')),
-        matching: find.text('I have your message.'),
-      ),
-      findsOneWidget,
-    );
-  });
+      expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+    },
+  );
 }
 
 Widget _host(Widget child, {bool tickersEnabled = false}) {

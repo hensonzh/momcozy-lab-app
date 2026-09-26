@@ -19,14 +19,13 @@ import '../support/momcozy_test_fonts.dart';
 import '../support/notification_fakes.dart';
 
 import 'package:momcozy_flutter_app/shared/widgets/mom_companion_widgets.dart';
-import 'package:momcozy_flutter_app/shared/widgets/mom_settings_row.dart';
 
 int auditUnread = 0;
 
 void main() {
   setUpAll(loadMomCozyTestFonts);
 
-  testWidgets('More content matches Figma with shared navigation at 393x844', (
+  testWidgets('More account hierarchy with shared navigation at 393x844', (
     tester,
   ) async {
     await _host(
@@ -40,22 +39,13 @@ void main() {
       onLogout: () async {},
     );
     await _decodeImages(tester);
-    expect(
-      tester.getRect(find.byType(MomHomeSurface).first),
-      const Rect.fromLTWH(16, 110, 361, 99),
-    );
-    expect(
-      tester.getRect(find.byType(MomSettingsRow).first),
-      const Rect.fromLTWH(16, 267, 361, 84),
-    );
-    expect(
-      tester.getRect(find.byType(MomExpertPlanEntry)),
-      const Rect.fromLTWH(16, 494, 361, 94),
-    );
-    expect(
-      tester.getRect(find.byKey(const ValueKey('more-logout'))),
-      const Rect.fromLTWH(16, 602, 361, 44),
-    );
+    expect(find.text('Privacy'), findsNothing);
+    final account = tester.getRect(find.byType(MomHomeSurface).first);
+    final delete = tester.getRect(find.byKey(const ValueKey('account-delete')));
+    final logout = tester.getRect(find.byKey(const ValueKey('more-logout')));
+    expect(account.height, lessThan(130));
+    expect(logout.top, greaterThan(account.bottom));
+    expect(delete.top, greaterThan(logout.bottom));
     expect(
       tester.getRect(find.byKey(const ValueKey('bottom-nav-chrome'))),
       const Rect.fromLTWH(0, 762, 393, 82),
@@ -72,15 +62,9 @@ void main() {
         closeTo(entry.value, .001),
       );
     }
-    for (final entry in {
-      'More': 33.0,
-      'Everyday settings': 223.0,
-      'Expert care': 450.0,
-      'Expert support': 510.0,
-      'Sign out': 616.0,
-    }.entries) {
-      expect(tester.getTopLeft(find.text(entry.key).first).dy, entry.value);
-    }
+    expect(find.text('More'), findsNWidgets(2));
+    expect(find.text('Delete account'), findsOneWidget);
+    expect(find.text('Expert support'), findsNothing);
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../goldens/ui_refactor/more-figma-default-393-1x.png'),
@@ -128,10 +112,7 @@ void main() {
 
 Future<void> _decodeImages(WidgetTester tester) async {
   await tester.runAsync(() async {
-    for (final asset in [
-      'assets/images/momcozy-agent.png',
-      'assets/images/mom_home/expert_group.png',
-    ]) {
+    for (final asset in ['assets/images/momcozy-agent.png']) {
       await precacheImage(
         AssetImage(asset),
         tester.element(find.byType(MorePage)),
@@ -183,7 +164,12 @@ Future<GoRouter> _host(
           child: NotificationScope(
             coordinator: coordinator,
             child: Scaffold(
-              body: SafeArea(child: MorePage(onLogout: onLogout)),
+              body: SafeArea(
+                child: MorePage(
+                  onLogout: onLogout,
+                  onDeleteAccount: () async {},
+                ),
+              ),
               bottomNavigationBar: const MomCozyBottomNavigation(
                 location: '/more',
               ),

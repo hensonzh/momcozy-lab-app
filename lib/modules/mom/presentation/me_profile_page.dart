@@ -92,8 +92,8 @@ class MeProfilePage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: 54,
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(minWidth: 54),
                             child: Text(
                               'Edit ›',
                               style: MeDesign.text(
@@ -156,15 +156,16 @@ class MeProfilePage extends StatelessWidget {
   String _labels(String key) {
     final value = controller.state?.profile[key];
     if (value == null) return 'Not provided';
-    return (value is List ? value : [value])
-        .map(
-          (e) =>
-              meProfileChoices[key]?[key == 'delivery_count' &&
-                      (int.tryParse(e.toString()) ?? 0) >= 3
-                  ? '3'
-                  : e.toString()] ??
-              e,
-        )
+    final values = value is List ? value : [value];
+    if (values.isEmpty) return 'Not provided';
+    return values
+        .map((e) {
+          final raw = e.toString();
+          final code = key == 'delivery_count' && (int.tryParse(raw) ?? 0) >= 3
+              ? '3'
+              : raw;
+          return meProfileChoices[key]?[code] ?? 'Review saved choice';
+        })
         .join(', ');
   }
 }

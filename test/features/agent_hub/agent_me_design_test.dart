@@ -87,10 +87,7 @@ Future<void> _loadImages(WidgetTester tester) async {
   final context = tester.element(find.byType(Scaffold).first);
   await tester.runAsync(() async {
     await Future.wait([
-      for (final asset in [
-        MomCozyAssets.ibclcConsultantAvatar,
-        MomCozyAssets.agentAvatar,
-      ])
+      for (final asset in [MomCozyAssets.agentAvatar])
         precacheImage(AssetImage(asset), context),
     ]);
   });

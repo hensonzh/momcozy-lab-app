@@ -1,8 +1,8 @@
-# Momcozy AI 环境与发布工作流
+# Momcozy AI 配置文件与环境发布工作流
 
-> 最后更新：2026-09-24
+> 最后更新：2026-09-25
 > 适用仓库：`backend/`、`agent/`、`app/`
-> 本轮只完成配置和流水线标准化，没有部署 staging/production，也没有上传 App Store。
+> 本文说明仓库配置与操作入口，不代表 staging/production 已完成部署或 App Store 已上传。
 
 ## 1. 统一环境语义
 
@@ -17,43 +17,49 @@
 仍暂时包含 `-test`（例如 `backend-test...`），这是基础设施命名遗留，不改变其
 `staging` 语义；后续改 DNS 时只更新 staging 配置源和证书，不再改应用代码。
 
-## 2. 配置源
+## 2. 配置文件地图（路径均相对工作区根目录）
 
-### Product Backend
+### 每个文件负责什么
 
-```text
-backend/env/local.env.example
-backend/env/staging.env.example
-backend/env/production.env.example
-backend/docker-compose.local.yml
-backend/docker-compose.deploy.yml
-backend/scripts/release.py
-backend/.github/workflows/backend-delivery.yml
+| 文件 | 职责；不要误用为 |
+| --- | --- |
+| `backend/Dockerfile`、`agent/Dockerfile` | 各服务各构建一份镜像；API、worker、迁移复用同一镜像并覆盖启动命令。不是按环境区分的 Dockerfile。镜像仅安装本服务的 `requirements.txt`。 |
+| 两个服务各自的 `docker-compose.local.yml` | 本机完整开发栈（服务与依赖），使用各自被忽略的 `env/local.env`。不是服务器部署拓扑。 |
+| 两个服务各自的 `docker-compose.ci.yml` | **只**与本服务的 `docker-compose.local.yml` 按此顺序叠加，注入 `APP_ENV=test` 等 CI 覆盖值；不能单独使用，也不部署到服务器。 |
+| 两个服务各自的 `docker-compose.deploy.yml` | `staging` 和 `production` 共用的唯一服务器 Compose 模板；从环境私有 env 注入差异，使用 CI 产出的不可变镜像引用，不在服务器重新构建。 |
+| `backend/env/{local,staging,production}.env.example`、`agent/env/{local,staging,production}.env.example` | 三套环境的**模板**，不是凭据或三个同时加载的文件。`local.env` 留在开发机；staging/production 的真实 env 留在各自部署主机并保持 `0600`。 |
+| `backend/requirements.txt`、`agent/requirements.txt` | 各服务自己的生产运行依赖，分别由自己的 Dockerfile 安装；与环境名无关。 |
+| 两个服务各自的 `requirements-dev.txt` | `-r requirements.txt` 加上测试、lint、类型检查工具，只在开发机/CI 安装。`pyproject.toml` 管理项目与工具配置，不是第二份运行依赖清单。 |
+| `backend/requirements-rtc-test.txt` | 在 dev 依赖上增加可选 LiveKit RTC 测试客户端；仅手动跑媒体集成测试时安装（见 `backend/docs/consultation-rooms.md`），不进入镜像或常规 CI。 |
+| `app/config/environments/{local,staging}.json`、`production.json.example` | Flutter 编译时环境、Product/Agent API URL。生产须先复制为被忽略的 `production.json` 并替换占位 URL。 |
+| `app/android/app/build.gradle.kts`、`app/ios/Runner.xcodeproj` | Android 有 `local/staging/production` 三个原生 flavor；iOS 已有独立 `staging` scheme（`com.momcozy.mai.staging`）用于内部 TestFlight 准备，`Runner` 的生产 Bundle ID 尚待确认；iOS 不是三套原生 scheme。 |
+
+### 选哪一组文件、走哪个入口
+
+| 场景 | Backend + Agent 环境与 Compose | Flutter 配置 | 执行入口 |
+| --- | --- | --- | --- |
+| `local` | 各自 `env/local.env`（由 `.example` 初始化）；各自 `docker-compose.local.yml` | `app/config/environments/local.json` | `cd app && make local-dev-up`，App 构建用 `make app-build-local-apk`；详见第 3 节。 |
+| `test`（CI 临时） | CI 使用 `env/local.env.example`、`docker-compose.local.yml` + `docker-compose.ci.yml`，测试进程注入 `APP_ENV=test` | 无 `test` flavor | `backend-ci.yml`、`agent-ci.yml`、`app-ci.yml`；不是服务器环境。 |
+| `staging` | 对应 `env/staging.env.example` **生成主机私有 env**；各自 `docker-compose.deploy.yml` | `app/config/environments/staging.json` | 先 `backend-delivery.yml`，再 `agent-delivery.yml`；通过联调门禁后才用 `app-staging-release.yml`。 |
+| `production` | 对应 `env/production.env.example` **生成独立的主机私有 env**；各自仍用 `docker-compose.deploy.yml` | 从 `production.json.example` 准备私有 `production.json` | 先 Backend 再 Agent 的受保护发布流程；App 正式构建还需要签名、最终 iOS Bundle ID 等条件。 |
+
+Backend 和 Agent 的两份部署 env 必须针对**同一环境**对齐共享网络、数据库、服务身份与公开 URL（见第 5 节）；不得把 `staging` env 配给 `production`。`docker compose --env-file` 用于 Compose 变量插值，服务内的 `env_file:` 将选定的私有配置交给容器；不要再叠加第二份 provider env。`backend/scripts/release.py` 和 `agent/scripts/release.py` 分别由受保护的 GitHub 发布工作流调用；`make *-staging-config` / `make *-production-config` 只检查模板可渲染，**不代表凭据齐全或已部署**。
+
+Agent 之前额外的本机 `env/azure.staging.env` 没有被 Compose 或发布脚本引用；已原样移至被忽略且权限为 `0700` 的 `agent/.local/config-archive/`，文件自身保持 `0600`。它是未启用的私有实验配置，不算第四套环境。若决定启用 Azure，审核后只将所需 provider 参数写入**目标环境现有的私有 service env**，按 `agent/docs/model-providers.md` 的 drain/切换流程发布，不要在 Compose 增加第二个 `env_file`。
+
+### 无副作用的配置检查
+
+```bash
+# 从 momcozy-lab 工作区根目录开始
+cd backend && make backend-staging-config backend-production-config
+cd ../agent && make agent-staging-config agent-production-config
+cd ../app && make workspace-environment-check
+make app-config-check APP_ENVIRONMENT=staging APP_MODE=release
 ```
 
-### Agent Runtime
+上述检查不启动服务、不构建 App。两个服务的 staging/production `.example` 可通过 Compose 语法检查，但其中的占位密钥会被 `scripts/release.py` 拒绝；App 的 `production.json.example` 也不是可直接发布的正式配置。
 
-```text
-agent/env/local.env.example
-agent/env/staging.env.example
-agent/env/production.env.example
-agent/docker-compose.local.yml
-agent/docker-compose.deploy.yml
-agent/scripts/release.py
-agent/.github/workflows/agent-delivery.yml
-```
-
-### Flutter App
-
-```text
-app/config/environments/local.json
-app/config/environments/staging.json
-app/config/environments/production.json.example
-app/scripts/build-mobile-app.mjs
-app/.github/workflows/app-staging-release.yml
-```
-
-每个环境只有一份已提交的非秘密配置模板。真实密钥只允许存在于：
+真实密钥只允许存在于：
 
 1. 本机被 Git 忽略的 `env/*.env`；
 2. 部署主机权限为 `0600` 的私有 env 文件；
@@ -204,7 +210,7 @@ node scripts/build-mobile-app.mjs \
 make app-build-local-apk
 make app-build-staging-apk
 make app-build-production-aab
-make app-build-staging-ios       # 无签名编译预检
+make app-build-staging-ios       # 独立 staging Bundle ID，无签名编译预检
 make app-build-production-ipa    # 需要 Apple 签名
 ```
 

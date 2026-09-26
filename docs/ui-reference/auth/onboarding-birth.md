@@ -5,14 +5,14 @@
 - 参考来源：derived-user-approved
 - 设计源码：[分娩资料（衍生设计）](../auth/derived/onboarding-birth.md#L1)，第 1–22 行
 - Flutter：`lib/features/onboarding/presentation/onboarding_page.dart`
-- Route / 入口：`/onboarding /avatar/create /avatar/review`
+- Route / 入口：`/onboarding`
 - 触发：从对应页面或父页面进入，具体交互待逐页复核
-- 状态：**Completed**
+- 状态：**已实现，Figma 新截图待同步**
 
 用户确认按统一规范补齐的衍生设计；不是设计工程原稿，不自动代表实现/验收完成。
 
 
-复核记录：按本页衍生规范统一首次使用样式；48 项设计状态测试、85 项 onboarding 回归通过，三宽及 2x、键盘、校验、草稿返回、错误重试、选择与回跳覆盖。保存失败提示遗漏已修复并有先失败再通过证据。验证使用实际 Flutter widget 与受控数据；未运行真实云端形象生成或系统相机授权，默认能力门禁保持原值。
+2026-09-25 更新：头像创建阶段已移除。当前 onboarding 为 3 步，保存分娩资料后直接进入 App；本页旧的头像截图/验收记录仅供历史追溯，不代表当前流程。新的 App 截图见下列 onboarding-* golden，Figma 画板尚待同步。
 
 - functional_evidence: [evidence/onboarding/verification.md](../evidence/onboarding/verification.md)
 - functional_evidence: [evidence/onboarding/design-tests.txt](../evidence/onboarding/design-tests.txt)
@@ -24,14 +24,7 @@
 - functional_evidence: [../../test/features/onboarding/onboarding_reading_test.dart](../../../test/features/onboarding/onboarding_reading_test.dart)
 - functional_evidence: [../../integration_test/onboarding_reading_test.dart](../../../integration_test/onboarding_reading_test.dart)
 - visual_evidence: [../../test/goldens/design_system/onboarding-birth-390.png](../../../test/goldens/design_system/onboarding-birth-390.png)
+- visual_evidence: [../../test/goldens/design_system/onboarding-birth-repeat-390.png](../../../test/goldens/design_system/onboarding-birth-repeat-390.png)（再次分娩，显示本次之前的剖宫产史问题）
 - visual_evidence: [../../test/goldens/design_system/onboarding-birth-error-390.png](../../../test/goldens/design_system/onboarding-birth-error-390.png)
-- visual_evidence: [evidence/onboarding-reading/native-onboarding-reading-photo-privacy-1x.png](../evidence/onboarding-reading/native-onboarding-reading-photo-privacy-1x.png)
-- visual_evidence: [evidence/onboarding-reading/native-onboarding-reading-generation-wait-2x.png](../evidence/onboarding-reading/native-onboarding-reading-generation-wait-2x.png)
-- visual_evidence: [evidence/onboarding-reading/native-onboarding-reading-generation-stage-1x.png](../evidence/onboarding-reading/native-onboarding-reading-generation-stage-1x.png)
-- visual_evidence: [evidence/onboarding-reading/native-onboarding-reading-activation-2x.png](../evidence/onboarding-reading/native-onboarding-reading-activation-2x.png)
-- visual_evidence: [evidence/onboarding-reading/native-onboarding-reading-activation-1x.png](../evidence/onboarding-reading/native-onboarding-reading-activation-1x.png)
-- visual_evidence: [evidence/onboarding-reading/native-onboarding-reading-generation-stage-2x.png](../evidence/onboarding-reading/native-onboarding-reading-generation-stage-2x.png)
-- visual_evidence: [evidence/onboarding-reading/native-onboarding-reading-generation-wait-1x.png](../evidence/onboarding-reading/native-onboarding-reading-generation-wait-1x.png)
-- visual_evidence: [evidence/onboarding-reading/native-onboarding-reading-photo-privacy-2x.png](../evidence/onboarding-reading/native-onboarding-reading-photo-privacy-2x.png)
 
 验收必须同时记录当前源码、行为验证、实际渲染和与参考的逐项差异。存在旧截图不代表本页已完成。

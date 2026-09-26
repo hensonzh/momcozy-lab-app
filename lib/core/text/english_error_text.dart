@@ -9,7 +9,7 @@ String englishErrorText(String? message, {required String fallback}) {
 }
 
 final _unsupportedText = RegExp(
-  r'[\u3400-\u9fff\u{20000}-\u{323af}\u3040-\u30ff\u31f0-\u31ff\uac00-\ud7af\u0400-\u052f\u0600-\u06ff\u0900-\u097f]|cozy[\s-]*mate',
+  r'[\u3400-\u9fff\u{20000}-\u{323af}\u3040-\u30ff\u31f0-\u31ff\uac00-\ud7af\u0400-\u052f\u0600-\u06ff\u0900-\u097f\u0370-\u03ff\u0590-\u05ff\u0e00-\u0e7f]|cozy[\s-]*mate',
   caseSensitive: false,
   unicode: true,
 );

@@ -1,172 +1,21 @@
-import '../modules/services/presentation/appointment_cancel_dialog.dart';
-import 'me_home_route.dart';
-import '../modules/profile/presentation/privacy_page.dart';
-import '../features/notifications/presentation/notification_scope.dart';
-import '../features/notifications/presentation/notification_settings_page.dart';
-import '../modules/services/presentation/appointment_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../domain/care/appointment.dart';
-import '../domain/shared/local_date.dart';
+
+import '../features/notifications/presentation/notification_scope.dart';
+import '../features/notifications/presentation/notification_settings_page.dart';
+import '../modules/profile/presentation/privacy_page.dart';
 import '../modules/mom/presentation/lactation_page.dart';
-import '../modules/services/presentation/service_catalog_page.dart';
-import '../modules/services/presentation/service_package_page.dart';
-import '../modules/services/presentation/service_progress_page.dart';
-import '../modules/services/presentation/service_renew_page.dart';
-import '../services/care/care_api_repository.dart';
 import '../services/lactation/lactation_api_repository.dart';
+import '../domain/shared/local_date.dart';
+import 'me_home_route.dart';
 import 'momcozy_api_runtime.dart';
-import '../services/appointments/appointment_api_repository.dart';
-import '../services/consultations/intake_api_repository.dart';
-import '../modules/services/presentation/booking_page.dart';
-import '../modules/services/presentation/intake_page.dart';
-import '../modules/consultation/application/room_controller.dart';
-import '../modules/consultation/presentation/room_page.dart';
-import '../services/consultations/room_api_repository.dart';
-import '../services/consultations/livekit_consultation_media.dart';
-import '../services/documentation/documentation_api_repository.dart';
-import '../modules/services/application/summary_controller.dart';
-import '../modules/services/presentation/consultation_summary_page.dart';
 
 Widget buildMotherHome(BuildContext context) {
   final runtime = MomCozyRuntimeScope.of(context);
   return MeHomeRoute(key: ValueKey(runtime), runtime: runtime);
 }
 
-void _back(BuildContext context) =>
-    context.canPop() ? context.pop() : context.go('/me');
-
 final momModuleRoutes = <GoRoute>[
-  GoRoute(
-    path: '/privacy',
-    builder: (context, state) {
-      final runtime = MomCozyRuntimeScope.of(context);
-      return PrivacyPage(
-        care: CareApiRepository(transport: runtime.jsonTransport),
-        consents: IntakeApiRepository(transport: runtime.jsonTransport),
-        initialEpisodeId: state.uri.queryParameters['episode'],
-        onBack: () => _back(context),
-        onNotifications: () => context.push('/notifications/settings'),
-      );
-    },
-  ),
-  GoRoute(
-    path: '/notifications/settings',
-    builder: (context, state) => NotificationSettingsPage(
-      coordinator: NotificationScope.maybeOf(context),
-    ),
-  ),
-  GoRoute(
-    path: '/services/appointments/:appointmentId',
-    builder: (context, state) {
-      final runtime = MomCozyRuntimeScope.of(context);
-      return AppointmentDetailPage(
-        key: ValueKey(
-          'appointment-${runtime.currentSession.userId}-${state.pathParameters['appointmentId']}',
-        ),
-        repository: AppointmentApiRepository(transport: runtime.jsonTransport),
-        appointmentId: state.pathParameters['appointmentId']!,
-      );
-    },
-  ),
-  GoRoute(
-    path: '/services/appointments/:appointmentId/summary',
-    builder: (context, state) {
-      final runtime = MomCozyRuntimeScope.of(context);
-      final appointmentId = state.pathParameters['appointmentId']!;
-      return ConsultationSummaryPage(
-        key: ValueKey(
-          'summary-${runtime.currentSession.userId}-$appointmentId',
-        ),
-        createController: () => CareSummaryController(
-          repository: DocumentationApiRepository(
-            transport: runtime.jsonTransport,
-          ),
-          appointmentId: appointmentId,
-        ),
-        onBack: () => _back(context),
-        onProgress: (episode) =>
-            context.push('/services/episodes/${episode.id}'),
-        onPlan: () => context.push('/schedule'),
-      );
-    },
-  ),
-  GoRoute(
-    path: '/services/appointments/:appointmentId/room',
-    builder: (context, state) {
-      final runtime = MomCozyRuntimeScope.of(context);
-      final appointmentId = state.pathParameters['appointmentId']!;
-      return ConsultationRoomPage(
-        key: ValueKey('room-${runtime.currentSession.userId}-$appointmentId'),
-        createController: () => ConsultationRoomController(
-          repository: ConsultationRoomApiRepository(
-            transport: runtime.jsonTransport,
-          ),
-          consents: IntakeApiRepository(transport: runtime.jsonTransport),
-          appointmentId: appointmentId,
-          media: LiveKitConsultationMedia(),
-          now: runtime.now,
-        ),
-        onBack: () => _back(context),
-        onIntake: () =>
-            context.push('/services/appointments/$appointmentId/intake'),
-        onHome: () => context.go('/me'),
-        onProgress: (appointment) =>
-            context.go('/services/appointments/${appointment.id}/summary'),
-        onRebook: (appointment) =>
-            context.go('/services/episodes/${appointment.episodeId}/booking'),
-        onCancel: (appointment) async {
-          final cancelled = await showAppointmentCancellation(
-            context,
-            repository: AppointmentApiRepository(
-              transport: runtime.jsonTransport,
-            ),
-            appointment: appointment,
-          );
-          if (context.mounted && cancelled != null) context.go('/me');
-        },
-      );
-    },
-  ),
-  GoRoute(
-    path: '/services/episodes/:episodeId/booking',
-    builder: (context, state) {
-      final runtime = MomCozyRuntimeScope.of(context);
-      return BookingPage(
-        key: ValueKey(
-          'booking-${runtime.currentSession.userId}-${state.pathParameters['episodeId']}',
-        ),
-        repository: AppointmentApiRepository(transport: runtime.jsonTransport),
-        episodeId: state.pathParameters['episodeId']!,
-        now: runtime.now,
-        onBack: () => _back(context),
-        onIntake: (appointment) =>
-            context.push('/services/appointments/${appointment.id}/intake'),
-        onConsultation: (appointment) =>
-            context.push('/services/appointments/${appointment.id}/room'),
-      );
-    },
-  ),
-  GoRoute(
-    path: '/services/appointments/:appointmentId/intake',
-    builder: (context, state) {
-      final runtime = MomCozyRuntimeScope.of(context);
-      return IntakePage(
-        key: ValueKey(
-          'intake-${runtime.currentSession.userId}-${state.pathParameters['appointmentId']}',
-        ),
-        repository: IntakeApiRepository(transport: runtime.jsonTransport),
-        appointmentId: state.pathParameters['appointmentId']!,
-        now: runtime.now,
-        onBack: () => _back(context),
-        onManageBabies: () => context.push('/baby'),
-        onPreconsult: (intake) => context.go(
-          '/',
-          extra: {'agentPrefill': 'I\'ve completed my consultation intake. Can you help me prepare the key points to discuss?'},
-        ),
-      );
-    },
-  ),
   GoRoute(
     path: '/me/lactation',
     builder: (context, state) {
@@ -178,75 +27,20 @@ final momModuleRoutes = <GoRoute>[
         date: LocalDate.fromDateTime(runtime.now().toLocal()),
         now: runtime.now,
         create: state.uri.queryParameters['create'] == '1',
-        onClose: () => _back(context),
+        onClose: () => context.canPop() ? context.pop() : context.go('/me'),
       );
     },
   ),
   GoRoute(
-    path: '/services',
-    builder: (context, state) => ServiceCatalogPage(
-      repository: CareApiRepository(
-        transport: MomCozyRuntimeScope.of(context).jsonTransport,
-      ),
-      onBack: () => _back(context),
-      onSelect: (package) => context.push('/services/${package.id}'),
+    path: '/privacy',
+    builder: (context, state) => PrivacyPage(
+      onBack: () => context.canPop() ? context.pop() : context.go('/more'),
     ),
   ),
   GoRoute(
-    path: '/services/episodes/:episodeId',
-    builder: (context, state) {
-      final runtime = MomCozyRuntimeScope.of(context);
-      return ServiceProgressPage(
-        repository: CareApiRepository(transport: runtime.jsonTransport),
-        appointmentRepository: AppointmentApiRepository(
-          transport: runtime.jsonTransport,
-        ),
-        episodeId: state.pathParameters['episodeId']!,
-        onBack: () => _back(context),
-        onBook: (episode) =>
-            context.push('/services/episodes/${episode.id}/booking'),
-        onRenew: () => context.push(
-          '/services/episodes/${state.pathParameters['episodeId']!}/renew',
-        ),
-        onOpenAppointment: (appointment) => context.push(
-          appointment.status == AppointmentStatus.completed
-              ? '/services/appointments/${appointment.id}/summary'
-              : '/services/appointments/${appointment.id}/room',
-        ),
-      );
-    },
-  ),
-  GoRoute(
-    path: '/services/renew',
-    builder: (context, state) => _renewPage(context, state),
-  ),
-  GoRoute(
-    path: '/services/episodes/:episodeId/renew',
-    builder: (context, state) => _renewPage(context, state),
-  ),
-  GoRoute(
-    path: '/services/:packageId',
-    builder: (context, state) => ServicePackagePage(
-      repository: CareApiRepository(
-        transport: MomCozyRuntimeScope.of(context).jsonTransport,
-      ),
-      packageId: state.pathParameters['packageId']!,
-      onBack: () => _back(context),
-      onBook: (episode) =>
-          context.push('/services/episodes/${episode.id}/booking'),
-      onProgress: (episode) => context.push('/services/episodes/${episode.id}'),
+    path: '/notifications/settings',
+    builder: (context, state) => NotificationSettingsPage(
+      coordinator: NotificationScope.maybeOf(context),
     ),
   ),
 ];
-
-Widget _renewPage(BuildContext context, GoRouterState state) =>
-    ServiceRenewPage(
-      repository: CareApiRepository(
-        transport: MomCozyRuntimeScope.of(context).jsonTransport,
-      ),
-      episodeId: state.pathParameters['episodeId'],
-      onBack: () => _back(context),
-      onBook: (episode) =>
-          context.push('/services/episodes/${episode.id}/booking'),
-      onProgress: (episode) => context.push('/services/episodes/${episode.id}'),
-    );

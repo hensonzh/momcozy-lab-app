@@ -39,7 +39,16 @@ void main() {
         name: 'Baby',
         birthDate: LocalDate(2026, 1, 31),
       );
-      expect(babyAgeLabel(baby, LocalDate(2026, 4, 30)), '3 mo');
+      expect(babyAgeLabel(baby, LocalDate(2026, 4, 30)), '3 months');
+      final newborn = BabyProfile(
+        id: 'newborn',
+        name: 'Luna',
+        birthDate: LocalDate(2026, 8, 18),
+      );
+      expect(babyAgeLabel(newborn, LocalDate(2026, 8, 19)), '1 day');
+      expect(babyAgeLabel(newborn, LocalDate(2026, 9, 8)), '3 weeks');
+      expect(babyAgeLabel(newborn, LocalDate(2026, 9, 9)), '3 weeks 1 day');
+      expect(babyAgeLabel(baby, LocalDate(2028, 2, 29)), '2 years 1 month');
       expect(
         babyAgeLabel(
           const BabyProfile(id: 'baby', name: 'Baby'),

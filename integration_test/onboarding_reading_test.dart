@@ -8,7 +8,7 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   binding.shouldPropagateDevicePointerEvents = true;
   testWidgets(
-    'Android onboarding reading and avatar choices',
+    'Android three-step onboarding reading',
     (tester) async {
       var converted = false;
       for (final scale in [1.0, 2.0]) {

@@ -10,6 +10,7 @@ import '../modules/mom/domain/me_experience.dart';
 import '../modules/mom/presentation/me_home_page.dart';
 import '../services/baby/baby_profiles_api_repository.dart';
 import '../services/baby/baby_records_api_repository.dart';
+import '../services/mother/mother_profile_api_repository.dart';
 import 'momcozy_api_runtime.dart';
 
 final _snapshots = Expando<MeState>('me-home');
@@ -56,6 +57,12 @@ class _MeHomeRouteState extends State<MeHomeRoute> {
         if (!context.mounted) return;
       }
       if (baby == null) {
+        final deliveryDate = (await MotherProfileApiRepository(
+          transport: runtime.jsonTransport,
+          ownerUserId: runtime.currentSession.userId,
+          timezoneProvider: runtime.timezoneProvider,
+        ).get()).deliveryDate;
+        if (!context.mounted) return;
         baby = await showBabyProfileEditor(
           context,
           repository: BabyProfilesApiRepository(
@@ -63,6 +70,8 @@ class _MeHomeRouteState extends State<MeHomeRoute> {
           ),
           timezone: timezone,
           now: runtime.now,
+          deliveryDate: deliveryDate,
+          closeOnSave: true,
         );
         if (baby == null || !context.mounted) return;
         repository.baby = baby;

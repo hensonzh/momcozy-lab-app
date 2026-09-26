@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
@@ -34,6 +35,48 @@ void main() {
       }
     },
   );
+
+  test('iOS app icon uses the existing Momcozy AI avatar', () {
+    const root = 'ios/Runner/Assets.xcassets/AppIcon.appiconset';
+    final manifest =
+        jsonDecode(File('$root/Contents.json').readAsStringSync())
+            as Map<String, Object?>;
+    final entries = manifest['images'] as List;
+    for (final item in entries) {
+      final entry = item as Map<String, dynamic>;
+      final filename = entry['filename'] as String;
+      final points = double.parse((entry['size'] as String).split('x').first);
+      final scale = int.parse((entry['scale'] as String).replaceFirst('x', ''));
+      final side = (points * scale).round();
+      final bytes = File('$root/$filename').readAsBytesSync();
+      expect(bytes.length, greaterThan(25), reason: filename);
+      expect(bytes.sublist(0, 8), const [
+        137,
+        80,
+        78,
+        71,
+        13,
+        10,
+        26,
+        10,
+      ], reason: '$filename must be a PNG');
+      // PNG truecolor, with no alpha channel (required for App Store icons).
+      expect(bytes[25], 2, reason: '$filename must be RGB');
+      final width =
+          (bytes[16] << 24) | (bytes[17] << 16) | (bytes[18] << 8) | bytes[19];
+      final height =
+          (bytes[20] << 24) | (bytes[21] << 16) | (bytes[22] << 8) | bytes[23];
+      expect(width, side, reason: filename);
+      expect(height, side, reason: filename);
+      if (side == 1024) {
+        expect(
+          sha256.convert(bytes).toString(),
+          '293619cca3c91767c9d65456547fff8ac1293a1a96e9ccdfafc1997e2b6938fa',
+          reason: 'Marketing icon should match the approved Android avatar',
+        );
+      }
+    }
+  });
 
   test('Android main activity uses a neutral starting window', () {
     final manifest = File(

@@ -40,23 +40,11 @@ abstract final class ScheduleDesign {
 }
 
 enum ScheduleCardKind {
-  task(
-    Color(0xfff4f9f6),
-    Color(0xffe3f0e8),
-    Color(0xff477061),
-    Color(0xff94baa8),
-  ),
   personal(
     Color(0xfffdf4ed),
     Color(0xfffae5d6),
     Color(0xff8f5e47),
     Color(0xffd6a88c),
-  ),
-  appointment(
-    Color(0xfff6f0fa),
-    Color(0xffece1f4),
-    Color(0xff7d5991),
-    Color(0xffba96cf),
   );
 
   const ScheduleCardKind(this.tint, this.chip, this.ink, this.accent);

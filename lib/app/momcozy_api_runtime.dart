@@ -27,8 +27,6 @@ import 'package:momcozy_flutter_app/features/motion_assessment/data/motion_voice
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/modules/schedule/data/schedule_api_repository.dart';
-import 'package:momcozy_flutter_app/services/care/care_api_repository.dart';
-import 'package:momcozy_flutter_app/domain/care/care_order.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/native/pump_native_runtime_coordinator.dart';
@@ -454,9 +452,6 @@ class MomCozyApiRuntime {
 
   ScheduleRepository get scheduleRepository =>
       _scheduleRepository ??= ScheduleApiRepository(transport: jsonTransport);
-
-  CareRepository get careRepository =>
-      CareApiRepository(transport: jsonTransport);
 
   RecordsApiRepository get recordsRepository {
     return RecordsApiRepository(transport: jsonTransport);

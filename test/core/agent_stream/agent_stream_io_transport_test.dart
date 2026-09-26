@@ -701,28 +701,17 @@ void main() {
     test(
       'client event client records safe local events without user authority',
       () async {
-        final fixture = readFixtureMap(
-          'route_intents/media_viewer_and_ibclc_return_intents.json',
-        );
-        final input = Map<String, Object?>.from(fixture['input']! as Map);
-        final ibclc = Map<String, Object?>.from(input['ibclc']! as Map);
-        final completion = Map<String, Object?>.from(
-          ibclc['completionPayload']! as Map,
-        );
         final recorded = <Map<String, Object?>>[];
         final client = AgentStreamClientEventClient(recorder: recorded.add);
 
         final result = await client.post(
           AgentStreamClientEventRequest(
-            eventType: completion['event_type']! as String,
-            label: '用户已完成一次 IBCLC 在线咨询',
-            occurredAt: completion['completed_at']! as String,
+            eventType: 'ui.schedule.entry.created',
+            label: 'A personal schedule entry was created',
+            occurredAt: '2026-09-25T10:00:00+08:00',
             locale: 'zh-CN',
             timezone: 'Asia/Shanghai',
-            metadata: {
-              'consult_id': completion['consult_id'],
-              'source': 'ibclc-chat',
-            },
+            metadata: {'entry_id': 'personal-001', 'source': 'schedule'},
           ),
         );
         final body = recorded.single;
@@ -731,11 +720,11 @@ void main() {
         expect(result.body, body);
         expect(body.containsKey('thread_id'), isFalse);
         expect(body.containsKey('user_id'), isFalse);
-        expect(body['event_type'], 'ibclc_consult_completed');
-        expect(body['occurred_at'], '2026-06-29T10:00:00+08:00');
+        expect(body['event_type'], 'ui.schedule.entry.created');
+        expect(body['occurred_at'], '2026-09-25T10:00:00+08:00');
         expect(body['locale'], 'zh-CN');
         expect(body['timezone'], 'Asia/Shanghai');
-        expect(body['metadata'], containsPair('source', 'ibclc-chat'));
+        expect(body['metadata'], containsPair('source', 'schedule'));
       },
     );
 

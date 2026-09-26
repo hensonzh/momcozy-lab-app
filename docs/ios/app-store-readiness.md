@@ -1,14 +1,48 @@
 # momcozy AI — iOS App Store readiness
 
-Last verified: 2026-09-24
+Last verified: 2026-09-25
 
 ## Scope
 
 - Flutter project: this repository
 - Store-facing name: `momcozy AI`
 - Intended release: a new App Store app, not an update to an existing Momcozy listing
-- Bundle ID: pending company confirmation
-- No Apple App ID, App Store Connect record, certificate, profile, TestFlight upload, or review submission was created during this preflight
+- Production Bundle ID: pending company confirmation
+- Internal TestFlight staging Bundle ID: `com.momcozy.mai.staging` (registered under team `YP9F4937J4`)
+- App Store Connect: `Momcozy AI` staging record (Apple ID `6816097872`, SKU `momcozy-lab-ios-staging`); no signed build or TestFlight upload yet
+
+## Staging iOS lane (2026-09-25)
+
+The shared Xcode scheme `staging` uses `Debug-staging`, `Profile-staging`, and
+`Release-staging` configurations. `Runner` keeps its original provisional ID;
+the staging archive has a separate install identity. Use the canonical entrypoint:
+
+```bash
+make app-build-staging-ios  # unsigned device compiler preflight
+# Once Apple signing and the staging App Store Connect record are ready:
+node scripts/build-mobile-app.mjs --platform ios --environment staging --mode release --format ipa
+```
+
+The unsigned Release build succeeded with the **registered**
+`com.momcozy.mai.staging` Bundle ID, arm64, version `1.0.0 (57)`, both staging
+API URLs, and the matching bundled staging CA. The company Xcode team is
+`Hong Kong Lute Technology Co., Limited` (`YP9F4937J4`); only the staging
+Xcode configurations select this team. The earlier unregistered
+`com.momcozymai.app.staging` ID is no longer used by the project; its old
+preflight ZIP is historical and cannot be uploaded to this App record.
+
+Apple Developer now shows the matching explicit App ID with Push Notifications
+enabled, and App Store Connect has the separate staging record. This task did
+not create, change, revoke, download, or inspect certificates or provisioning
+profiles, and did not register devices. Signing readiness is therefore not
+established. The source worktree was not clean, so this unsigned build is
+**not** a publishable release. Choose a new build number for the first signed
+upload; do not reuse the unsigned preflight build.
+
+The `Runner.entitlements` file includes push notifications. A signed archive
+must either have Push Notifications enabled on the staging App ID with matching
+provisioning, or have that entitlement deliberately removed from a dedicated
+staging build after product review. No TestFlight upload was attempted.
 
 ## Completed locally
 
@@ -26,9 +60,12 @@ Last verified: 2026-09-24
 | App icon asset shape | Complete iPhone/iPad slot inventory; 1024×1024 marketing file has no alpha |
 | Legal links currently used by login UI | Terms and privacy pages both returned HTTP 200 on 2026-09-24 |
 
-## Local unsigned build
+## Previous unsigned build (2026-09-24)
 
-The build is a compiler/archive preflight only. It cannot be installed on a physical device or uploaded to App Store Connect because it is unsigned.
+The 2026-09-24 build was a compiler/archive preflight only. Its listed
+`build/ios/iphoneos/Runner.app` path has since been overwritten by the current
+staging preflight and does not identify that historical build. An unsigned app
+cannot be installed on a physical device or uploaded to App Store Connect.
 
 - App: `build/ios/iphoneos/Runner.app`
 - Zip: `build/ios/preflight/momcozy-ai-ios-unsigned-1.0.0-57.zip`
@@ -59,7 +96,7 @@ flutter build ios \
 
 ### 1. Final Bundle ID
 
-The unsigned build still uses the temporary engineering identifier:
+The previous `Runner`-scheme unsigned build used the temporary engineering identifier:
 
 ```text
 com.momcozymai.app.flutterpoc
@@ -88,16 +125,13 @@ The current iOS 1024×1024 App Store icon is still the default Flutter logo. It 
 
 The launch image files are transparent 1×1 placeholders, so the launch screen is effectively a plain white screen. Brand-approved iOS icon and launch treatment are required before submission. Do not upscale the 192 px Android launcher icon as the final 1024 px App Store artwork.
 
-### 5. Google and Apple login
+### 5. Email authentication and account recovery
 
-The app currently exposes Google login and email/password login. The unsigned build resolved the Google callback URL scheme to an empty string because the iOS OAuth configuration is absent.
-
-Before release, choose one path:
-
-1. keep Google login, configure its iOS OAuth client, and add Sign in with Apple; or
-2. hide Google login in the first iOS release and ship email/password only.
-
-The selected path must be reflected in the review notes and privacy disclosures.
+The App now offers email/password sign-in only. The retired external-login SDK
+and callback scheme are removed. Before release, validate real-mailbox signup,
+verification and password reset, and provide support to historical external-only
+accounts that no longer control their registered mailbox. Reassess Apple sign-in
+requirements only if a third-party login option is introduced in the future.
 
 ### 6. Push notifications
 
@@ -142,7 +176,7 @@ The project currently targets both iPhone and iPad (`UIDeviceFamily` 1 and 2) an
 
 ## Build observations
 
-- The unsigned app embeds privacy manifests supplied by Flutter, WebRTC, Firebase, Google Sign-In, and several Flutter plugins.
+- The unsigned app embeds privacy manifests supplied by Flutter, WebRTC, Firebase, and several Flutter plugins.
 - No app-owned `PrivacyInfo.xcprivacy` currently exists. Generate and review the Xcode privacy report from the signed archive before submission, then add an app-owned manifest if the app's own required-reason API use or declared data practices require it.
 - Camera, microphone, and photo-library usage strings are present in Chinese.
 - No Core Location usage description is declared.

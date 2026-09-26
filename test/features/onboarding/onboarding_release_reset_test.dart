@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/update/app_release_lifecycle.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
+import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
 
 import '../../support/fixture_api_transport.dart';
@@ -119,153 +119,56 @@ void main() {
     },
   );
 
-  test(
-    'completed onboarding marks the current release for that user',
-    () async {
-      final transport = _RecordingTransport(
-        {
-          onboardingMeEndpoint: const {
-            'status': 'avatar_required',
-            'current_step': 'avatar',
-            'current_stage': 'postpartum',
-            'profile_confirmed': true,
-            'can_continue_with_default': true,
-          },
+  test('confirmed profile marks the current release for that user', () async {
+    final transport = _RecordingTransport(
+      {
+        onboardingMeEndpoint: const {
+          'status': 'required',
+          'profile_confirmed': false,
         },
-        writeResponsesByPath: {
-          onboardingReleaseResetEndpoint: const {
-            'status': 'already_reset',
-            'release_id': '1.0.0+27',
-            'deleted_file_count': 0,
-            'object_cleanup_queued': false,
-          },
-          '$onboardingMeEndpoint/complete': const {
-            'status': 'completed',
-            'current_step': 'done',
-            'current_stage': 'postpartum',
-            'profile_confirmed': true,
-          },
+      },
+      writeResponsesByPath: {
+        onboardingReleaseResetEndpoint: const {
+          'status': 'already_reset',
+          'release_id': '1.0.0+27',
+          'deleted_file_count': 0,
+          'object_cleanup_queued': false,
         },
-      );
-      final policy = _FakeReleasePolicy(requiresReset: true);
-      final runtimeController = _runtimeController(transport);
-      final controller = OnboardingController(
-        runtimeController: runtimeController,
-        releasePolicy: policy,
-      );
-      await _waitFor(() => controller.phase == OnboardingGatePhase.ready);
-
-      expect(await controller.completeWithDefaultAvatar(), isTrue);
-
-      expect(policy.completedUsers, ['release-user']);
-      expect(await policy.requiresResetFor('release-user'), isFalse);
-      controller.dispose();
-      runtimeController.dispose();
-    },
-  );
-
-  test(
-    'accepted avatar generation marks onboarding release complete',
-    () async {
-      final transport = _RecordingTransport(
-        {
-          onboardingMeEndpoint: const {
-            'status': 'avatar_generating',
-            'current_step': 'generating',
-            'current_stage': 'postpartum',
-            'profile_confirmed': true,
-            'can_enter_app': true,
-            'avatar_setup_completed': false,
-            'avatar': {
-              'id': 'generation-id',
-              'stage': 'postpartum',
-              'status': 'queued',
-              'error_code': '',
-              'created_at': '2026-08-09T00:00:00Z',
-              'candidates': <Object?>[],
-            },
-          },
+        '$onboardingMeEndpoint/profile': const {
+          'status': 'completed',
+          'profile_confirmed': true,
         },
-        writeResponsesByPath: {
-          onboardingReleaseResetEndpoint: const {
-            'status': 'already_reset',
-            'release_id': '1.0.0+27',
-            'deleted_file_count': 0,
-            'object_cleanup_queued': false,
-          },
-        },
-      );
-      final policy = _FakeReleasePolicy(requiresReset: true);
-      final runtimeController = _runtimeController(transport);
-      final controller = OnboardingController(
-        runtimeController: runtimeController,
-        releasePolicy: policy,
-      );
-
-      await _waitFor(() => controller.phase == OnboardingGatePhase.ready);
-
-      expect(policy.completedUsers, ['release-user']);
-      expect(controller.requiresOnboardingFor('release-user'), isFalse);
-      controller.dispose();
-      runtimeController.dispose();
-    },
-  );
-
-  test(
-    'local completion marker failure does not revoke cloud app entry',
-    () async {
-      final transport = _RecordingTransport(
-        {
-          onboardingMeEndpoint: const {
-            'status': 'avatar_generating',
-            'current_step': 'generating',
-            'current_stage': 'postpartum',
-            'profile_confirmed': true,
-            'can_enter_app': true,
-            'avatar_setup_completed': false,
-            'avatar': {
-              'id': 'generation-id',
-              'stage': 'postpartum',
-              'status': 'queued',
-              'error_code': '',
-              'created_at': '2026-08-09T00:00:00Z',
-              'candidates': <Object?>[],
-            },
-          },
-        },
-        writeResponsesByPath: {
-          onboardingReleaseResetEndpoint: const {
-            'status': 'already_reset',
-            'release_id': '1.0.0+27',
-            'deleted_file_count': 0,
-            'object_cleanup_queued': false,
-          },
-        },
-      );
-      final runtimeController = _runtimeController(transport);
-      final controller = OnboardingController(
-        runtimeController: runtimeController,
-        releasePolicy: _FakeReleasePolicy(
-          requiresReset: true,
-          throwOnMarkCompleted: true,
+      },
+    );
+    final policy = _FakeReleasePolicy(requiresReset: true);
+    final runtime = _runtimeController(transport);
+    final controller = OnboardingController(
+      runtimeController: runtime,
+      releasePolicy: policy,
+    );
+    await _waitFor(() => controller.phase == OnboardingGatePhase.ready);
+    expect(
+      await controller.confirmProfile(
+        OnboardingProfileDraft(
+          displayName: 'Mia',
+          age: 32,
+          deliveryDate: DateTime(2026, 9, 20),
+          deliveryCount: 1,
         ),
-      );
-
-      await _waitFor(() => controller.phase == OnboardingGatePhase.ready);
-
-      expect(controller.requiresOnboardingFor('release-user'), isFalse);
-      expect(controller.state?.canEnterApp, isTrue);
-      controller.dispose();
-      runtimeController.dispose();
-    },
-  );
+      ),
+      isTrue,
+    );
+    expect(policy.completedUsers, ['release-user']);
+    expect(controller.requiresOnboardingFor('release-user'), isFalse);
+    controller.dispose();
+    runtime.dispose();
+  });
 }
 
-MomCozyRuntimeController _runtimeController(ApiJsonTransport transport) {
+MomCozyRuntimeController _runtimeController(_RecordingTransport transport) {
   return MomCozyRuntimeController(
     MomCozyApiRuntime(
       jsonTransport: transport,
-      multipartTransport: FixtureApiMultipartTransport(const {}),
       session: const MomCozySession(
         status: MomCozySessionStatus.authenticated,
         userId: 'release-user',
@@ -301,13 +204,9 @@ class _RecordingTransport extends FixtureApiJsonTransportByPath {
 }
 
 class _FakeReleasePolicy implements OnboardingReleasePolicy {
-  _FakeReleasePolicy({
-    required this.requiresReset,
-    this.throwOnMarkCompleted = false,
-  });
+  _FakeReleasePolicy({required this.requiresReset});
 
   bool requiresReset;
-  final bool throwOnMarkCompleted;
   final List<String> completedUsers = [];
 
   @override
@@ -315,7 +214,6 @@ class _FakeReleasePolicy implements OnboardingReleasePolicy {
 
   @override
   Future<void> markCompletedFor(String userId) async {
-    if (throwOnMarkCompleted) throw StateError('secure storage unavailable');
     completedUsers.add(userId);
     requiresReset = false;
   }

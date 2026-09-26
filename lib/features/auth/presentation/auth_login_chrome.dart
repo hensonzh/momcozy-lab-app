@@ -14,6 +14,16 @@ const authBackground = MomHomeTokens.background;
 const authReferenceInk = Color(0xff111111);
 const authReferenceMuted = Color(0xff747487);
 const authReferenceBorder = Color(0xffd8dae1);
+const authLoginTitle = Color(0xffb54f78);
+const authLoginSubtitle = Color(0xff8a7180);
+const authLoginLink = Color(0xff8a607f);
+const authLoginButton = Color(0xffa44569);
+const authLoginBackground = LinearGradient(
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
+  stops: [0, 0.5, 1],
+  colors: [Color(0xfff5edf4), Color(0xfffaf5f8), Color(0xfffffdfc)],
+);
 
 TextStyle authReferenceText(
   double size, {
@@ -22,7 +32,7 @@ TextStyle authReferenceText(
   double height = 1.4,
   TextDecoration? decoration,
 }) => TextStyle(
-  fontFamily: 'NotoSansSCHome',
+  fontFamily: 'Inter',
   fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
   fontSize: size,
   fontWeight: weight,
@@ -122,55 +132,10 @@ class AuthNotice extends StatelessWidget {
   );
 }
 
-class AuthLoginBrandPanel extends StatelessWidget {
-  const AuthLoginBrandPanel({super.key});
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 4),
-    child: Container(
-      key: const ValueKey('auth-brand-panel'),
-      height: 92,
-      padding: const EdgeInsets.fromLTRB(18, 8, 10, 8),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xfffff7f8), Color(0xfff8edf3)],
-        ),
-        border: Border.all(color: const Color(0xfff0dce4)),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Row(
-        children: [
-          const Expanded(
-            child: Text(
-              'Momcozy',
-              key: ValueKey('auth-brand-wordmark'),
-              textScaler: TextScaler.noScaling,
-              style: TextStyle(
-                fontFamily: 'LibreCaslonDisplay',
-                fontSize: 36,
-                height: 44 / 36,
-                color: authRose,
-              ),
-            ),
-          ),
-          Image.asset(
-            'assets/images/auth_mother_baby.png',
-            key: const ValueKey('auth-brand-illustration'),
-            width: 76,
-            height: 76,
-            excludeFromSemantics: true,
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
 class AuthLoginHeader extends StatelessWidget {
   const AuthLoginHeader({
     super.key,
-    this.title = 'Welcome back',
+    this.title = 'Momcozy',
     this.subtitle = 'Care and support, every step of the way.',
     this.compact = false,
   });
@@ -221,111 +186,63 @@ class AuthLoginHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!compact) {
       return Padding(
-        padding: const EdgeInsets.only(top: 4, bottom: 52),
-        child: Text(
-          title,
-          key: const ValueKey('auth-login-title'),
-          textAlign: TextAlign.center,
-          style: authReferenceText(
-            28,
-            weight: FontWeight.w700,
-            height: 36 / 28,
-          ),
+        padding: const EdgeInsets.only(top: 4, bottom: 64),
+        child: Column(
+          children: [
+            Text(
+              title,
+              key: const ValueKey('auth-login-title'),
+              textScaler: TextScaler.noScaling,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'LibreCaslonDisplay',
+                fontSize: 48,
+                fontWeight: FontWeight.w400,
+                height: 58 / 48,
+                color: authLoginTitle,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              key: const ValueKey('auth-login-subtitle'),
+              textAlign: TextAlign.center,
+              style: authReferenceText(
+                14,
+                height: 20 / 14,
+                color: authLoginSubtitle,
+              ),
+            ),
+          ],
         ),
       );
     }
-    final large = MediaQuery.textScalerOf(context).scale(14) > 14 * 1.4;
-    final copy = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(title, style: MomHomeTokens.text(24, weight: FontWeight.w700)),
-        SizedBox(height: compact ? 6 : 8),
-        Text(
-          subtitle,
-          style: MomHomeTokens.text(
-            13,
-            color: authMuted,
-            height: compact ? 1.55 : 18 / 13,
-          ),
-        ),
-      ],
-    );
-    final illustration = Image.asset(
-      'assets/images/auth_mother_baby.png',
-      width: 48,
-      height: 48,
-      excludeFromSemantics: true,
-    );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Text(
-              'Momcozy',
-              textScaler: TextScaler.noScaling,
-              style: TextStyle(
-                fontFamily: 'LibreCaslonDisplay',
-                fontSize: 32,
-                height: compact ? 1 : 44 / 32,
-                color: authRose,
-                letterSpacing: compact ? -1.5 : 0,
-              ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 36),
+      child: Column(
+        children: [
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'LibreCaslonDisplay',
+              fontSize: 36,
+              height: 44 / 36,
+              color: authLoginTitle,
             ),
-            if (!compact)
-              TextButton(
-                key: const ValueKey('auth-language-button'),
-                onPressed: () => showLanguage(context),
-                style: TextButton.styleFrom(
-                  foregroundColor: authMuted,
-                  minimumSize: const Size(130, 44),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  padding: EdgeInsets.zero,
-                  textStyle: MomHomeTokens.text(
-                    13,
-                    weight: FontWeight.w700,
-                    height: 18 / 13,
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('◎ English'),
-                    SizedBox(width: 2),
-                    Icon(Icons.keyboard_arrow_down, size: 12),
-                  ],
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 14),
-        MomSettingsCard(
-          borderInside: !compact,
-          gradient: compact
-              ? MomHomeTokens.plan
-              : const LinearGradient(
-                  colors: [Color(0xfffffdfb), Color(0xfff3f8f5)],
-                ),
-          children: [
-            if (compact)
-              copy
-            else if (large) ...[
-              copy,
-              Align(alignment: Alignment.centerRight, child: illustration),
-            ] else
-              Row(
-                children: [
-                  Expanded(child: copy),
-                  const SizedBox(width: 12),
-                  illustration,
-                ],
-              ),
-          ],
-        ),
-        const SizedBox(height: 14),
-      ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: authReferenceText(
+              14,
+              height: 20 / 14,
+              color: authLoginSubtitle,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -355,8 +272,13 @@ class AuthLanguageButton extends StatelessWidget {
 }
 
 class AuthLegalFooter extends StatelessWidget {
-  const AuthLegalFooter({super.key, this.compact = false});
+  const AuthLegalFooter({
+    super.key,
+    this.compact = false,
+    this.registration = false,
+  });
   final bool compact;
+  final bool registration;
 
   Future<void> _open(BuildContext context, String path) async {
     try {
@@ -399,7 +321,11 @@ class AuthLegalFooter extends StatelessWidget {
               child: const Text('Terms of Use'),
             ),
             Text(
-              compact ? ' and ' : 'and',
+              registration
+                  ? ' · Read our '
+                  : compact
+                  ? ' and '
+                  : 'and',
               style: TextStyle(
                 fontSize: 12,
                 height: 17 / 12,

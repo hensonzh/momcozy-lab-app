@@ -168,9 +168,9 @@ void main() {
         await tester.pump(const Duration(milliseconds: 400));
       }
 
-      final appointments = find.widgetWithText(SwitchListTile, 'Appointments');
+      final updates = find.widgetWithText(SwitchListTile, 'Momcozy AI updates');
       await capture('more', 'Authenticated More entry');
-      await tap(find.text('通知'));
+      router.go('/notifications');
       await tester.pumpAndSettle();
       expect(router.state.uri.path, '/notifications');
       await capture('inbox', 'Tap notifications → actual empty inbox');
@@ -182,7 +182,7 @@ void main() {
         'not-requested',
         'Inbox toolbar → not requested, category off',
       );
-      await tap(appointments);
+      await tap(updates);
       expect(find.text('Receive reminders?'), findsOneWidget);
       await capture(
         'education',
@@ -199,7 +199,7 @@ void main() {
             ? NotificationPermission.authorized
             : NotificationPermission.denied,
       );
-      expect(transport.preferences['appointments'], allow);
+      expect(transport.preferences['agent_updates'], allow);
       await capture(
         allow ? 'allowed' : 'denied',
         'Android $branch → permission refreshed and category result',
@@ -207,7 +207,7 @@ void main() {
       if (!allow) {
         await tester.pump(const Duration(seconds: 5));
         await tester.pumpAndSettle();
-        await tap(appointments);
+        await tap(updates);
         expect(find.text('Notifications are off'), findsOneWidget);
         await capture(
           'settings-offer',
@@ -228,20 +228,20 @@ void main() {
           'settings-allowed',
           'Allow in Android settings and return → App refresh',
         );
-        await tap(appointments);
+        await tap(updates);
         await tester.pumpAndSettle();
-        expect(transport.preferences['appointments'], isTrue);
+        expect(transport.preferences['agent_updates'], isTrue);
         await capture(
           'category-enabled',
           'Enable category after system permission → isolated preference saved',
         );
       }
-      await tap(appointments);
+      await tap(updates);
       await tester.pumpAndSettle();
-      expect(transport.preferences['appointments'], isFalse);
+      expect(transport.preferences['agent_updates'], isFalse);
       await capture(
         'category-disabled',
-        'Disable service category; Android permission remains allowed',
+        'Disable conversation updates; Android permission remains allowed',
       );
       expect(
         await native.currentPermission(),
@@ -284,7 +284,6 @@ class _Transport extends FixtureApiJsonTransportByPath {
     : super(
         {
           '/v1/notifications': {'items': [], 'unread_count': 0},
-          '/v1/care/overview': {'episodes': [], 'orders': []},
         },
         writeResponsesByPath: {
           '/v1/notifications/installations': {
@@ -294,12 +293,7 @@ class _Transport extends FixtureApiJsonTransportByPath {
           },
         },
       );
-  final preferences = <String, bool>{
-    'appointments': false,
-    'consultations': false,
-    'expert_feedback': false,
-    'service_updates': false,
-  };
+  final preferences = <String, bool>{'agent_updates': false};
   final preferenceWrites = <String>[];
   @override
   Future<Map<String, Object?>> getJson(

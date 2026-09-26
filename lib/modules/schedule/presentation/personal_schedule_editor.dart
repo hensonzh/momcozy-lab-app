@@ -215,7 +215,9 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
         if (!didPop) _close();
       },
       child: _ScheduleDialogFrame(
-        title: widget.existing == null ? 'Add to schedule' : 'Edit schedule item',
+        title: widget.existing == null
+            ? 'Add to schedule'
+            : 'Edit schedule item',
         onClose: _busy ? null : () => _close(),
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -312,11 +314,15 @@ class _PersonalScheduleEditorState extends State<PersonalScheduleEditor> {
   }
 
   String get _failureMessage => switch (_failure?.kind) {
-    ProductFailureKind.conflict => 'This item was updated elsewhere. Refresh and try again. Your entries are still here.',
-    ProductFailureKind.unauthenticated => 'Your session has expired. Sign in again to continue.',
+    ProductFailureKind.conflict =>
+      'This item was updated elsewhere. Refresh and try again. Your entries are still here.',
+    ProductFailureKind.unauthenticated =>
+      'Your session has expired. Sign in again to continue.',
     ProductFailureKind.forbidden => 'This account cannot edit this item.',
-    ProductFailureKind.invalid => 'Check your entries and try again. Your draft is still here.',
-    _ => 'Could not save right now. Your entries are still here. Try again later.',
+    ProductFailureKind.invalid =>
+      'Check your entries and try again. Your draft is still here.',
+    _ =>
+      'Could not save right now. Your entries are still here. Try again later.',
   };
   InputDecoration _input(String hint) => InputDecoration(
     hintText: hint,

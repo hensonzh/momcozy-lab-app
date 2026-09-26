@@ -92,13 +92,9 @@ Total Pages / UI views: **147** · Completed: **142** · Need Review: **5** · M
 | [语言选择](auth/language.md) | `lib/features/auth/presentation/auth_page.dart` | `/login` | present | Completed |
 | [条款与隐私链接](auth/legal.md) | `lib/features/auth/presentation/auth_page.dart` | `/login` | present | Completed |
 | [内部邀请码入口](auth/invite.md) | `lib/features/auth/presentation/invite_auth_page.dart` | `/login (internalInviteOnly)` | present | Completed |
-| [首次使用加载与重试](auth/onboarding-load.md) | `lib/features/onboarding/presentation/onboarding_page.dart` | `/onboarding /avatar/create /avatar/review` | present | Completed |
-| [基本资料](auth/onboarding-profile.md) | `lib/features/onboarding/presentation/onboarding_page.dart` | `/onboarding /avatar/create /avatar/review` | present | Completed |
-| [分娩日期](auth/onboarding-delivery.md) | `lib/features/onboarding/presentation/onboarding_page.dart` | `/onboarding /avatar/create /avatar/review` | present | Completed |
-| [分娩资料](auth/onboarding-birth.md) | `lib/features/onboarding/presentation/onboarding_page.dart` | `/onboarding /avatar/create /avatar/review` | present | Completed |
-| [陪伴形象选择](auth/onboarding-avatar-choice.md) | `lib/features/onboarding/presentation/onboarding_page.dart` | `/onboarding /avatar/create /avatar/review` | present | Completed |
-| [形象生成](auth/onboarding-avatar-create.md) | `lib/features/onboarding/presentation/onboarding_page.dart` | `/onboarding /avatar/create /avatar/review` | present | Completed |
-| [形象审核与启用](auth/onboarding-avatar-review.md) | `lib/features/onboarding/presentation/onboarding_page.dart` | `/onboarding /avatar/create /avatar/review` | present | Completed |
+| [基本资料](auth/onboarding-profile.md) | `lib/features/onboarding/presentation/onboarding_page.dart` | `/onboarding` | present | Figma update pending |
+| [分娩日期](auth/onboarding-delivery.md) | `lib/features/onboarding/presentation/onboarding_page.dart` | `/onboarding` | present | Figma update pending |
+| [分娩资料](auth/onboarding-birth.md) | `lib/features/onboarding/presentation/onboarding_page.dart` | `/onboarding` | present | Figma update pending |
 | [Me首页-空服务状态](mom/state-01.md) | `lib/modules/mom/presentation/mother_home_page.dart` | `/me` | present | Completed |
 | [每日知识-详情弹窗](mom/state-02.md) | `lib/shared/widgets/knowledge_banner.dart` | `/me` | present | Completed |
 | [每日知识-Cozymate去向](agent/state-03.md) | `lib/features/agent_hub/agent_hub_page.dart` | `/` | present | Completed |

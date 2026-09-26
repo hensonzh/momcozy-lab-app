@@ -66,7 +66,7 @@ The project declares APNs entitlement and background remote notifications. Fireb
 ## Authentication and account deletion
 
 - Email/password registration and login are implemented.
-- Google login and linking are implemented but iOS OAuth configuration is missing.
+- Historical external-only accounts can set an email password using a mailbox reset code; new external login/linking is removed.
 - Sign in with Apple is not implemented.
 - In-app account deletion is implemented. The UI states that access ends immediately and a data-erasure request remains pending.
 
@@ -82,7 +82,6 @@ Legal/backend must confirm:
 Confirm production contracts, regions, retention, training/use restrictions, and subprocessors for every enabled service:
 
 - Apple APNs and Firebase Cloud Messaging, if push is enabled;
-- Google Sign-In, if Google login is enabled;
 - LiveKit/WebRTC infrastructure for consultation;
 - Stripe for eligible professional-service checkout;
 - AI model/provider services used by the backend;
@@ -100,7 +99,7 @@ The app is intended for parents/caregivers but stores information about babies. 
 
 ## Privacy manifests
 
-The unsigned iOS build embeds privacy manifests from Flutter, WebRTC, Firebase, Google Sign-In, and multiple plugins. The app target itself does not currently contain `PrivacyInfo.xcprivacy`.
+The unsigned iOS build embeds privacy manifests from Flutter, WebRTC, Firebase, and multiple plugins. The app target itself does not currently contain `PrivacyInfo.xcprivacy`.
 
 Before submission:
 

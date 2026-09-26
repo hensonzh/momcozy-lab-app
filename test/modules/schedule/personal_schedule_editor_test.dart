@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:momcozy_flutter_app/domain/care/care_plan.dart';
-import 'package:momcozy_flutter_app/domain/care/service_package.dart';
 import 'package:momcozy_flutter_app/domain/shared/local_date.dart';
 import 'package:momcozy_flutter_app/domain/shared/product_failure.dart';
 import 'package:momcozy_flutter_app/modules/schedule/data/schedule_api_repository.dart';
@@ -10,13 +8,6 @@ import 'package:momcozy_flutter_app/modules/schedule/domain/schedule.dart';
 import 'package:momcozy_flutter_app/modules/schedule/presentation/schedule_page.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import '../../support/momcozy_test_fonts.dart';
-
-const emptyCatalog = ServiceCatalog(
-  packages: [],
-  providers: [],
-  availableRegions: [],
-  paymentMode: PaymentMode.sandbox,
-);
 
 class MemoryScheduleRepository implements ScheduleRepository {
   final values = <PersonalScheduleEntry>[];
@@ -33,9 +24,6 @@ class MemoryScheduleRepository implements ScheduleRepository {
     int limit = 100,
   }) async => SchedulePageData(
     personal: values,
-    appointments: [],
-    plans: [],
-    episodes: [],
     serverTime: DateTime.utc(2026, 9, 12),
     hasMore: false,
   );
@@ -93,14 +81,6 @@ class MemoryScheduleRepository implements ScheduleRepository {
   Future<void> delete(PersonalScheduleEntry entry) async {
     values.removeWhere((e) => e.id == entry.id);
   }
-
-  @override
-  Future<PublishedCarePlan> updateTask({
-    required String publicationId,
-    required String sourceKey,
-    required int expectedVersion,
-    required CareTaskStatus status,
-  }) => throw UnimplementedError();
 }
 
 Future<void> mountSchedule(
@@ -127,7 +107,6 @@ Future<void> mountSchedule(
         body: SchedulePage(
           repository: repo,
           timezoneProvider: () async => 'Asia/Shanghai',
-          catalogLoader: () async => emptyCatalog,
           now: () => DateTime(2026, 9, 12),
         ),
       ),

@@ -269,5 +269,6 @@ if (options.platform === "android") {
 
 const args = ["build", options.format, `--${options.mode}`];
 if (options.unsigned) args.push("--no-codesign");
+if (options.environment === "staging") args.push("--flavor", "staging");
 args.push(...dartDefines);
 run("flutter", args);

@@ -3,6 +3,7 @@ import '../../../domain/baby/baby_profile.dart';
 import '../../../domain/shared/local_date.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
 import '../../../shared/widgets/mom_settings_widgets.dart';
+import '../../../shared/widgets/date_time_picker.dart';
 import '../application/baby_profile_controller.dart';
 import 'baby_design.dart';
 import 'baby_motion.dart';
@@ -14,6 +15,7 @@ Future<BabyProfile?> showBabyProfileEditor(
   required DateTime Function() now,
   BabyProfile? profile,
   LocalDate? deliveryDate,
+  bool closeOnSave = false,
 }) async {
   final c = BabyProfileController(
     repository: repository,
@@ -24,7 +26,10 @@ Future<BabyProfile?> showBabyProfileEditor(
   );
   try {
     await Navigator.of(context, rootNavigator: true).push<void>(
-      MaterialPageRoute(builder: (_) => BabyProfileEditor(controller: c)),
+      MaterialPageRoute(
+        builder: (_) =>
+            BabyProfileEditor(controller: c, closeOnSave: closeOnSave),
+      ),
     );
     return c.hasSaved ? c.savedProfile : null;
   } finally {
@@ -33,8 +38,13 @@ Future<BabyProfile?> showBabyProfileEditor(
 }
 
 class BabyProfileEditor extends StatefulWidget {
-  const BabyProfileEditor({super.key, required this.controller});
+  const BabyProfileEditor({
+    super.key,
+    required this.controller,
+    this.closeOnSave = false,
+  });
   final BabyProfileController controller;
+  final bool closeOnSave;
   @override
   State<BabyProfileEditor> createState() => _BabyProfileEditorState();
 }
@@ -42,6 +52,30 @@ class BabyProfileEditor extends StatefulWidget {
 class _BabyProfileEditorState extends State<BabyProfileEditor> {
   late final name = TextEditingController(text: widget.controller.name);
   bool saved = false;
+
+  Future<void> _chooseBirthDate() async {
+    final c = widget.controller;
+    final today = c.today;
+    final birth = c.birthDate;
+    final initial =
+        birth != null &&
+            birth.compareTo(LocalDate(1900, 1, 1)) >= 0 &&
+            birth.compareTo(today) <= 0
+        ? birth
+        : today;
+    final selected = await showMomCozyDatePicker(
+      context: context,
+      initialDate: DateTime(initial.year, initial.month, initial.day),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(today.year, today.month, today.day),
+      helpText: 'Date of birth',
+      theme: BabyDesign.theme(Theme.of(context)),
+    );
+    if (mounted && selected != null) {
+      c.setBirthDate(LocalDate.fromDateTime(selected));
+    }
+  }
+
   @override
   void dispose() {
     name.dispose();
@@ -143,18 +177,37 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                                   counterText: '',
                                 ),
                               ),
-                              const BabyLabel('Date of birth'),
-                              Text(
-                                c.birthDate?.toString() ?? '—',
-                                style: BabyDesign.text(16),
-                              ),
-                              Text(
-                                'Same as the delivery date in your profile',
-                                style: BabyDesign.text(
-                                  13,
-                                  color: MomHomeTokens.secondary,
+                              const BabyLabel('Date of birth', required: true),
+                              if (c.deliveryDate == null)
+                                OutlinedButton(
+                                  onPressed: c.editable
+                                      ? _chooseBirthDate
+                                      : null,
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: MomHomeTokens.surface,
+                                    alignment: Alignment.centerLeft,
+                                    minimumSize: const Size.fromHeight(44),
+                                  ),
+                                  child: Text(
+                                    c.birthDate?.toString() ??
+                                        'Choose date of birth',
+                                  ),
+                                )
+                              else
+                                Text(
+                                  c.birthDate.toString(),
+                                  style: BabyDesign.text(16),
                                 ),
-                              ),
+                              if (c.deliveryDate != null || c.birthDate == null)
+                                Text(
+                                  c.deliveryDate != null
+                                      ? 'Same as the delivery date in your profile'
+                                      : 'Choose a date to complete your baby’s profile',
+                                  style: BabyDesign.text(
+                                    13,
+                                    color: MomHomeTokens.secondary,
+                                  ),
+                                ),
                             ],
                           ),
                           MomSettingsCard(
@@ -191,6 +244,8 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                               ),
                             ],
                           ),
+                          if (c.validation != null)
+                            Text(c.validation!, style: BabyDesign.text(13)),
                           if (c.failure != null)
                             Text(
                               'Could not save. Please try again.',
@@ -221,8 +276,14 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                               ? () async {
                                   FocusScope.of(context).unfocus();
                                   final result = await c.save();
-                                  if (mounted && result != null) {
-                                    setState(() => saved = true);
+                                  if (mounted &&
+                                      context.mounted &&
+                                      result != null) {
+                                    if (widget.closeOnSave) {
+                                      Navigator.pop(context);
+                                    } else {
+                                      setState(() => saved = true);
+                                    }
                                   }
                                 }
                               : null,

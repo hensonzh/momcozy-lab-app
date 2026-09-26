@@ -39,6 +39,16 @@ paths/methods, putting tokens in URLs, or changing the error envelope is
 breaking. Breaking changes require a coordinated app release, compatibility
 window, or API version.
 
+## Registration Compatibility
+
+The current Flutter flow calls `/v1/auth/register` with only an email, then
+`/v1/auth/verify-registration-code` with the emailed code, and finally
+`/v1/auth/verify-email` with the same code, password, matching
+`confirm_password`, and device ID. The pre-check neither authenticates nor
+consumes the code; the final call can still reject an expired code. Older
+clients may keep calling `/signup` and omitting `confirm_password`; do not
+remove that compatibility path without a coordinated version transition.
+
 ## Mobile Client Requirements
 
 - Send user auth through `Authorization: Bearer`.
@@ -50,16 +60,26 @@ window, or API version.
 - Never send `X-Service-Key` or call `/v1/internal/agent/*` from Flutter.
 - Keep the Product and Runtime base URLs and generated clients separate.
 - Keep Schedule state authoritative through `GET /v1/schedule` and refetch
-  after personal-entry or Care Plan task writes.
+  after personal-entry writes.
 - Personal schedule writes use `Idempotency-Key` on create and
-  `expected_updated_at` on update/delete. Care Plan task feedback uses the
-  publication id, stable task source key, and `expected_version`.
-- The legacy `/v1/plans` operations are deprecated and are
-  not valid Flutter client dependencies.
+  `expected_updated_at` on update/delete.
+- The independent `/v1/plans` operations remain in the Product contract.
+  Do not confuse them with retired Expert support Care Plan endpoints.
 - Treat `voice_provider_disabled` and `vision_provider_disabled` as stable
   unavailable states. Do not fall back to retired endpoints.
 - Treat Product `file_id` as attachment identity. Signed object URLs are
   temporary transport values and must not become cache keys or durable IDs.
+
+## Onboarding (contract prepared, not deployed)
+
+The opt-in App gate calls Product `GET /v1/onboarding/me` and
+`PUT /v1/onboarding/me/profile`. Delivery count includes the current birth;
+`has_cesarean_history` means a cesarean **before** the current birth and is
+false when `delivery_count == 1`, regardless of the current delivery method.
+The delivery date is required. The Backend is not yet published to staging;
+keep `MOMCOZY_ENABLE_ONBOARDING` disabled until the public contract and
+end-to-end flow are verified. The optional release-reset endpoint is still
+absent and must not be enabled.
 
 ## Agent UI Boundary
 

@@ -1,0 +1,172 @@
+{
+  "date": "2026-09-26",
+  "figmaFileKey": "ePIoJkiMiXiug9ibpcgRbl",
+  "page": "Auth · App states",
+  "viewport": "390 × 844 Figma frames; 390 × 844 or 393 × 844 Flutter captures (393 center-cropped by image fill). Frame 37 screenshot is 390 × 568 and retains the keyboard-short-viewport reference.",
+  "frames": [
+    {
+      "name": "01 · Login Default",
+      "source": "test/goldens/ui_inventory/auth-journey-login-393.png",
+      "sha1": "ce0c88edf6a48715ce1d194cc2b7056a1195f056",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "02 · Login Password Visible",
+      "source": "test/goldens/ui_inventory/auth-followup-login-password-visible-393-1x.png",
+      "sha1": "0cde5339dded42392734ac098953d975a1bebf8c",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "03 · Login Empty Validation",
+      "source": "test/goldens/ui_inventory/auth-journey-empty-validation-393.png",
+      "sha1": "2bd1d8f45ca6cc29172c119ac8f0ec8493362d5d",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "04 · Login Submitting",
+      "source": "test/goldens/ui_inventory/auth-journey-login-busy-393.png",
+      "sha1": "4212e64a01db3484829b4dc2816e45890951b1af",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "05 · Login Invalid Credentials",
+      "source": "test/goldens/ui_inventory/auth-journey-invalid-credentials-393.png",
+      "sha1": "8e91326f5659edb4b6163088d497e7c0b6aad078",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "06 · Login Rate Limited",
+      "source": "test/goldens/ui_inventory/auth-journey-rate-limit-393.png",
+      "sha1": "052e775e7167ffa9bb381bfa61fb4113218d834a",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "20 · Forgot Default",
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-empty-393-1x.png",
+      "sha1": "45929d5dde9e351345579490a3ba2ec5d8accabc",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "21 · Forgot Empty Validation",
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-validation-393-1x.png",
+      "sha1": "8418ef67e8b929083b6c8ee7fe43c0b3d46c0534",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "22 · Forgot Email Validation",
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-email-validation-393-1x.png",
+      "sha1": "e0fd6ac0f96db38ec8a34b63581fd4b1b435e9d7",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "23 · Forgot Offline",
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-offline-393-1x.png",
+      "sha1": "e2bf0d39f138a1808e5b7552b44d252a284f1b66",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "24 · Forgot Submitting",
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-pending-393-1x.png",
+      "sha1": "338d11ce3cc2006c8aceca6cfff950ad03053170",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "25 · Forgot Email Unavailable",
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-393-1x.png",
+      "sha1": "3e074ffe3e6dda6e9289a4d2bf54b0157ecf3627",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "26 · Reset Default",
+      "source": "test/goldens/ui_inventory/auth-followup-reset-code-form-393-1x.png",
+      "sha1": "dc8b806e5941265f78b7641ad348b928caa51636",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "27 · Reset Code Validation",
+      "source": "test/goldens/ui_inventory/auth-followup-reset-empty-validation-393-1x.png",
+      "sha1": "bbe8435d41c28cdfdf89d957253a903be457e9bb",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "28 · Reset Password Validation",
+      "source": "test/goldens/ui_inventory/auth-followup-reset-password-validation-393-1x.png",
+      "sha1": "f09631639f85a714c75290ca47decf016e5bd745",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "29 · Reset Code Expired",
+      "source": "test/goldens/ui_inventory/auth-followup-reset-expired-code-393-1x.png",
+      "sha1": "9c8bb5eded06f91eb0952397b02054e423a3f047",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "30 · Reset Rate Limited",
+      "source": "test/goldens/ui_inventory/auth-followup-reset-rate-limited-393-1x.png",
+      "sha1": "9252685d122ccf1cd6ebcae89829cb317eafc0a7",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "31 · Reset Resend Cooldown",
+      "source": "test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-393-1x.png",
+      "sha1": "dc8b806e5941265f78b7641ad348b928caa51636",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "32 · Reset Submitting",
+      "source": "test/goldens/ui_inventory/auth-followup-reset-pending-393-1x.png",
+      "sha1": "86d7044b14398db93ef674f6566c51433fbb10da",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "33 · Reset Complete",
+      "source": "test/goldens/ui_inventory/auth-followup-reset-complete-393-1x.png",
+      "sha1": "6f7a369a497b60c2ea1117a5406323d57a21812b",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "34 · Language Sheet",
+      "source": "test/goldens/ui_inventory/auth-followup-language-sheet-393-1x.png",
+      "sha1": "7b17a25e6326dadf796962235dac18379bfd5b28",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "35 · Legal Footer",
+      "source": "test/goldens/design_system/auth-legal-390.png",
+      "sha1": "782bfd30d9f7cb9e7c261937dd270d3362f29680",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "36 · Internal Invite Default",
+      "source": "test/goldens/design_system/auth-invite-390.png",
+      "sha1": "a93bc26633d7ec371f80f8f84d834c3fb6c4eeb9",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "37 · Internal Invite Validation",
+      "source": "test/goldens/design_system/auth-invite-validation-390.png",
+      "sha1": "8dced56adb7f13a920e058fca71c7ea2f856c338",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "38 · Internal Invite Submitting",
+      "source": "test/goldens/ui_inventory/auth-invite-submit-pending-390.png",
+      "sha1": "15811462391e30ed06d394d3a92600f80525e811",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "39 · Internal Invite Device Error",
+      "source": "test/goldens/ui_inventory/auth-invite-device-error-390.png",
+      "sha1": "8b2e8dac05e820846216dd0913309598569713a0",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    },
+    {
+      "name": "40 · Internal invite storage error",
+      "source": "test/goldens/ui_inventory/auth-invite-storage-error-390.png",
+      "sha1": "2ee6869811df3b5d604ac805b4bf2a78ffa42e02",
+      "status": "2026-09-26: Figma image fill SHA-1 matched the current Flutter golden after upload"
+    }
+  ],
+  "verification": "Figma screenshot image-fill mirror, not independent design-to-App visual parity. Frames 01–06 and 20–40 were individually checked by image SHA-1.",
+  "limitation": "Frame 37 is a short-viewport reference (390 × 568); the Figma container remains a standard 390 × 844 state frame. A separate full-viewport keyboard-aware capture would be needed for 1:1 frame parity."
+}

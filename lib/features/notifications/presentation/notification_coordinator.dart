@@ -245,42 +245,6 @@ class NotificationCoordinator extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> setReminder(
-    String appointmentId, {
-    required bool enabled,
-    required Future<bool> Function() explain,
-    required Future<bool> Function() offerSettings,
-  }) async {
-    final generation = _generation;
-    if (enabled &&
-        !await _prepare(
-          generation: generation,
-          explain: explain,
-          offerSettings: offerSettings,
-        )) {
-      return false;
-    }
-    if (!enabled) await refresh();
-    if (!_current(generation) || _delivery == null) return false;
-    try {
-      final result = await _delivery!.setReminder(
-        appointmentId,
-        enabled: enabled,
-        installationId: enabled ? _installationId : null,
-      );
-      return _current(generation) && result.enabled == enabled;
-    } catch (failure) {
-      if (_current(generation)) onMessage(_friendly(failure));
-      return false;
-    }
-  }
-
-  Future<AppointmentReminder?> reminder(String appointmentId) async {
-    final generation = _generation;
-    final result = await _delivery?.reminder(appointmentId);
-    return _current(generation) ? result : null;
-  }
-
   Future<Map<String, bool>> preferences() async {
     final generation = _generation;
     final result = await _delivery?.preferences() ?? <String, bool>{};
@@ -312,7 +276,11 @@ class NotificationCoordinator extends ChangeNotifier {
       );
       return _current(generation);
     } catch (failure) {
-      if (_current(generation)) onMessage(_friendly(failure));
+      if (_current(generation)) {
+        onMessage(
+          'Could not update notification preferences. Please try again.',
+        );
+      }
       return false;
     }
   }
@@ -410,22 +378,7 @@ class NotificationCoordinator extends ChangeNotifier {
   static bool _safeRoute(String route) {
     const uuid =
         r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}';
-    return RegExp(
-          '^/services/(appointments/$uuid(/(intake|room|summary))?|episodes/$uuid)\$',
-        ).hasMatch(route) ||
-        RegExp('^/\\?conversationId=$uuid\$').hasMatch(route);
-  }
-
-  String _friendly(Object failure) {
-    if (failure is ApiHttpException &&
-        failure.errorCode == 'reminder_expired') {
-      return 'This appointment is too close to its start time to enable a reminder.';
-    }
-    if (failure is ApiHttpException &&
-        failure.errorCode == 'notification_preference_disabled') {
-      return 'Enable appointment notifications in Notification settings first.';
-    }
-    return 'The reminder could not be updated. Your appointment is still saved.';
+    return RegExp('^/\\?conversationId=$uuid\$').hasMatch(route);
   }
 
   void _inboxChanged() {

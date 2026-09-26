@@ -70,7 +70,7 @@ void main() {
         final file = File(output);
         await file.parent.create(recursive: true);
         await file.writeAsString(
-          '${const JsonEncoder.withIndent('  ').convert({'default_local_build': rows, 'onboarding_enabled_build': withOnboarding, 'notes': 'The local build uses default false capability flags. Onboarding/avatar routes require an OnboardingController. History is an in-page capability, not an independent GoRoute.'})}\n',
+          '${const JsonEncoder.withIndent('  ').convert({'default_local_build': rows, 'onboarding_enabled_build': withOnboarding, 'notes': 'The local build uses default false capability flags. Only the optional onboarding route requires an OnboardingController; avatar routes are retired. History is an in-page capability, not an independent GoRoute.'})}\n',
         );
       }
       defaultRouter.dispose();

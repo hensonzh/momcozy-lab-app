@@ -4,6 +4,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
@@ -45,6 +46,54 @@ class EnvironmentWorkflowContractTest(unittest.TestCase):
             (ROOT / ".github" / "workflows" / "app-test-release.yml").exists()
         )
         self.assertFalse((ROOT / "scripts" / "validate_test_service_manifests.py").exists())
+
+    def test_ios_staging_scheme_uses_an_install_isolated_bundle_id(self) -> None:
+        scheme_path = (
+            ROOT / "ios" / "Runner.xcodeproj" / "xcshareddata" / "xcschemes" / "staging.xcscheme"
+        )
+        scheme = ET.parse(scheme_path).getroot()
+        for action, configuration in (
+            ("LaunchAction", "Debug-staging"),
+            ("TestAction", "Debug-staging"),
+            ("ProfileAction", "Profile-staging"),
+            ("ArchiveAction", "Release-staging"),
+        ):
+            self.assertEqual(scheme.find(action).attrib["buildConfiguration"], configuration)
+
+        project = (ROOT / "ios" / "Runner.xcodeproj" / "project.pbxproj").read_text()
+        self.assertEqual(project.count("PRODUCT_BUNDLE_IDENTIFIER = com.momcozy.mai.staging;"), 3)
+        self.assertEqual(project.count("DEVELOPMENT_TEAM = YP9F4937J4;"), 6)
+        self.assertEqual(
+            project.count("PRODUCT_BUNDLE_IDENTIFIER = com.momcozy.mai.staging.RunnerTests;"), 3
+        )
+        self.assertNotIn("com.momcozymai.app.staging", project)
+        for configuration in ("Debug-staging", "Profile-staging", "Release-staging"):
+            self.assertEqual(project.count(f"name = {configuration};"), 3)
+        self.assertEqual(project.count("PRODUCT_BUNDLE_IDENTIFIER = com.momcozymai.app.flutterpoc;"), 3)
+
+    def test_ios_staging_entrypoint_selects_staging_xcode_scheme(self) -> None:
+        import subprocess
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            flutter = root / "flutter" / "bin" / "flutter"
+            flutter.parent.mkdir(parents=True)
+            flutter.write_text('#!/bin/sh\nprintf "%s\n" "$@" > "$MOMCOZY_CAPTURE_ARGS"\n')
+            flutter.chmod(0o755)
+            capture = root / "flutter-args.txt"
+            env = os.environ | {
+                "MOMCOZY_TOOLCHAIN_ROOT": str(root),
+                "MOMCOZY_CAPTURE_ARGS": str(capture),
+            }
+            result = subprocess.run(
+                ["node", "scripts/build-mobile-app.mjs", "--platform", "ios",
+                 "--environment", "staging", "--mode", "release", "--format", "ios", "--unsigned"],
+                cwd=ROOT, env=env, capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            args = capture.read_text().splitlines()
+            self.assertEqual(args[:6], ["build", "ios", "--release", "--no-codesign", "--flavor", "staging"])
+            self.assertIn("--dart-define=MOMCOZY_ENV=staging", args)
 
     def test_standard_build_entrypoint_covers_store_artifacts_and_blocks_provisional_ios_id(self) -> None:
         script = (ROOT / "scripts" / "build-mobile-app.mjs").read_text()

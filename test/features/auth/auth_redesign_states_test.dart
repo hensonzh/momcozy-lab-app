@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
-import 'package:momcozy_flutter_app/core/auth/google_sign_in_gateway.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
@@ -50,12 +49,6 @@ class _Device implements MomCozyAuthDeviceIdStore {
   Future<String> readOrCreateDeviceId() async => 'device';
 }
 
-class _Google implements GoogleSignInGateway {
-  final pending = Completer<String?>();
-  @override
-  Future<String?> signIn() => pending.future;
-}
-
 class _FailStore extends MemoryMomCozySessionStore {
   @override
   Future<void> writeSession(MomCozySession session) async =>
@@ -68,7 +61,6 @@ void main() {
     WidgetTester t,
     _Transport api, {
     MomCozySessionStore? store,
-    GoogleSignInGateway? google,
   }) async {
     t.view.physicalSize = const Size(320, 568);
     t.view.devicePixelRatio = 1;
@@ -93,7 +85,6 @@ void main() {
           sessionStore: store ?? MemoryMomCozySessionStore(),
           authDeviceIdStore: _Device(),
           internalInviteOnly: false,
-          googleSignIn: google ?? _Google(),
         ),
       ),
     );
@@ -104,7 +95,6 @@ void main() {
           const AssetImage('assets/images/auth_mother_baby.png'),
           c,
         ),
-        precacheImage(const AssetImage('assets/images/google_sign_in.png'), c),
       ]);
     });
     await t.pumpAndSettle();
@@ -189,12 +179,14 @@ void main() {
     (t) async {
       final api = _Transport();
       api.respond = (p) async {
-        if (p.endsWith('verify-email')) throw _error('invalid_or_expired_code');
+        if (p.endsWith('verify-registration-code')) {
+          throw _error('invalid_or_expired_code');
+        }
         return {'status': 'verification_required'};
       };
       final runtime = await mount(t, api);
       await tap(t, find.byKey(const ValueKey('auth-register-button')));
-      await fill(t);
+      await t.enterText(key('email-field'), 'mia@example.com');
       await tap(t, key('submit-button'));
       await t.enterText(key('code-field'), '123');
       await tap(t, key('submit-button'));
@@ -204,20 +196,16 @@ void main() {
         'code-validation',
         find.text('Enter the 8-digit code from your email.'),
       );
-      await tap(t, find.text('Resend code'));
+      expect(find.text('Request another code in 60s'), findsOneWidget);
       expect(api.paths.length, 1);
-      expect(
-        find.text('Please wait 60 seconds before requesting another code.'),
-        findsOneWidget,
-      );
       await capture(t, 'resend-cooldown', key('success-text'));
       await t.enterText(key('code-field'), '12345678');
       await tap(t, key('submit-button'));
-      expect(api.paths.last, '/v1/auth/verify-email');
+      expect(api.paths.last, '/v1/auth/verify-registration-code');
       expect(runtime.currentSession.isAuthenticated, isFalse);
       await capture(t, 'code-expired', key('error-text'));
       await tap(t, find.text('Back to sign in'));
-      expect(find.text('Welcome back'), findsOneWidget);
+      expect(find.text('Momcozy'), findsOneWidget);
     },
   );
   testWidgets(
@@ -229,18 +217,22 @@ void main() {
         return {'status': 'verification_if_required'};
       };
       await mount(t, api);
-      await fill(t);
+      await tap(t, key('register-button'));
+      await t.enterText(key('email-field'), 'mia@example.com');
       await tap(t, key('submit-button'));
-      expect(api.paths.length, 2);
+      expect(api.paths, ['/v1/auth/register']);
+      await t.pump(const Duration(seconds: 61));
       await t.enterText(key('email-field'), '');
-      await tap(t, find.text('Resend code'));
-      expect(api.paths.length, 2);
+      await tap(t, find.text('Request another code'));
+      expect(api.paths, ['/v1/auth/register']);
       expect(find.text('Enter your email first.'), findsOneWidget);
       await t.enterText(key('email-field'), 'mia@example.com');
       final pending = Completer<Map<String, Object?>>();
       api.respond = (_) => pending.future;
-      await tap(t, find.text('Resend code'), settle: false);
-      locked(t);
+      await tap(t, find.text('Request another code'), settle: false);
+      expect(t.widget<FilledButton>(key('submit-button')).onPressed, isNull);
+      expect(t.widget<TextFormField>(key('email-field')).enabled, isFalse);
+      expect(t.widget<TextFormField>(key('code-field')).enabled, isFalse);
       expect(
         t
             .widget<TextButton>(
@@ -253,30 +245,23 @@ void main() {
       pending.complete({'status': 'verification_if_required'});
       await t.pumpAndSettle();
       expect(
-        find.text('If your account is eligible, a new code is on its way.'),
+        find.text(
+          'If this email is eligible, check your inbox and spam folder. A request within 60 seconds may not send another code.',
+        ),
         findsOneWidget,
       );
-      expect(api.paths.length, 3);
-      await tap(t, find.text('Resend code'));
-      expect(api.paths.length, 3);
+      expect(api.paths, ['/v1/auth/register', '/v1/auth/resend-verification']);
+      expect(find.text('Request another code in 60s'), findsOneWidget);
     },
   );
   testWidgets(
-    'short large Google pending and failure leaves email recovery available',
+    'short large login omits Google and keeps email recovery available',
     (t) async {
-      final api = _Transport(), google = _Google();
-      await mount(t, api, google: google);
-      await tap(t, key('google-button'), settle: false);
-      locked(t);
+      final api = _Transport();
+      await mount(t, api);
+      expect(key('google-button'), findsNothing);
+      expect(find.text('OR'), findsNothing);
       expect(api.paths, isEmpty);
-      google.pending.completeError(const GoogleSignInUnavailable());
-      await t.pumpAndSettle();
-      await capture(t, 'google-error', key('error-text'));
-      expect(
-        t.getTopLeft(key('error-text')).dy,
-        greaterThan(t.getBottomLeft(key('google-button')).dy),
-      );
-      expect(t.widget<TextFormField>(key('email-field')).enabled, isTrue);
       await fill(t);
       await tap(t, key('submit-button'));
       expect(api.paths, ['/v1/auth/login']);

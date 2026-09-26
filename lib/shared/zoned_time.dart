@@ -51,6 +51,18 @@ List<DateTime> zonedWallClockCandidates(
   return values..sort();
 }
 
+/// A readable timezone label. Keep the IANA ID in data and time calculations.
+String displayTimeZone(String timezone) {
+  if (timezone == 'UTC') return timezone;
+  final parts = timezone.split('/');
+  if (parts.length < 2 ||
+      parts.any((part) => !RegExp(r'^[A-Za-z_]+$').hasMatch(part))) {
+    return timezone;
+  }
+  final city = parts.last.replaceAll('_', ' ');
+  return city == 'UTC' ? 'UTC' : '$city time';
+}
+
 String zonedClock(DateTime instant, String timezone) {
   final value = inTimezone(instant, timezone);
   return '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
@@ -60,10 +72,4 @@ String zonedRange(DateTime start, DateTime end, String timezone) {
   final first = inTimezone(start, timezone), last = inTimezone(end, timezone);
   final sameZone = first.timeZoneName == last.timeZoneName;
   return '${zonedClock(start, timezone)}${sameZone ? '' : ' ${first.timeZoneName}'} – ${zonedClock(end, timezone)} ${last.timeZoneName}';
-}
-
-String appointmentDay(DateTime instant, String timezone) {
-  final value = inTimezone(instant, timezone);
-  const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  return '${value.month}/${value.day} ${weekdays[value.weekday - 1]}';
 }

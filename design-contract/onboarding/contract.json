@@ -1,0 +1,228 @@
+{
+  "schemaVersion": "1.0",
+  "project": {
+    "id": "onboarding",
+    "name": "Postpartum onboarding without avatar creation",
+    "target": "flutter"
+  },
+  "source": {
+    "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
+    "fileUrl": "https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/",
+    "version": "Onboarding · App states page, updated and independently reopened 2026-09-26",
+    "exportedAt": "2026-09-26T00:00:00+08:00"
+  },
+  "tokens": {
+    "color": {
+      "background": "#fffbf8",
+      "surface": "#ffffff",
+      "rose": "#995273",
+      "ink": "#2b2826"
+    },
+    "typography": {
+      "body": {
+        "family": "app theme",
+        "size": 14,
+        "weight": 400,
+        "lineHeight": 20
+      }
+    },
+    "spacing": {
+      "page": 16,
+      "section": 14
+    },
+    "radius": {
+      "card": 22
+    }
+  },
+  "screens": [
+    {
+      "id": "onboarding.profile",
+      "name": "Your setup",
+      "figmaNodeId": "871:47",
+      "route": "/onboarding",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "none",
+        "fixedBottomHeight": 0
+      },
+      "states": [
+        {
+          "id": "basics",
+          "figmaNodeId": "871:47",
+          "status": "referenceMissing",
+          "fixture": {
+            "label": "A few basics first",
+            "step": 1,
+            "totalSteps": 3,
+            "deliveryCountLabel": "Including this birth, how many times have you given birth?",
+            "deliveryCountRange": "1–20"
+          }
+        },
+        {
+          "id": "delivery",
+          "figmaNodeId": "871:46",
+          "status": "referenceMissing",
+          "fixture": {
+            "label": "Tell us about your delivery",
+            "step": 2,
+            "totalSteps": 3,
+            "deliveryDateRequired": true
+          }
+        },
+        {
+          "id": "birth",
+          "figmaNodeId": "871:45",
+          "status": "referenceMissing",
+          "fixture": {
+            "label": "How was your delivery?",
+            "step": 3,
+            "totalSteps": 3,
+            "previousCesareanLabel": "Before this delivery, had you ever had a cesarean birth?",
+            "previousCesareanVisibleWhen": "deliveryCount > 1"
+          }
+        },
+        {
+          "id": "birth-error",
+          "figmaNodeId": "871:44",
+          "status": "referenceMissing",
+          "fixture": {
+            "label": "Profile could not be saved. Try again.",
+            "step": 3,
+            "totalSteps": 3
+          }
+        }
+      ],
+      "components": [
+        "onboarding.progress",
+        "onboarding.form"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "onboarding.progress",
+      "figmaNodeId": "871:47",
+      "type": "stepIndicator",
+      "flutterWidget": "_SetupProgressHeader",
+      "states": [
+        "onboarding.profile.basics",
+        "onboarding.profile.delivery",
+        "onboarding.profile.birth"
+      ],
+      "layout": {
+        "width": "fill",
+        "height": "content",
+        "steps": 3
+      },
+      "semantics": {
+        "role": "progressbar",
+        "action": "none"
+      }
+    },
+    {
+      "id": "onboarding.form",
+      "figmaNodeId": "871:45",
+      "type": "profileForm",
+      "flutterWidget": "OnboardingPage",
+      "states": [
+        "normal",
+        "onboarding.profile.birth-error"
+      ],
+      "layout": {
+        "width": "fill",
+        "height": "scroll"
+      },
+      "semantics": {
+        "role": "form",
+        "action": "saveProfile"
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "onboarding.profile.save",
+      "screen": "onboarding.profile",
+      "trigger": "tap:Save and start",
+      "from": "birth",
+      "to": "app.home",
+      "status": "planned",
+      "network": {
+        "request": "PUT /v1/onboarding/me/profile",
+        "refresh": [
+          "selectedInfant"
+        ],
+        "retainContentWhileRefreshing": true
+      }
+    },
+    {
+      "id": "onboarding.profile.retry",
+      "screen": "onboarding.profile",
+      "trigger": "tap:Save and start",
+      "from": "birth-error",
+      "to": "app.home",
+      "status": "planned",
+      "network": {
+        "request": "PUT /v1/onboarding/me/profile",
+        "retainDraftOnFailure": true
+      }
+    }
+  ],
+  "assets": [],
+  "validation": {
+    "referenceDir": "references",
+    "actualDir": "comparisons/actual",
+    "comparisonDir": "comparisons",
+    "requiredStates": [
+      "onboarding.profile.basics",
+      "onboarding.profile.delivery",
+      "onboarding.profile.birth",
+      "onboarding.profile.birth-error"
+    ],
+    "requiredChecks": [
+      "flutter analyze",
+      "flutter test",
+      "same-size overlay",
+      "interaction regression"
+    ]
+  },
+  "overrides": [
+    {
+      "reason": "2026-09-25 user request removes digital avatar creation and all follow-up states 07–24",
+      "affectedStates": [
+        "basics",
+        "delivery",
+        "birth",
+        "birth-error"
+      ],
+      "decision": "Step denominator 4 → 3; final save completes onboarding and opens the app; avatar-related Figma frames and app goldens removed."
+    },
+    {
+      "reason": "2026-09-25 user decision: loading and retry should reuse general product feedback rather than onboarding-specific design frames",
+      "affectedStates": [
+        "loading",
+        "load-error"
+      ],
+      "decision": "No onboarding-specific Figma screens or golden snapshots. Figma frames 01–02 were deleted and verified in a fresh tab on 2026-09-25. Runtime uses shared ProductLoadingView and ProductErrorView (retry)."
+    },
+    {
+      "reason": "2026-09-25 user clarification: delivery count includes the current birth; cesarean history refers only to births before it",
+      "affectedStates": [
+        "basics",
+        "birth",
+        "birth-error"
+      ],
+      "decision": "Ask for the numbered delivery on step 1. Only show the previous-cesarean question when deliveryCount > 1; first delivery persists false without asking. The 390px repeat-delivery variant remains a separate local screenshot. The four visible Figma frames 03–06 now display the updated 390×844 three-step images; old embedded four-step screenshots were hidden. This is an image-layer sync, not an independent pixel-parity or complete profile-field audit."
+    }
+  ]
+}

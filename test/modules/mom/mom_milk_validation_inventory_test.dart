@@ -81,7 +81,6 @@ void main() {
       for (final asset in [
         MomCozyAssets.agentAvatar,
         'assets/images/mom_home/cozymate_avatar.png',
-        'assets/images/mom_home/expert_group.png',
         'assets/images/mom/milk-hero.png',
       ]) {
         await precacheImage(

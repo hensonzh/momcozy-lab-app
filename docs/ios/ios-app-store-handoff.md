@@ -92,7 +92,7 @@ security find-identity -v -p codesigning
 | 当前版本 | `1.0.0+57` |
 | SKU 建议 | `momcozy-ai-ios`，最终由 App Store 管理员确认 |
 
-Bundle ID 是 Apple 生态中的不可随意替换身份。创建 App Store Connect App 之后，不能把同一商店记录改成另一个 Bundle ID。必须在创建 App ID、App Store 记录、Google OAuth、Firebase 和 APNs 之前一次性确认。
+Bundle ID 是 Apple 生态中的不可随意替换身份。创建 App Store Connect App 之后，不能把同一商店记录改成另一个 Bundle ID。必须在创建 App ID、App Store 记录、Firebase 和 APNs 之前一次性确认。
 
 ---
 
@@ -544,8 +544,6 @@ flutter build ipa \
   "MOMCOZY_ENV": "production",
   "MOMCOZY_API_BASE_URL": "https://product.example.com",
   "MOMCOZY_AGENT_API_BASE_URL": "https://agent.example.com",
-  "MOMCOZY_GOOGLE_SERVER_CLIENT_ID": "...",
-  "MOMCOZY_GOOGLE_IOS_CLIENT_ID": "...",
   "MOMCOZY_FIREBASE_API_KEY": "...",
   "MOMCOZY_FIREBASE_APP_ID": "...",
   "MOMCOZY_FIREBASE_SENDER_ID": "...",
@@ -774,7 +772,7 @@ https://momcozy.com/pages/terms-conditions
 
 ### 8.6 Privacy Manifest / 第三方 SDK
 
-无签名包已包含 Flutter、WebRTC、Firebase、Google Sign-In 和若干插件的 Privacy Manifest；App 自身目前没有 `PrivacyInfo.xcprivacy`。
+无签名包已包含 Flutter、WebRTC、Firebase 和若干插件的 Privacy Manifest；App 自身目前没有 `PrivacyInfo.xcprivacy`。
 
 正式签名 Archive 后必须：
 
@@ -1086,7 +1084,6 @@ ios/Runner/Base.lproj/LaunchScreen.storyboard
 lib/app/momcozy_api_runtime.dart
 lib/features/agent_hub/agent_hub_runtime.dart
 lib/core/network/staging_certificate_trust.dart
-lib/core/auth/google_sign_in_gateway.dart
 lib/features/notifications/data/firebase_push_messaging.dart
 ```
 

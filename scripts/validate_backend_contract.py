@@ -23,7 +23,6 @@ REQUIRED_OPENAPI_PATHS = {
     PRODUCT_SERVICE: {
         "/v1/auth/register",
         "/v1/auth/verify-email",
-        "/v1/auth/google",
         "/v1/auth/reset-password",
         "/v1/auth/me",
         "/v1/auth/signup",
@@ -32,6 +31,8 @@ REQUIRED_OPENAPI_PATHS = {
         "/v1/auth/refresh",
         "/v1/auth/logout",
         "/v1/files/upload",
+        "/v1/onboarding/me",
+        "/v1/onboarding/me/profile",
         "/v1/profile/lactation",
         "/v1/records/feeding",
         "/v1/records/pumping",
@@ -56,6 +57,8 @@ REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS = {
     (AGENT_RUNTIME_SERVICE, "POST", "/v1/agent/actions/{action_id}/confirm"),
 }
 REQUIRED_OPENAPI_OPERATIONS = {
+    (PRODUCT_SERVICE, "GET", "/v1/onboarding/me"),
+    (PRODUCT_SERVICE, "PUT", "/v1/onboarding/me/profile"),
     (PRODUCT_SERVICE, "GET", "/v1/schedule"),
     (PRODUCT_SERVICE, "POST", "/v1/schedule/personal"),
     (PRODUCT_SERVICE, "PATCH", "/v1/schedule/personal/{task_id}"),
@@ -82,7 +85,7 @@ FORBIDDEN_QUERY_KEYS = {
 AUTH_EXEMPT_PATHS = {
     ("/v1/auth/register", "POST"), ("/v1/auth/verify-email", "POST"),
     ("/v1/auth/resend-verification", "POST"), ("/v1/auth/forgot-password", "POST"),
-    ("/v1/auth/reset-password", "POST"), ("/v1/auth/google", "POST"),
+    ("/v1/auth/reset-password", "POST"),
     ("/v1/auth/logout-session", "POST"),
     ("/v1/auth/signup", "POST"),
     ("/v1/auth/login", "POST"),
@@ -231,15 +234,15 @@ def _validate_service_boundaries(
             f"Product Backend OpenAPI must not expose Agent Runtime path: {path}"
         )
 
-    runtime_exempt_paths = {"/v1/health/live", "/v1/health/ready"}
-    # Care report generation is an Agent Runtime execution boundary called by
-    # Product workers with a dedicated service key; it is not a mobile API.
-    runtime_exempt_paths.update(
-        {
-            "/v1/internal/care-reports/generate",
-            "/v1/internal/care-reports/sources",
-        }
+    retired_package_paths = sorted(
+        str(path)
+        for path in service_paths[PRODUCT_SERVICE]
+        if str(path).startswith(("/v1/care/", "/v1/ibclc/"))
     )
+    for path in retired_package_paths:
+        errors.append(f"Product Backend OpenAPI contains retired package path: {path}")
+
+    runtime_exempt_paths = {"/v1/health/live", "/v1/health/ready"}
     invalid_runtime_paths = sorted(
         str(path)
         for path in service_paths[AGENT_RUNTIME_SERVICE]

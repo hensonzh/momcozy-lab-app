@@ -2,22 +2,14 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-// These are input/legacy-wire matchers, never user-facing copy. Keep each
-// exception exact so adding a new Chinese UI string still fails this gate.
+// These are exact legacy-wire matchers.
+// Keep each exception exact so adding another Chinese UI string fails this gate.
 const _legacyHanLiterals = <String, List<String>>{
   'lib/core/agent_stream/agent_stream_event.dart': ['快捷回复', '推荐回复'],
   'lib/features/agent_hub/domain/agent_conversation.dart': [
     '[系统流程触发]',
     '用户刚完成体态动态评估',
     '用户刚完成头颈姿态动态评估',
-  ],
-  'lib/features/agent_hub/agent_hub_page.dart': [
-    '开始处理请求。',
-    '正在处理请求。',
-    '正在处理请求',
-    '正在整理对话上下文',
-    '已整理好相关信息',
-    '正在整理回复',
   ],
   'lib/modules/mom/domain/me_experience.dart': [
     '有力气',

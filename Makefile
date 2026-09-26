@@ -17,6 +17,7 @@ export PATH := $(TOOLCHAIN_PATH)
 	local-dev-init \
 	local-dev-up \
 	local-dev-start \
+	local-dev-refresh \
 	local-dev-app \
 	local-dev-account \
 	local-dev-verify \
@@ -44,6 +45,9 @@ local-dev-up:
 
 local-dev-start:
 	node scripts/local-dev-stack.mjs start
+
+local-dev-refresh:
+	python3 scripts/local_dev_refresh_emulator.py
 
 local-dev-app:
 	node scripts/local-dev-stack.mjs app

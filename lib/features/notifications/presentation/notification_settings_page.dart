@@ -164,7 +164,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                             Semantics(
                               header: true,
                               child: Text(
-                                'Service notifications',
+                                'AI updates',
                                 style: MomHomeTokens.text(
                                   18,
                                   weight: FontWeight.w700,
@@ -181,28 +181,16 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                               children: [
                                 Column(
                                   children: [
-                                    for (final entry in const {
-                                      'appointments': 'Appointments',
-                                      'consultations': 'Consultations',
-                                      'expert_feedback': 'Expert feedback',
-                                      'service_updates': 'Service updates',
-                                    }.entries) ...[
-                                      if (entry.key != 'appointments')
-                                        const Divider(
-                                          height: 1,
-                                          color: MomHomeTokens.border,
-                                        ),
-                                      _preferenceTile(
-                                        context,
-                                        key: entry.key,
-                                        title: entry.value,
-                                        subtitle:
-                                            permission.canNotify &&
-                                                coordinator.pushReady
-                                            ? 'Service notifications'
-                                            : 'Background delivery unavailable',
-                                      ),
-                                    ],
+                                    _preferenceTile(
+                                      context,
+                                      key: 'agent_updates',
+                                      title: 'Momcozy AI updates',
+                                      subtitle:
+                                          permission.canNotify &&
+                                              coordinator.pushReady
+                                          ? 'Conversation updates'
+                                          : 'Background delivery unavailable',
+                                    ),
                                   ],
                                 ),
                               ],
@@ -219,13 +207,13 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                                   ),
                                 ),
                                 Text(
-                                  'Not enabled. Service preferences do not opt you into marketing.',
+                                  'Not enabled. Notification preferences do not opt you into marketing.',
                                   style: _paragraph(context, 13),
                                 ),
                               ],
                             ),
                             Text(
-                              'Only future reminders you previously enabled can resume when permission is restored. Past reminders are not sent later.',
+                              'Background updates resume when permission is restored.',
                               style: _paragraph(context, 12),
                             ),
                             OutlinedButton(

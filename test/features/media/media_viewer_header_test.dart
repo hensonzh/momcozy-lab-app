@@ -121,6 +121,52 @@ void main() {
     );
   });
 
+  testWidgets('other-script media titles use English half or kind fallback', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    for (final (raw, expected) in [
+      (
+        'Οδηγός θηλασμού · Feeding positions and care',
+        'Feeding positions and care',
+      ),
+      ('מדריך להנקה', 'Image'),
+      ('คู่มือการให้นม', 'Image'),
+    ]) {
+      final extra = <String, String>{
+        'kind': 'image',
+        'url': '/v1/assets/photo-1',
+        'title': raw,
+      };
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: MediaViewerPage(
+            path: '/media-viewer',
+            title: 'Media',
+            summary: '',
+            icon: Icons.image,
+            accent: Colors.black,
+            routeExtra: extra,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(expected), findsOneWidget);
+      expect(find.textContaining(raw), findsNothing);
+      expect(extra['title'], raw);
+      expect(tester.takeException(), isNull);
+    }
+  });
+
   testWidgets('long English resource titles remain readable at 320px and 2x', (
     tester,
   ) async {

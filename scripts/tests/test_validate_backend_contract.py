@@ -38,6 +38,30 @@ class SplitBackendContractTest(unittest.TestCase):
             ],
         )
 
+    def test_retired_package_routes_are_not_valid_contract_paths(self) -> None:
+        errors = _validate_service_boundaries(
+            {
+                PRODUCT_SERVICE: {
+                    "/v1/care/catalog": {},
+                    "/v1/ibclc/me": {},
+                    "/v1/plans": {},
+                },
+                AGENT_RUNTIME_SERVICE: {
+                    "/v1/internal/care-reports/generate": {},
+                },
+            }
+        )
+
+        self.assertEqual(
+            errors,
+            [
+                "Product Backend OpenAPI contains retired package path: /v1/care/catalog",
+                "Product Backend OpenAPI contains retired package path: /v1/ibclc/me",
+                "Agent Runtime OpenAPI contains Product Backend-owned path: "
+                "/v1/internal/care-reports/generate",
+            ],
+        )
+
     def test_requires_owner_scoped_conversation_history_contract(self) -> None:
         history_path = "/v1/agent/threads/{thread_id}/history"
 

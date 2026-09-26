@@ -59,6 +59,7 @@ class _Transport extends FixtureApiJsonTransportByPath {
         '/v1/auth/verify-email': _tokens,
         '/v1/auth/me': _account,
         '/v1/auth/register': {'status': 'verification_required'},
+        '/v1/auth/verify-registration-code': {'status': 'code_valid'},
         '/v1/auth/resend-verification': {'status': 'verification_if_required'},
         '/v1/auth/forgot-password': {'status': 'reset_if_available'},
         '/v1/auth/reset-password': {'status': 'reset'},
@@ -113,11 +114,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.runAsync(() async {
       final context = tester.element(find.byType(MaterialApp));
-      for (final asset in [
-        'auth_mother_baby.png',
-        'momcozy_logo.png',
-        'google_sign_in.png',
-      ]) {
+      for (final asset in ['auth_mother_baby.png', 'momcozy_logo.png']) {
         await precacheImage(AssetImage('assets/images/$asset'), context);
       }
     });
@@ -204,17 +201,7 @@ void main() {
       '/login',
       'Submit empty email and password',
     );
-    await tap(tester, find.byKey(const ValueKey('auth-google-button')));
-    expect(
-      find.text('Google sign-in is unavailable. Try again or use email.'),
-      findsOneWidget,
-    );
-    await capture(
-      tester,
-      'auth-journey-google-unavailable',
-      '/login',
-      'Continue with Google; current build has no client ID',
-    );
+    expect(find.byKey(const ValueKey('auth-google-button')), findsNothing);
     await fill(tester);
     await tester.pump();
     await tap(tester, find.byKey(const ValueKey('auth-password-visibility')));
@@ -282,13 +269,14 @@ void main() {
       'Successful login saves session; guard restores More',
     );
     transport.responsesByPath['/v1/auth/me'] = _error('unavailable', 503);
-    await tap(tester, find.text('Account settings'));
+    router.push('/account');
+    await tester.pumpAndSettle();
     expect(find.text('Retry'), findsOneWidget);
     await capture(
       tester,
       'account-journey-load-error',
       '/account',
-      'More → Account settings; account request fails',
+      'Open account deep link; account request fails',
     );
     transport.responsesByPath['/v1/auth/me'] = _account;
     await tap(tester, find.text('Retry'));
@@ -296,42 +284,23 @@ void main() {
       tester,
       'account-journey-loaded',
       '/account',
-      'Retry → actual account details',
+      'Retry → actual account details, without deletion entry',
     );
-    await tap(tester, find.byKey(const ValueKey('account-link-google')));
-    await capture(
-      tester,
-      'account-journey-link-confirm',
-      '/account',
-      'Link Google account → password confirmation dialog',
-    );
-    await tester.enterText(
-      find.byKey(const ValueKey('account-link-password')),
-      'Inventory123',
-    );
-    await tap(tester, find.text('Continue'));
-    expect(
-      find.text('Google sign-in is unavailable. Try again or use email.'),
-      findsOneWidget,
-    );
-    await capture(
-      tester,
-      'account-journey-link-unavailable',
-      '/account',
-      'Confirm password → Google unavailable in current build',
-    );
+    expect(find.byKey(const ValueKey('account-delete')), findsNothing);
+    router.pop();
+    await tester.pumpAndSettle();
     await tap(tester, find.byKey(const ValueKey('account-delete')));
     await capture(
       tester,
       'account-journey-delete-confirm',
-      '/account',
+      '/more',
       'Request account deletion → confirmation',
     );
     await tap(tester, find.text('Cancel'));
     await capture(
       tester,
       'account-journey-delete-cancelled',
-      '/account',
+      '/more',
       'Cancel → account remains available',
     );
     await tap(tester, find.byKey(const ValueKey('account-delete')));
@@ -341,7 +310,7 @@ void main() {
     await capture(
       tester,
       'account-journey-delete-error',
-      '/account',
+      '/more',
       'Confirm delete → isolated HTTP failure, session retained',
     );
     await tap(tester, find.byKey(const ValueKey('account-delete')));
@@ -376,7 +345,10 @@ void main() {
       '/login',
       'Login → Create an account',
     );
-    await fill(tester);
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-email-field')),
+      'inventory@example.test',
+    );
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
     expect(find.text('Verify your email'), findsOneWidget);
     await capture(
@@ -385,11 +357,7 @@ void main() {
       '/login',
       'Submit registration → backend verification_required → verify form',
     );
-    await tap(tester, find.text('Resend code'));
-    expect(
-      find.text('Please wait 60 seconds before requesting another code.'),
-      findsOneWidget,
-    );
+    expect(find.text('Request another code in 60s'), findsOneWidget);
     await capture(
       tester,
       'auth-journey-resend-cooldown',
@@ -411,7 +379,7 @@ void main() {
       find.byKey(const ValueKey('auth-code-field')),
       '12345678',
     );
-    transport.responsesByPath['/v1/auth/verify-email'] = _error(
+    transport.responsesByPath['/v1/auth/verify-registration-code'] = _error(
       'invalid_or_expired_code',
     );
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
@@ -419,9 +387,39 @@ void main() {
       tester,
       'auth-journey-code-expired',
       '/login',
-      'Verify email → invalid_or_expired_code',
+      'Verify registration code → invalid_or_expired_code',
     );
-    transport.responsesByPath['/v1/auth/verify-email'] = _tokens;
+    transport.responsesByPath['/v1/auth/verify-registration-code'] = {
+      'status': 'code_valid',
+    };
+    await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
+    expect(find.text('Set your password'), findsOneWidget);
+    await capture(
+      tester,
+      'auth-journey-set-password',
+      '/login',
+      'Valid code → set and confirm password',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-password-field')),
+      'Inventory123',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-confirm-password-field')),
+      'different123',
+    );
+    await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
+    expect(find.text('Passwords do not match.'), findsOneWidget);
+    await capture(
+      tester,
+      'auth-journey-password-mismatch',
+      '/login',
+      'Different confirmation → no account request',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-confirm-password-field')),
+      'Inventory123',
+    );
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
     expect(runtime.currentSession.isAuthenticated, isTrue);
     await capture(
@@ -430,14 +428,13 @@ void main() {
       '/more',
       'Valid verification → session saved → intended More route',
     );
-    await tap(tester, find.text('Account settings'));
-    await tap(tester, find.byKey(const ValueKey('account-sign-out')));
+    await tap(tester, find.byKey(const ValueKey('more-logout')));
     expect(await store.readSession(), isNull);
     await capture(
       tester,
       'auth-journey-signed-out',
       '/login',
-      'More → Account settings → Sign out → anonymous login',
+      'More → Sign out → anonymous login',
     );
     await tester.pumpWidget(const SizedBox());
   });

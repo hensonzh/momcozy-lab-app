@@ -456,13 +456,13 @@ class _MediaViewerRouteState {
         _defaultTitleForKind(kind);
     // Use the English half of a bilingual title when present. Otherwise keep
     // route metadata intact and show the media kind, not untranslated copy.
-    final englishParts = _legacyTitleHan.hasMatch(title)
+    final englishParts = _unsupportedTitleScript.hasMatch(title)
         ? title
               .split(RegExp(r'\s+[·|｜]\s+'))
               .map((part) => part.trim())
               .where(
                 (part) =>
-                    !_legacyTitleHan.hasMatch(part) &&
+                    !_unsupportedTitleScript.hasMatch(part) &&
                     RegExp(r'[A-Za-z]').hasMatch(part),
               )
               .toList()
@@ -473,8 +473,8 @@ class _MediaViewerRouteState {
     return _MediaViewerRouteState(kind: kind, url: url, title: displayTitle);
   }
 
-  static final _legacyTitleHan = RegExp(
-    r'[\u3400-\u9fff\u{20000}-\u{323af}]',
+  static final _unsupportedTitleScript = RegExp(
+    r'[\u3400-\u9fff\u{20000}-\u{323af}\u3040-\u30ff\u31f0-\u31ff\uac00-\ud7af\u0400-\u052f\u0600-\u06ff\u0900-\u097f\u0370-\u03ff\u0590-\u05ff\u0e00-\u0e7f]',
     unicode: true,
   );
   static final _retiredTitleBrand = RegExp(
