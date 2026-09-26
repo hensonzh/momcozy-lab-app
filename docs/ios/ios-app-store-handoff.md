@@ -2,9 +2,9 @@
 
 > **文档定位：** 这是后续智能体处理 iOS 签名、TestFlight、App Store 提审与发布时的唯一入口文档。先读本文件，再按需阅读同目录下的专项草稿。
 >
-> **最后核验日期：** 2026-09-24
+> **最后核验日期：** 2026-09-24（历史规划；2026-09-26 的外测进度请先看 [`testflight-staging-build-59-handoff.md`](testflight-staging-build-59-handoff.md)）
 >
-> **当前结论：** 本地 iOS Release 无签名构建已经成功，但正式 Bundle ID、Apple 签名、生产 API、登录策略、推送、支付合规、正式图标和商店资料尚未全部就绪，当前绝对不能上传或提交审核。
+> **历史结论（2026-09-24；现已过时）：** 本地 iOS Release 无签名构建已经成功，但正式 Bundle ID、Apple 签名、生产 API、登录策略、推送、支付合规、正式图标和商店资料尚未全部就绪，当前绝对不能上传或提交审核。
 
 > **环境工作流更新（2026-09-24）：** local/staging/production 配置、Backend/Agent
 > 发布顺序和统一 App 构建命令以
