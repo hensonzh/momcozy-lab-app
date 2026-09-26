@@ -270,6 +270,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Breast milk'));
     await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const ValueKey('feeding-volume')), '40');
+    await tester.pumpAndSettle();
     r.gate = Completer();
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();

@@ -119,7 +119,12 @@ Future<void> verifyAgentConversation(
   expect(tester.widget<TextField>(input).controller!.text, isEmpty);
   client.emit(1, 'run.started', 1, {});
   await frame();
-  expect(find.text('Thinking…'), findsOneWidget);
+  expect(find.text('Thinking…'), findsNothing);
+  expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+  expect(
+    find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
+    findsOneWidget,
+  );
   await captureConversation('thinking');
   client.emit(1, 'message.delta', 2, {
     'text': 'This is a visual test reply, not a health assessment.',
