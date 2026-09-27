@@ -160,7 +160,10 @@ void main() {
       await tester.pumpAndSettle();
     }
     if (metric != null) {
-      await tester.tap(find.text(metric).last);
+      final target = find.text(metric).last;
+      await tester.ensureVisible(target);
+      await tester.pumpAndSettle();
+      await tester.tap(target);
       await tester.pumpAndSettle();
     }
     expect(tester.takeException(), isNull);
