@@ -1,0 +1,8 @@
+{
+  "deploymentTarget": "north-america-staging",
+  "runtimeEnvironment": "staging",
+  "productApiBaseUrl": "TBD",
+  "agentApiBaseUrl": "TBD",
+  "androidApplicationId": "TBD",
+  "iosBundleId": "TBD"
+}

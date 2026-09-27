@@ -29,6 +29,8 @@ class OnboardingController extends ChangeNotifier {
   String _errorMessage = '';
   bool _busy = false;
   bool _disposed = false;
+  int _accountEpoch = 0;
+  int _loadVersion = 0;
   String? _resetUserId;
   String? _resetReleaseId;
   Future<void>? _resetInFlight;
@@ -53,6 +55,10 @@ class OnboardingController extends ChangeNotifier {
   void _handleRuntimeChanged() {
     final session = runtimeController.currentSession;
     if (!session.isAuthenticated) {
+      ++_accountEpoch;
+      ++_loadVersion;
+      _busy = false;
+      _errorMessage = '';
       _clearResetTracking();
       _loadedUserId = null;
       _state = null;
@@ -61,6 +67,9 @@ class OnboardingController extends ChangeNotifier {
       return;
     }
     if (_loadedUserId != null && _loadedUserId != session.userId) {
+      ++_accountEpoch;
+      ++_loadVersion;
+      _busy = false;
       _clearResetTracking();
       _loadedUserId = null;
       _state = null;
@@ -78,6 +87,10 @@ class OnboardingController extends ChangeNotifier {
     final session = runtimeController.currentSession;
     if (!session.isAuthenticated) return;
     final userId = session.userId;
+    final epoch = _accountEpoch;
+    final version = ++_loadVersion;
+    bool isCurrent() =>
+        _isCurrentAccount(userId, epoch) && version == _loadVersion;
     _loadedUserId = userId;
     if (!silent) {
       _phase = OnboardingGatePhase.loading;
@@ -87,15 +100,16 @@ class OnboardingController extends ChangeNotifier {
     try {
       final repository = _repository;
       await _ensureReleaseReset(userId, repository);
-      if (runtimeController.currentSession.userId != userId) return;
+      if (!isCurrent()) return;
       final next = await repository.fetchState();
-      if (runtimeController.currentSession.userId != userId) return;
+      if (!isCurrent()) return;
       await _markReleaseCompletedIfNeeded(userId, next);
+      if (!isCurrent()) return;
       _applyState(next);
       _phase = OnboardingGatePhase.ready;
       _errorMessage = '';
     } catch (error) {
-      if (runtimeController.currentSession.userId != userId) return;
+      if (!isCurrent()) return;
       _errorMessage = _messageFor(error);
       _phase = silent && _state != null
           ? OnboardingGatePhase.ready
@@ -106,16 +120,21 @@ class OnboardingController extends ChangeNotifier {
 
   Future<bool> confirmProfile(OnboardingProfileDraft draft) async {
     final userId = runtimeController.currentSession.userId;
+    final epoch = _accountEpoch;
+    if (!_isCurrentAccount(userId, epoch)) return false;
     final succeeded = await _run(() async {
       final next = await _repository.confirmProfile(draft);
+      if (!_isCurrentAccount(userId, epoch)) return;
       if (!next.profileConfirmed) {
         throw const FormatException('Profile confirmation was not accepted.');
       }
+      ++_loadVersion;
       await _markReleaseCompletedIfNeeded(userId, next);
+      if (!_isCurrentAccount(userId, epoch)) return;
       _applyState(next);
       _phase = OnboardingGatePhase.ready;
     });
-    if (!succeeded) return false;
+    if (!succeeded || !_isCurrentAccount(userId, epoch)) return false;
     final infantId = _state?.primaryInfantId;
     if (infantId != null && infantId.isNotEmpty) {
       try {
@@ -124,9 +143,15 @@ class OnboardingController extends ChangeNotifier {
         // The confirmed profile remains authoritative; selection can recover.
       }
     }
+    if (!_isCurrentAccount(userId, epoch)) return false;
     _notify();
     return true;
   }
+
+  bool _isCurrentAccount(String userId, int epoch) =>
+      runtimeController.currentSession.isAuthenticated &&
+      runtimeController.currentSession.userId == userId &&
+      _accountEpoch == epoch;
 
   Future<void> _ensureReleaseReset(
     String userId,
@@ -189,18 +214,21 @@ class OnboardingController extends ChangeNotifier {
 
   Future<bool> _run(Future<void> Function() action) async {
     if (_busy) return false;
+    final epoch = _accountEpoch;
     _busy = true;
     _errorMessage = '';
     _notify();
     try {
       await action();
-      return true;
+      return _accountEpoch == epoch;
     } catch (error) {
-      _errorMessage = _messageFor(error);
+      if (_accountEpoch == epoch) _errorMessage = _messageFor(error);
       return false;
     } finally {
-      _busy = false;
-      _notify();
+      if (_accountEpoch == epoch) {
+        _busy = false;
+        _notify();
+      }
     }
   }
 

@@ -60,6 +60,15 @@ void main() {
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
           expect(find.text('Girl · 3 weeks'), findsOneWidget);
+          await tester.runAsync(
+            () => precacheImage(
+              const AssetImage(
+                'assets/images/baby_figma/OriginalCozymatePortrait.png',
+              ),
+              tester.element(find.byType(BabyHomePage)),
+            ),
+          );
+          await tester.pumpAndSettle();
           if (width == 320 && scale == 2) {
             await expectLater(
               find.byType(MaterialApp),
@@ -72,15 +81,15 @@ void main() {
           expect(find.text('Development'), findsNothing);
           if (scale > 1) {
             await tester.scrollUntilVisible(
-              find.text('Not recorded yet'),
+              find.text('No entry yet'),
               180,
               scrollable: find.byType(Scrollable).first,
             );
-            expect(find.text('Not recorded yet'), findsAtLeastNWidgets(1));
+            expect(find.text('No entry yet'), findsAtLeastNWidgets(1));
             await tester.drag(find.byType(ListView), const Offset(0, 4000));
             await tester.pumpAndSettle();
           } else {
-            expect(find.text('Not recorded yet'), findsAtLeastNWidgets(1));
+            expect(find.text('No entry yet'), findsAtLeastNWidgets(1));
           }
           expect(find.text('Not recorded'), findsNothing);
           if (scale == 1) {

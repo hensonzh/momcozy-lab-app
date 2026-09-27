@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/domain/shared/local_date.dart';
 import 'package:momcozy_flutter_app/domain/shared/product_failure.dart';
 import 'package:momcozy_flutter_app/modules/baby/application/baby_home_controller.dart';
 import 'package:momcozy_flutter_app/modules/baby/presentation/baby_home_page.dart';
+import 'package:momcozy_flutter_app/modules/baby/presentation/baby_overview_cards.dart';
 import 'package:momcozy_flutter_app/modules/baby/presentation/baby_record_editor.dart';
 import 'package:momcozy_flutter_app/modules/baby/presentation/baby_profile_editor.dart';
 import 'baby_test_repositories.dart';
@@ -238,7 +239,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       final before = (p.reads, r.recentReads, r.latestReads, r.curveReads);
-      await tester.tap(find.text('Log').first);
+      await tester.tap(find.byType(BabyFeedingSummary));
       await tester.pumpAndSettle();
       await tester.tap(find.byTooltip('Close'));
       await tester.pumpAndSettle();
@@ -264,7 +265,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Log').first);
+    await tester.tap(find.byType(BabyFeedingSummary));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Bottle feeding'));
     await tester.pumpAndSettle();

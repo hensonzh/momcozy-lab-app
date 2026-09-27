@@ -188,6 +188,7 @@ void main() {
       await tap(t, find.byKey(const ValueKey('auth-register-button')));
       await t.enterText(key('email-field'), 'mia@example.com');
       await tap(t, key('submit-button'));
+      await capture(t, 'resend-cooldown', key('success-text'));
       await t.enterText(key('code-field'), '123');
       await tap(t, key('submit-button'));
       expect(api.paths, ['/v1/auth/register']);
@@ -198,7 +199,7 @@ void main() {
       );
       expect(find.text('Request another code in 60s'), findsOneWidget);
       expect(api.paths.length, 1);
-      await capture(t, 'resend-cooldown', key('success-text'));
+      expect(find.byKey(const ValueKey('auth-success-text')), findsNothing);
       await t.enterText(key('code-field'), '12345678');
       await tap(t, key('submit-button'));
       expect(api.paths.last, '/v1/auth/verify-registration-code');
@@ -246,7 +247,7 @@ void main() {
       await t.pumpAndSettle();
       expect(
         find.text(
-          'If this email is eligible, check your inbox and spam folder. A request within 60 seconds may not send another code.',
+          'Check your inbox and spam folder for an 8-digit code. Codes expire in 15 minutes.',
         ),
         findsOneWidget,
       );

@@ -86,6 +86,36 @@ Future<void> _pumpHome(
 void main() {
   setUpAll(loadMomCozyTestFonts);
 
+  testWidgets('greeting and mother name occupy separate lines', (tester) async {
+    final repository = _MeHomeRepository(
+      initial: const MeState(
+        profile: {
+          'preferred_name': 'Local App Test',
+          'actual_delivery_date': '2026-09-20',
+        },
+      ),
+    );
+    await _pumpHome(
+      tester,
+      _controller(repository),
+      size: const Size(393, 844),
+      scale: 1,
+    );
+    final greeting = find.text('Good afternoon');
+    final name = find.text('Local App Test');
+    expect(greeting, findsOneWidget);
+    expect(name, findsOneWidget);
+    expect(
+      tester.getRect(name).top,
+      greaterThanOrEqualTo(tester.getRect(greeting).bottom),
+    );
+    expect(
+      tester.renderObject<RenderParagraph>(name).didExceedMaxLines,
+      isFalse,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('postpartum stage appears below the day in profile shortcut', (
     tester,
   ) async {
@@ -212,17 +242,21 @@ void main() {
         size: Size(width, 844),
         scale: 2,
       );
-      final greeting = find.textContaining(
+      final greeting = find.text('Good afternoon');
+      final name = find.text(
         'Alexandra-Margaret Catherine Elizabeth Chen Richardson',
       );
       final profile = find.text('My profile ›');
       expect(greeting, findsOneWidget);
+      expect(name, findsOneWidget);
       expect(profile, findsOneWidget);
-      final paragraph = tester.renderObject<RenderParagraph>(
-        find.descendant(of: greeting, matching: find.byType(RichText)),
+      expect(
+        tester.getRect(name).top,
+        greaterThanOrEqualTo(tester.getRect(greeting).bottom),
       );
+      final paragraph = tester.renderObject<RenderParagraph>(name);
       expect(paragraph.didExceedMaxLines, isFalse);
-      final titleBounds = tester.getRect(greeting);
+      final titleBounds = tester.getRect(name);
       final profileBounds = tester.getRect(profile);
       expect(titleBounds.left, greaterThanOrEqualTo(0));
       expect(titleBounds.right, lessThanOrEqualTo(width));

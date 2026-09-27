@@ -466,6 +466,49 @@ void main() {
       c.dispose();
     },
   );
+  testWidgets('onboarding values appear in Me profile summary', (tester) async {
+    final repo = TestMeRepository()
+      ..state = const MeState(
+        profile: {
+          'preferred_name': 'Mia',
+          'age': 32,
+          'actual_delivery_date': '2026-09-20',
+          'delivery_count': 2,
+          'baby_count': 6,
+          'current_delivery_method': 'assisted_vaginal',
+          'gestation_weeks': 39,
+          'gestation_days': 2,
+          'feeding_methods': ['direct', 'formula'],
+        },
+      );
+    final c = controller(repo);
+    await setup(tester, MeProfilePage(controller: c));
+    expect(find.textContaining('Six babies'), findsOneWidget);
+    expect(find.textContaining('Assisted birth'), findsOneWidget);
+    expect(
+      find.text('Current feeding methods  Direct breastfeeding, Formula'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('39 wk 2 days'), findsOneWidget);
+    await tester.ensureVisible(find.text('Edit ›').at(2));
+    await tester.tap(find.text('Edit ›').at(2));
+    await tester.pumpAndSettle();
+    expect(find.byType(MeProfileEditor), findsOneWidget);
+    final choices = find.byType(MeChoice);
+    expect(tester.widget<MeChoice>(choices.first).selected, isTrue);
+    await tester.ensureVisible(find.text('Not sure yet').first);
+    await tester.tap(find.text('Not sure yet').first);
+    await tester.pumpAndSettle();
+    expect(tester.widget<MeChoice>(choices.first).selected, isFalse);
+    expect(repo.saves, 0);
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(repo.state.profile['feeding_methods'], ['unknown']);
+    expect(find.text('Current feeding methods  Not sure yet'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    c.dispose();
+  });
+
   testWidgets('legacy profile choices do not expose unreviewed catalog text', (
     tester,
   ) async {
@@ -494,7 +537,7 @@ void main() {
       size: const Size(320, 568),
     );
     expect(find.textContaining('Third or later'), findsOneWidget);
-    expect(find.textContaining('Nursing'), findsOneWidget);
+    expect(find.textContaining('Direct breastfeeding'), findsOneWidget);
     final review = find.textContaining('Review saved choice');
     expect(review, findsWidgets);
     for (final label in review.evaluate()) {
@@ -516,18 +559,20 @@ void main() {
     await tester.tap(feedingEdit);
     await tester.pumpAndSettle();
     expect(find.byType(MeProfileEditor), findsOneWidget);
-    await tester.ensureVisible(find.text('Bottle-fed formula'));
-    await tester.tap(find.text('Bottle-fed formula'));
+    await tester.ensureVisible(find.text('Formula'));
+    await tester.tap(find.text('Formula'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
     expect(repo.state.profile['feeding_methods'], ['direct', 'formula']);
     expect(repo.state.profile['baby_count'], '双胞胎');
     expect(find.byType(MeProfilePage), findsOneWidget);
-    await c.saveProfile({'feeding_methods': <String>[]});
+    await c.saveProfile({
+      'feeding_methods': <String>['unknown'],
+    });
     await tester.pumpAndSettle();
-    expect(find.text('Current feeding method  Not provided'), findsOneWidget);
-    expect(repo.state.profile['feeding_methods'], isEmpty);
+    expect(find.text('Current feeding methods  Not sure yet'), findsOneWidget);
+    expect(repo.state.profile['feeding_methods'], ['unknown']);
     expect(tester.takeException(), isNull);
     c.dispose();
   });

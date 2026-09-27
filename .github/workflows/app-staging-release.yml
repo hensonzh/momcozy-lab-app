@@ -77,6 +77,8 @@ jobs:
       name: staging
       url: https://hensonzh.github.io/momcozy-lab-releases/staging/
     env:
+      MOMCOZY_RELEASE_LANE: legacy-staging
+      MOMCOZY_APK_DART_DEFINES: MOMCOZY_INTERNAL_INVITE_LOGIN=true
       MOMCOZY_APK_FLAVOR: staging
       MOMCOZY_APK_MODE: release
       MOMCOZY_REQUIRE_RELEASE_SIGNING: "1"
@@ -275,57 +277,8 @@ jobs:
           PY
           rm -f "${request_file}" "${response_file}"
 
-      - name: Resolve or provision the isolated smoke infant
-        run: |
-          infants_file="${RUNNER_TEMP}/staging-smoke-infants.json"
-          created_file="${RUNNER_TEMP}/staging-smoke-created-infant.json"
-          trap 'rm -f "${infants_file}" "${created_file}"' EXIT
-          install -m 0600 /dev/null "${infants_file}"
-          install -m 0600 /dev/null "${created_file}"
-          curl --fail-with-body --silent --show-error \
-            --cacert "${SSL_CERT_FILE}" \
-            --header "Authorization: Bearer ${MOMCOZY_API_TOKEN}" \
-            "${MOMCOZY_API_BASE_URL}/v1/profile/infants" \
-            --output "${infants_file}"
-          baby_id="$(
-            INFANTS_FILE="${infants_file}" python3 - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-          from uuid import UUID
-
-          payload = json.loads(Path(os.environ["INFANTS_FILE"]).read_text())
-          items = payload.get("items")
-          if not isinstance(items, list):
-              raise SystemExit("profile infants response has no items list")
-          if items:
-              print(UUID(str(items[0].get("id", ""))))
-          PY
-          )"
-          if [[ -z "${baby_id}" ]]; then
-            curl --fail-with-body --silent --show-error \
-              --cacert "${SSL_CERT_FILE}" \
-              --request POST \
-              --header "Authorization: Bearer ${MOMCOZY_API_TOKEN}" \
-              --header "Content-Type: application/json" \
-              --header "Idempotency-Key: app-staging-smoke-infant-v1" \
-              --data '{"name":"Staging Smoke Infant","sex_at_birth":"unknown"}' \
-              "${MOMCOZY_API_BASE_URL}/v1/profile/infants" \
-              --output "${created_file}"
-            baby_id="$(
-              CREATED_FILE="${created_file}" python3 - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-          from uuid import UUID
-
-          payload = json.loads(Path(os.environ["CREATED_FILE"]).read_text())
-          print(UUID(str(payload.get("id", ""))))
-          PY
-            )"
-          fi
-          [[ "${baby_id}" =~ ^[0-9a-f-]{36}$ ]]
-          printf 'MOMCOZY_DEFAULT_BABY_ID=%s\n' "${baby_id}" >> "${GITHUB_ENV}"
+      - name: Resolve the isolated smoke account onboarding state
+        run: python3 scripts/prepare_staging_smoke_infant.py --github-env "${GITHUB_ENV}"
 
       - name: Run the signed release gate and live Product-Agent join smoke
         env:

@@ -2,25 +2,31 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/config/momcozy_app_capabilities.dart';
 
 void main() {
-  test('capabilities read the compile environment and default to false', () {
-    const capabilities = MomCozyAppCapabilities.fromEnvironment();
-    const expectedOnboarding = bool.fromEnvironment(
-      'MOMCOZY_ENABLE_ONBOARDING',
-      defaultValue: false,
-    );
-    const expectedReleaseReset = bool.fromEnvironment(
-      'MOMCOZY_ENABLE_RELEASE_RESET',
-      defaultValue: false,
-    );
-    const expectedExtendedProductApi = bool.fromEnvironment(
-      'MOMCOZY_ENABLE_EXTENDED_PRODUCT_API',
-      defaultValue: false,
-    );
+  test(
+    'capabilities read the compile environment and enable onboarding by default',
+    () {
+      const capabilities = MomCozyAppCapabilities.fromEnvironment();
+      const expectedOnboarding = bool.fromEnvironment(
+        'MOMCOZY_ENABLE_ONBOARDING',
+        defaultValue: true,
+      );
+      const expectedReleaseReset = bool.fromEnvironment(
+        'MOMCOZY_ENABLE_RELEASE_RESET',
+        defaultValue: false,
+      );
+      const expectedExtendedProductApi = bool.fromEnvironment(
+        'MOMCOZY_ENABLE_EXTENDED_PRODUCT_API',
+        defaultValue: false,
+      );
 
-    expect(capabilities.onboardingGateEnabled, expectedOnboarding);
-    expect(capabilities.releaseResetEnabled, expectedReleaseReset);
-    expect(capabilities.extendedProductApiEnabled, expectedExtendedProductApi);
-  });
+      expect(capabilities.onboardingGateEnabled, expectedOnboarding);
+      expect(capabilities.releaseResetEnabled, expectedReleaseReset);
+      expect(
+        capabilities.extendedProductApiEnabled,
+        expectedExtendedProductApi,
+      );
+    },
+  );
 
   test('internal test builds can explicitly enable each capability', () {
     const capabilities = MomCozyAppCapabilities(

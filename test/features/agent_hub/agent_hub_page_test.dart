@@ -113,7 +113,7 @@ void main() {
     );
   });
 
-  testWidgets('design shortcuts send through the existing conversation runner', (
+  testWidgets("today's milk shortcut sends a complete records request", (
     tester,
   ) async {
     final client = _ControllableAgentStreamClient();
@@ -121,20 +121,49 @@ void main() {
     await tester.pumpWidget(
       _host(AgentHubPage(runner: AgentStreamRunner(client))),
     );
-    await tester.tap(find.text('Milk supply insights'));
+    expect(find.text("Today's milk"), findsOneWidget);
+    expect(find.text('7-day schedule'), findsOneWidget);
+    await tester.tap(find.text("Today's milk"));
     await tester.pump();
     expect(
       client.requests.single.message,
-      'I would like to understand my milk supply and feeding. Start by asking me the most important question.',
+      'Please look up my milk volume records for today in my local timezone. '
+      'Show the time and recorded mL amount for each feeding and pumping entry, '
+      'and total measured feeding and pumping volumes separately. '
+      'Do not estimate the volume of direct breastfeeding or count pumped milk as consumed. '
+      'If there are no records, say so rather than making up amounts.',
     );
+    expect(client.requests.single.message, isNot("Today's milk"));
     expect(find.text(client.requests.single.message), findsOneWidget);
-    final recovery = tester.widget<OutlinedButton>(
+    final schedule = tester.widget<OutlinedButton>(
       find.ancestor(
-        of: find.text('Postpartum recovery check-in'),
+        of: find.text('7-day schedule'),
         matching: find.byType(OutlinedButton),
       ),
     );
-    expect(recovery.onPressed, isNull);
+    expect(schedule.onPressed, isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('7-day schedule shortcut sends a complete calendar request', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    await tester.pumpWidget(
+      _host(AgentHubPage(runner: AgentStreamRunner(client))),
+    );
+    await tester.tap(find.text('7-day schedule'));
+    await tester.pump();
+    expect(
+      client.requests.single.message,
+      'Please look up my actual schedule for the next 7 calendar days, '
+      'including today, in my local timezone. List each scheduled item by '
+      'date and time, with its title. If there are no items, say so rather '
+      'than inventing a schedule.',
+    );
+    expect(client.requests.single.message, isNot('7-day schedule'));
+    expect(find.text(client.requests.single.message), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 

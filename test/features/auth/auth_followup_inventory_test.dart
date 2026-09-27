@@ -356,6 +356,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Enter your password.'), findsOneWidget);
+      expect(find.text('Confirm your password.'), findsOneWidget);
       await snap(
         tester,
         'reset-empty-validation',
@@ -374,6 +375,10 @@ void main() {
         'Eight digit code and weak new password → password rule error',
       );
       await tester.enterText(password, 'NewInventory123');
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        'NewInventory123',
+      );
       transport.responsesByPath['/v1/auth/reset-password'] = _error(
         'invalid_or_expired_code',
       );
@@ -505,17 +510,17 @@ void main() {
     await snap(
       tester,
       'verify-initial-send-error',
-      'Unverified login → automatic verification email send fails, login retained',
+      'Unverified login → resend fails, existing code may still be entered',
     );
     transport.responsesByPath['/v1/auth/resend-verification'] = {
       'status': 'verification_if_required',
     };
-    await tap(tester, submit);
+    await tap(tester, find.text('Request another code'));
     expect(find.text('Verify your email'), findsOneWidget);
     await snap(
       tester,
       'verify-from-login',
-      'Retry unverified login → code requested and verification form',
+      'Retry code request → verification form remains usable',
     );
     await tap(tester, find.text('Back to sign in'));
     await tap(tester, find.byKey(const ValueKey('auth-register-button')));
@@ -557,7 +562,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       find.text(
-        'If this email is eligible, check your inbox and spam folder. A request within 60 seconds may not send another code.',
+        'Check your inbox and spam folder for an 8-digit code. Codes expire in 15 minutes.',
       ),
       findsOneWidget,
     );

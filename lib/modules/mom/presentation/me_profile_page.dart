@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../../domain/shared/feeding_methods.dart';
 import '../application/me_controller.dart';
 import 'me_design.dart';
 
@@ -11,16 +12,21 @@ const meProfileGroups = [
 ];
 const meProfileChoices = <String, Map<String, String>>{
   'delivery_count': {'1': 'First', '2': 'Second', '3': 'Third or later'},
-  'baby_count': {'1': 'One baby', '2': 'Twins', '3': 'Triplets or more'},
+  'baby_count': {
+    '1': 'One baby',
+    '2': 'Twins',
+    '3': 'Triplets',
+    '4': 'Four babies',
+    '5': 'Five babies',
+    '6': 'Six babies',
+  },
   'current_delivery_method': {
     'vaginal': 'Vaginal birth',
     'cesarean': 'Cesarean birth',
+    'assisted_vaginal': 'Assisted birth',
+    'other': 'Other',
   },
-  'feeding_methods': {
-    'direct': 'Nursing',
-    'expressed': 'Bottle-fed breast milk',
-    'formula': 'Bottle-fed formula',
-  },
+  'feeding_methods': feedingMethodLabels,
   'feeding_preference': {
     'breast': 'Breastfeeding',
     'formula': 'Formula feeding',
@@ -146,7 +152,7 @@ class MeProfilePage extends StatelessWidget {
             : delivery.map(_labels).join(' · '),
       ],
       2 => [
-        'Current feeding method  ${_labels('feeding_methods')}',
+        'Current feeding methods  ${_labels('feeding_methods')}',
         'Preferred feeding method  ${_labels('feeding_preference')}',
       ],
       _ => ['Care support, return-to-work plans, and other notes'],
@@ -311,12 +317,19 @@ class _MeProfileEditorState extends State<MeProfileEditor> {
                               final selected = List<String>.from(
                                 draft[key] as List? ?? [],
                               );
-                              selected.contains(entry.key)
-                                  ? selected.remove(entry.key)
-                                  : selected.add(entry.key);
-                              draft[key] = meProfileChoices[key]!.keys
-                                  .where(selected.contains)
-                                  .toList();
+                              if (key == 'feeding_methods') {
+                                draft[key] = toggleFeedingMethod(
+                                  selected,
+                                  entry.key,
+                                );
+                              } else {
+                                selected.contains(entry.key)
+                                    ? selected.remove(entry.key)
+                                    : selected.add(entry.key);
+                                draft[key] = meProfileChoices[key]!.keys
+                                    .where(selected.contains)
+                                    .toList();
+                              }
                             } else {
                               if (key == 'delivery_count' &&
                                   entry.key == '3' &&

@@ -2368,12 +2368,19 @@ class _AgentHomeShortcuts extends StatelessWidget {
         children: [
           for (final action in const [
             (
-              'Milk supply insights',
-              'I would like to understand my milk supply and feeding. Start by asking me the most important question.',
+              "Today's milk",
+              'Please look up my milk volume records for today in my local timezone. '
+                  'Show the time and recorded mL amount for each feeding and pumping entry, '
+                  'and total measured feeding and pumping volumes separately. '
+                  'Do not estimate the volume of direct breastfeeding or count pumped milk as consumed. '
+                  'If there are no records, say so rather than making up amounts.',
             ),
             (
-              'Postpartum recovery check-in',
-              'I would like a postpartum recovery check-in. Start with the most important question.',
+              '7-day schedule',
+              'Please look up my actual schedule for the next 7 calendar days, '
+                  'including today, in my local timezone. List each scheduled item by '
+                  'date and time, with its title. If there are no items, say so rather '
+                  'than inventing a schedule.',
             ),
           ])
             OutlinedButton(

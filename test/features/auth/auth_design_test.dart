@@ -179,6 +179,10 @@ void main() {
           find.byKey(const ValueKey('auth-password-field')),
           'new-secret123',
         );
+        await tester.enterText(
+          find.byKey(const ValueKey('auth-confirm-password-field')),
+          'new-secret123',
+        );
         await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
         expect(transport.lastPath, '/v1/auth/reset-password');
         expect(transport.lastBody?['new_password'], 'new-secret123');

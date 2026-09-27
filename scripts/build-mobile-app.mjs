@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import {
   AGENT_API_DEFINE,
   PRODUCT_API_DEFINE,
+  assertLegacyPublishedUrls,
   resolveFlutterApiConfig,
 } from "./flutter-api-config.mjs";
 
@@ -31,6 +32,7 @@ function usage() {
     [--mode <debug|release>] \\
     [--format <apk|appbundle|ios|ipa>] \\
     [--config <path>] \\
+    [--release-lane <legacy-staging|north-america-staging>] \\
     [--unsigned] \\
     [--check-config]
 
@@ -57,6 +59,7 @@ function parseArgs(argv) {
     mode: "",
     format: "",
     config: "",
+    releaseLane: "",
     unsigned: false,
     checkConfig: false,
   };
@@ -75,12 +78,12 @@ function parseArgs(argv) {
       continue;
     }
     const key = arg.startsWith("--") ? arg.slice(2) : "";
-    if (!["platform", "environment", "mode", "format", "config"].includes(key)) {
+    if (!["platform", "environment", "mode", "format", "config", "release-lane"].includes(key)) {
       fail(`Unknown argument: ${arg}`);
     }
     const value = argv[index + 1];
     if (!value || value.startsWith("--")) fail(`${arg} requires a value.`);
-    result[key] = value;
+    result[key === "release-lane" ? "releaseLane" : key] = value;
     index += 1;
   }
   return result;
@@ -212,6 +215,20 @@ if (options.environment === "production" && options.unsigned) {
 if (options.platform === "ios" && options.environment === "production") {
   validateProductionIosIdentity();
 }
+if (options.releaseLane && !["legacy-staging", "north-america-staging"].includes(options.releaseLane)) {
+  fail(`Unsupported release lane: ${options.releaseLane}.`);
+}
+if (options.releaseLane && (options.environment !== "staging" || options.mode !== "release")) {
+  fail("Release lanes require the staging environment and release mode.");
+}
+if (options.releaseLane === "legacy-staging" &&
+    (options.platform !== "android" || options.format !== "apk")) {
+  fail("legacy-staging distributes only an Android APK.");
+}
+if (options.releaseLane === "north-america-staging" &&
+    (options.format !== (options.platform === "android" ? "appbundle" : "ipa") || options.unsigned)) {
+  fail("north-america-staging requires a signed Android appbundle or iOS ipa.");
+}
 if (
   options.platform === "android" &&
   options.environment === "production" &&
@@ -221,14 +238,41 @@ if (
   fail("Production Android release signing variables are incomplete.");
 }
 
-const defaultConfig = path.join(
-  projectRoot,
-  "config",
-  "environments",
-  `${options.environment}.json`,
-);
+const defaultConfig = options.releaseLane === "north-america-staging"
+  ? path.join(projectRoot, "config", "release-lanes", "north-america-staging.json")
+  : path.join(projectRoot, "config", "environments", `${options.environment}.json`);
 const configPath = path.resolve(projectRoot, options.config || defaultConfig);
-const config = loadConfig(configPath, options.environment);
+let config;
+if (options.releaseLane === "north-america-staging") {
+  const check = spawnSync("node", ["scripts/check-north-america-staging-target.mjs", "--config", configPath], {
+    cwd: projectRoot, encoding: "utf8",
+  });
+  if (check.status !== 0) fail((check.stderr || "B target check failed.").trim().replace(/^FAIL /, ""));
+  const target = JSON.parse(readFileSync(configPath, "utf8"));
+  for (const [name, value] of [
+    [PRODUCT_API_DEFINE, target.productApiBaseUrl],
+    [AGENT_API_DEFINE, target.agentApiBaseUrl],
+  ]) {
+    if (process.env[name] && process.env[name] !== value) {
+      fail(`${name} must match the B target declaration; do not override it with A.`);
+    }
+  }
+  config = {
+    MOMCOZY_ENV: "staging",
+    [PRODUCT_API_DEFINE]: target.productApiBaseUrl,
+    [AGENT_API_DEFINE]: target.agentApiBaseUrl,
+  };
+  if (options.platform === "android") {
+    // The existing staging flavor is A's install identity; B needs a new flavor.
+    fail("B Android application ID is not implemented in a separate native flavor; A staging must remain unchanged.");
+  }
+  const project = readFileSync(path.join(projectRoot, "ios/Runner.xcodeproj/project.pbxproj"), "utf8");
+  if (project.split(`PRODUCT_BUNDLE_IDENTIFIER = ${target.iosBundleId};`).length - 1 !== 3) {
+    fail("B iOS Bundle ID does not match the existing staging Xcode configurations.");
+  }
+} else {
+  config = loadConfig(configPath, options.environment);
+}
 const productUrl = String(process.env[PRODUCT_API_DEFINE] || config[PRODUCT_API_DEFINE] || "");
 const agentUrl = String(process.env[AGENT_API_DEFINE] || config[AGENT_API_DEFINE] || "");
 const resolved = resolveFlutterApiConfig({
@@ -236,12 +280,22 @@ const resolved = resolveFlutterApiConfig({
   productUrl,
   agentUrl,
 });
+if (options.releaseLane === "legacy-staging") {
+  try {
+    assertLegacyPublishedUrls(resolved);
+  } catch (error) {
+    fail(error.message);
+  }
+}
 const dartDefines = Object.entries({
   ...config,
   MOMCOZY_ENV: options.environment,
   [PRODUCT_API_DEFINE]: resolved.productUrl,
   [AGENT_API_DEFINE]: resolved.agentUrl,
 }).map(([name, value]) => `--dart-define=${name}=${String(value)}`);
+if (options.releaseLane) {
+  dartDefines.push(`--dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=${options.releaseLane === "legacy-staging"}`);
+}
 
 console.log(`Environment: ${options.environment}`);
 console.log(`Platform:    ${options.platform}`);
@@ -250,7 +304,14 @@ console.log(`Format:      ${options.format}`);
 console.log(`Product API: ${resolved.productUrl}`);
 console.log(`Agent API:   ${resolved.agentUrl}`);
 console.log(`Config:      ${path.relative(projectRoot, configPath)}`);
+if (options.releaseLane) console.log(`Login define: MOMCOZY_INTERNAL_INVITE_LOGIN=${options.releaseLane === "legacy-staging"}`);
 if (options.checkConfig) process.exit(0);
+if (options.releaseLane === "north-america-staging") {
+  fail("B build is not enabled until its managed-service backend and signing path are approved.");
+}
+if (options.releaseLane === "legacy-staging" && !hasAndroidReleaseSigning()) {
+  fail("A release signing variables are incomplete; refuse a debug-signed distribution artifact.");
+}
 
 if (options.platform === "android") {
   const args = [

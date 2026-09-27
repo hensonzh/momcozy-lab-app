@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
+import 'package:momcozy_flutter_app/features/auth/presentation/auth_login_chrome.dart';
 
 import '../../support/fixture_api_transport.dart';
 
@@ -50,6 +51,62 @@ void main() {
 
     controller.dispose();
     router.dispose();
+  });
+
+  testWidgets('invite default, pending, and error share the login chrome', (
+    tester,
+  ) async {
+    final transport = _GatedInviteTransport(
+      _httpError(429, code: 'rate_limited', message: 'Too many attempts'),
+    );
+    final controller = MomCozyRuntimeController(
+      MomCozyApiRuntime(jsonTransport: transport),
+    );
+    addTearDown(controller.dispose);
+    addTearDown(() {
+      if (!transport.gate.isCompleted) transport.gate.complete();
+    });
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MomCozyAuthPage(
+          runtimeController: controller,
+          sessionStore: MemoryMomCozySessionStore(),
+          authDeviceIdStore: const _FixedAuthDeviceIdStore('test-device'),
+          internalInviteOnly: true,
+        ),
+      ),
+    );
+    final background = find.byKey(const ValueKey('auth-invite-background'));
+    final field = find.byKey(const ValueKey('auth-invite-code-field'));
+    final button = find.byKey(const ValueKey('auth-invite-login-button'));
+    final gradient =
+        tester.widget<Container>(background).decoration as BoxDecoration;
+    expect(gradient.gradient, authLoginBackground);
+    final input = tester.widget<TextField>(field);
+    expect(input.decoration?.hintText, 'Enter your invitation code');
+    expect(input.decoration?.labelText, isNull);
+    expect(input.decoration?.prefixIcon, isNull);
+    expect(input.decoration?.constraints?.minHeight, 56);
+    expect(tester.getTopLeft(field).dx, tester.getTopLeft(button).dx);
+    expect(tester.getSize(field).width, tester.getSize(button).width);
+    expect(tester.getSize(button).height, 56);
+    final headerRect = tester.getRect(find.text('Welcome'));
+    final fieldRect = tester.getRect(field);
+    final buttonRect = tester.getRect(button);
+
+    await tester.enterText(field, 'MCZ-TEST-0001');
+    await tester.tap(button);
+    await tester.pump();
+    expect(tester.widget<Container>(background).decoration, gradient);
+    expect(tester.getRect(find.text('Welcome')), headerRect);
+    expect(tester.getRect(field), fieldRect);
+    expect(tester.getRect(button), buttonRect);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    transport.gate.complete();
+    await tester.pumpAndSettle();
+    expect(tester.getRect(field), fieldRect);
+    expect(tester.getRect(button), buttonRect);
+    expect(find.byKey(const ValueKey('auth-error-text')), findsOneWidget);
   });
 
   testWidgets('invite login requires a typed invite code before posting', (
@@ -112,10 +169,7 @@ void main() {
       find.byKey(const ValueKey('auth-invite-code-field')),
     );
     expect(field.decoration?.hintText, 'Enter your invitation code');
-    expect(
-      field.decoration?.floatingLabelBehavior,
-      FloatingLabelBehavior.always,
-    );
+    expect(field.decoration?.labelText, isNull);
     expect(field.controller?.text, 'MCZ-LAST-0001');
 
     controller.dispose();
@@ -503,5 +557,21 @@ class _FailingSessionStore implements MomCozySessionStore {
   @override
   Future<void> writeSession(MomCozySession session) async {
     throw StateError('simulated secure storage failure');
+  }
+}
+
+class _GatedInviteTransport extends FixtureApiJsonTransport {
+  _GatedInviteTransport(super.response);
+
+  final gate = Completer<void>();
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    await gate.future;
+    return super.postJson(path, body: body, headers: headers);
   }
 }

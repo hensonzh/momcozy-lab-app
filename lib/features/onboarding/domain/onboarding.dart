@@ -1,3 +1,5 @@
+import 'package:momcozy_flutter_app/domain/shared/feeding_methods.dart';
+
 enum OnboardingStatus { required, completed }
 
 enum OnboardingReleaseResetStatus { reset, alreadyReset }
@@ -48,13 +50,21 @@ class OnboardingState {
   });
 
   factory OnboardingState.fromMap(Map<String, Object?> map) {
-    final confirmed =
-        map['profile_confirmed'] == true || map['status'] == 'completed';
+    final confirmed = map['profile_confirmed'];
+    final status = map['status'];
+    final valid =
+        (status == 'required' && confirmed == false) ||
+        (status == 'completed' && confirmed == true) ||
+        (confirmed == true &&
+            (status == 'avatar_required' || status == 'avatar_generating'));
+    if (!valid) {
+      throw const FormatException('Invalid onboarding state response.');
+    }
     return OnboardingState(
-      status: confirmed
+      status: confirmed == true
           ? OnboardingStatus.completed
           : OnboardingStatus.required,
-      profileConfirmed: confirmed,
+      profileConfirmed: confirmed == true,
       primaryInfantId: _nullableString(map['primary_infant_id']),
     );
   }
@@ -84,9 +94,13 @@ class OnboardingProfileDraft {
     this.deliveryCount,
     this.hasCesareanHistory,
     this.deliveryType,
+    this.gestationWeeks,
+    this.gestationDays,
+    List<String>? feedingMethods,
     this.infantCount = 1,
     List<OnboardingInfantDraft>? infants,
-  }) : infants = infants ?? [OnboardingInfantDraft()];
+  }) : infants = infants ?? [OnboardingInfantDraft()],
+       feedingMethods = feedingMethods ?? [];
 
   String displayName;
   int? age;
@@ -98,6 +112,9 @@ class OnboardingProfileDraft {
   /// Cesarean history before the current delivery (not its delivery method).
   bool? hasCesareanHistory;
   String? deliveryType;
+  int? gestationWeeks;
+  int? gestationDays;
+  List<String> feedingMethods;
   int infantCount;
   final List<OnboardingInfantDraft> infants;
 
@@ -117,8 +134,28 @@ class OnboardingProfileDraft {
   }
 
   Map<String, Object?> toMap() {
+    final name = displayName.trim();
+    if (name.isEmpty || name.runes.length > 120) {
+      throw const FormatException('Name must be 1–120 characters.');
+    }
+    if (deliveryDate == null) {
+      throw const FormatException('Choose your delivery date.');
+    }
     if (deliveryCount == null || deliveryCount! < 1 || deliveryCount! > 20) {
       throw const FormatException('Choose which delivery this is.');
+    }
+    if (gestationWeeks == null ||
+        gestationWeeks! < 20 ||
+        gestationWeeks! > 45 ||
+        gestationDays == null ||
+        gestationDays! < 0 ||
+        gestationDays! > 6) {
+      throw const FormatException(
+        'Enter gestational age at delivery (weeks and days).',
+      );
+    }
+    if (!validFeedingMethods(feedingMethods)) {
+      throw const FormatException('Choose your current feeding methods.');
     }
     return <String, Object?>{
       // The backend still requires the single supported care-stage value.
@@ -127,9 +164,13 @@ class OnboardingProfileDraft {
       'display_name': displayName.trim(),
       'age': age,
       'delivery_date': _date(deliveryDate!),
+      'client_timezone_offset_minutes': DateTime.now().timeZoneOffset.inMinutes,
       'delivery_count': deliveryCount,
       'has_cesarean_history': deliveryCount == 1 ? false : hasCesareanHistory,
       'delivery_type': deliveryType,
+      'gestation_weeks': gestationWeeks,
+      'gestation_days': gestationDays,
+      'feeding_methods': List<String>.of(feedingMethods),
       'infant_count': infantCount,
       'infants': infants.map((infant) => infant.toMap()).toList(),
     };

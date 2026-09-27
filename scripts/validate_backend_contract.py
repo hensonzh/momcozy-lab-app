@@ -83,7 +83,8 @@ FORBIDDEN_QUERY_KEYS = {
     "token",
 }
 AUTH_EXEMPT_PATHS = {
-    ("/v1/auth/register", "POST"), ("/v1/auth/verify-email", "POST"),
+    ("/v1/auth/register", "POST"), ("/v1/auth/verify-registration-code", "POST"),
+    ("/v1/auth/verify-email", "POST"),
     ("/v1/auth/resend-verification", "POST"), ("/v1/auth/forgot-password", "POST"),
     ("/v1/auth/reset-password", "POST"),
     ("/v1/auth/logout-session", "POST"),
@@ -123,6 +124,11 @@ def main(argv: list[str] | None = None) -> int:
     errors.extend(
         _validate_agent_runtime_pattern(
             schemas[AGENT_RUNTIME_SERVICE],
+        )
+    )
+    errors.extend(
+        _validate_mobile_wire_contracts(
+            schemas[PRODUCT_SERVICE], schemas[AGENT_RUNTIME_SERVICE]
         )
     )
 
@@ -218,6 +224,107 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=SMOKE_FLOWS_PATH,
     )
     return parser.parse_args(argv)
+
+
+def _resolve_schema(document: dict[str, object], schema: object) -> dict[str, object]:
+    while isinstance(schema, dict) and isinstance(schema.get("$ref"), str):
+        ref = schema["$ref"]
+        if not ref.startswith("#/components/schemas/"):
+            return {}
+        name = ref.rsplit("/", 1)[-1]
+        components = document.get("components")
+        schemas = components.get("schemas") if isinstance(components, dict) else None
+        schema = schemas.get(name) if isinstance(schemas, dict) else None
+    return schema if isinstance(schema, dict) else {}
+
+
+def _validate_mobile_wire_contracts(
+    product: dict[str, object], agent: dict[str, object]
+) -> list[str]:
+    """Guard fields needed by the current Flutter auth and conversation paths.
+
+    Path-only smoke checks cannot detect an added mandatory registration field,
+    removed password confirmation, or a thread shape that the client discards.
+    """
+    errors: list[str] = []
+
+    def operation(
+        document: dict[str, object], path: str, method: str
+    ) -> dict[str, object]:
+        paths = document.get("paths")
+        route = paths.get(path) if isinstance(paths, dict) else None
+        value = route.get(method.lower()) if isinstance(route, dict) else None
+        if not isinstance(value, dict):
+            errors.append(f"Missing mobile operation: {method} {path}")
+            return {}
+        return value
+
+    def request(
+        document: dict[str, object], path: str, method: str
+    ) -> dict[str, object]:
+        value = operation(document, path, method)
+        body = value.get("requestBody")
+        content = body.get("content") if isinstance(body, dict) else None
+        json_body = (
+            content.get("application/json") if isinstance(content, dict) else None
+        )
+        schema = json_body.get("schema") if isinstance(json_body, dict) else None
+        return _resolve_schema(document, schema)
+
+    register = request(product, "/v1/auth/register", "POST")
+    register_required = set(_list(register.get("required")))
+    if register and register_required - {"email"}:
+        errors.append(
+            "POST /v1/auth/register: App sends only email; server requires "
+            + ", ".join(sorted(register_required - {"email"}))
+        )
+
+    operation(product, "/v1/auth/verify-registration-code", "POST")
+    for path, required_fields in (
+        (
+            "/v1/auth/verify-email",
+            {"email", "token", "password", "confirm_password"},
+        ),
+        (
+            "/v1/auth/reset-password",
+            {"email", "token", "new_password", "confirm_password"},
+        ),
+        (
+            "/v1/auth/change-password",
+            {"current_password", "new_password", "confirm_password"},
+        ),
+    ):
+        schema = request(product, path, "POST")
+        if not schema:
+            continue
+        properties = schema.get("properties")
+        fields = set(properties) if isinstance(properties, dict) else set()
+        required = set(_list(schema.get("required")))
+        for field in sorted(required_fields - fields):
+            errors.append(
+                f"POST {path}: App field {field} is absent from request schema"
+            )
+        for field in sorted(required_fields - required):
+            errors.append(f"POST {path}: server must require {field}")
+
+    operation(product, "/v1/onboarding/me", "GET")
+    operation(product, "/v1/onboarding/me/profile", "PUT")
+    operation(agent, "/v1/agent/threads/{thread_id}/history", "GET")
+    # The staging release smoke also lists the newly confirmed baby.
+    operation(product, "/v1/babies", "GET")
+
+    components = agent.get("components")
+    schemas = components.get("schemas") if isinstance(components, dict) else None
+    thread = schemas.get("AgentThreadRead") if isinstance(schemas, dict) else None
+    if not isinstance(thread, dict):
+        errors.append("AgentThreadRead: thread schema is missing")
+    else:
+        properties = thread.get("properties")
+        fields = set(properties) if isinstance(properties, dict) else set()
+        required = set(_list(thread.get("required")))
+        for field in sorted({"id", "created_at", "updated_at"} - (fields & required)):
+            errors.append(f"AgentThreadRead: App requires non-null {field}")
+    return errors
 
 
 def _validate_service_boundaries(

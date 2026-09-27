@@ -205,93 +205,118 @@ class BabyGrowthMetrics extends StatelessWidget {
       final narrow = MediaQuery.sizeOf(context).width < 359;
       final columns = MediaQuery.textScalerOf(context).scale(1) > 1.5 ? 1 : 3;
       final gap = narrow ? 8.0 : 10.0;
-      return Wrap(
-        spacing: gap,
-        runSpacing: gap,
-        children: [
-          for (final metric in GrowthMetric.values)
-            Builder(
-              builder: (context) {
-                final record = controller.latestGrowth.value
-                    ?.where((value) => value.metric == metric)
-                    .firstOrNull;
-                return SizedBox(
-                  width: (constraints.maxWidth - (columns - 1) * gap) / columns,
-                  child: Material(
-                    color: MomHomeTokens.surface,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        MomHomeTokens.cardRadius,
-                      ),
-                      side: const BorderSide(color: MomHomeTokens.border),
+      final cardWidth = (constraints.maxWidth - (columns - 1) * gap) / columns;
+      final labelStyle = BabyDesign.text(
+        13,
+        line: 18,
+        color: MomHomeTokens.secondary,
+      );
+      final heading = TextPainter(
+        text: TextSpan(
+          text: growthMetricLabel(GrowthMetric.headCircumference),
+          style: labelStyle,
+        ),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout(maxWidth: cardWidth - 24);
+      final headingHeight = heading.height;
+      heading.dispose();
+      final cards = [
+        for (final metric in GrowthMetric.values)
+          Builder(
+            builder: (context) {
+              final record = controller.latestGrowth.value
+                  ?.where((value) => value.metric == metric)
+                  .firstOrNull;
+              return SizedBox(
+                width: cardWidth,
+                child: Material(
+                  color: MomHomeTokens.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      MomHomeTokens.cardRadius,
                     ),
-                    clipBehavior: Clip.antiAlias,
-                    child: InkWell(
-                      onTap: () => onRecord(metric),
-                      child: BabyArtwork(
-                        kind: 'measurement',
-                        child: Container(
-                          constraints: BoxConstraints(
-                            minHeight: record == null ? 72 : 106,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 12,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
+                    side: const BorderSide(color: MomHomeTokens.border),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: () => onRecord(metric),
+                    child: BabyArtwork(
+                      kind: 'measurement',
+                      child: Container(
+                        constraints: BoxConstraints(
+                          minHeight: record == null ? 72 : 106,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 12,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: columns == 3 ? headingHeight : null,
+                              child: Text(
                                 growthMetricLabel(metric),
+                                style: labelStyle,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            if (record != null) ...[
+                              Text(
+                                '${babyNumber(record.value)} ${record.unit}',
                                 style: BabyDesign.text(
-                                  13,
-                                  line: 18,
-                                  color: MomHomeTokens.secondary,
+                                  22,
+                                  line: 31,
+                                  weight: FontWeight.w700,
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              if (record != null) ...[
-                                Text(
-                                  '${babyNumber(record.value)} ${record.unit}',
-                                  style: BabyDesign.text(
-                                    22,
-                                    line: 31,
-                                    weight: FontWeight.w700,
-                                  ),
+                              Text(
+                                '${record.recordedOn.month}/${record.recordedOn.day}',
+                                style: BabyDesign.text(
+                                  12,
+                                  line: 17,
+                                  color: MomHomeTokens.secondary,
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  '${record.recordedOn.month}/${record.recordedOn.day}',
-                                  style: BabyDesign.text(
-                                    12,
-                                    line: 17,
-                                    color: MomHomeTokens.secondary,
-                                  ),
+                              ),
+                            ] else
+                              Text(
+                                controller.latestGrowth.loading
+                                    ? 'Loading…'
+                                    : controller.latestGrowth.failure != null
+                                    ? 'Not loaded yet'
+                                    : 'No entry yet',
+                                style: const TextStyle(
+                                  fontFamily: 'NotoSansSCHome',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: MomHomeTokens.secondary,
                                 ),
-                              ] else
-                                Text(
-                                  controller.latestGrowth.loading
-                                      ? 'Loading…'
-                                      : controller.latestGrowth.failure != null
-                                      ? 'Not loaded yet'
-                                      : 'Not recorded yet',
-                                  style: const TextStyle(
-                                    fontFamily: 'NotoSansSCHome',
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: MomHomeTokens.secondary,
-                                  ),
-                                ),
-                            ],
-                          ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-        ],
+                ),
+              );
+            },
+          ),
+      ];
+      if (columns == 1) {
+        return Wrap(spacing: gap, runSpacing: gap, children: cards);
+      }
+      return IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var index = 0; index < cards.length; index++) ...[
+              if (index > 0) SizedBox(width: gap),
+              cards[index],
+            ],
+          ],
+        ),
       );
     },
   );

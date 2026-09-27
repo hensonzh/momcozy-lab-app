@@ -64,6 +64,26 @@ void main() {
       expect(find.text('1/3'), findsOneWidget);
       await tester.enterText(
         find.byKey(const ValueKey('onboarding-display-name')),
+        'M' * 121,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('onboarding-age')),
+        '32',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('onboarding-delivery-count')),
+        '1',
+      );
+      await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Name must be 120 characters or fewer.'),
+        findsOneWidget,
+      );
+      expect(find.text('1/3'), findsOneWidget);
+      expect(transport.mutationPaths, isEmpty);
+      await tester.enterText(
+        find.byKey(const ValueKey('onboarding-display-name')),
         'Mia',
       );
       await tester.enterText(
@@ -85,11 +105,60 @@ void main() {
         find.byKey(const ValueKey('onboarding-postpartum-delivery-continue')),
       );
       await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Enter gestational age at delivery'),
+        findsOneWidget,
+      );
+      expect(find.text('2/3'), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const ValueKey('onboarding-gestation-weeks')),
+        '39',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('onboarding-gestation-days')),
+        '2',
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('onboarding-postpartum-delivery-continue')),
+      );
+      await tester.pumpAndSettle();
       expect(find.text('3/3'), findsOneWidget);
       expect(find.text('Save and start'), findsOneWidget);
       expect(
         find.text('Before this delivery, had you ever had a cesarean birth?'),
         findsNothing,
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('onboarding-postpartum-save')),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('onboarding-postpartum-save')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Choose your current feeding methods.'), findsOneWidget);
+      expect(transport.mutationPaths, isEmpty);
+      final unsure = find.byKey(const ValueKey('onboarding-feeding-unknown'));
+      await tester.ensureVisible(unsure);
+      await tester.tap(unsure);
+      await tester.pumpAndSettle();
+      expect(tester.widget<FilterChip>(unsure).selected, isTrue);
+      for (final method in ['direct', 'formula']) {
+        final chip = find.byKey(ValueKey('onboarding-feeding-$method'));
+        await tester.ensureVisible(chip);
+        await tester.tap(chip);
+        await tester.pumpAndSettle();
+      }
+      expect(tester.widget<FilterChip>(unsure).selected, isFalse);
+      expect(
+        tester
+            .widget<FilterChip>(
+              find.byKey(const ValueKey('onboarding-feeding-direct')),
+            )
+            .selected,
+        isTrue,
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('onboarding-postpartum-save')),
       );
       await tester.tap(
         find.byKey(const ValueKey('onboarding-postpartum-save')),
@@ -99,6 +168,9 @@ void main() {
       expect(transport.mutationPaths, ['/v1/onboarding/me/profile']);
       expect(transport.lastBody?['delivery_count'], 1);
       expect(transport.lastBody?['has_cesarean_history'], false);
+      expect(transport.lastBody?['gestation_weeks'], 39);
+      expect(transport.lastBody?['gestation_days'], 2);
+      expect(transport.lastBody?['feeding_methods'], ['direct', 'formula']);
       expect(find.text('Create your digital companion'), findsNothing);
     },
   );

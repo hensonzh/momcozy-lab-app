@@ -88,6 +88,24 @@ InputDecoration authReferenceInputDecoration(
   );
 }
 
+ButtonStyle authLoginButtonStyle() => FilledButton.styleFrom(
+  minimumSize: const Size.fromHeight(56),
+  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  padding: const EdgeInsets.symmetric(
+    vertical: 12,
+    horizontal: MomCozySpacing.card,
+  ),
+  backgroundColor: authLoginButton,
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  foregroundColor: MomCozyColors.raised,
+  textStyle: authReferenceText(
+    16,
+    color: Colors.white,
+    weight: FontWeight.w600,
+    height: 24 / 16,
+  ),
+);
+
 ThemeData authLoginTheme(ThemeData base) {
   final theme = momSettingsTheme(base);
   return theme.copyWith(

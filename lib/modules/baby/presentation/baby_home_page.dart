@@ -333,7 +333,7 @@ class _BabyHomePageState extends State<BabyHomePage>
               ? 'Loading…'
               : c.recentRecords.failure != null && !c.recentRecords.hasValue
               ? 'Not loaded yet'
-              : 'Not recorded yet';
+              : 'No entry yet';
           final article =
               babyKnowledgeArticles[selectBabyKnowledge(
                 now: c.now(),
@@ -422,10 +422,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                   ),
                 ),
                 const SizedBox(height: 14),
-                BabySectionHeader(
-                  title: 'Feeding today',
-                  onTap: () => _record(BabyRecordKind.feeding),
-                ),
+                const BabySectionHeader(title: 'Feeding today'),
                 const SizedBox(height: 14),
                 BabyPressFeedback(
                   child: BabyFeedingSummary(
@@ -440,10 +437,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                   ),
                 ),
                 const SizedBox(height: 14),
-                BabySectionHeader(
-                  title: "Today's check-in",
-                  onTap: () => _record(BabyRecordKind.dailyStatus),
-                ),
+                const BabySectionHeader(title: "Today's check-in"),
                 const SizedBox(height: 14),
                 if (c.recentRecords.failure != null) ...[
                   ProductErrorView(
@@ -548,10 +542,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                   },
                 ),
                 const SizedBox(height: 14),
-                BabySectionHeader(
-                  title: 'Growth & development',
-                  onTap: () => _record(BabyRecordKind.growth),
-                ),
+                const BabySectionHeader(title: 'Growth'),
                 const SizedBox(height: 14),
                 if (c.latestGrowth.failure != null) ...[
                   ProductErrorView(

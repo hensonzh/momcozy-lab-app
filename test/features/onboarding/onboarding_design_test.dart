@@ -105,15 +105,41 @@ void main() {
         );
         await tap(find.widgetWithText(FilledButton, 'Continue'));
         expect(find.text('2/3'), findsOneWidget);
+        expect(find.text('Tell us about this delivery'), findsOneWidget);
+        expect(find.text('Date of this delivery'), findsOneWidget);
+        expect(find.text('Gestational weeks at this delivery'), findsOneWidget);
+        final weeksField = tester.getRect(
+          find.byKey(const ValueKey('onboarding-gestation-weeks')),
+        );
+        final daysField = tester.getRect(
+          find.byKey(const ValueKey('onboarding-gestation-days')),
+        );
+        expect((weeksField.top - daysField.top).abs(), lessThan(0.5));
+        expect((weeksField.bottom - daysField.bottom).abs(), lessThan(0.5));
         await capture('delivery');
         await tap(find.text('Choose date'));
         await tap(find.text('OK'));
+        await tester.enterText(
+          find.byKey(const ValueKey('onboarding-gestation-weeks')),
+          '39',
+        );
+        await tester.enterText(
+          find.byKey(const ValueKey('onboarding-gestation-days')),
+          '2',
+        );
         await tap(
           find.byKey(const ValueKey('onboarding-postpartum-delivery-continue')),
         );
         expect(find.text('3/3'), findsOneWidget);
+        expect(find.text('How was this delivery?'), findsOneWidget);
+        expect(
+          find.text('How many babies were born in this delivery?'),
+          findsOneWidget,
+        );
         expect(find.text('Save and start'), findsOneWidget);
         await capture('birth');
+        await tap(find.byKey(const ValueKey('onboarding-feeding-direct')));
+        await tap(find.byKey(const ValueKey('onboarding-feeding-formula')));
         await tap(find.byKey(const ValueKey('onboarding-postpartum-save')));
         expect(
           find.text('Profile could not be saved. Try again.'),

@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../../../shared/widgets/momcozy_components.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'auth_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
@@ -241,12 +245,47 @@ class _MomCozyAccountPageState extends State<MomCozyAccountPage> {
             style: _paragraph(context),
           ),
       ]),
+      if (providers.contains('email') && profile['account_status'] == 'active')
+        TextButton(
+          key: const ValueKey('account-change-password'),
+          onPressed: _changePassword,
+          child: const Text('Change password'),
+        ),
       TextButton(
         key: const ValueKey('account-sign-out'),
         onPressed: _logout,
         child: const Text('Sign out'),
       ),
     ];
+  }
+
+  Future<void> _changePassword() async {
+    final changed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => _ChangePasswordDialog(
+        onSubmit:
+            widget.runtimeController.runtime.authRepository.changePassword,
+      ),
+    );
+    if (changed != true || !mounted) return;
+    try {
+      // Changing the password revokes every server session, including this one.
+      await widget.runtimeController.logout(
+        sessionStore: widget.sessionStore,
+        revokeRemote: false,
+      );
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Password changed. Sign in again with your new password.',
+            ),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _logout() async {
@@ -263,4 +302,165 @@ class _MomCozyAccountPageState extends State<MomCozyAccountPage> {
       );
     }
   }
+}
+
+class _ChangePasswordDialog extends StatefulWidget {
+  const _ChangePasswordDialog({required this.onSubmit});
+
+  final Future<void> Function({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  })
+  onSubmit;
+
+  @override
+  State<_ChangePasswordDialog> createState() => _ChangePasswordDialogState();
+}
+
+class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
+  final _form = GlobalKey<FormState>();
+  final _current = TextEditingController();
+  final _next = TextEditingController();
+  final _confirm = TextEditingController();
+  bool _busy = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _current.dispose();
+    _next.dispose();
+    _confirm.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (_busy || !(_form.currentState?.validate() ?? false)) return;
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await widget.onSubmit(
+        currentPassword: _current.text,
+        newPassword: _next.text,
+        confirmPassword: _confirm.text,
+      );
+      if (mounted) Navigator.of(context).pop(true);
+    } catch (error) {
+      if (error is TimeoutException ||
+          error is ApiRequestTimeoutException ||
+          error is IOException) {
+        // The server may have changed the password and revoked this session.
+        // Sign out locally rather than retrying an indeterminate mutation.
+        if (mounted) Navigator.of(context).pop(true);
+        return;
+      }
+      if (error is ApiHttpException &&
+          error.statusCode == 401 &&
+          error.errorCode == 'authentication_required') {
+        if (mounted) Navigator.of(context).pop(true);
+        return;
+      }
+      if (mounted) {
+        setState(() {
+          _error =
+              error is ApiHttpException &&
+                  error.errorCode == 'invalid_current_password'
+              ? 'Current password is incorrect.'
+              : error is ApiHttpException &&
+                    error.errorCode == 'validation_failed'
+              ? 'Choose a different password and try again.'
+              : accountAuthErrorText(error);
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => PopScope(
+    canPop: !_busy,
+    child: AlertDialog(
+      title: const Text('Change password'),
+      content: SingleChildScrollView(
+        child: Form(
+          key: _form,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                key: const ValueKey('account-current-password'),
+                controller: _current,
+                enabled: !_busy,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Current password',
+                ),
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Enter your current password.'
+                    : null,
+              ),
+              TextFormField(
+                key: const ValueKey('account-new-password'),
+                controller: _next,
+                enabled: !_busy,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: 'New password'),
+                validator: (value) =>
+                    value != null &&
+                        value.length >= 8 &&
+                        value.length <= 128 &&
+                        RegExp('[A-Za-z]').hasMatch(value) &&
+                        RegExp('[0-9]').hasMatch(value)
+                    ? null
+                    : 'Use 8–128 characters with a letter and a number.',
+              ),
+              TextFormField(
+                key: const ValueKey('account-confirm-password'),
+                controller: _confirm,
+                enabled: !_busy,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Confirm new password',
+                ),
+                validator: (value) =>
+                    value == _next.text && value != null && value.isNotEmpty
+                    ? null
+                    : 'Passwords do not match.',
+              ),
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _error!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+              const SizedBox(height: 8),
+              const Text(
+                'You will be signed out on all devices after changing your password.',
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _busy ? null : () => Navigator.of(context).pop(false),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          key: const ValueKey('account-change-password-submit'),
+          onPressed: _busy ? null : _submit,
+          child: _busy
+              ? const SizedBox.square(
+                  dimension: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Text('Change password'),
+        ),
+      ],
+    ),
+  );
 }
