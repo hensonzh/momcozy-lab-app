@@ -99,7 +99,10 @@ void main() {
       ], now: now);
 
       expect(projection.isTerminal, isFalse);
-      expect(projection.statusEvent?.semanticLabel, 'Let me understand what you need…');
+      expect(
+        projection.statusEvent?.semanticLabel,
+        'Let me understand what you need…',
+      );
     });
 
     test('terminal response clears all work status', () {

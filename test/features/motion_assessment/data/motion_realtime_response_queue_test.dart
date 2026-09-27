@@ -123,9 +123,18 @@ void main() {
       _instructions(events.single),
       contains('motion_assessment.context.v3'),
     );
-    expect(_instructions(events.single), contains('Use English for every response'));
-    expect(_instructions(events.single), contains('even if the user asks for another language'));
-    expect(_instructions(events.single), isNot(contains('Say only the following line')));
+    expect(
+      _instructions(events.single),
+      contains('Use English for every response'),
+    );
+    expect(
+      _instructions(events.single),
+      contains('even if the user asks for another language'),
+    );
+    expect(
+      _instructions(events.single),
+      isNot(contains('Say only the following line')),
+    );
   });
 
   test('keeps every Realtime response in the Momcozy AI identity', () async {
@@ -139,7 +148,10 @@ void main() {
     final instructions = _instructions(events.single);
     expect(instructions, contains('the same Momcozy AI identity'));
     expect(instructions, contains('main app conversation'));
-    expect(instructions, contains('Do not introduce yourself as a separate coach'));
+    expect(
+      instructions,
+      contains('Do not introduce yourself as a separate coach'),
+    );
     expect(instructions, contains('mention internal models'));
   });
 
@@ -245,7 +257,10 @@ void main() {
     await queue.enqueue('请自然侧身并目视前方');
 
     expect(_instructions(events.single), contains('natural, concise English'));
-    expect(_instructions(events.single), isNot(contains('Say only the following line')));
+    expect(
+      _instructions(events.single),
+      isNot(contains('Say only the following line')),
+    );
   });
 
   test(

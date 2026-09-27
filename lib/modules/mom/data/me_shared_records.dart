@@ -40,7 +40,8 @@ List<MeObservation> meObservationsFromBaby(Iterable<BabyRecord> records) => [
         id: record.id,
         kind: MeMetric.diaper,
         occurredAt: record.savedAt.toLocal(),
-        value: '${(record.wetCount ?? 0) + (record.stoolCount ?? 0)} diaper changes',
+        value:
+            '${(record.wetCount ?? 0) + (record.stoolCount ?? 0)} diaper changes',
         fields: {
           'daily_summary': true,
           'wet': record.wetCount,

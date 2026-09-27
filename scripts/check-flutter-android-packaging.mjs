@@ -117,17 +117,17 @@ contains(
 );
 contains(
   "android/app/src/local/res/values/strings.xml",
-  "<string name=\"app_name\">momcozy AI</string>",
+  "<string name=\"app_name\">Momcozy AI</string>",
   "Flutter local label matches current staging branding",
 );
 contains(
   "android/app/src/staging/res/values/strings.xml",
-  "<string name=\"app_name\">momcozy AI</string>",
+  "<string name=\"app_name\">Momcozy AI</string>",
   "Flutter staging label matches current staging branding",
 );
 contains(
   "android/app/src/production/res/values/strings.xml",
-  "<string name=\"app_name\">momcozy AI</string>",
+  "<string name=\"app_name\">Momcozy AI</string>",
   "Flutter production-shaped label matches current staging branding",
 );
 

@@ -93,9 +93,9 @@ class _MeHomeRouteState extends State<MeHomeRoute> {
       }
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Could not load. Please try again.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not load. Please try again.')),
+        );
       }
     }
   }

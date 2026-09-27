@@ -318,7 +318,10 @@ class MeMetricRow extends StatelessWidget {
 }
 
 class MeError extends StatelessWidget {
-  const MeError({super.key, this.message = 'Could not save. Please try again.'});
+  const MeError({
+    super.key,
+    this.message = 'Could not save. Please try again.',
+  });
   final String message;
   @override
   Widget build(BuildContext context) => Container(

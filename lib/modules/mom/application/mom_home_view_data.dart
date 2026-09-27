@@ -28,13 +28,15 @@ class MomDailyInsight {
     status: MomInsightStatus.waiting,
     eyebrow: 'Momcozy AI · Waiting for your first record',
     title: 'Start with a record.\nI\'ll get to know your recovery as you go.',
-    body: 'Track pumping and nursing, or talk with Momcozy AI about feeding and recovery.',
+    body:
+        'Track pumping and nursing, or talk with Momcozy AI about feeding and recovery.',
   );
   static const unavailable = MomDailyInsight(
     status: MomInsightStatus.unavailable,
     eyebrow: 'Momcozy AI · Daily insights unavailable',
     title: 'Notice the little changes,\nwith Momcozy AI by your side',
-    body: 'Daily insights aren\'t available right now. You can still talk with Momcozy AI about your day.',
+    body:
+        'Daily insights aren\'t available right now. You can still talk with Momcozy AI about your day.',
   );
 }
 
@@ -66,7 +68,9 @@ class MomHomeViewData {
     return MomHomeViewData(
       greeting:
           '$greeting${profile?.displayName.isNotEmpty == true ? ', ${profile!.displayName}' : ''}',
-      phaseLabel: day == null ? 'Here for every stage' : formatPostpartumDay(day),
+      phaseLabel: day == null
+          ? 'Here for every stage'
+          : formatPostpartumDay(day),
       insight: hasMilk
           ? c.insight.value ?? MomDailyInsight.unavailable
           : c.lactation.hasValue
