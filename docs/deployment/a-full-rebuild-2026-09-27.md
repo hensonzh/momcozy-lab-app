@@ -7,7 +7,7 @@
 - 已停止 23 个应用容器（含独立 `consultation`）；SSH、Docker、Nginx 与数据卷保留。重新核对 `docker ps` 为零，绝不把容器重启当作新部署。`consultation` 没有这三仓库对应的新发布链，维持停机。
 - 停机前容器清单：`/opt/momcozy-lab/backups/app-containers-prestop-20260927T095400Z.json`（0600）；8 个旧卷离线归档：`/opt/momcozy-lab/backups/offline-volumes-20260927T095705Z/manifest.json`（SHA-256 与 tar 读取已校验）；原卷和旧 release 指针留在 `/opt/momcozy-lab`，不迁入新环境、不删除。
 - 新 A 使用独立 `/opt/momcozy-lab-staging`，Compose project 为 `momcozy-lab-backend-staging` / `momcozy-lab-agent-staging`，网络 `momcozy-lab-staging`，由新项目首次创建独立卷。旧 project/卷、manifest `test` 和旧数据库不作为回滚目标。
-- 仍走 `backend-test` → `127.0.0.1:8001`、`agent-test` → `127.0.0.1:8002`，公网 HTTPS 均为 8443；新的活动 manifest 必须是 `staging`。首次空 root 没有旧 OpenAPI 可比；后续同一新 root 的替换仍强制做在线兼容检查。
+- 仍走 `backend-test` → `127.0.0.1:8001`、`agent-test` → `127.0.0.1:8002`，公网 HTTPS 均为 8443；新的活动 manifest 必须是 `staging`。**当前 8443 并没有监听**：旧公网入口由 `consultation-test-port-mux` 容器转发到主机 Nginx `127.0.0.1:18443`，该容器已按要求停机，不能作为 A 新版重启。仓库 `backend/deploy/nginx` 与 `agent/deploy/nginx` 的新站点配置已改为由主机 Nginx 直接监听 8443、使用 `/etc/nginx/tls/momcozy-lab-staging` 证书并移除 consultation include；证书 SAN 覆盖两个域名，已通过 App staging CA 验证。首次空 root 没有旧 OpenAPI 可比；后续同一新 root 的替换仍强制做在线兼容检查。
 
 ## 提交与门禁
 
@@ -18,7 +18,7 @@
 ## 私有配置与部署顺序（待执行）
 
 1. 在新 root 下创建 mode-0600 的 Backend、Agent `staging.env`，依各自唯一 `env/staging.env.example` 填写，**不打印或提交任何密钥**。只复用经确认的第三方 provider 设置；新 PostgreSQL/Redis/MinIO 凭据、JWT 私钥、邮箱 token key、跨服务 key、邀请码均需按新栈生成并在两份 env 中对齐。A 的邀请码登录不依赖 B 的 Resend 完成，但邮件注册/重置不应伪称已打通。Backend 是共享三件套 owner；Agent 不创建第二套。`SERVICE_API_KEY` 网页暴露风险按既有用户决定暂不实施专项隔离，仍须如实提示。
-2. 将公共 staging CA 放在主机只读路径并将该路径作为两工作流 `CA_FILE`；核对与 App 内 CA 匹配。用受保护 workflow：先 `backend-delivery` 的 `bootstrap`（空 PostgreSQL/Redis/MinIO），再 `deploy`（迁移、健康、manifest），最后 `agent-delivery` 的 `deploy`（匹配 Product 契约、Agent 迁移、worker heartbeat、健康）。部署失败时新服务停住、保留新数据与诊断，不自动重启旧容器或回灌旧卷。
+2. 先备份主机旧 Nginx A 站点配置，安装上述两份仓库版 8443 站点配置，`nginx -t` 通过后 reload；验证公网 TLS 可连接而后端仍未启动时仅返回网关错误。不要启动旧 consultation mux。将公共 staging CA 放在主机只读路径并将该路径作为两工作流 `CA_FILE`；核对与 App 内 CA 匹配。用受保护 workflow：先 `backend-delivery` 的 `bootstrap`（空 PostgreSQL/Redis/MinIO），再 `deploy`（迁移、健康、manifest），最后 `agent-delivery` 的 `deploy`（匹配 Product 契约、Agent 迁移、worker heartbeat、健康）。部署失败时新服务停住、保留新数据与诊断，不自动重启旧容器或回灌旧卷。
 3. 验证两条公开 `/v1/health/ready` 和 `/openapi.json`、活动 manifest 的 SHA/image digest/environment、邀请码创建/登录/禁用和设备绑定；避免在日志打印邀请码或 access token。`/v1/admin/invite-codes/ui` 为现有邀请码管理页（无独立操作员鉴权且前端嵌入 service key），不能声称风险已经修复。
 4. 后端 join barrier 通过后运行 `app-staging-release.yml`：最新 App main SHA、正确 Backend/Agent manifest、签名/证书身份、staging flavor、`MOMCOZY_INTERNAL_INVITE_LOGIN=true`、在线 Product-Agent smoke 全部通过才上传 APK，并更新 `hensonzh/momcozy-lab-releases` 的 `/staging/` 下载页、SHA256、二维码与 provenance。再核对 Pages manifest 与 Release APK 的字节数和 SHA256，手机安装、扫码和邀请码登录人工验收。
 
