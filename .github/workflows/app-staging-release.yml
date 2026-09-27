@@ -102,11 +102,11 @@ jobs:
 
       - name: Validate staging environment configuration
         env:
-          DEPLOY_SSH_HOST: ${{ secrets.SSH_HOST }}
-          DEPLOY_SSH_PORT: ${{ secrets.SSH_PORT }}
-          DEPLOY_SSH_USER: ${{ secrets.SSH_USER }}
-          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          DEPLOY_SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          DEPLOY_SSH_HOST: ${{ secrets.SSH_HOST || secrets.STAGING_SSH_HOST }}
+          DEPLOY_SSH_PORT: ${{ secrets.SSH_PORT || secrets.STAGING_SSH_PORT }}
+          DEPLOY_SSH_USER: ${{ secrets.SSH_USER || secrets.STAGING_SSH_USER }}
+          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY || secrets.STAGING_SSH_PRIVATE_KEY }}
+          DEPLOY_SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS || secrets.STAGING_SSH_KNOWN_HOSTS }}
         run: |
           set -euo pipefail
           for name in DEPLOY_RELEASE_ROOT STAGING_RELEASE_LOCK DEPLOY_SSH_HOST DEPLOY_SSH_PORT DEPLOY_SSH_USER DEPLOY_SSH_PRIVATE_KEY DEPLOY_SSH_KNOWN_HOSTS; do
@@ -180,8 +180,8 @@ jobs:
 
       - name: Configure verified SSH access to deployed release manifests
         env:
-          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          DEPLOY_SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY || secrets.STAGING_SSH_PRIVATE_KEY }}
+          DEPLOY_SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS || secrets.STAGING_SSH_KNOWN_HOSTS }}
         run: |
           install -d -m 0700 "${HOME}/.ssh"
           install -m 0600 /dev/null "${HOME}/.ssh/id_ed25519"
@@ -190,9 +190,9 @@ jobs:
 
       - name: Fetch the currently deployed service manifests
         env:
-          DEPLOY_SSH_HOST: ${{ secrets.SSH_HOST }}
-          DEPLOY_SSH_PORT: ${{ secrets.SSH_PORT }}
-          DEPLOY_SSH_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_SSH_HOST: ${{ secrets.SSH_HOST || secrets.STAGING_SSH_HOST }}
+          DEPLOY_SSH_PORT: ${{ secrets.SSH_PORT || secrets.STAGING_SSH_PORT }}
+          DEPLOY_SSH_USER: ${{ secrets.SSH_USER || secrets.STAGING_SSH_USER }}
         run: |
           scp -P "${DEPLOY_SSH_PORT}" \
             "${DEPLOY_SSH_USER}@${DEPLOY_SSH_HOST}:${DEPLOY_RELEASE_ROOT}/current/backend/release-manifest.json" \
@@ -305,9 +305,9 @@ jobs:
       - name: Fetch the currently deployed service manifests again under the lock and publish
         env:
           GH_TOKEN: ${{ secrets.RELEASES_GH_TOKEN }}
-          DEPLOY_SSH_HOST: ${{ secrets.SSH_HOST }}
-          DEPLOY_SSH_PORT: ${{ secrets.SSH_PORT }}
-          DEPLOY_SSH_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_SSH_HOST: ${{ secrets.SSH_HOST || secrets.STAGING_SSH_HOST }}
+          DEPLOY_SSH_PORT: ${{ secrets.SSH_PORT || secrets.STAGING_SSH_PORT }}
+          DEPLOY_SSH_USER: ${{ secrets.SSH_USER || secrets.STAGING_SSH_USER }}
           MOMCOZY_APK_INPUT: ${{ github.workspace }}/build/app/outputs/flutter-apk/app-staging-release.apk
           MOMCOZY_SKIP_NPM_CI: "1"
           MOMCOZY_GITHUB_RELEASE_REPO: hensonzh/momcozy-lab-releases
