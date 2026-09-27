@@ -15,9 +15,7 @@ import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import '../../support/fixture_api_transport.dart';
 
 void main() {
-  testWidgets('default app startup bypasses the unsupported onboarding gate', (
-    tester,
-  ) async {
+  testWidgets('explicit opt-out bypasses the onboarding gate', (tester) async {
     final fixture = _fixture();
 
     await tester.pumpWidget(
@@ -26,6 +24,9 @@ void main() {
         sessionStore: MemoryMomCozySessionStore(fixture.session),
         routeIntentPlatform: fixture.routeIntents,
         agentHubBuilder: _agentHubBuilder,
+        capabilities: const MomCozyAppCapabilities(
+          onboardingGateEnabled: false,
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -68,7 +69,7 @@ void main() {
     fixture.dispose();
   });
 
-  testWidgets('an explicit capability keeps the onboarding route available', (
+  testWidgets('default capability gates a new user into onboarding', (
     tester,
   ) async {
     final fixture = _fixture();
@@ -79,7 +80,7 @@ void main() {
         sessionStore: MemoryMomCozySessionStore(fixture.session),
         routeIntentPlatform: fixture.routeIntents,
         agentHubBuilder: _agentHubBuilder,
-        capabilities: const MomCozyAppCapabilities(onboardingGateEnabled: true),
+        capabilities: const MomCozyAppCapabilities(),
       ),
     );
     await tester.pumpAndSettle();

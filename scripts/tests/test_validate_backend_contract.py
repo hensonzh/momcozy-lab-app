@@ -1,4 +1,6 @@
 import unittest
+from copy import deepcopy
+import json
 
 from scripts.validate_backend_contract import (
     AGENT_RUNTIME_OPENAPI_PATH,
@@ -10,6 +12,7 @@ from scripts.validate_backend_contract import (
     _parse_args,
     _validate_agent_runtime_pattern,
     _validate_service_boundaries,
+    _validate_mobile_wire_contracts,
 )
 
 
@@ -73,6 +76,45 @@ class SplitBackendContractTest(unittest.TestCase):
             REQUIRED_QUERY_KEYS[(AGENT_RUNTIME_SERVICE, history_path)],
             {"before_sequence", "limit"},
         )
+
+    def test_mobile_auth_wire_contract_rejects_deployed_registration_drift(self) -> None:
+        product = json.loads(PRODUCT_OPENAPI_PATH.read_text())
+        runtime = json.loads(AGENT_RUNTIME_OPENAPI_PATH.read_text())
+        deployed_shape = deepcopy(product)
+        registration = deployed_shape["components"]["schemas"]["EmailRegisterRequest"]
+        registration["required"] = ["email", "password"]
+        deployed_shape["paths"].pop("/v1/auth/verify-registration-code")
+        verification = deployed_shape["components"]["schemas"]["EmailChallengeRequest"]
+        verification["properties"].pop("confirm_password")
+        verification["required"].remove("confirm_password")
+
+        errors = _validate_mobile_wire_contracts(deployed_shape, runtime)
+        self.assertTrue(any("/v1/auth/register" in error and "password" in error for error in errors))
+        self.assertTrue(any("/v1/auth/verify-registration-code" in error for error in errors))
+        self.assertTrue(any("/v1/auth/verify-email" in error and "confirm_password" in error for error in errors))
+
+    def test_mobile_wire_contract_rejects_reset_and_history_drift(self) -> None:
+        product = json.loads(PRODUCT_OPENAPI_PATH.read_text())
+        runtime = json.loads(AGENT_RUNTIME_OPENAPI_PATH.read_text())
+        deployed_product = deepcopy(product)
+        deployed_runtime = deepcopy(runtime)
+        reset = deployed_product["components"]["schemas"]["PasswordResetConfirmRequest"]
+        reset["properties"].pop("confirm_password")
+        reset["required"].remove("confirm_password")
+        deployed_product["paths"].pop("/v1/auth/change-password")
+        thread = deployed_runtime["components"]["schemas"]["AgentThreadRead"]
+        thread["properties"].pop("created_at")
+        thread["required"].remove("created_at")
+
+        errors = _validate_mobile_wire_contracts(deployed_product, deployed_runtime)
+        self.assertTrue(any("/v1/auth/reset-password" in error and "confirm_password" in error for error in errors))
+        self.assertTrue(any("/v1/auth/change-password" in error for error in errors))
+        self.assertTrue(any("AgentThreadRead" in error and "created_at" in error for error in errors))
+
+    def test_mobile_wire_contract_accepts_current_snapshots(self) -> None:
+        product = json.loads(PRODUCT_OPENAPI_PATH.read_text())
+        runtime = json.loads(AGENT_RUNTIME_OPENAPI_PATH.read_text())
+        self.assertEqual(_validate_mobile_wire_contracts(product, runtime), [])
 
     def test_requires_the_deployed_proprietary_runtime_pattern(self) -> None:
         def schema(pattern: str) -> dict[str, object]:

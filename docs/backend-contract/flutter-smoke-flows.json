@@ -26,20 +26,6 @@
         },
         {
           "method": "POST",
-          "path": "/v1/auth/signup",
-          "body": {
-            "email": "smoke+${run_id}@example.test",
-            "password": "${strong_password}",
-            "display_name": "Smoke User",
-            "device_id": "flutter-smoke"
-          },
-          "captures": {
-            "access_token": "$.access_token",
-            "refresh_token": "$.refresh_token"
-          }
-        },
-        {
-          "method": "POST",
           "path": "/v1/auth/refresh",
           "body": {
             "refresh_token": "${refresh_token}"
@@ -52,7 +38,168 @@
         {
           "method": "POST",
           "path": "/v1/auth/logout",
-          "headers": ["${auth_header}"]
+          "headers": [
+            "${auth_header}"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "email_registration_and_password_lifecycle",
+      "service": "product",
+      "notes": "Run only with an isolated mailbox/account; obtain codes from the email test fixture, not a production inbox. Password changes revoke prior sessions.",
+      "steps": [
+        {
+          "method": "POST",
+          "path": "/v1/auth/register",
+          "body": {
+            "email": "smoke+${run_id}@example.test"
+          },
+          "assertions": [
+            "202; password is not set until verified"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/v1/auth/verify-registration-code",
+          "body": {
+            "email": "smoke+${run_id}@example.test",
+            "token": "${verification_code}"
+          },
+          "assertions": [
+            "validates code without consuming it"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/v1/auth/verify-email",
+          "body": {
+            "email": "smoke+${run_id}@example.test",
+            "token": "${verification_code}",
+            "password": "${strong_password}",
+            "confirm_password": "${strong_password}"
+          },
+          "captures": {
+            "access_token": "$.access_token",
+            "refresh_token": "$.refresh_token"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/v1/auth/me",
+          "headers": [
+            "${auth_header}"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/v1/auth/forgot-password",
+          "body": {
+            "email": "smoke+${run_id}@example.test"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/v1/auth/reset-password",
+          "body": {
+            "email": "smoke+${run_id}@example.test",
+            "token": "${reset_code}",
+            "new_password": "${new_password}",
+            "confirm_password": "${new_password}"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/v1/auth/login",
+          "body": {
+            "email": "smoke+${run_id}@example.test",
+            "password": "${new_password}"
+          },
+          "captures": {
+            "access_token": "$.access_token",
+            "refresh_token": "$.refresh_token"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/v1/auth/change-password",
+          "headers": [
+            "${auth_header}"
+          ],
+          "body": {
+            "current_password": "${new_password}",
+            "new_password": "${changed_password}",
+            "confirm_password": "${changed_password}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "fresh_user_onboarding",
+      "service": "product",
+      "notes": "Use a new verified user without an existing current-delivery infant; repeat PUT must be idempotent.",
+      "steps": [
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/me",
+          "headers": [
+            "${auth_header}"
+          ],
+          "assertions": [
+            "status required; profile_confirmed false"
+          ]
+        },
+        {
+          "method": "PUT",
+          "path": "/v1/onboarding/me/profile",
+          "headers": [
+            "${auth_header}"
+          ],
+          "body": {
+            "stage": "postpartum",
+            "display_name": "Smoke User",
+            "age": 32,
+            "delivery_date": "${today}",
+            "client_timezone_offset_minutes": 0,
+            "delivery_count": 1,
+            "has_cesarean_history": false,
+            "delivery_type": "vaginal",
+            "gestation_weeks": 39,
+            "gestation_days": 2,
+            "feeding_methods": [
+              "direct"
+            ],
+            "infant_count": 1,
+            "infants": [
+              {
+                "nickname": "Smoke Baby",
+                "sex": "female"
+              }
+            ]
+          },
+          "captures": {
+            "baby_id": "$.primary_infant_id"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/me",
+          "headers": [
+            "${auth_header}"
+          ],
+          "assertions": [
+            "status completed; profile_confirmed true; primary_infant_id matches"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/v1/babies",
+          "headers": [
+            "${auth_header}"
+          ],
+          "assertions": [
+            "contains exactly one current-delivery infant for this test account"
+          ]
         }
       ]
     },
@@ -63,7 +210,10 @@
         {
           "method": "POST",
           "path": "/v1/files/upload",
-          "headers": ["${auth_header}", "${idempotency_header}"],
+          "headers": [
+            "${auth_header}",
+            "${idempotency_header}"
+          ],
           "multipart": {
             "file": {
               "filename": "smoke.txt",
@@ -75,7 +225,10 @@
         {
           "method": "POST",
           "path": "/v1/records/feeding",
-          "headers": ["${auth_header}", "${idempotency_header}"],
+          "headers": [
+            "${auth_header}",
+            "${idempotency_header}"
+          ],
           "body": {
             "feed_time": "${iso_now}",
             "feed_type": "bottle",
@@ -87,12 +240,16 @@
         {
           "method": "GET",
           "path": "/v1/schedule?start_date=${today}&end_date=${tomorrow}&timezone=UTC",
-          "headers": ["${auth_header}"]
+          "headers": [
+            "${auth_header}"
+          ]
         },
         {
           "method": "GET",
           "path": "/v1/records/feeding",
-          "headers": ["${auth_header}"]
+          "headers": [
+            "${auth_header}"
+          ]
         }
       ]
     },
@@ -103,7 +260,9 @@
         {
           "method": "POST",
           "path": "/v1/agent/threads",
-          "headers": ["${auth_header}"],
+          "headers": [
+            "${auth_header}"
+          ],
           "body": {
             "title": "Smoke agent thread"
           },
@@ -114,7 +273,10 @@
         {
           "method": "POST",
           "path": "/v1/agent/runs",
-          "headers": ["${auth_header}", "${idempotency_header}"],
+          "headers": [
+            "${auth_header}",
+            "${idempotency_header}"
+          ],
           "body": {
             "thread_id": "${thread_id}",
             "message": "Create a smoke-test run without external side effects.",
@@ -132,7 +294,9 @@
         {
           "method": "GET",
           "path": "/v1/agent/threads/${thread_id}/history?limit=20",
-          "headers": ["${auth_header}"],
+          "headers": [
+            "${auth_header}"
+          ],
           "assertions": [
             "returns only the authenticated owner conversation",
             "items are chronological and next_before_sequence pages backward"
@@ -141,19 +305,30 @@
         {
           "method": "GET",
           "path": "/v1/agent/runs/${run_id}/events",
-          "headers": ["${auth_header}"]
+          "headers": [
+            "${auth_header}"
+          ]
         },
         {
           "method": "GET",
           "path": "/v1/agent/runs/${run_id}/stream?after_sequence=0&limit=200",
-          "headers": ["${auth_header}"],
-          "assertions": ["no token query parameter"]
+          "headers": [
+            "${auth_header}"
+          ],
+          "assertions": [
+            "no token query parameter"
+          ]
         },
         {
           "method": "GET",
           "path": "/v1/agent/runs/${run_id}/stream?after_sequence=0&limit=200&follow=true&poll_interval_seconds=0.5&max_wait_seconds=1",
-          "headers": ["${auth_header}"],
-          "assertions": ["no token query parameter", "returns persisted application events only"]
+          "headers": [
+            "${auth_header}"
+          ],
+          "assertions": [
+            "no token query parameter",
+            "returns persisted application events only"
+          ]
         }
       ]
     },
@@ -164,7 +339,9 @@
         {
           "method": "POST",
           "path": "/v1/speech/transcribe-chunk",
-          "headers": ["${auth_header}"],
+          "headers": [
+            "${auth_header}"
+          ],
           "multipart": {
             "file": {
               "filename": "speech.wav",
@@ -172,13 +349,20 @@
               "body": "voice smoke"
             }
           },
-          "assertions": ["returns text field or stable voice_provider_disabled error"]
+          "assertions": [
+            "returns text field or stable voice_provider_disabled error"
+          ]
         },
         {
           "method": "GET",
           "path": "/v1/realtime-voice-stream?text=hello",
-          "headers": ["${auth_header}"],
-          "assertions": ["no token query parameter", "returns audio/pcm or stable voice_provider_disabled error"]
+          "headers": [
+            "${auth_header}"
+          ],
+          "assertions": [
+            "no token query parameter",
+            "returns audio/pcm or stable voice_provider_disabled error"
+          ]
         }
       ]
     }

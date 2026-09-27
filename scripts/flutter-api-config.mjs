@@ -1,10 +1,12 @@
 #!/usr/bin/env node
+import { readFileSync } from "node:fs";
 import { isIP } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const PRODUCT_API_DEFINE = "MOMCOZY_API_BASE_URL";
 export const AGENT_API_DEFINE = "MOMCOZY_AGENT_API_BASE_URL";
+export const INVITE_LOGIN_DEFINE = "MOMCOZY_INTERNAL_INVITE_LOGIN";
 export const DEFAULT_LOCAL_PRODUCT_API_URL = "http://127.0.0.1:8769";
 export const DEFAULT_LOCAL_AGENT_API_URL = "http://127.0.0.1:8010";
 
@@ -95,6 +97,35 @@ export function assertNoReservedApiDartDefines(
         `${sourceName} must not include ${define.name}; use the first-class environment variable instead.`,
       );
     }
+  }
+}
+
+export function assertLegacyInviteDartDefines(dartDefines) {
+  const parsedDefines = parseDartDefines(dartDefines);
+  if (parsedDefines.some((define) => define.name === "MOMCOZY_ENV")) {
+    throw new Error("MOMCOZY_ENV is fixed to staging in A release builds.");
+  }
+  const values = parsedDefines
+    .filter((define) => define.name === INVITE_LOGIN_DEFINE);
+  if (values.length !== 1 || values[0].value !== "true") {
+    throw new Error(`legacy-staging requires exactly one ${INVITE_LOGIN_DEFINE}=true.`);
+  }
+}
+
+export function assertLegacyReleaseLane(lane) {
+  if (String(lane || "").trim() !== "legacy-staging") {
+    throw new Error("A staging APK requires MOMCOZY_RELEASE_LANE=legacy-staging.");
+  }
+}
+
+export function assertLegacyPublishedUrls({ productUrl, agentUrl }) {
+  const config = JSON.parse(readFileSync(
+    path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../config/environments/staging.json"),
+    "utf8",
+  ));
+  if (productUrl !== config.MOMCOZY_API_BASE_URL ||
+      agentUrl !== config.MOMCOZY_AGENT_API_BASE_URL) {
+    throw new Error("A publication must use both URLs from config/environments/staging.json, not a B target.");
   }
 }
 
@@ -226,10 +257,21 @@ if (isMain) {
   }
   try {
     const options = parseCliArgs(process.argv.slice(2));
-    resolveFlutterApiConfig(options);
+    const resolved = resolveFlutterApiConfig(options);
+    if (process.env.MOMCOZY_ENFORCE_LEGACY_TARGET === "1") {
+      assertLegacyPublishedUrls(resolved);
+    }
     assertNoReservedApiDartDefines(options.extraDartDefines, {
       sourceName: "MOMCOZY_EXTRA_DART_DEFINES",
     });
+    if (process.env.MOMCOZY_RELEASE_LANE === "legacy-staging") {
+      const extras = parseDartDefines(options.extraDartDefines);
+      for (const name of [INVITE_LOGIN_DEFINE, "MOMCOZY_ENV"]) {
+        if (extras.some((define) => define.name === name)) {
+          throw new Error(`MOMCOZY_EXTRA_DART_DEFINES must not include ${name}; the A release wrapper sets it.`);
+        }
+      }
+    }
   } catch (error) {
     console.error(`FAIL ${error.message}`);
     process.exit(1);

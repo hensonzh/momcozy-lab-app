@@ -8,8 +8,8 @@
   "source": {
     "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
     "fileUrl": "https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/",
-    "version": "Onboarding · App states page, updated and independently reopened 2026-09-26",
-    "exportedAt": "2026-09-26T00:00:00+08:00"
+    "version": "Onboarding · App states page, multi-select feeding methods; App gate default-on 2026-09-27",
+    "exportedAt": "2026-09-27T00:00:00+08:00"
   },
   "tokens": {
     "color": {
@@ -74,10 +74,17 @@
           "figmaNodeId": "871:46",
           "status": "referenceMissing",
           "fixture": {
-            "label": "Tell us about your delivery",
+            "label": "Tell us about this delivery",
             "step": 2,
             "totalSteps": 3,
-            "deliveryDateRequired": true
+            "deliveryDateRequired": true,
+            "gestationWeeksRequired": true,
+            "gestationWeeksRange": "20–45",
+            "gestationDaysRequired": true,
+            "gestationDaysRange": "0–6",
+            "deliveryDateLabel": "Date of this delivery",
+            "gestationWeeksLabel": "Gestational weeks at this delivery",
+            "gestationInputsAlignment": "same top and bottom, including when labels wrap"
           }
         },
         {
@@ -85,11 +92,21 @@
           "figmaNodeId": "871:45",
           "status": "referenceMissing",
           "fixture": {
-            "label": "How was your delivery?",
+            "label": "How was this delivery?",
             "step": 3,
             "totalSteps": 3,
             "previousCesareanLabel": "Before this delivery, had you ever had a cesarean birth?",
-            "previousCesareanVisibleWhen": "deliveryCount > 1"
+            "previousCesareanVisibleWhen": "deliveryCount > 1",
+            "babyCountLabel": "How many babies were born in this delivery?",
+            "feedingMethodsLabel": "Current feeding methods · Select all that apply",
+            "feedingMethodsRequired": true,
+            "feedingMethodsOptions": [
+              "direct",
+              "expressed",
+              "formula",
+              "unknown"
+            ],
+            "feedingMethodsRule": "unknown is exclusive; direct, expressed and formula can combine"
           }
         },
         {
@@ -99,7 +116,16 @@
           "fixture": {
             "label": "Profile could not be saved. Try again.",
             "step": 3,
-            "totalSteps": 3
+            "totalSteps": 3,
+            "feedingMethodsLabel": "Current feeding methods · Select all that apply",
+            "feedingMethodsRequired": true,
+            "feedingMethodsOptions": [
+              "direct",
+              "expressed",
+              "formula",
+              "unknown"
+            ],
+            "feedingMethodsRule": "unknown is exclusive; direct, expressed and formula can combine"
           }
         }
       ],
@@ -223,6 +249,32 @@
         "birth-error"
       ],
       "decision": "Ask for the numbered delivery on step 1. Only show the previous-cesarean question when deliveryCount > 1; first delivery persists false without asking. The 390px repeat-delivery variant remains a separate local screenshot. The four visible Figma frames 03–06 now display the updated 390×844 three-step images; old embedded four-step screenshots were hidden. This is an image-layer sync, not an independent pixel-parity or complete profile-field audit."
+    },
+    {
+      "reason": "2026-09-26 user noticed that gestational weeks and days were omitted from the three-step onboarding screenshots; current feeding method was also missing.",
+      "affectedStates": [
+        "delivery",
+        "birth",
+        "birth-error"
+      ],
+      "decision": "Step 2 collects delivery date plus gestational weeks (20–45) and additional days (0–6, including explicit zero). Step 3 collects current feeding method with an explicit Not sure yet option. App and local Backend now validate and persist both; Figma frames 04–06 use new 390×844 App screenshots. Older v2 image layers are hidden. No independent Figma pixel export or online App/Backend release is claimed."
+    },
+    {
+      "reason": "2026-09-26 user feedback: align gestational weeks/days inputs and explicitly identify the current delivery in steps 2 and 3.",
+      "affectedStates": [
+        "delivery",
+        "birth",
+        "birth-error"
+      ],
+      "decision": "The two gestation text fields share top/bottom alignment even when their labels wrap. Step titles and date, weeks, delivery method, and baby-count copy clarify that they refer to this delivery. Refresh 390×844 reference bitmaps; no workflow or data-contract changes."
+    },
+    {
+      "reason": "2026-09-27 product decision: enable onboarding by default on a fresh user dataset and unify onboarding + Me feeding as multi-select.",
+      "affectedStates": [
+        "birth",
+        "birth-error"
+      ],
+      "decision": "Replace step-3 single select with four feeding chips matching Me. Persist one canonical feeding_methods list, derive maternal/current-baby mode; release reset stays off. Figma frames 05–06 use refreshed 390×844 App screenshot layers after independently reopened visual verification; no old-account migration or data purge performed."
     }
   ]
 }

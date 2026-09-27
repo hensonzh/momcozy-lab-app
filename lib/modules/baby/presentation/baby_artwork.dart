@@ -146,34 +146,11 @@ class BabyKnowledgeBanner extends StatelessWidget {
 }
 
 class BabySectionHeader extends StatelessWidget {
-  const BabySectionHeader({
-    super.key,
-    required this.title,
-    required this.onTap,
-  });
+  const BabySectionHeader({super.key, required this.title});
   final String title;
-  final VoidCallback onTap;
   @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      Expanded(
-        child: Text(
-          title,
-          style: BabyDesign.text(18, line: 25, weight: FontWeight.w700),
-        ),
-      ),
-      SizedBox(
-        width: 68,
-        height: 44,
-        child: TextButton(
-          onPressed: onTap,
-          style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            textStyle: BabyDesign.text(13, line: 18, weight: FontWeight.w700),
-          ),
-          child: const Text('Log'),
-        ),
-      ),
-    ],
+  Widget build(BuildContext context) => Text(
+    title,
+    style: BabyDesign.text(18, line: 25, weight: FontWeight.w700),
   );
 }

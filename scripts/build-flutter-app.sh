@@ -28,7 +28,8 @@ Environment overrides:
   MOMCOZY_APK_FLAVOR             local | staging | production (default: staging).
   MOMCOZY_APK_MODE               debug | release (default: release).
   MOMCOZY_EXTRA_DART_DEFINES     Extra comma-separated KEY=VALUE definitions;
-                                  the two API URL keys are reserved.
+                                  the two API URL keys and A invite flag are reserved.
+  MOMCOZY_RELEASE_LANE           Must be legacy-staging for staging APK publication.
   MOMCOZY_SKIP_NPM_CI            Set to 1 to skip npm ci.
   MOMCOZY_SKIP_UPLOAD            Set to 1 to build without publishing to GitHub.
   MOMCOZY_REQUIRE_RELEASE_SIGNING
@@ -65,6 +66,16 @@ download_base_url="${MOMCOZY_DOWNLOAD_BASE_URL:-${DEFAULT_DOWNLOAD_BASE_URL}}"
 github_release_repo="${MOMCOZY_GITHUB_RELEASE_REPO:-${DEFAULT_GITHUB_RELEASE_REPO}}"
 apk_flavor="${MOMCOZY_APK_FLAVOR:-staging}"
 apk_mode="${MOMCOZY_APK_MODE:-release}"
+if [[ "${apk_flavor}" == "staging" ]]; then
+  export MOMCOZY_RELEASE_LANE="${MOMCOZY_RELEASE_LANE:-legacy-staging}"
+  if [[ -n "${MOMCOZY_APK_DART_DEFINES:-}" && "${MOMCOZY_APK_DART_DEFINES}" != "MOMCOZY_INTERNAL_INVITE_LOGIN=true" ]]; then
+    printf 'MOMCOZY_APK_DART_DEFINES must be MOMCOZY_INTERNAL_INVITE_LOGIN=true; put other defines in MOMCOZY_EXTRA_DART_DEFINES.\n' >&2
+    exit 2
+  fi
+  export MOMCOZY_APK_DART_DEFINES="MOMCOZY_INTERNAL_INVITE_LOGIN=true${MOMCOZY_EXTRA_DART_DEFINES:+,${MOMCOZY_EXTRA_DART_DEFINES}}"
+else
+  export MOMCOZY_APK_DART_DEFINES="${MOMCOZY_EXTRA_DART_DEFINES:-}"
+fi
 skip_upload="${MOMCOZY_SKIP_UPLOAD:-0}"
 pages_namespace="staging"
 
@@ -90,11 +101,17 @@ if [[ "${apk_flavor}" == "staging" && "${download_base_url%/}" != */"${pages_nam
   download_base_url="${download_base_url%/}/${pages_namespace}"
 fi
 
+if [[ "${apk_flavor}" == "staging" && "${check_config}" != "1" && "${skip_upload}" == "0" ]]; then
+  export MOMCOZY_ENFORCE_LEGACY_TARGET=1
+  export MOMCOZY_REQUIRE_RELEASE_SIGNING=1
+fi
+
 node "${SCRIPT_DIR}/flutter-api-config.mjs" validate \
   --flavor "${apk_flavor}" \
   --product-url "${api_base_url}" \
   --agent-url "${agent_api_base_url}" \
   --extra-dart-defines "${MOMCOZY_EXTRA_DART_DEFINES:-}"
+node "${SCRIPT_DIR}/build-flutter-apk-download-site.mjs" --check-config
 
 if [[ "${check_config}" == "1" ]]; then
   printf 'Flutter build config is valid.\n'
@@ -102,6 +119,15 @@ if [[ "${check_config}" == "1" ]]; then
   printf '  Agent Runtime API:   %s\n' "${agent_api_base_url}"
   printf '  Variant:     %s %s\n' "${apk_flavor}" "${apk_mode}"
   exit 0
+fi
+
+if [[ "${skip_upload}" == "0" && "${apk_flavor}" == "staging" ]]; then
+  for signing_name in MOMCOZY_FLUTTER_RELEASE_STORE_FILE MOMCOZY_FLUTTER_RELEASE_STORE_PASSWORD MOMCOZY_FLUTTER_RELEASE_KEY_ALIAS MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD; do
+    if [[ -z "${!signing_name:-}" ]]; then
+      printf 'A publication requires complete release signing; missing %s.\n' "${signing_name}" >&2
+      exit 2
+    fi
+  done
 fi
 
 if [[ "${MOMCOZY_SKIP_NPM_CI:-0}" != "1" ]]; then
@@ -112,7 +138,6 @@ export MOMCOZY_DOWNLOAD_BASE_URL="${download_base_url}"
 export MOMCOZY_GITHUB_RELEASE_REPO="${github_release_repo}"
 export MOMCOZY_API_BASE_URL="${api_base_url}"
 export MOMCOZY_AGENT_API_BASE_URL="${agent_api_base_url}"
-export MOMCOZY_APK_DART_DEFINES="${MOMCOZY_EXTRA_DART_DEFINES:-}"
 export MOMCOZY_APK_FLAVOR="${apk_flavor}"
 export MOMCOZY_APK_MODE="${apk_mode}"
 

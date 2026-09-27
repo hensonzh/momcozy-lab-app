@@ -8,6 +8,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/core/privacy/log_redactor.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/agent_conversation_api_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/data/pump_workstate_api_repository.dart';
 import 'package:momcozy_flutter_app/features/pump_session/domain/pump_workstate.dart';
@@ -184,11 +185,29 @@ class StagingSmokeRunner {
   }
 }
 
-List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(StagingSmokeConfig config) {
+List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(
+  StagingSmokeConfig config,
+) {
   final headers = const {'X-Momcozy-Client': 'flutter-test-smoke'};
   final token = config.session.accessToken;
   final jsonTransport = IoApiJsonTransport(
     baseUri: config.apiBaseUri,
+    token: token,
+    headers: headers,
+  );
+  const runsPath = '/v1/agent/runs';
+  if (!config.agentRunsUri.path.endsWith(runsPath)) {
+    throw StateError(
+      'Staging Agent runs URI is not a /v1/agent/runs endpoint.',
+    );
+  }
+  final agentJsonTransport = IoApiJsonTransport(
+    baseUri: config.agentRunsUri.replace(
+      path: config.agentRunsUri.path.substring(
+        0,
+        config.agentRunsUri.path.length - runsPath.length,
+      ),
+    ),
     token: token,
     headers: headers,
   );
@@ -216,6 +235,9 @@ List<StagingSmokeProbe> buildDefaultStagingSmokeProbes(StagingSmokeConfig config
       ),
     ),
     _AgentSseProbe(config, agentEndpoint),
+    _AgentConversationHistoryProbe(
+      AgentConversationApiRepository(transport: agentJsonTransport),
+    ),
   ];
 }
 
@@ -371,6 +393,31 @@ class _MediaUploadProbe implements StagingSmokeProbe {
       if (fileId != null && fileId.isNotEmpty) {
         await repository.deleteFile(fileId: fileId);
       }
+    }
+  }
+}
+
+class _AgentConversationHistoryProbe implements StagingSmokeProbe {
+  const _AgentConversationHistoryProbe(this.repository);
+
+  final AgentConversationApiRepository repository;
+
+  @override
+  String get name => 'agent conversation history';
+
+  @override
+  bool get requiresMutation => false;
+
+  @override
+  bool get requiresAgentStream => true;
+
+  @override
+  Future<void> run() async {
+    final history = await repository.loadLatestConversation();
+    if (history == null) {
+      throw StateError(
+        'Agent completed without recoverable conversation history.',
+      );
     }
   }
 }

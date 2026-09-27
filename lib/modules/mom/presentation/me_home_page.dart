@@ -115,13 +115,27 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   runSpacing: 4,
                   children: [
-                    Text(
-                      '$greeting${name.isEmpty ? '' : ', $name'}',
-                      style: MeDesign.text(
-                        20,
-                        weight: FontWeight.w700,
-                        line: 34,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          greeting,
+                          style: MeDesign.text(
+                            20,
+                            weight: FontWeight.w700,
+                            line: 34,
+                          ),
+                        ),
+                        if (name.isNotEmpty)
+                          Text(
+                            name,
+                            style: MeDesign.text(
+                              20,
+                              weight: FontWeight.w700,
+                              line: 34,
+                            ),
+                          ),
+                      ],
                     ),
                     TextButton(
                       onPressed: () => page(MeProfilePage(controller: c)),

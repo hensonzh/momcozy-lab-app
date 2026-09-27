@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import date
+
 import json
 import unittest
 from pathlib import Path
@@ -7,7 +9,7 @@ from unittest.mock import call, patch
 from sys import path
 
 path.insert(0, str(Path(__file__).resolve().parents[1]))
-from local_dev_refresh_emulator import account_from_output, center_of, find_node, is_login_form, latin_keyboard, nodes_from_xml, type_text, wait_for, wait_for_field_focus
+from local_dev_refresh_emulator import account_from_output, center_of, find_node, is_login_form, latin_keyboard, nodes_from_xml, type_text, wait_for, wait_for_field_focus, local_onboarding_payload, ensure_onboarding
 
 
 UI = '''<hierarchy><node class="android.view.View" content-desc="Welcome back" bounds="[0,0][100,100]"/>
@@ -62,6 +64,43 @@ class RefreshEmulatorTest(unittest.TestCase):
         with patch("local_dev_refresh_emulator.ui_nodes", return_value=focused):
             node = wait_for_field_focus("emulator-5554", "Email")
         self.assertEqual(node.get("focused"), "true")
+
+    def test_local_profile_confirmation_is_isolated_and_idempotent(self) -> None:
+        baby_id = "88f0e03b-6f87-43cb-b485-6339214a8f93"
+        calls = []
+
+        def request(method, path, token, payload=None):
+            calls.append((method, path, payload))
+            if path == "/v1/onboarding/me" and len(calls) == 1:
+                return {"status": "required", "profile_confirmed": False}
+            if path == "/v1/babies":
+                return {"items": [{"id": baby_id}]}
+            return {"status": "completed", "profile_confirmed": True, "primary_infant_id": baby_id}
+
+        with patch("local_dev_refresh_emulator.request_product_json", side_effect=request):
+            self.assertEqual(ensure_onboarding("token"), baby_id)
+        self.assertEqual([path for _, path, _ in calls], [
+            "/v1/onboarding/me", "/v1/onboarding/me/profile", "/v1/onboarding/me", "/v1/babies",
+        ])
+        self.assertEqual(calls[1][2]["feeding_methods"], ["direct"])
+        self.assertEqual(calls[1][2]["infant_count"], 1)
+
+    def test_confirmed_account_is_not_rewritten(self) -> None:
+        baby_id = "88f0e03b-6f87-43cb-b485-6339214a8f93"
+        with patch("local_dev_refresh_emulator.request_product_json", side_effect=[
+            {"status": "completed", "profile_confirmed": True, "primary_infant_id": baby_id},
+            {"items": [{"id": baby_id}]},
+        ]) as request:
+            self.assertEqual(ensure_onboarding("token"), baby_id)
+        self.assertEqual(request.call_args_list, [
+            call("GET", "/v1/onboarding/me", "token"),
+            call("GET", "/v1/babies", "token"),
+        ])
+
+    def test_local_onboarding_date_is_not_future_in_utc(self) -> None:
+        payload = local_onboarding_payload()
+        self.assertLessEqual(payload["delivery_date"], date.today().isoformat())
+        self.assertEqual(payload["client_timezone_offset_minutes"], 0)
 
     def test_account_result_has_unique_local_email_and_safe_input_password(self) -> None:
         data = json.dumps({

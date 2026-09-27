@@ -73,3 +73,6 @@ app.*.map.json
 
 # Environment-specific mobile configuration
 /config/environments/production.json
+
+# B target declaration (approved URLs/identities are supplied per operator)
+/config/release-lanes/north-america-staging.json

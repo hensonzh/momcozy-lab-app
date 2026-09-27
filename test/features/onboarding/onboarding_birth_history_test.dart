@@ -109,6 +109,18 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('onboarding-gestation-weeks')),
+        '39',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('onboarding-gestation-days')),
+        '2',
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('onboarding-postpartum-delivery-continue')),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(
         find.byKey(const ValueKey('onboarding-postpartum-delivery-continue')),
       );
@@ -137,6 +149,12 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Yes').last);
       await tester.pumpAndSettle();
+      for (final method in ['direct', 'formula']) {
+        final chip = find.byKey(ValueKey('onboarding-feeding-$method'));
+        await tester.ensureVisible(chip);
+        await tester.tap(chip);
+        await tester.pumpAndSettle();
+      }
       await tester.ensureVisible(
         find.byKey(const ValueKey('onboarding-postpartum-save')),
       );
@@ -146,6 +164,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(transport.lastBody?['delivery_count'], 2);
       expect(transport.lastBody?['has_cesarean_history'], true);
+      expect(transport.lastBody?['gestation_weeks'], 39);
+      expect(transport.lastBody?['gestation_days'], 2);
+      expect(transport.lastBody?['feeding_methods'], ['direct', 'formula']);
     });
   }
 }

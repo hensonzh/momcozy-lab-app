@@ -38,7 +38,9 @@ Update flow for API changes:
 - `POST /v1/auth/invite-login`
 - `POST /v1/auth/register` (email only; request verification code)
 - `POST /v1/auth/verify-registration-code` (check code, no session)
-- `POST /v1/auth/verify-email` (set password and consume code)
+- `POST /v1/auth/verify-email` (set password with required confirmation and consume code)
+- `POST /v1/auth/forgot-password` and `POST /v1/auth/reset-password` (matching confirmation required)
+- `POST /v1/auth/change-password` (bearer session + current password; revokes all sessions)
 - `POST /v1/auth/signup` (legacy compatibility)
 - `POST /v1/auth/login`
 - `POST /v1/auth/refresh`

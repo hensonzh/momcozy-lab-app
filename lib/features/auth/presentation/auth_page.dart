@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
@@ -13,12 +14,13 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'invite_auth_page.dart';
 import 'auth_login_chrome.dart';
 
+enum _RegistrationRecovery { authenticated, notCommitted, unknown }
+
 enum _AuthStep {
   login,
   register,
   verifyRegistration,
   setPassword,
-  verify,
   forgot,
   reset,
 }
@@ -53,6 +55,8 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
   _AuthStep _step = _AuthStep.login;
   bool _busy = false;
   bool _showPassword = false;
+  bool _registrationResultUnknown = false;
+  bool _resetResultUnknown = false;
   String? _message;
   String? _error;
   DateTime? _resendAt;
@@ -93,10 +97,12 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
       _error = null;
       _message = message;
       if (!preserveCode) _code.clear();
-      if (step == _AuthStep.register || step == _AuthStep.verifyRegistration) {
+      if (step != _AuthStep.setPassword) {
         _password.clear();
         _confirmPassword.clear();
+        _registrationResultUnknown = false;
       }
+      if (step != _AuthStep.reset) _resetResultUnknown = false;
       _showPassword = false;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -109,7 +115,6 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
     _AuthStep.register => 'Create your account',
     _AuthStep.verifyRegistration => 'Verify your email',
     _AuthStep.setPassword => 'Set your password',
-    _AuthStep.verify => 'Verify your email',
     _AuthStep.forgot => 'Forgot password?',
     _AuthStep.reset => 'Reset your password',
   };
@@ -118,7 +123,6 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
     _AuthStep.register => 'Send verification code',
     _AuthStep.verifyRegistration => 'Continue',
     _AuthStep.setPassword => 'Create account',
-    _AuthStep.verify => 'Verify and continue',
     _AuthStep.forgot => 'Send reset code',
     _AuthStep.reset => 'Reset password',
   };
@@ -134,15 +138,17 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
       );
     }
     final usesCode =
-        _step == _AuthStep.verify ||
-        _step == _AuthStep.verifyRegistration ||
-        _step == _AuthStep.reset;
+        _step == _AuthStep.verifyRegistration || _step == _AuthStep.reset;
     final usesPassword =
         _step == _AuthStep.login ||
-        _step == _AuthStep.verify ||
         _step == _AuthStep.setPassword ||
         _step == _AuthStep.reset;
     final isLogin = _step == _AuthStep.login;
+    final sessionExpired =
+        isLogin &&
+        widget.runtimeController.currentSession.status ==
+            MomCozySessionStatus.expired;
+    final hasLoginNotice = sessionExpired || _message != null || _error != null;
     final theme = authLoginTheme(Theme.of(context));
     return Theme(
       data: theme,
@@ -183,8 +189,6 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                               'Enter the code we sent before setting your password.',
                             _AuthStep.setPassword =>
                               'Choose a password for your verified email.',
-                            _AuthStep.verify =>
-                              'Enter the code we sent to your email.',
                             _AuthStep.forgot =>
                               'We\'ll send a code to help you reset your password.',
                             _AuthStep.reset =>
@@ -194,35 +198,27 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (_step == _AuthStep.login &&
-                                widget
-                                        .runtimeController
-                                        .currentSession
-                                        .status ==
-                                    MomCozySessionStatus.expired)
-                              const Padding(
-                                padding: EdgeInsets.only(bottom: 14),
-                                child: AuthNotice(
-                                  'Your session expired. Please sign in again.',
+                            if (!isLogin) ...[
+                              if (_message != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 14),
+                                  child: AuthNotice(
+                                    _message!,
+                                    textKey: const ValueKey(
+                                      'auth-success-text',
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            if (_message != null)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 14),
-                                child: AuthNotice(
-                                  _message!,
-                                  textKey: const ValueKey('auth-success-text'),
+                              if (_error != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 14),
+                                  child: AuthNotice(
+                                    _error!,
+                                    error: true,
+                                    textKey: const ValueKey('auth-error-text'),
+                                  ),
                                 ),
-                              ),
-                            if (_error != null)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 14),
-                                child: AuthNotice(
-                                  _error!,
-                                  error: true,
-                                  textKey: const ValueKey('auth-error-text'),
-                                ),
-                              ),
+                            ],
                             _AuthField(
                               label: isLogin ? 'Email' : 'Email address',
                               showLabel: !isLogin,
@@ -261,7 +257,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                             if (usesCode) ...[
                               const SizedBox(height: MomCozySpacing.section),
                               _AuthField(
-                                label: '8-digit email code',
+                                label: 'verification code',
                                 child: TextFormField(
                                   key: const ValueKey('auth-code-field'),
                                   controller: _code,
@@ -302,13 +298,20 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                   obscureText: !_showPassword,
                                   autocorrect: false,
                                   enableSuggestions: false,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction:
+                                      _step == _AuthStep.setPassword ||
+                                          _step == _AuthStep.reset
+                                      ? TextInputAction.next
+                                      : TextInputAction.done,
                                   style: authReferenceText(16, height: 24 / 16),
                                   textAlignVertical: TextAlignVertical.center,
                                   onChanged: isLogin
                                       ? (_) => setState(() {})
                                       : null,
-                                  onFieldSubmitted: _busy
+                                  onFieldSubmitted:
+                                      _busy ||
+                                          _step == _AuthStep.setPassword ||
+                                          _step == _AuthStep.reset
                                       ? null
                                       : (_) => _submit(),
                                   autofillHints: [
@@ -386,7 +389,8 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                 ),
                               ),
                             ],
-                            if (_step == _AuthStep.setPassword) ...[
+                            if (_step == _AuthStep.setPassword ||
+                                _step == _AuthStep.reset) ...[
                               const SizedBox(height: MomCozySpacing.section),
                               _AuthField(
                                 label: 'Confirm password',
@@ -399,6 +403,10 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                   obscureText: true,
                                   autocorrect: false,
                                   enableSuggestions: false,
+                                  textInputAction: TextInputAction.done,
+                                  onFieldSubmitted: _busy
+                                      ? null
+                                      : (_) => _submit(),
                                   decoration: authReferenceInputDecoration(
                                     context,
                                     hintText: 'Enter your password again',
@@ -457,25 +465,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                           _email.text.trim().isEmpty)
                                   ? null
                                   : _submit,
-                              style: FilledButton.styleFrom(
-                                minimumSize: const Size.fromHeight(56),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                  horizontal: MomCozySpacing.card,
-                                ),
-                                backgroundColor: authLoginButton,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                foregroundColor: MomCozyColors.raised,
-                                textStyle: authReferenceText(
-                                  16,
-                                  color: Colors.white,
-                                  weight: FontWeight.w600,
-                                  height: 24 / 16,
-                                ),
-                              ),
+                              style: authLoginButtonStyle(),
                               child: _busy
                                   ? const SizedBox.square(
                                       dimension: MomCozyIconSizes.medium,
@@ -485,8 +475,28 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                     )
                                   : Text(_submitLabel),
                             ),
-                            if (_step == _AuthStep.login) ...[
-                              const SizedBox(height: 72),
+                            if (isLogin) ...[
+                              if (hasLoginNotice) ...[
+                                const SizedBox(height: 16),
+                                if (sessionExpired)
+                                  const AuthNotice(
+                                    'Your session expired. Please sign in again.',
+                                  ),
+                                if (_message != null)
+                                  AuthNotice(
+                                    _message!,
+                                    textKey: const ValueKey(
+                                      'auth-success-text',
+                                    ),
+                                  ),
+                                if (_error != null)
+                                  AuthNotice(
+                                    _error!,
+                                    error: true,
+                                    textKey: const ValueKey('auth-error-text'),
+                                  ),
+                              ],
+                              SizedBox(height: hasLoginNotice ? 28 : 72),
                               Wrap(
                                 spacing: 12,
                                 alignment: WrapAlignment.center,
@@ -537,18 +547,6 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                                         : 'Request another code',
                                   ),
                                 ),
-                              if (_step == _AuthStep.verify)
-                                TextButton(
-                                  key: const ValueKey(
-                                    'auth-verify-forgot-button',
-                                  ),
-                                  onPressed: _busy
-                                      ? null
-                                      : () => _navigate(_AuthStep.forgot),
-                                  child: const Text(
-                                    'Already registered? Reset password',
-                                  ),
-                                ),
                               if (_step == _AuthStep.setPassword)
                                 TextButton(
                                   onPressed: _busy
@@ -597,17 +595,16 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
     setState(() {
       _busy = true;
       _error = null;
+      if (_step == _AuthStep.verifyRegistration || _step == _AuthStep.reset) {
+        _message = null;
+      }
     });
     try {
       await action();
     } catch (error) {
       if (mounted) {
         setState(() {
-          if (_step == _AuthStep.verifyRegistration &&
-              error is ApiHttpException &&
-              error.errorCode == 'invalid_or_expired_code') {
-            _message = null;
-          }
+          _message = null;
           _error = accountAuthErrorText(error);
         });
       }
@@ -621,6 +618,10 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
   }
 
   Future<void> _submit() async {
+    if ((_step == _AuthStep.verifyRegistration || _step == _AuthStep.reset) &&
+        _message != null) {
+      setState(() => _message = null);
+    }
     if (!(_form.currentState?.validate() ?? false)) return;
     await _run(() async {
       final api = widget.runtimeController.runtime.authRepository;
@@ -633,25 +634,52 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
             _navigate(
               _AuthStep.verifyRegistration,
               message:
-                  'Check your inbox and spam folder for an 8-digit code. Codes expire in 15 minutes. Already registered? Sign in or reset your password.',
+                  'Check your inbox and spam folder for an 8-digit code. Codes expire in 15 minutes.',
             );
           }
         case _AuthStep.verifyRegistration:
           await api.checkRegistrationCode(email: email, code: _code.text);
           if (mounted) _navigate(_AuthStep.setPassword, preserveCode: true);
         case _AuthStep.setPassword:
+          final deviceId = await widget.authDeviceIdStore
+              .readOrCreateDeviceId();
+          if (_registrationResultUnknown) {
+            final recovery = await _recoverRegistration(
+              api,
+              email,
+              password,
+              deviceId,
+            );
+            if (recovery == _RegistrationRecovery.authenticated) return;
+            if (recovery == _RegistrationRecovery.unknown) {
+              _showUnknownRegistrationMessage();
+              return;
+            }
+          }
+          MomCozyAuthTokenResponse? issued;
           try {
-            await _accept(
-              await api.verifyEmail(
-                email: email,
-                code: _code.text,
-                password: password,
-                confirmPassword: _confirmPassword.text,
-                deviceId: await widget.authDeviceIdStore.readOrCreateDeviceId(),
-              ),
+            issued = await api.verifyEmail(
+              email: email,
+              code: _code.text,
+              password: password,
+              confirmPassword: _confirmPassword.text,
+              deviceId: deviceId,
             );
           } on ApiHttpException catch (error) {
             if (error.errorCode != 'invalid_or_expired_code') rethrow;
+            if (_registrationResultUnknown) {
+              // The timed-out request may still commit after our first login check.
+              // Never discard the password draft on a possibly raced code error.
+              final recovery = await _recoverRegistration(
+                api,
+                email,
+                password,
+                deviceId,
+              );
+              if (recovery == _RegistrationRecovery.authenticated) return;
+              _showUnknownRegistrationMessage();
+              return;
+            }
             if (mounted) {
               _navigate(
                 _AuthStep.verifyRegistration,
@@ -659,7 +687,14 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
                     'Code expired or invalid. Request another code and try again.',
               );
             }
+          } on TimeoutException {
+            await _recoverUnknownRegistration(api, email, password, deviceId);
+          } on ApiRequestTimeoutException {
+            await _recoverUnknownRegistration(api, email, password, deviceId);
+          } on IOException {
+            await _recoverUnknownRegistration(api, email, password, deviceId);
           }
+          if (issued != null) await _accept(issued);
         case _AuthStep.login:
           try {
             final tokens = await api.login(
@@ -670,25 +705,20 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
             await _accept(tokens);
           } on ApiHttpException catch (error) {
             if (error.errorCode != 'email_unverified') rethrow;
-            await api.resendVerification(email);
-            _startResendCooldown();
+            String? notice;
+            try {
+              await api.resendVerification(email);
+              _startResendCooldown();
+              notice =
+                  'Check your inbox and spam folder for an 8-digit code. Codes expire in 15 minutes.';
+            } catch (_) {
+              notice =
+                  'Could not request a new code. If you already have a valid code, enter it below; otherwise request another.';
+            }
             if (mounted) {
-              _navigate(
-                _AuthStep.verify,
-                message:
-                    'If verification is needed, check your inbox and spam folder for a code. You can request another code in 60 seconds.',
-              );
+              _navigate(_AuthStep.verifyRegistration, message: notice);
             }
           }
-        case _AuthStep.verify:
-          await _accept(
-            await api.verifyEmail(
-              email: email,
-              code: _code.text,
-              password: password,
-              deviceId: await widget.authDeviceIdStore.readOrCreateDeviceId(),
-            ),
-          );
         case _AuthStep.forgot:
           await api.forgotPassword(email);
           _password.clear();
@@ -701,12 +731,32 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
             );
           }
         case _AuthStep.reset:
-          await api.resetPassword(
-            email: email,
-            code: _code.text,
-            password: password,
-          );
+          try {
+            await api.resetPassword(
+              email: email,
+              code: _code.text,
+              password: password,
+              confirmPassword: _confirmPassword.text,
+            );
+          } on ApiHttpException catch (error) {
+            if (!_resetResultUnknown ||
+                error.errorCode != 'invalid_or_expired_code') {
+              rethrow;
+            }
+            _showUnknownResetMessage();
+            return;
+          } on TimeoutException {
+            _showUnknownResetMessage();
+            return;
+          } on ApiRequestTimeoutException {
+            _showUnknownResetMessage();
+            return;
+          } on IOException {
+            _showUnknownResetMessage();
+            return;
+          }
           _password.clear();
+          _confirmPassword.clear();
           if (mounted) {
             _navigate(
               _AuthStep.login,
@@ -714,6 +764,67 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
             );
           }
       }
+    });
+  }
+
+  Future<_RegistrationRecovery> _recoverRegistration(
+    MomCozyAuthApiRepository api,
+    String email,
+    String password,
+    String deviceId,
+  ) async {
+    late final MomCozyAuthTokenResponse tokens;
+    try {
+      tokens = await api.login(
+        email: email,
+        password: password,
+        deviceId: deviceId,
+      );
+    } on ApiHttpException catch (error) {
+      if (error.errorCode == 'authentication_required' ||
+          error.errorCode == 'email_unverified') {
+        return _RegistrationRecovery.notCommitted;
+      }
+      return _RegistrationRecovery.unknown;
+    } on TimeoutException {
+      return _RegistrationRecovery.unknown;
+    } on ApiRequestTimeoutException {
+      return _RegistrationRecovery.unknown;
+    } on IOException {
+      return _RegistrationRecovery.unknown;
+    }
+    await _accept(tokens);
+    return _RegistrationRecovery.authenticated;
+  }
+
+  Future<void> _recoverUnknownRegistration(
+    MomCozyAuthApiRepository api,
+    String email,
+    String password,
+    String deviceId,
+  ) async {
+    _registrationResultUnknown = true;
+    if (await _recoverRegistration(api, email, password, deviceId) ==
+        _RegistrationRecovery.authenticated) {
+      return;
+    }
+    _showUnknownRegistrationMessage();
+  }
+
+  void _showUnknownRegistrationMessage() {
+    if (!mounted) return;
+    setState(() {
+      _error =
+          'We could not confirm whether your account was created. Reconnect and try again, or sign in with the password you chose.';
+    });
+  }
+
+  void _showUnknownResetMessage() {
+    _resetResultUnknown = true;
+    if (!mounted) return;
+    setState(() {
+      _error =
+          'We could not confirm whether your password was reset. Try signing in with the new password. If it does not work, request another reset code.';
     });
   }
 
@@ -725,7 +836,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
       return;
     }
     final api = widget.runtimeController.runtime.authRepository;
-    if (_step == _AuthStep.verify || _step == _AuthStep.verifyRegistration) {
+    if (_step == _AuthStep.verifyRegistration) {
       await api.resendVerification(_email.text);
     } else {
       await api.forgotPassword(_email.text);
@@ -733,8 +844,9 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
     _startResendCooldown();
     if (mounted) {
       setState(() {
-        _message =
-            'If this email is eligible, check your inbox and spam folder. A request within 60 seconds may not send another code.';
+        _message = _step == _AuthStep.verifyRegistration
+            ? 'Check your inbox and spam folder for an 8-digit code. Codes expire in 15 minutes.'
+            : 'If this email is eligible, check your inbox and spam folder. A request within 60 seconds may not send another code.';
       });
     }
   });

@@ -34,11 +34,14 @@ moving backend `main` branches are not silently substituted during App CI.
 
 ## Compatibility gates
 
-The Product Backend snapshot does not yet expose every endpoint implemented by
-the newer product UI. Unsupported launch-blocking behavior is therefore off by
-default and must be enabled explicitly after test contract verification.
+The Product Backend snapshot does not yet expose every optional endpoint used
+by newer product UI. Onboarding is default-on for the new-user rollout and
+requires a matching Product Backend; unrelated extended Product routes remain
+off until their endpoints are verified.
 
-- `MOMCOZY_ENABLE_ONBOARDING`: enables the backend-driven onboarding gate.
+- `MOMCOZY_ENABLE_ONBOARDING`: defaults to true. Deploy the compatible Product
+  Backend before distributing the App; pass false only for an unsupported
+  local environment. This change does not delete or migrate existing data.
 - `MOMCOZY_ENABLE_RELEASE_RESET`: opts into the internal-test release reset,
   but the reset runs only when `MOMCOZY_ENABLE_ONBOARDING` is also true. The
   reset flag alone is intentionally inert.

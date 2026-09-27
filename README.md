@@ -153,24 +153,27 @@ Current Android package IDs:
 
 ## New-user onboarding
 
-Onboarding driven by Product Backend is capability-gated while the split Product Backend contract
-is being rolled out. It is disabled by default, so a missing onboarding endpoint
-cannot block login or the main App shell. Enable it only in a compatible
-environment with `--dart-define=MOMCOZY_ENABLE_ONBOARDING=true`. When enabled,
-authenticated users whose backend onboarding state is incomplete are held on
-the full-screen `/onboarding` route before the main App shell is available. The
-flow now collects the postpartum name and age, delivery date, optional delivery
-method and infant count in three steps. Saving the profile completes onboarding
-and opens the App directly. Portrait upload, avatar generation, review and the
-avatar task/banner routes have been retired. The client uses only
-`GET /v1/onboarding/me` and `PUT /v1/onboarding/me/profile` for this flow.
-The split Product Backend currently does not publish these onboarding endpoints,
-so keep the capability disabled until a compatible service is available.
+Onboarding is enabled by default for new authenticated users. A compatible
+Product Backend must be deployed before distributing this build; if a local or
+older Backend has no onboarding endpoints, opt out explicitly with
+`--dart-define=MOMCOZY_ENABLE_ONBOARDING=false` for that environment. The gate
+holds users with incomplete setup on the full-screen `/onboarding` route. In
+three steps it collects name, age, this delivery's date, gestational weeks/days,
+number of deliveries, delivery method, baby count, prior cesarean history (only
+when applicable), and **current feeding methods**. Direct breastfeeding,
+expressed breast milk and formula can be selected together; “Not sure yet” is
+exclusive. The Me profile edits the same multi-select field and keeps maternal
+and current-baby feeding summaries in sync. Saving completes onboarding and
+opens the App directly. Portrait/avatar creation is retired. Only
+`GET /v1/onboarding/me` and `PUT /v1/onboarding/me/profile` are used for setup.
+No old-account data migration or database wipe is performed by this App change;
+use a fresh user data set for rollout.
 
 The destructive internal-test release reset is disabled by default and runs
-only when **both** `MOMCOZY_ENABLE_ONBOARDING=true` and
-`MOMCOZY_ENABLE_RELEASE_RESET=true` are supplied as `--dart-define` values.
-Enabling the reset flag alone has no effect. With both flags enabled, startup
+only when onboarding is enabled (the default) **and**
+`MOMCOZY_ENABLE_RELEASE_RESET=true` is explicitly supplied as a `--dart-define`.
+The reset flag alone has no effect if onboarding is explicitly disabled. With
+both capabilities enabled, startup
 compares the installed runtime version and build number (for example
 `1.0.0+57`) with the last launched release. A changed release clears the local
 session, all user-scoped secure storage, product media caches,

@@ -36,7 +36,7 @@ class MomCozyAuthApiRepository {
     required String email,
     required String code,
     required String password,
-    String? confirmPassword,
+    required String confirmPassword,
     String deviceId = '',
   }) async {
     final body = <String, Object?>{
@@ -45,9 +45,7 @@ class MomCozyAuthApiRepository {
       'password': password,
       'device_id': deviceId,
     };
-    if (confirmPassword != null) {
-      body['confirm_password'] = confirmPassword;
-    }
+    body['confirm_password'] = confirmPassword;
     return MomCozyAuthTokenResponse.fromMap(
       await _post('/v1/auth/verify-email', body: body),
     );
@@ -65,6 +63,7 @@ class MomCozyAuthApiRepository {
     required String email,
     required String code,
     required String password,
+    required String confirmPassword,
   }) async {
     await _post(
       '/v1/auth/reset-password',
@@ -72,6 +71,22 @@ class MomCozyAuthApiRepository {
         'email': email.trim(),
         'token': code.trim(),
         'new_password': password,
+        'confirm_password': confirmPassword,
+      },
+    );
+  }
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    await _post(
+      '/v1/auth/change-password',
+      body: {
+        'current_password': currentPassword,
+        'new_password': newPassword,
+        'confirm_password': confirmPassword,
       },
     );
   }

@@ -7,6 +7,8 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  assertLegacyInviteDartDefines,
+  assertLegacyReleaseLane,
   assertNoReservedApiDartDefines,
   withFlutterApiDartDefines,
 } from "./flutter-api-config.mjs";
@@ -64,6 +66,11 @@ try {
       ...extraDartDefines,
     ],
   });
+  if (flavor === "staging") {
+    assertLegacyReleaseLane(process.env.MOMCOZY_RELEASE_LANE);
+    if (mode !== "release") throw new Error("legacy-staging APK requires release mode.");
+    assertLegacyInviteDartDefines(dartDefines);
+  }
 } catch (error) {
   console.error(`FAIL ${error.message}`);
   process.exit(1);
@@ -121,6 +128,27 @@ if (!existsSync(buildApkPath)) {
   process.exit(1);
 }
 
+if (flavor === "staging" && (apkInput || skipBuild)) {
+  const attestationPath = `${buildApkPath}.build-config.json`;
+  let attestation;
+  try {
+    attestation = JSON.parse(await readFile(attestationPath, "utf8"));
+  } catch {
+    console.error(`FAIL A prebuilt APK needs its release gate build record: ${attestationPath}`);
+    process.exit(1);
+  }
+  const actualSha256 = crypto.createHash("sha256")
+    .update(await readFile(buildApkPath)).digest("hex");
+  if (attestation.schemaVersion !== 1 ||
+      attestation.sha256 !== actualSha256 ||
+      attestation.releaseLane !== "legacy-staging" ||
+      attestation.flavor !== flavor || attestation.mode !== mode ||
+      JSON.stringify(attestation.dartDefines) !== JSON.stringify(dartDefines)) {
+    console.error("FAIL A prebuilt APK hash/build configuration does not match its release gate record.");
+    process.exit(1);
+  }
+}
+
 await mkdir(releaseDir, { recursive: true });
 await mkdir(assetDir, { recursive: true });
 await copyFile(buildApkPath, artifactPath);
@@ -142,6 +170,8 @@ const qrCodeUrl = `${baseUrl}/${qrCodePath}`;
 const manifest = {
   app: qrLabel,
   platform: "android",
+  releaseLane: flavor === "staging" ? "legacy-staging" : null,
+  inviteLoginOnly: flavor === "staging" ? true : null,
   flavor,
   runtimeEnvironment,
   mode,

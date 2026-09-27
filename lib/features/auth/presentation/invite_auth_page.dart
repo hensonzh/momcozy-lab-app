@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'auth_login_chrome.dart';
-import '../../../shared/widgets/mom_settings_widgets.dart';
 
 import 'package:flutter/material.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
 import '../../../shared/design_system/momcozy_design_system.dart';
 import '../../../shared/widgets/momcozy_components.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -55,64 +55,74 @@ class _MomCozyInviteAuthPageState extends State<MomCozyInviteAuthPage> {
     return Theme(
       data: authLoginTheme(Theme.of(context)),
       child: Scaffold(
-        body: MomCozyPageBody(
-          maxWidth: MomCozyLayout.maxAppWidth,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const AuthLoginHeader(
-                    title: 'Welcome',
-                    subtitle: 'Continue with an invitation code',
-                    compact: true,
-                  ),
-                  MomSettingsCard(
-                    children: [
-                      if (_errorText != null)
-                        AuthNotice(
-                          _errorText!,
-                          error: true,
-                          textKey: const ValueKey('auth-error-text'),
-                        ),
-                      TextField(
-                        key: const ValueKey('auth-invite-code-field'),
-                        controller: _inviteCodeController,
-                        focusNode: _inviteCodeFocusNode,
-                        enabled: !_submitting,
-                        textInputAction: TextInputAction.done,
-                        textCapitalization: TextCapitalization.characters,
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        decoration: InputDecoration(
-                          labelText: 'Invitation code',
-                          hintText: 'Enter your invitation code',
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          prefixIcon: const Icon(Icons.key_rounded),
-                        ),
-                        onSubmitted: (_) => _submitInvite(),
+        backgroundColor: const Color(0xfff5edf4),
+        body: Container(
+          key: const ValueKey('auth-invite-background'),
+          decoration: const BoxDecoration(gradient: authLoginBackground),
+          child: MomCozyPageBody(
+            maxWidth: MomCozyLayout.maxAppWidth,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  24,
+                  (92.0 - MediaQuery.paddingOf(context).top).clamp(16.0, 92.0),
+                  24,
+                  32,
+                ),
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const AuthLoginHeader(
+                      title: 'Welcome',
+                      subtitle: 'Continue with an invitation code',
+                    ),
+                    Text(
+                      'Invitation code',
+                      style: MomHomeTokens.text(12, weight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: MomCozySpacing.compact),
+                    TextField(
+                      key: const ValueKey('auth-invite-code-field'),
+                      controller: _inviteCodeController,
+                      focusNode: _inviteCodeFocusNode,
+                      enabled: !_submitting,
+                      textInputAction: TextInputAction.done,
+                      textCapitalization: TextCapitalization.characters,
+                      autocorrect: false,
+                      enableSuggestions: false,
+                      style: authReferenceText(16, height: 24 / 16),
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: authReferenceInputDecoration(
+                        context,
+                        hintText: 'Enter your invitation code',
                       ),
-                      FilledButton(
-                        key: const ValueKey('auth-invite-login-button'),
-                        onPressed: _submitting ? null : _submitInvite,
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size.fromHeight(48),
-                        ),
-                        child: _submitting
-                            ? const SizedBox.square(
-                                dimension: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Text('Sign in with code'),
+                      onSubmitted: (_) => _submitInvite(),
+                    ),
+                    const SizedBox(height: MomCozySpacing.page),
+                    FilledButton(
+                      key: const ValueKey('auth-invite-login-button'),
+                      onPressed: _submitting ? null : _submitInvite,
+                      style: authLoginButtonStyle(),
+                      child: _submitting
+                          ? const SizedBox.square(
+                              dimension: MomCozyIconSizes.medium,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Sign in with code'),
+                    ),
+                    if (_errorText != null) ...[
+                      const SizedBox(height: 16),
+                      AuthNotice(
+                        _errorText!,
+                        error: true,
+                        textKey: const ValueKey('auth-error-text'),
                       ),
                     ],
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

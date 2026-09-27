@@ -1,3 +1,4 @@
+import 'package:momcozy_flutter_app/domain/shared/feeding_methods.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
 import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';
@@ -36,6 +37,41 @@ void main() {
     expect(confirmed.primaryInfantId, 'baby-1');
   });
 
+  test('feeding method selection is multi-select with exclusive unknown', () {
+    expect(toggleFeedingMethod([], 'direct'), ['direct']);
+    expect(toggleFeedingMethod(['direct'], 'formula'), ['direct', 'formula']);
+    expect(toggleFeedingMethod(['direct', 'formula'], 'unknown'), ['unknown']);
+    expect(toggleFeedingMethod(['unknown'], 'expressed'), ['expressed']);
+    expect(toggleFeedingMethod(['direct'], 'direct'), ['direct']);
+  });
+
+  test('contradictory or malformed gate responses do not unlock the app', () {
+    for (final response in [
+      <String, Object?>{'status': 'completed', 'profile_confirmed': false},
+      <String, Object?>{'status': 'required', 'profile_confirmed': 'true'},
+      <String, Object?>{'status': 'unknown', 'profile_confirmed': false},
+    ]) {
+      expect(() => OnboardingState.fromMap(response), throwsFormatException);
+    }
+  });
+
+  test(
+    'rejects an overlong name or missing delivery date before transport',
+    () {
+      final draft = OnboardingProfileDraft(
+        displayName: 'M' * 121,
+        age: 32,
+        deliveryCount: 1,
+        gestationWeeks: 39,
+        gestationDays: 0,
+        feedingMethods: ['direct', 'formula'],
+      );
+      expect(() => draft.toMap(), throwsFormatException);
+      draft.displayName = 'Mia';
+      expect(() => draft.toMap(), throwsFormatException);
+    },
+  );
+
   test('first delivery cannot persist a previous cesarean history', () {
     final draft = OnboardingProfileDraft(
       displayName: 'Mia',
@@ -44,6 +80,9 @@ void main() {
       deliveryCount: 2,
       hasCesareanHistory: true,
       deliveryType: 'cesarean',
+      gestationWeeks: 39,
+      gestationDays: 2,
+      feedingMethods: ['direct', 'formula'],
     );
     draft.setDeliveryCount(1);
     expect(draft.hasCesareanHistory, isNull);
@@ -59,10 +98,30 @@ void main() {
       deliveryCount: 2,
       hasCesareanHistory: false,
       deliveryType: 'cesarean',
+      gestationWeeks: 39,
+      gestationDays: 2,
+      feedingMethods: ['direct', 'formula'],
     );
     expect(draft.toMap()['has_cesarean_history'], false);
     expect(draft.toMap()['delivery_type'], 'cesarean');
   });
+
+  test(
+    'requires gestational weeks, days and feeding mode for profile save',
+    () {
+      final draft = OnboardingProfileDraft(
+        displayName: 'Mia',
+        deliveryDate: DateTime(2026, 7, 19),
+        deliveryCount: 1,
+      );
+      expect(() => draft.toMap(), throwsFormatException);
+      draft.gestationWeeks = 39;
+      draft.gestationDays = 0;
+      draft.feedingMethods.addAll(['direct', 'formula']);
+      expect(draft.toMap()['gestation_days'], 0);
+      expect(draft.toMap()['feeding_methods'], ['direct', 'formula']);
+    },
+  );
 
   test(
     'serializes postpartum delivery and infant set on profile save',
@@ -80,6 +139,9 @@ void main() {
           deliveryCount: 2,
           hasCesareanHistory: true,
           deliveryType: 'cesarean',
+          gestationWeeks: 39,
+          gestationDays: 2,
+          feedingMethods: ['direct', 'formula'],
           infantCount: 2,
           infants: [
             OnboardingInfantDraft(nickname: 'A', sex: 'female'),
@@ -94,9 +156,14 @@ void main() {
         'display_name': 'Mia',
         'age': 32,
         'delivery_date': '2026-07-19',
+        'client_timezone_offset_minutes':
+            DateTime.now().timeZoneOffset.inMinutes,
         'delivery_count': 2,
         'has_cesarean_history': true,
         'delivery_type': 'cesarean',
+        'gestation_weeks': 39,
+        'gestation_days': 2,
+        'feeding_methods': ['direct', 'formula'],
         'infant_count': 2,
         'infants': [
           {'nickname': 'A', 'sex': 'female'},

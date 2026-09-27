@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-26",
+  "date": "2026-09-27",
   "designFile": "ePIoJkiMiXiug9ibpcgRbl",
   "figmaPage": "Onboarding · App states (868:193)",
   "retiredFigmaFrames": "01–02: dedicated loading/retry; 07–24: avatar creation and follow-up states",
@@ -17,12 +17,12 @@
   ],
   "localConditionalVariant": "design-contract/onboarding/comparisons/actual/05-birth-details-repeat.png",
   "appVerification": {
-    "flutterAnalyze": "lib + integration_test passed on 2026-09-26",
-    "onboardingTests": "39 passed, 2 skipped on 2026-09-26; first delivery omits prior-cesarean question, repeat delivery displays it and persists the answer",
+    "flutterAnalyze": "2026-09-27: affected onboarding, shared feeding, Me, capability source and tests passed.",
+    "onboardingTests": "2026-09-27: App targeted onboarding/Me/capability/records/architecture suite 106 passed and 2 skipped; full App suite 1286 passed, 8 skipped, 32 failures outside onboarding in parallel-dirty agent/account/schedule/baby test surfaces.",
     "fullSuite": "Earlier run: 1237 pass, 8 skipped, 17 failures outside onboarding; not repeated for this clarification",
-    "goldens": "390/1× and 320/2× repeat-delivery screenshots verified without DEBUG banner or rendering overflow"
+    "goldens": "2026-09-27: onboarding birth/birth-error/repeat 390x844 goldens and 320/390/430px × 1×/2× text scaling refreshed and tested; delivery reference unchanged by multi-select work."
   },
-  "figmaVerification": "2026-09-26: Figma page 868:193 was reopened in an independent Chrome tab and reloaded. Only frames 03–06 remain. Each frame visibly displays its updated 390×844 three-step screenshot (03 1/3, 04 2/3, 05/06 3/3); 03 explicitly asks how many deliveries including this birth. The new image layers 902:3, 902:6, 902:11, 902:14 are positioned at (0,0) in their respective frames. Original four-step images were hidden, not deleted, to preserve a reversible reference. The independent-tab reload confirmed the visible replacement persisted.",
+  "figmaVerification": "2026-09-27: Figma 05–06 were visually verified in a newly opened independent Chrome Figma tab after re-importing the initially blank 05 image. All four frames 03–06 remained visible; 05 displays four feeding chips, 06 displays the chosen direct/formula chips and save error. This is an App bitmap sync, not an independent Figma vector export/pixel parity check.",
   "deviceVerification": "Not run.",
   "figmaDeletion": {
     "confirmedByUser": true,
@@ -37,15 +37,40 @@
     ],
     "additionalDeletedFrameRange": "01–02 inclusive, two dedicated loading/retry frames, independently verified in a new tab on 2026-09-25"
   },
-  "figmaImageReplacement": "SYNCED: four local 390×844 PNGs were pasted as Figma image layers 03-profile-basics-v2 (902:3), 04-delivery-date-v2 (902:6), 05-birth-details-v2 (902:11), 06-birth-details-error-v2 (902:14) under their existing frames. Old screenshots are hidden. The conditional repeat-delivery image remains a local variant, not a new Figma frame. No independent Figma export/pixel overlay was produced, so strict visual parity is not claimed.",
-  "backendContract": "Local Product Backend now includes GET /v1/onboarding/me and PUT /v1/onboarding/me/profile, atomic profile/baby creation, idempotent same-payload retries, owner scope, and migrations 20260926_0022/0023. Prior cesarean means only before the current birth; ambiguous legacy cesarean=true data becomes unknown. Backend full suite: 712 passed, 22 skipped without a Postgres URL; targeted isolated Postgres onboarding, HTTP and migration tests: 11 passed. The public staging OpenAPI was rechecked 2026-09-26 and still has no onboarding paths; no CI/main deployment has occurred. Existing 154+ unrelated Backend and 1600+ App worktree changes prevent a clean, isolated release. The App gate remains off by default and release-reset endpoint remains unimplemented; do not activate the gate or claim online API completion.",
+  "figmaImageReplacement": "2026-09-27: frame 03 retains 902:3 and frame 04 retains 923:3. Frame 05 displays 05-birth-feeding-multiselect-v5-image (929:3), frame 06 displays 06-birth-error-feeding-multiselect-v5 (927:15), both 390×844 at (0,0). Prior v4 bitmaps are hidden. An initial 05 paste had no image fill; the empty rectangle was deleted and the actual image was re-imported from an independent Figma tab. Conditional repeat variant stays local.",
+  "backendContract": "2026-09-27 local contract: GET /v1/onboarding/me and PUT /v1/onboarding/me/profile with required feeding_methods multi-select (direct, expressed, formula; unknown exclusive). Shared semantics with Me PATCH; maternal/current infant single mode derived and synchronized. Backend full suite 739 passed, 28 skipped; isolated DB targeted test pending final run. Default-on is App configuration only; no database wipe, online deployment or release-reset activation.",
   "genericFeedback": "Runtime uses shared ProductLoadingView and ProductErrorView with retry; widget regression exercises delayed load, failure, and successful retry.",
   "figmaGenericFeedback": "The dedicated Figma frames 01 and 02 were deleted and their absence verified in a newly opened Figma tab on 2026-09-25. App runtime continues using the shared loading/error components.",
   "figmaReplacementLayerIds": {
     "03": "902:3",
-    "04": "902:6",
-    "05": "902:11",
-    "06": "902:14"
+    "04": "923:3",
+    "05": "929:3",
+    "06": "927:15"
   },
-  "figmaReloadScreenshot": "design-contract/onboarding/comparisons/figma-page-20260926.png"
+  "figmaReloadScreenshot": "design-contract/onboarding/comparisons/figma-page-feeding-multiselect-20260927.jpg",
+  "figmaPreviousReplacementLayerIds": {
+    "03": "902:3",
+    "04": "923:3",
+    "05": "923:6",
+    "06": "923:9"
+  },
+  "gestationAndFeedingCorrection": {
+    "app": "Step 2 requires gestational weeks 20–45 and additional days 0–6; step 3 requires explicit feeding choice. App onboarding tests: 40 passed, 2 skipped; Flutter analyze on affected paths passed.",
+    "backend": "Onboarding PUT requires gestation_weeks, gestation_days, current_feeding_mode. Weeks/days persist in MePreferences.profile; feeding persists in LactationProfile and current BabyProfile records. Full local non-database suite: 725 passed, 25 skipped; isolated local PostgreSQL onboarding and migration tests: 18 passed.",
+    "release": "No App build publication, Backend deploy, or git push performed for this correction."
+  },
+  "currentDeliveryCopyAndAlignment": {
+    "app": "Bottom-align two gestation input fields so their rectangles have matching top/bottom even if labels wrap; step 2/3 titles and relevant field labels explicitly refer to this delivery. No business schema changes.",
+    "verification": "40 onboarding tests passed, 2 skipped; Flutter analyze passed; design contract validated.",
+    "figma": "Visible v4 04–06 screenshot layers seen on an independently reopened Figma page; older v3 layers hidden.",
+    "release": "No app/backend publication or git push performed."
+  },
+  "priorBackendContract20260926": "Local Product Backend now includes GET /v1/onboarding/me and PUT /v1/onboarding/me/profile, atomic profile/baby creation, idempotent same-payload retries, owner scope, and migrations 20260926_0022/0023. Prior cesarean means only before the current birth; ambiguous legacy cesarean=true data becomes unknown. Backend full suite: 712 passed, 22 skipped without a Postgres URL; targeted isolated Postgres onboarding, HTTP and migration tests: 11 passed. The public staging OpenAPI was rechecked 2026-09-26 and still has no onboarding paths; no CI/main deployment has occurred. Existing 154+ unrelated Backend and 1600+ App worktree changes prevent a clean, isolated release. The App gate remains off by default and release-reset endpoint remains unimplemented; do not activate the gate or claim online API completion.",
+  "multiSelectDefaultOn20260927": {
+    "app": "Onboarding gate defaults on; release reset remains off. Onboarding and Me editor share 4 feeding options and exclusive unknown behavior. Local goldens updated at 320/390/430px and 1×/2× text scale.",
+    "backend": "Onboarding and Me persist the same canonical ordered feeding_methods list. Lactation and current-infant single mode derive from the list: direct/expressed without formula stays breast-milk only, formula combined with breast milk is mixed, unknown stays unknown. Owner-scoped Me edits update both summary models.",
+    "deployment": "Code only; no local or cloud user data deleted, no App publish or Backend deploy. Use fresh user dataset and deploy compatible Backend before distributing default-on App.",
+    "verification": "App targeted suite 106 passed, 2 skipped; Flutter analyze and design contract passed. Backend full suite 739 passed, 28 skipped; isolated PostgreSQL onboarding/migration/Me/lactation/OpenAPI tests 81 passed; Ruff and mypy passed. Full App suite had 32 failures outside onboarding (agent/account/schedule/baby goldens or captures) in dirty worktree; no onboarding failures.",
+    "figma": "05 image 929:3 and 06 image 927:15 seen on an independently reopened Figma tab; screenshot comparisons/figma-page-feeding-multiselect-20260927.jpg. Earlier blank 05 paste cleaned up; image re-imported and verified. No pixel export comparison."
+  }
 }

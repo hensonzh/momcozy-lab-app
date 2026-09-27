@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,6 +13,99 @@ import '../../support/fixture_api_transport.dart';
 class _DeviceId implements MomCozyAuthDeviceIdStore {
   @override
   Future<String> readOrCreateDeviceId() async => 'test-device';
+}
+
+class _GatedAuthTransport extends FixtureApiJsonTransportByPath {
+  _GatedAuthTransport(super.responsesByPath);
+
+  final codeGate = Completer<void>();
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    if (path == '/v1/auth/verify-registration-code') {
+      await codeGate.future;
+    }
+    return super.postJson(path, body: body, headers: headers);
+  }
+}
+
+class _AmbiguousRegistrationTransport extends FixtureApiJsonTransportByPath {
+  _AmbiguousRegistrationTransport({required bool committed})
+    : super({
+        '/v1/auth/register': {'status': 'verification_required'},
+        '/v1/auth/verify-registration-code': {'status': 'code_valid'},
+        '/v1/auth/verify-email': {
+          'access_token': 'access',
+          'refresh_token': 'refresh',
+          'expires_in': 900,
+          'user': {'id': 'mia'},
+        },
+        '/v1/auth/login': committed
+            ? {
+                'access_token': 'access',
+                'refresh_token': 'refresh',
+                'expires_in': 900,
+                'user': {'id': 'mia'},
+              }
+            : {
+                'http_status': 401,
+                'body': {
+                  'error': {'code': 'authentication_required'},
+                },
+              },
+      });
+
+  bool loseFirstResponse = true;
+  int verificationRequests = 0;
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    if (path == '/v1/auth/verify-email') {
+      verificationRequests++;
+      final response = await super.postJson(path, body: body, headers: headers);
+      if (loseFirstResponse) {
+        loseFirstResponse = false;
+        throw TimeoutException('Registration response lost');
+      }
+      return response;
+    }
+    return super.postJson(path, body: body, headers: headers);
+  }
+}
+
+class _AmbiguousResetTransport extends FixtureApiJsonTransportByPath {
+  _AmbiguousResetTransport()
+    : super({
+        '/v1/auth/forgot-password': {'status': 'reset_if_available'},
+        '/v1/auth/reset-password': {
+          'http_status': 401,
+          'body': {
+            'error': {'code': 'invalid_or_expired_code'},
+          },
+        },
+      });
+  bool loseFirstResponse = true;
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    if (path == '/v1/auth/reset-password' && loseFirstResponse) {
+      loseFirstResponse = false;
+      throw TimeoutException('Reset response lost');
+    }
+    return super.postJson(path, body: body, headers: headers);
+  }
 }
 
 void main() {
@@ -135,6 +230,73 @@ void main() {
     expect((await store.readSession())?.userId, 'mia');
   });
 
+  testWidgets('login validation stays below its corresponding field', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransport({});
+    await mount(tester, transport, MemoryMomCozySessionStore());
+    final email = find.byKey(const ValueKey('auth-email-field'));
+    final password = find.byKey(const ValueKey('auth-password-field'));
+    final submit = find.byKey(const ValueKey('auth-submit-button'));
+
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    final emailError = find.text('Enter a valid email address.');
+    final passwordError = find.text('Enter your password.');
+    expect(
+      tester.getTopLeft(emailError).dy,
+      greaterThan(tester.getTopLeft(email).dy),
+    );
+    expect(
+      tester.getBottomLeft(emailError).dy,
+      lessThan(tester.getTopLeft(password).dy),
+    );
+    expect(
+      tester.getTopLeft(passwordError).dy,
+      greaterThan(tester.getTopLeft(password).dy),
+    );
+    expect(
+      tester.getBottomLeft(passwordError).dy,
+      lessThan(tester.getTopLeft(submit).dy),
+    );
+
+    await tester.enterText(email, 'not-an-email');
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(find.text('Enter a valid email address.'), findsOneWidget);
+    expect(transport.postedBodies, isEmpty);
+  });
+
+  for (final (code, status, message) in [
+    ('authentication_required', 401, 'Email or password is incorrect.'),
+    ('rate_limited', 429, 'Too many attempts. Please wait and try again.'),
+  ]) {
+    testWidgets('login $code notice is below Sign in', (tester) async {
+      final transport = FixtureApiJsonTransport({
+        'http_status': status,
+        'body': {
+          'error': {'code': code},
+        },
+      });
+      await mount(tester, transport, MemoryMomCozySessionStore());
+      await fill(tester);
+      final submit = find.byKey(const ValueKey('auth-submit-button'));
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      final notice = find.byKey(const ValueKey('auth-error-text'));
+      expect(find.text(message), findsOneWidget);
+      expect(
+        tester.getTopLeft(notice).dy,
+        greaterThan(tester.getBottomLeft(submit).dy),
+      );
+      expect(
+        tester.getBottomLeft(notice).dy,
+        lessThan(tester.getTopLeft(find.text("Don't have an account?")).dy),
+      );
+      expect(transport.lastPath, '/v1/auth/login');
+    });
+  }
+
   testWidgets('unverified login opens verification without a separate entry', (
     tester,
   ) async {
@@ -146,6 +308,7 @@ void main() {
         },
       },
       '/v1/auth/resend-verification': {'status': 'verification_if_required'},
+      '/v1/auth/verify-registration-code': {'status': 'code_valid'},
       '/v1/auth/verify-email': {
         'access_token': 'access',
         'refresh_token': 'refresh',
@@ -174,7 +337,7 @@ void main() {
     expect(find.text('Request another code in 60s'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('auth-verify-forgot-button')),
-      findsOneWidget,
+      findsNothing,
     );
     expect(controller.currentSession.isAuthenticated, isFalse);
     expect(
@@ -190,6 +353,21 @@ void main() {
     );
     await tester.ensureVisible(
       find.byKey(const ValueKey('auth-submit-button')),
+    );
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-submit-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+    await tester.pumpAndSettle();
+    expect(transport.lastPath, '/v1/auth/verify-registration-code');
+    expect(find.text('Set your password'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-password-field')),
+      'secret123',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-confirm-password-field')),
+      'secret123',
     );
     await tester.ensureVisible(
       find.byKey(const ValueKey('auth-submit-button')),
@@ -357,6 +535,92 @@ void main() {
     expect(find.text('Change email'), findsNothing);
     expect(find.text('Back to sign in'), findsOneWidget);
   });
+
+  testWidgets(
+    'registration verification notices are exclusive across submit and resend',
+    (tester) async {
+      final transport = _GatedAuthTransport({
+        '/v1/auth/register': {'status': 'verification_required'},
+        '/v1/auth/verify-registration-code': {'status': 'code_valid'},
+        '/v1/auth/resend-verification': {'status': 'verification_if_required'},
+      });
+      addTearDown(() {
+        if (!transport.codeGate.isCompleted) transport.codeGate.complete();
+      });
+      await mount(tester, transport, MemoryMomCozySessionStore());
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-register-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-register-button')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-email-field')),
+        'mia@example.com',
+      );
+      await tester.pump();
+      final submit = find.byKey(const ValueKey('auth-submit-button'));
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      const inbox =
+          'Check your inbox and spam folder for an 8-digit code. Codes expire in 15 minutes.';
+      expect(transport.mutationPaths, ['/v1/auth/register']);
+      expect(find.text('Verify your email'), findsOneWidget);
+      expect(find.text(inbox), findsOneWidget);
+      expect(find.textContaining('Already registered?'), findsNothing);
+
+      await tester.pump(const Duration(seconds: 61));
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-email-field')),
+        '',
+      );
+      await tester.ensureVisible(find.text('Request another code'));
+      await tester.tap(find.text('Request another code'));
+      await tester.pumpAndSettle();
+      expect(find.text('Enter your email first.'), findsOneWidget);
+      expect(find.text(inbox), findsNothing);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-email-field')),
+        'mia@example.com',
+      );
+      transport.responsesByPath['/v1/auth/resend-verification'] = {
+        'http_status': 429,
+        'body': {
+          'error': {'code': 'rate_limited'},
+        },
+      };
+      await tester.ensureVisible(find.text('Request another code'));
+      await tester.tap(find.text('Request another code'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Too many attempts. Please wait and try again.'),
+        findsOneWidget,
+      );
+      expect(find.text(inbox), findsNothing);
+      transport.responsesByPath['/v1/auth/resend-verification'] = {
+        'status': 'verification_if_required',
+      };
+      await tester.ensureVisible(find.text('Request another code'));
+      await tester.tap(find.text('Request another code'));
+      await tester.pumpAndSettle();
+      expect(find.text(inbox), findsOneWidget);
+      expect(find.byKey(const ValueKey('auth-error-text')), findsNothing);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-code-field')),
+        '12345678',
+      );
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pump();
+      expect(find.text(inbox), findsNothing);
+      expect(tester.widget<FilledButton>(submit).onPressed, isNull);
+      transport.codeGate.complete();
+      await tester.pumpAndSettle();
+      expect(find.text('Set your password'), findsOneWidget);
+    },
+  );
 
   testWidgets('password visibility can be toggled and resets on navigation', (
     tester,
@@ -662,6 +926,294 @@ void main() {
       );
     },
   );
+
+  testWidgets('unverified login retains code entry when resend fails', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransportByPath({
+      '/v1/auth/login': {
+        'http_status': 403,
+        'body': {
+          'error': {'code': 'email_unverified'},
+        },
+      },
+      '/v1/auth/resend-verification': {
+        'http_status': 503,
+        'body': {
+          'error': {'code': 'auth_email_unavailable'},
+        },
+      },
+      '/v1/auth/verify-registration-code': {'status': 'code_valid'},
+    });
+    await mount(tester, transport, MemoryMomCozySessionStore());
+    await fill(tester);
+    final submit = find.byKey(const ValueKey('auth-submit-button'));
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('auth-code-field')), findsOneWidget);
+    expect(find.textContaining('already have a valid code'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-code-field')),
+      '12345678',
+    );
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(transport.lastPath, '/v1/auth/verify-registration-code');
+    expect(find.text('Set your password'), findsOneWidget);
+  });
+
+  testWidgets('navigating away from a password draft clears it', (
+    tester,
+  ) async {
+    final transport = FixtureApiJsonTransportByPath({
+      '/v1/auth/register': {'status': 'verification_required'},
+      '/v1/auth/verify-registration-code': {'status': 'code_valid'},
+    });
+    await mount(tester, transport, MemoryMomCozySessionStore());
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-register-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-register-button')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-email-field')),
+      'mia@example.com',
+    );
+    await tester.pump();
+    final submit = find.byKey(const ValueKey('auth-submit-button'));
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('auth-code-field')), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-code-field')),
+      '12345678',
+    );
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-password-field')),
+      'unsubmitted123',
+    );
+    await tester.ensureVisible(find.text('Back to sign in'));
+    await tester.tap(find.text('Back to sign in'));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<TextFormField>(
+            find.byKey(const ValueKey('auth-password-field')),
+          )
+          .controller
+          ?.text,
+      isEmpty,
+    );
+  });
+  testWidgets(
+    'registration response loss recovers an already-created account',
+    (tester) async {
+      final transport = _AmbiguousRegistrationTransport(committed: true);
+      final store = MemoryMomCozySessionStore();
+      final controller = await mount(tester, transport, store);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-register-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-register-button')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-email-field')),
+        'mia@example.com',
+      );
+      await tester.pump();
+      final submit = find.byKey(const ValueKey('auth-submit-button'));
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-code-field')),
+        '12345678',
+      );
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-password-field')),
+        'secret123',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        'secret123',
+      );
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      expect(transport.mutationPaths, [
+        '/v1/auth/register',
+        '/v1/auth/verify-registration-code',
+        '/v1/auth/verify-email',
+        '/v1/auth/login',
+      ]);
+      expect(transport.verificationRequests, 1);
+      expect(controller.currentSession.isAuthenticated, isTrue);
+      expect((await store.readSession())?.userId, 'mia');
+    },
+  );
+
+  testWidgets(
+    'registration response loss keeps draft until result can be checked',
+    (tester) async {
+      final transport = _AmbiguousRegistrationTransport(committed: false);
+      final store = MemoryMomCozySessionStore();
+      final controller = await mount(tester, transport, store);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-register-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-register-button')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-email-field')),
+        'mia@example.com',
+      );
+      await tester.pump();
+      final submit = find.byKey(const ValueKey('auth-submit-button'));
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-code-field')),
+        '12345678',
+      );
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-password-field')),
+        'secret123',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        'secret123',
+      );
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      expect(controller.currentSession.isAuthenticated, isFalse);
+      expect(
+        find.textContaining('could not confirm whether your account'),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<TextFormField>(
+              find.byKey(const ValueKey('auth-password-field')),
+            )
+            .controller
+            ?.text,
+        'secret123',
+      );
+      transport.responsesByPath['/v1/auth/verify-email'] = {
+        'http_status': 401,
+        'body': {
+          'error': {'code': 'invalid_or_expired_code'},
+        },
+      };
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      expect(find.text('Set your password'), findsOneWidget);
+      expect(
+        find.textContaining('could not confirm whether your account'),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<TextFormField>(
+              find.byKey(const ValueKey('auth-password-field')),
+            )
+            .controller
+            ?.text,
+        'secret123',
+      );
+      transport.responsesByPath['/v1/auth/login'] = {
+        'access_token': 'access',
+        'refresh_token': 'refresh',
+        'expires_in': 900,
+        'user': {'id': 'mia'},
+      };
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      expect(transport.verificationRequests, 2);
+      expect(controller.currentSession.isAuthenticated, isTrue);
+    },
+  );
+
+  testWidgets('reset response loss preserves new password and code', (
+    tester,
+  ) async {
+    final transport = _AmbiguousResetTransport();
+    await mount(tester, transport, MemoryMomCozySessionStore());
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-forgot-button')),
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-forgot-button')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-email-field')),
+      'mia@example.com',
+    );
+    final submit = find.byKey(const ValueKey('auth-submit-button'));
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-code-field')),
+      '12345678',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-password-field')),
+      'new-secret123',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-confirm-password-field')),
+      'new-secret123',
+    );
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('could not confirm whether your password was reset'),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<TextFormField>(
+            find.byKey(const ValueKey('auth-password-field')),
+          )
+          .controller
+          ?.text,
+      'new-secret123',
+    );
+    await tester.ensureVisible(submit);
+    await tester.pumpAndSettle();
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('could not confirm whether your password was reset'),
+      findsOneWidget,
+    );
+    expect(find.text('Reset your password'), findsOneWidget);
+    expect(
+      tester
+          .widget<TextFormField>(find.byKey(const ValueKey('auth-code-field')))
+          .controller
+          ?.text,
+      '12345678',
+    );
+  });
+
   testWidgets(
     'forgot password gives generic confirmation and submits new password',
     (tester) async {
@@ -692,6 +1244,31 @@ void main() {
         find.byKey(const ValueKey('auth-password-field')),
         'new-secret123',
       );
+      expect(find.text('verification code'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        findsOneWidget,
+      );
+      final resetPosts = transport.postedBodies.length;
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('auth-submit-button')),
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+      await tester.pumpAndSettle();
+      expect(find.text('Confirm your password.'), findsOneWidget);
+      expect(transport.postedBodies.length, resetPosts);
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        'different123',
+      );
+      await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
+      await tester.pumpAndSettle();
+      expect(find.text('Passwords do not match.'), findsOneWidget);
+      expect(transport.postedBodies.length, resetPosts);
+      await tester.enterText(
+        find.byKey(const ValueKey('auth-confirm-password-field')),
+        'new-secret123',
+      );
       await tester.ensureVisible(
         find.byKey(const ValueKey('auth-submit-button')),
       );
@@ -699,6 +1276,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(transport.lastPath, '/v1/auth/reset-password');
       expect(transport.lastBody?['new_password'], 'new-secret123');
+      expect(transport.lastBody?['confirm_password'], 'new-secret123');
       expect(
         find.text('Password reset. Sign in with your new password.'),
         findsOneWidget,

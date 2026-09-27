@@ -1,7 +1,7 @@
 /// Backend-dependent product capabilities that are safe to opt into per build.
 class MomCozyAppCapabilities {
   const MomCozyAppCapabilities({
-    this.onboardingGateEnabled = false,
+    this.onboardingGateEnabled = true,
     this.releaseResetEnabled = false,
     this.extendedProductApiEnabled = false,
   });
@@ -9,7 +9,7 @@ class MomCozyAppCapabilities {
   const MomCozyAppCapabilities.fromEnvironment()
     : onboardingGateEnabled = const bool.fromEnvironment(
         'MOMCOZY_ENABLE_ONBOARDING',
-        defaultValue: false,
+        defaultValue: true,
       ),
       releaseResetEnabled = const bool.fromEnvironment(
         'MOMCOZY_ENABLE_RELEASE_RESET',

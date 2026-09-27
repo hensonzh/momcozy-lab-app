@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from contextlib import contextmanager
 import os
 import re
@@ -10,6 +11,7 @@ import subprocess
 import time
 from pathlib import Path
 from uuid import UUID
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree
 
@@ -179,9 +181,63 @@ def verify_account(account):
         profile = json.load(response)
     if profile.get("id") != account["user_id"] or profile.get("email") != account["email"]:
         raise RuntimeError("Fresh account identity check failed")
+    return token
 
 
-def install_and_login(device, account):
+def local_onboarding_payload():
+    return {
+        "stage": "postpartum", "display_name": "Local App Test", "age": 32,
+        "delivery_date": datetime.now(timezone.utc).date().isoformat(),
+        "client_timezone_offset_minutes": 0,
+        "delivery_count": 1, "has_cesarean_history": False,
+        "delivery_type": "vaginal", "gestation_weeks": 39, "gestation_days": 2,
+        "feeding_methods": ["direct"], "infant_count": 1,
+        "infants": [{"nickname": "Local Baby", "sex": "female"}],
+    }
+
+
+def request_product_json(method, path, token, payload=None):
+    body = json.dumps(payload).encode() if payload is not None else None
+    request = Request(
+        f"{PRODUCT_URL}{path}", data=body, method=method,
+        headers={"Authorization": f"Bearer {token}",
+                 **({"Content-Type": "application/json"} if body is not None else {})},
+    )
+    try:
+        with urlopen(request, timeout=15) as response:
+            result = json.load(response)
+    except HTTPError as error:
+        raise RuntimeError(f"Local onboarding request failed (HTTP {error.code}, {method} {path})") from None
+    if not isinstance(result, dict):
+        raise RuntimeError(f"Local onboarding returned invalid JSON ({method} {path})")
+    return result
+
+
+def ensure_onboarding(token):
+    state = request_product_json("GET", "/v1/onboarding/me", token)
+    if state.get("status") == "required" and state.get("profile_confirmed") is False:
+        state = request_product_json(
+            "PUT", "/v1/onboarding/me/profile", token, local_onboarding_payload()
+        )
+        confirmed = request_product_json("GET", "/v1/onboarding/me", token)
+        if state != confirmed:
+            raise RuntimeError("Local onboarding confirmation did not persist")
+    if state.get("status") != "completed" or state.get("profile_confirmed") is not True:
+        raise RuntimeError("Local onboarding is not confirmed")
+    try:
+        baby_id = str(UUID(str(state["primary_infant_id"])))
+    except (KeyError, TypeError, ValueError) as error:
+        raise RuntimeError("Local onboarding returned no primary infant") from error
+    babies = request_product_json("GET", "/v1/babies", token)
+    if not isinstance(babies.get("items"), list) or not any(
+        isinstance(baby, dict) and baby.get("id") == baby_id
+        for baby in babies["items"]
+    ):
+        raise RuntimeError("Local onboarding baby is not owned by the fresh account")
+    return baby_id
+
+
+def install_and_login(device, account, token):
     if adb(device, "shell", "pm", "path", PACKAGE, capture=True).strip():
         adb(device, "uninstall", PACKAGE)
     adb(device, "install", str(APK))
@@ -198,6 +254,16 @@ def install_and_login(device, account):
     type_text(device, account["password"])
     adb(device, "shell", "input", "keyevent", "KEYCODE_BACK")
     tap_node(device, find_node(ui_nodes(device), class_name="android.widget.Button", description="Sign in"))
+    wait_for(
+        device,
+        lambda nodes: next((n for n in nodes if "Your setup" in n.get("content-desc", "") or "Your setup" in n.get("text", "")), None),
+        "first-login onboarding gate",
+    )
+    ensure_onboarding(token)
+    # Re-bootstrap the retained App session so the onboarding gate re-fetches
+    # the server confirmation. No credentials are entered a second time.
+    adb(device, "shell", "am", "force-stop", PACKAGE)
+    adb(device, "shell", "monkey", "-p", PACKAGE, "-c", "android.intent.category.LAUNCHER", "1", capture=True)
     wait_for(device, lambda nodes: next((n for n in nodes if n.get("content-desc", "").split("\n")[0] == "More"), None), "authenticated home")
     tap_node(device, find_node(ui_nodes(device), description="More"))
     wait_for(device, lambda nodes: any(account["email"] in (n.get("content-desc", "") + n.get("text", "")) for n in nodes), "new email on More page")
@@ -227,12 +293,11 @@ def main():
          "--dart-define=MOMCOZY_AGENT_API_BASE_URL=http://10.0.2.2:8010"])
     print(f"Local APK built: {APK}", flush=True)
     account = create_account()
-    verify_account(account)
+    token = verify_account(account)
     with latin_keyboard(device):
-        install_and_login(device, account)
+        install_and_login(device, account, token)
     print(f"Emulator login verified for user {account['user_id']}.", flush=True)
     print(f"Email: {account['email']}", flush=True)
-    print(f"Password: {account['password']}", flush=True)
     print(f"Screenshots: {SCREENSHOTS / 'account.png'}, {SCREENSHOTS / 'home.png'}", flush=True)
 
 

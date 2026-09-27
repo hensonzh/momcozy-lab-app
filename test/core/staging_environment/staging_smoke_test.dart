@@ -33,6 +33,18 @@ void main() {
     expect(config.session.refreshToken, 'refresh-token');
   });
 
+  test(
+    'default staging probes include authenticated conversation recovery',
+    () {
+      final probes = buildDefaultStagingSmokeProbes(_config(enabled: true));
+      final history = probes
+          .where((probe) => probe.name == 'agent conversation history')
+          .single;
+      expect(history.requiresAgentStream, isTrue);
+      expect(probes.last, same(history));
+    },
+  );
+
   test('runner skips every probe when staging smoke is disabled', () async {
     final runner = StagingSmokeRunner(
       config: _config(enabled: false),

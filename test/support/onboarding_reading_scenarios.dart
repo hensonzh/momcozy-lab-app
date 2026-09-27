@@ -76,6 +76,14 @@ Future<void> verifyOnboardingReading(
     await capture('delivery');
     await tap(find.text('Choose date'));
     await tap(find.text('OK'));
+    await tester.enterText(
+      find.byKey(const ValueKey('onboarding-gestation-weeks')),
+      '39',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('onboarding-gestation-days')),
+      '2',
+    );
     await tap(
       find.byKey(const ValueKey('onboarding-postpartum-delivery-continue')),
     );

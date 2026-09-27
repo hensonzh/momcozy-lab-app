@@ -257,6 +257,8 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
         download_env["MOMCOZY_AGENT_API_BASE_URL"] = (
             "https://services.example.test/agent"
         )
+        download_env["MOMCOZY_RELEASE_LANE"] = "legacy-staging"
+        download_env["MOMCOZY_APK_DART_DEFINES"] = "MOMCOZY_INTERNAL_INVITE_LOGIN=true"
         download_site = subprocess.run(
             ["node", "scripts/build-flutter-apk-download-site.mjs", "--check-config"],
             cwd=PROJECT_ROOT,
@@ -272,6 +274,8 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
         release_env["MOMCOZY_AGENT_API_BASE_URL"] = (
             "https://services.example.test/agent"
         )
+        release_env["MOMCOZY_RELEASE_LANE"] = "legacy-staging"
+        release_env["MOMCOZY_APK_DART_DEFINES"] = "MOMCOZY_INTERNAL_INVITE_LOGIN=true"
         release_gate = subprocess.run(
             ["node", "scripts/run-flutter-release-gate.mjs", "--check-config"],
             cwd=PROJECT_ROOT,

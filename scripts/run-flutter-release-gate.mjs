@@ -1,10 +1,16 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync } from "node:fs";
+import { createReadStream, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { withFlutterApiDartDefines } from "./flutter-api-config.mjs";
+import {
+  assertLegacyInviteDartDefines,
+  assertLegacyPublishedUrls,
+  assertLegacyReleaseLane,
+  withFlutterApiDartDefines,
+} from "./flutter-api-config.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, "..");
@@ -89,8 +95,14 @@ try {
     dartDefines: [
       `MOMCOZY_API_BASE_URL=${env.MOMCOZY_API_BASE_URL || ""}`,
       `MOMCOZY_AGENT_API_BASE_URL=${env.MOMCOZY_AGENT_API_BASE_URL || ""}`,
+      ...String(env.MOMCOZY_APK_DART_DEFINES || "").split(",").filter(Boolean),
     ],
   });
+  assertLegacyReleaseLane(env.MOMCOZY_RELEASE_LANE);
+  if (releaseFlavor !== "staging") {
+    throw new Error("legacy-staging release gate requires the staging flavor.");
+  }
+  assertLegacyInviteDartDefines(stagingApiDartDefines);
 } catch (error) {
   console.error(`FAIL ${error.message}`);
   process.exit(1);
@@ -101,6 +113,16 @@ if (process.argv.includes("--check-config")) {
     `Flutter release gate config is valid for ${releaseFlavor} (${runtimeEnvironment} runtime).`,
   );
   process.exit(0);
+}
+
+try {
+  assertLegacyPublishedUrls({
+    productUrl: env.MOMCOZY_API_BASE_URL,
+    agentUrl: env.MOMCOZY_AGENT_API_BASE_URL,
+  });
+} catch (error) {
+  console.error(`FAIL ${error.message}`);
+  process.exit(1);
 }
 
 if (!existsSync(path.join(flutterAppDir, "pubspec.yaml"))) {
@@ -141,6 +163,11 @@ const steps = [
   ["flutter", ["analyze", "--no-pub"], flutterAppDir],
   ["flutter", ["test", "--no-pub", "--exclude-tags=golden"], flutterAppDir],
   [
+    "flutter",
+    ["test", "--no-pub", "--dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=true", "test/features/auth/release_lane_auth_mode_test.dart"],
+    flutterAppDir,
+  ],
+  [
     "node",
     [
       "scripts/build-flutter-android-apk.mjs",
@@ -167,6 +194,18 @@ for (const [command, args, cwd] of steps) {
     process.exit(result.status ?? 1);
   }
 }
+
+const apkPath = path.join(flutterAppDir, "build", "app", "outputs", "flutter-apk", `app-${releaseFlavor}-release.apk`);
+const hash = createHash("sha256");
+for await (const chunk of createReadStream(apkPath)) hash.update(chunk);
+writeFileSync(`${apkPath}.build-config.json`, JSON.stringify({
+  schemaVersion: 1,
+  sha256: hash.digest("hex"),
+  releaseLane: "legacy-staging",
+  flavor: releaseFlavor,
+  mode: "release",
+  dartDefines: stagingApiDartDefines,
+}, null, 2) + "\n");
 
 console.log("");
 console.log("Flutter release gate passed.");

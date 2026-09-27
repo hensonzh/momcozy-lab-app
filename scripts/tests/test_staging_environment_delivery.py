@@ -110,12 +110,26 @@ class StagingDeliveryContractTest(unittest.TestCase):
             temporary_path = Path(temporary)
             apk_input = temporary_path / "verified.apk"
             apk_input.write_bytes(b"verified-staging-apk")
+            (temporary_path / "verified.apk.build-config.json").write_text(json.dumps({
+                "schemaVersion": 1,
+                "sha256": hashlib.sha256(apk_input.read_bytes()).hexdigest(),
+                "releaseLane": "legacy-staging",
+                "flavor": "staging",
+                "mode": "release",
+                "dartDefines": [
+                    "MOMCOZY_API_BASE_URL=https://backend.example.test:8443",
+                    "MOMCOZY_AGENT_API_BASE_URL=https://agent.example.test:8443",
+                    "MOMCOZY_INTERNAL_INVITE_LOGIN=true",
+                ],
+            }))
             dist = temporary_path / "dist"
             env = os.environ.copy()
             env.update(
                 {
                     "MOMCOZY_APK_FLAVOR": "staging",
                     "MOMCOZY_APK_MODE": "release",
+                    "MOMCOZY_RELEASE_LANE": "legacy-staging",
+                    "MOMCOZY_APK_DART_DEFINES": "MOMCOZY_INTERNAL_INVITE_LOGIN=true",
                     "MOMCOZY_APK_INPUT": str(apk_input),
                     "MOMCOZY_DOWNLOAD_DIST": str(dist),
                     "MOMCOZY_DOWNLOAD_BASE_URL": "https://download.example.test/staging",
@@ -146,12 +160,21 @@ class StagingDeliveryContractTest(unittest.TestCase):
             manifest = json.loads((dist / "manifest.json").read_text())
             self.assertEqual(manifest["flavor"], "staging")
             self.assertEqual(manifest["runtimeEnvironment"], "staging")
+            self.assertEqual(manifest["releaseLane"], "legacy-staging")
+            self.assertIs(manifest["inviteLoginOnly"], True)
+            version = re.search(
+                r"^version:\s*([^+\s]+)\+(\d+)$",
+                (ROOT / "pubspec.yaml").read_text(),
+                re.MULTILINE,
+            )
+            self.assertIsNotNone(version)
+            name, build = version.groups()
             self.assertEqual(
-                manifest["githubReleaseTag"], "staging-android-v1.0.0-57"
+                manifest["githubReleaseTag"], f"staging-android-v{name}-{build}"
             )
             self.assertEqual(
                 manifest["apkFile"],
-                "momcozy-staging-android-1.0.0-57.apk",
+                f"momcozy-staging-android-{name}-{build}.apk",
             )
             self.assertEqual(
                 manifest["sha256"], hashlib.sha256(apk_input.read_bytes()).hexdigest()
@@ -293,9 +316,12 @@ class StagingDeliveryContractTest(unittest.TestCase):
         for run_block in _literal_run_blocks(workflow):
             self.assertNotIn("${{ inputs.", run_block)
         self.assertNotIn("subosito/flutter-action@v2", workflow)
-        self.assertIn("Resolve or provision the isolated smoke infant", workflow)
-        self.assertIn("/v1/profile/infants", workflow)
-        self.assertIn("Idempotency-Key", workflow)
+        self.assertIn("Resolve the isolated smoke account onboarding state", workflow)
+        smoke_infant = (ROOT / "scripts/prepare_staging_smoke_infant.py").read_text()
+        self.assertIn("/v1/onboarding/me/profile", smoke_infant)
+        self.assertIn("/v1/babies", smoke_infant)
+        self.assertNotIn("/v1/profile/infants", workflow)
+        self.assertIn("MOMCOZY_DEFAULT_BABY_ID", smoke_infant)
         self.assertIn(
             "subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
             workflow,

@@ -46,8 +46,10 @@ The current Flutter flow calls `/v1/auth/register` with only an email, then
 `/v1/auth/verify-email` with the same code, password, matching
 `confirm_password`, and device ID. The pre-check neither authenticates nor
 consumes the code; the final call can still reject an expired code. Older
-clients may keep calling `/signup` and omitting `confirm_password`; do not
-remove that compatibility path without a coordinated version transition.
+clients may keep calling `/signup` to request an email challenge, but the
+final `/verify-email` and `/reset-password` requests now require matching
+confirmation; clients that omit it receive 422. This is a breaking change and
+requires a coordinated rollout and supported-client audit before backend enforcement.
 
 ## Mobile Client Requirements
 
@@ -70,16 +72,20 @@ remove that compatibility path without a coordinated version transition.
 - Treat Product `file_id` as attachment identity. Signed object URLs are
   temporary transport values and must not become cache keys or durable IDs.
 
-## Onboarding (contract prepared, not deployed)
+## Onboarding (default-on client; deploy compatible Backend first)
 
-The opt-in App gate calls Product `GET /v1/onboarding/me` and
-`PUT /v1/onboarding/me/profile`. Delivery count includes the current birth;
-`has_cesarean_history` means a cesarean **before** the current birth and is
-false when `delivery_count == 1`, regardless of the current delivery method.
-The delivery date is required. The Backend is not yet published to staging;
-keep `MOMCOZY_ENABLE_ONBOARDING` disabled until the public contract and
-end-to-end flow are verified. The optional release-reset endpoint is still
-absent and must not be enabled.
+The App gate calls Product `GET /v1/onboarding/me` and
+`PUT /v1/onboarding/me/profile` by default. Delivery count includes this
+birth; prior cesarean history excludes it. The delivery date and gestational
+age are required. Onboarding and later Me edits use the same required
+`feeding_methods` multi-select (`direct`, `expressed`, `formula`, or `unknown`
+on its own); Backend derives its single-value maternal/current-baby feeding
+summaries. This Backend has not been published to staging by this code change.
+Do not distribute the default-on App before deploying and verifying the
+matching Backend; opt out with `MOMCOZY_ENABLE_ONBOARDING=false` only for an
+intentionally unsupported local environment. This rollout assumes a fresh user
+data set, not a migration or deletion of existing users. The separate
+release-reset endpoint is absent; leave its capability disabled.
 
 ## Agent UI Boundary
 

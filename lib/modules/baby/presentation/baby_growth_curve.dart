@@ -79,7 +79,10 @@ class BabyGrowthCurve extends StatelessWidget {
                 ),
               ),
               onPressed: () => onMetricChanged(value),
-              child: Text(growthMetricLabel(value)),
+              child: Text(
+                growthMetricLabel(value),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
         ),

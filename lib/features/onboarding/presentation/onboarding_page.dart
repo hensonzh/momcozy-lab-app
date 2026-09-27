@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../domain/shared/product_failure.dart';
+import '../../../domain/shared/feeding_methods.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
 import '../../../shared/widgets/date_time_picker.dart';
 import '../../../shared/widgets/mom_settings_widgets.dart';
@@ -31,6 +32,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
   final _deliveryCountController = TextEditingController();
+  final _gestationWeeksController = TextEditingController();
+  final _gestationDaysController = TextEditingController();
   final _profileScroll = ScrollController();
   int _profileStep = 0;
   final OnboardingProfileDraft _draft = OnboardingProfileDraft();
@@ -42,6 +45,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     _nameController.dispose();
     _ageController.dispose();
     _deliveryCountController.dispose();
+    _gestationWeeksController.dispose();
+    _gestationDaysController.dispose();
     super.dispose();
   }
 
@@ -181,6 +186,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
       );
       return;
     }
+    if (_nameController.text.trim().runes.length > 120) {
+      setState(
+        () => _validationMessage = 'Name must be 120 characters or fewer.',
+      );
+      return;
+    }
     if (age == null || age < 12 || age > 70) {
       setState(() => _validationMessage = 'Enter an age between 12 and 70.');
       return;
@@ -203,12 +214,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Widget _postpartumDeliveryStep(BuildContext context) {
     final draft = _draft;
     return _ProfileStep(
-      title: 'Tell us about your delivery',
+      title: 'Tell us about this delivery',
       reason:
-          'Your delivery date helps personalize postpartum recovery and your baby\'s age-based guidance.',
+          'The date of this delivery helps personalize postpartum recovery and your baby\'s age-based guidance.',
       children: [
         _DateField(
-          label: 'Delivery date',
+          label: 'Date of this delivery',
           value: draft.deliveryDate,
           onTap: () async {
             final today = DateUtils.dateOnly(widget.now());
@@ -222,6 +233,34 @@ class _OnboardingPageState extends State<OnboardingPage> {
             );
             if (selected != null) setState(() => draft.deliveryDate = selected);
           },
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              child: _ProfileField(
+                label: 'Gestational weeks at this delivery',
+                child: TextField(
+                  key: const ValueKey('onboarding-gestation-weeks'),
+                  controller: _gestationWeeksController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(hintText: 'e.g. 39'),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _ProfileField(
+                label: 'Additional days',
+                child: TextField(
+                  key: const ValueKey('onboarding-gestation-days'),
+                  controller: _gestationDaysController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(hintText: '0–6'),
+                ),
+              ),
+            ),
+          ],
         ),
         if (_validationMessage.isNotEmpty ||
             widget.controller.errorMessage.isNotEmpty)
@@ -240,18 +279,35 @@ class _OnboardingPageState extends State<OnboardingPage> {
       setState(() => _validationMessage = 'Choose your delivery date.');
       return;
     }
+    final weeks = int.tryParse(_gestationWeeksController.text.trim());
+    final days = int.tryParse(_gestationDaysController.text.trim());
+    if (weeks == null ||
+        weeks < 20 ||
+        weeks > 45 ||
+        days == null ||
+        days < 0 ||
+        days > 6) {
+      setState(
+        () => _validationMessage =
+            'Enter gestational age at delivery (20–45 weeks and 0–6 days).',
+      );
+      return;
+    }
+    _draft
+      ..gestationWeeks = weeks
+      ..gestationDays = days;
     _goToProfileStep(2);
   }
 
   Widget _postpartumBirthStep() {
     final draft = _draft;
     return _ProfileStep(
-      title: 'How was your delivery?',
+      title: 'How was this delivery?',
       reason:
-          'Delivery method and baby count help personalize recovery and create the right baby profiles.',
+          'The delivery method and baby count this time help personalize recovery and create the right baby profiles.',
       children: [
         _ProfileField(
-          label: 'Delivery method (optional)',
+          label: 'Delivery method this time (optional)',
           child: DropdownButtonFormField<String?>(
             initialValue: draft.deliveryType,
             style: MomHomeTokens.text(14),
@@ -279,7 +335,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         ),
         _CountField(
-          label: 'How many babies did you welcome?',
+          label: 'How many babies were born in this delivery?',
           value: draft.infantCount,
           onChanged: (value) => setState(() => draft.setInfantCount(value)),
         ),
@@ -304,6 +360,30 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   setState(() => draft.hasCesareanHistory = value),
             ),
           ),
+        _ProfileField(
+          label: 'Current feeding methods · Select all that apply',
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final entry in feedingMethodLabels.entries)
+                FilterChip(
+                  key: ValueKey('onboarding-feeding-${entry.key}'),
+                  label: Text(entry.value),
+                  selected: draft.feedingMethods.contains(entry.key),
+                  selectedColor: MomHomeTokens.mint,
+                  onSelected: (_) => setState(() {
+                    draft.feedingMethods = toggleFeedingMethod(
+                      draft.feedingMethods,
+                      entry.key,
+                    );
+                    _validationMessage = '';
+                    widget.controller.clearError();
+                  }),
+                ),
+            ],
+          ),
+        ),
         if (_validationMessage.isNotEmpty ||
             widget.controller.errorMessage.isNotEmpty)
           _errorText(),
@@ -321,6 +401,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final draft = _draft;
     if (draft.deliveryDate == null) {
       setState(() => _validationMessage = 'Choose your delivery date.');
+      return;
+    }
+    if (!validFeedingMethods(draft.feedingMethods)) {
+      setState(
+        () => _validationMessage = 'Choose your current feeding methods.',
+      );
       return;
     }
     FocusScope.of(context).unfocus();
