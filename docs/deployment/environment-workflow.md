@@ -3,6 +3,7 @@
 > 最后更新：2026-09-25
 > 适用仓库：`backend/`、`agent/`、`app/`
 > 本文说明仓库配置与操作入口，不代表 staging/production 已完成部署或 App Store 已上传。
+> **新设计（2026-09-27，尚未实施）：** 现有邀请码 APK 与未来北美 Play/TestFlight 两条预发布链路的隔离、风险和实施门禁见 [双链路设计稿](dual-staging-release-lanes.md)。本文描述的是当前单套 staging/production 配置，不意味着新链路可用。
 
 ## 1. 统一环境语义
 
