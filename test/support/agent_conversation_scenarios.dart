@@ -120,7 +120,8 @@ Future<void> verifyAgentConversation(
   client.emit(1, 'run.started', 1, {});
   await frame();
   expect(find.text('Thinking…'), findsNothing);
-  expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
+  expect(find.byKey(const ValueKey('agent-run-status-line')), findsOneWidget);
+  expect(find.text('Thinking ...'), findsOneWidget);
   expect(
     find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
     findsOneWidget,
