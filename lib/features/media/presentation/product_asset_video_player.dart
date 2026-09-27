@@ -519,7 +519,9 @@ class _ProductAssetVideoControls extends StatelessWidget {
                           ? 'product-asset-video-exit-fullscreen-control'
                           : 'product-asset-video-fullscreen',
                     ),
-                    tooltip: immersive ? 'Exit full screen' : 'Play full screen',
+                    tooltip: immersive
+                        ? 'Exit full screen'
+                        : 'Play full screen',
                     onPressed: onFullscreen,
                     icon: Icon(
                       immersive

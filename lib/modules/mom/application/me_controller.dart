@@ -55,7 +55,8 @@ class MeController extends ChangeNotifier {
         );
       }
     } catch (_) {
-      if (!disposed && generation == _generation) error = 'Could not load. Please try again.';
+      if (!disposed && generation == _generation)
+        error = 'Could not load. Please try again.';
     } finally {
       if (generation == _generation) loading = false;
       _notify();

@@ -87,9 +87,7 @@ class KnowledgeBanner extends StatelessWidget {
                               right: reservePortraitSpace ? 66 : 24,
                             ),
                             child: Text(
-                              splitTitle
-                                  ? article.title
-                                  : article.title,
+                              splitTitle ? article.title : article.title,
                               style: TextStyle(
                                 fontSize:
                                     (MediaQuery.sizeOf(context).width * .048)

@@ -167,7 +167,9 @@ class _AgentFullScreenImageState extends State<_AgentFullScreenImage> {
   });
 
   Widget _error() => MediaViewerLoadError(
-    message: _canReload ? 'Could not load image' : 'Could not display this image. Go back and choose it again.',
+    message: _canReload
+        ? 'Could not load image'
+        : 'Could not display this image. Go back and choose it again.',
     onRetry: _canReload ? _retry : null,
   );
 

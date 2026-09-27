@@ -7,7 +7,8 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import '../../support/momcozy_test_fonts.dart';
 import 'lactation_test.dart' show LactationFixture, date, now;
 
-const validation = 'Check the time and values: milk amount must be 0–2,000 ml, and nursing duration must be a whole number from 0–240 minutes.';
+const validation =
+    'Check the time and values: milk amount must be 0–2,000 ml, and nursing duration must be a whole number from 0–240 minutes.';
 Future<void> click(WidgetTester tester, Finder finder) async {
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
@@ -105,7 +106,12 @@ void main() {
           repo.createFailure = const ProductFailure(ProductFailureKind.offline);
           await tester.tap(find.text('Save this record'));
           await tester.pumpAndSettle();
-          expect(find.text('Your save has not been confirmed. Please try again.').hitTestable(), findsOneWidget);
+          expect(
+            find
+                .text('Your save has not been confirmed. Please try again.')
+                .hitTestable(),
+            findsOneWidget,
+          );
           expect(find.text('Record saved.'), findsNothing);
           await shot('uncertain');
           repo.createFailure = null;
