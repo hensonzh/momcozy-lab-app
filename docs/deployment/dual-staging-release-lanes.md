@@ -1,6 +1,6 @@
 # 两条预发布部署与 App 分发链路（设计稿）
 
-> 日期：2026-09-27。状态：**局部本地实施，未新构建/发布可安装包、未改动云端、未实施北美基础设施**。
+> 日期：2026-09-27。状态：**A 旧应用容器已停并完成离线备份，新 A 仍待首次部署；B 未实施北美基础设施**。A 的最新执行状态见 [全新空数据重建交接](a-full-rebuild-2026-09-27.md)。下文旧 API 兼容约束属于停机前设计，不覆盖后来的新版优先决定。
 > 范围：工作区 `backend/`（Product Backend）、`agent/`（Agent Runtime）、`app/`（Flutter）。既有配置事实和入口参见 [环境工作流](environment-workflow.md)；Resend 交接见工作区 `backend/docs/resend-auth-email-handoff-checklist.md`。实际操作前重新核对仓库、服务器、平台和用户批准。
 
 ## 0. 本地实施进度与下一道门禁

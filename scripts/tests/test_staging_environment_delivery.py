@@ -31,7 +31,9 @@ def _literal_run_blocks(workflow: str) -> list[str]:
 
 class StagingDeliveryContractTest(unittest.TestCase):
     def test_manual_release_operator_gate(self) -> None:
-        script = _literal_run_blocks(STAGING_RELEASE.read_text())[0]
+        workflow = STAGING_RELEASE.read_text()
+        self.assertIn("secrets.STAGING_SSH_PRIVATE_KEY", workflow)
+        script = _literal_run_blocks(workflow)[0]
         cases = [
             ("Operator, Second", "operator", "SECOND", True),
             ("operator", "stranger", "operator", False),
