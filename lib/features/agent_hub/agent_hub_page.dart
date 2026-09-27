@@ -3537,8 +3537,11 @@ class AgentRunTranscript extends StatelessWidget {
     if (state.textContent.trim().isNotEmpty) {
       return const _AgentLoopDecorState();
     }
-    final projectedEvent = projectAgentWorkStatus(state.events).statusEvent;
-    return _AgentLoopDecorState(statusTitle: projectedEvent?.userFacingStatus);
+    final projection = projectAgentWorkStatus(state.events);
+    if (projection.isTerminal) return const _AgentLoopDecorState();
+    return _AgentLoopDecorState(
+      statusTitle: projection.statusEvent?.userFacingStatus ?? 'Thinking ...',
+    );
   }
 
   String? get _supportingText {

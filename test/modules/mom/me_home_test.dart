@@ -127,6 +127,38 @@ void main() {
     expect(find.text('Postpartum day 21 · Early recovery'), findsNothing);
   });
 
+  test('Pumping is a default record without overriding saved order', () {
+    expect(const MeState().visibleMetrics, [
+      MeMetric.feed,
+      MeMetric.pump,
+      MeMetric.energy,
+      MeMetric.sleep,
+    ]);
+    expect(
+      const MeState(
+        order: [MeMetric.sleep, MeMetric.feed, MeMetric.energy],
+      ).visibleMetrics,
+      [MeMetric.sleep, MeMetric.feed, MeMetric.energy, MeMetric.pump],
+    );
+  });
+
+  testWidgets('Me home shows Pumping in Today\'s records by default', (
+    tester,
+  ) async {
+    await _pumpHome(
+      tester,
+      _controller(_MeHomeRepository()),
+      size: const Size(393, 844),
+      scale: 1,
+    );
+    await tester.scrollUntilVisible(
+      find.text('Pumping'),
+      160,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Pumping'), findsOneWidget);
+  });
+
   testWidgets('Manage records is right aligned with the section title', (
     tester,
   ) async {
@@ -210,7 +242,7 @@ void main() {
         await tester.drag(find.byType(ListView), const Offset(0, 4000));
         await tester.pumpAndSettle();
       } else {
-        expect(find.text('No entry yet'), findsNWidgets(3));
+        expect(find.text('No entry yet'), findsNWidgets(4));
       }
       await expectLater(
         find.byType(MaterialApp),

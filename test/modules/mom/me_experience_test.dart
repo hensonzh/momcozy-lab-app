@@ -382,7 +382,7 @@ void main() {
     final c = controller(repo);
     await setup(tester, MeManageRecords(controller: c));
 
-    final handle = find.byType(ReorderableDragStartListener).at(1);
+    final handle = find.byType(ReorderableDragStartListener).at(2);
     final bounds = tester.getRect(handle);
     expect(bounds.size, const Size(46, 58));
     final gesture = await tester.startGesture(
@@ -419,7 +419,7 @@ void main() {
     final c = controller(repo);
     await setup(tester, MeManageRecords(controller: c));
 
-    final handle = find.byIcon(Icons.drag_handle).at(1);
+    final handle = find.byIcon(Icons.drag_handle).at(2);
     final start = tester.getCenter(handle);
     final gesture = await tester.startGesture(start);
     await tester.pump(const Duration(milliseconds: 700));

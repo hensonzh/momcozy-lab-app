@@ -82,6 +82,7 @@ void main() {
       MeMetric.energy,
       MeMetric.feed,
       MeMetric.sleep,
+      MeMetric.pump,
     ]);
     expect(state.records.single.value, 'Okay');
   });

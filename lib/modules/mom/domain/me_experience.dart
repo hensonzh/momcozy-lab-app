@@ -220,6 +220,7 @@ class MeState {
   List<MeMetric> get visibleMetrics {
     final visible = <MeMetric>{
       MeMetric.feed,
+      MeMetric.pump,
       MeMetric.energy,
       MeMetric.sleep,
       ...metricsFor(active.expand((e) => e.issues)),
