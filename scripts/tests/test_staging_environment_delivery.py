@@ -210,10 +210,11 @@ class StagingDeliveryContractTest(unittest.TestCase):
             "flutter test --no-pub",
             "scripts/build-mobile-app.mjs",
             "--environment local",
-            "app-local-debug.apk",
-            "actions/upload-artifact@",
+            "Build the local debug APK",
         ):
             self.assertIn(required, workflow)
+        self.assertNotIn("actions/upload-artifact@", workflow)
+        self.assertNotIn("actions/upload-artifact@", STAGING_RELEASE.read_text())
 
     def test_android_gradle_properties_do_not_pin_a_host_aapt2_path(self) -> None:
         properties = (ROOT / "android" / "gradle.properties").read_text()

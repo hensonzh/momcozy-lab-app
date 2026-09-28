@@ -378,20 +378,12 @@ jobs:
           bash scripts/build-flutter-app.sh
           kill -0 "${lock_pid}"
 
-      - name: Record and upload the published immutable artifact
+      - name: Verify the published immutable artifact
         run: |
           sha256sum dist/android-apk/releases/*.apk
           test "$(find dist/android-apk/releases -name '*.apk' -type f | wc -l | tr -d ' ')" = "1"
           provenance_file="$(python3 -c 'import json; print(json.load(open("dist/android-apk/manifest.json"))["provenanceFile"])')"
           test -f "dist/android-apk/releases/${provenance_file}"
-
-      - name: Upload the release bundle
-        uses: actions/upload-artifact@v4
-        with:
-          name: momcozy-staging-release-${{ github.sha }}
-          path: dist/android-apk
-          if-no-files-found: error
-          retention-days: 30
 
       - name: Remove signing and SSH material
         if: always()
