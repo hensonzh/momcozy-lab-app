@@ -49,6 +49,32 @@ void main() {
       expect(nursing.durationMinutes, 12);
     },
   );
+  test(
+    'today cumulative counts edit the same summary and preserve other fields',
+    () async {
+      final repo = BabyTestRecords();
+      final first = editor(repo, BabyRecordKind.dailyStatus);
+      addTearDown(first.dispose);
+      first.setWetCount('2');
+      final wet = (await first.save())!.single as BabyDailyStatusRecord;
+      final second = editor(repo, BabyRecordKind.dailyStatus, initial: wet);
+      addTearDown(second.dispose);
+      expect(second.wetCount, '2');
+      second.setWetCount('4');
+      final updated = (await second.save())!.single as BabyDailyStatusRecord;
+      expect(updated.id, wet.id);
+      expect(updated.wetCount, 4);
+      final third = editor(repo, BabyRecordKind.dailyStatus, initial: updated);
+      addTearDown(third.dispose);
+      third.setStoolCount('3');
+      final total = (await third.save())!.single as BabyDailyStatusRecord;
+      expect(repo.values, hasLength(1));
+      expect(total.id, wet.id);
+      expect(total.wetCount, 4);
+      expect(total.stoolCount, 3);
+    },
+  );
+
   test('bottle feeding requires a positive measured amount', () async {
     for (final method in [
       BabyFeedingMethod.expressedMilk,

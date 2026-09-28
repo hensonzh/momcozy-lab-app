@@ -41,6 +41,45 @@ void main() {
     ),
     home: Scaffold(body: child),
   );
+  testWidgets('today diaper total reopens the same summary for editing', (
+    tester,
+  ) async {
+    viewport(tester, 393);
+    final repo = BabyTestRecords()
+      ..values = [
+        BabyDailyStatusRecord(
+          id: 'daily',
+          babyId: babyTestProfile.id,
+          recordedOn: LocalDate(2026, 9, 8),
+          timezone: 'Asia/Shanghai',
+          savedAt: babyTestNow,
+          wetCount: 2,
+          stoolCount: 3,
+        ),
+      ];
+    final home = BabyHomeController(
+      profileRepository: BabyTestProfiles(),
+      recordRepository: repo,
+      timezoneProvider: () async => 'Asia/Shanghai',
+      now: () => babyTestNow,
+    );
+    await tester.pumpWidget(app(BabyHomePage(controller: home, onAsk: (_) {})));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Wet diapers').first);
+    await tester.tap(find.text('Wet diapers').first);
+    await tester.pumpAndSettle();
+    final wetField = find.byKey(const ValueKey('wet-count'));
+    expect(tester.widget<TextFormField>(wetField).initialValue, '2');
+    await tester.enterText(wetField, '4');
+    await tester.tap(find.byKey(const ValueKey('baby-save')));
+    await tester.pumpAndSettle();
+    expect(repo.values, hasLength(1));
+    final saved = repo.values.single as BabyDailyStatusRecord;
+    expect(saved.id, 'daily');
+    expect(saved.wetCount, 4);
+    expect(saved.stoolCount, 3);
+  });
+
   for (final width in [320.0, 393.0, 430.0]) {
     for (final scale in [1.0, 2.0]) {
       testWidgets(

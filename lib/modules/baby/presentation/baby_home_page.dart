@@ -256,6 +256,16 @@ class _BabyHomePageState extends State<BabyHomePage>
         baby = widget.controller.baby,
         zone = widget.controller.timezone;
     if (baby == null || zone == null) return;
+    final currentDaily = kind == BabyRecordKind.dailyStatus
+        ? c.recentRecords.value
+              ?.whereType<BabyDailyStatusRecord>()
+              .where(
+                (record) =>
+                    record.babyId == baby.id &&
+                    record.recordedOn == dateInTimezone(c.now(), zone),
+              )
+              .firstOrNull
+        : null;
     final saved = await showBabyRecordEditor(
       context,
       repository: c.recordRepository,
@@ -263,6 +273,7 @@ class _BabyHomePageState extends State<BabyHomePage>
       timezone: zone,
       now: c.now,
       kind: kind,
+      initial: currentDaily,
       diaperKind: diaper,
       growthMetric: metric ?? _metric,
     );
