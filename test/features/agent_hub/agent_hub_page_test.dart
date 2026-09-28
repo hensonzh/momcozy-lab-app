@@ -1046,6 +1046,8 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('pump-display.png'), findsOneWidget);
+    expect(find.text("Today's milk"), findsNothing);
+    expect(find.text('7-day schedule'), findsNothing);
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
@@ -1072,6 +1074,8 @@ void main() {
     );
     expect(find.byKey(const ValueKey('agent-sent-image-0')), findsOneWidget);
     expect(find.text('点击查看'), findsNothing);
+    expect(find.text("Today's milk"), findsOneWidget);
+    expect(find.text('7-day schedule'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
     await tester.pumpAndSettle();
@@ -1081,6 +1085,63 @@ void main() {
     );
     await tester.tap(find.byKey(const ValueKey('agent-sent-image-close')));
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('attachment shortcuts stay hidden during upload and reply', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    final picked = Completer<AgentStreamImageInput?>();
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          mediaRepository: _FakeAgentImageMediaRepository(),
+          pickImage: (_) => picked.future,
+        ),
+      ),
+    );
+
+    expect(find.text("Today's milk"), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text("Today's milk"), findsNothing);
+
+    picked.complete(
+      AgentStreamImageInput(
+        dataUrl: '',
+        localBytes: base64Decode(
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+        ),
+        mimeType: 'image/png',
+        name: 'draft.png',
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text("Today's milk"), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    expect(client.requests.single.images, hasLength(1));
+    expect(find.text("Today's milk"), findsNothing);
+
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'attachment-run-completed',
+        'type': 'run.completed',
+        'run_id': 'attachment-run',
+        'sequence': 1,
+        'payload': {'status': 'completed'},
+      }),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text("Today's milk"), findsOneWidget);
   });
 
   testWidgets('Agent Hub uploads and sends a PDF file attachment', (
@@ -1120,6 +1181,8 @@ void main() {
     );
     expect(find.byType(AgentComposerFileAttachment), findsOneWidget);
     expect(find.text('checkup-report.pdf'), findsOneWidget);
+    expect(find.text("Today's milk"), findsNothing);
+    expect(find.text('7-day schedule'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
     await tester.pump();
@@ -1135,6 +1198,8 @@ void main() {
     );
     expect(mediaRepository.uploadedFiles.single.mimeType, 'application/pdf');
     expect(find.byKey(const ValueKey('agent-sent-file-0')), findsOneWidget);
+    expect(find.text("Today's milk"), findsOneWidget);
+    expect(find.text('7-day schedule'), findsOneWidget);
   });
 
   testWidgets('Agent Hub deletes an abandoned upload when it is removed', (
@@ -1329,8 +1394,10 @@ void main() {
       findsOneWidget,
     );
 
+    expect(find.text("Today's milk"), findsNothing);
     await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
     await tester.pump();
+    expect(find.text("Today's milk"), findsNothing);
 
     expect(find.text('gallery.png'), findsOneWidget);
     expect(find.byType(AgentComposerImageAttachment), findsOneWidget);
@@ -1385,8 +1452,10 @@ void main() {
       isNotNull,
     );
 
+    expect(find.text("Today's milk"), findsNothing);
     await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
     await tester.pump();
+    expect(find.text("Today's milk"), findsOneWidget);
 
     expect(
       find.byKey(const ValueKey('agent-image-attachment-chip')),
