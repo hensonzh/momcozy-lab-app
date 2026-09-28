@@ -52,6 +52,13 @@ class StagingDeliveryContractTest(unittest.TestCase):
                 )
                 self.assertEqual(result.returncode == 0, allowed, result.stderr)
 
+    def test_headless_smoke_installs_only_the_reviewed_staging_ca(self) -> None:
+        tool = (ROOT / "tool/staging_environment_smoke_test.dart").read_text()
+        trust = (ROOT / "lib/core/network/staging_certificate_trust.dart").read_text()
+        self.assertIn("configureStagingCertificateTrust(", tool)
+        self.assertIn("apiBaseUrl: config.apiBaseUri.toString()", tool)
+        self.assertIn("stagingCertificateHosts.contains", trust)
+
     def test_staging_release_gate_builds_only_the_distribution_apk(self) -> None:
         script = (ROOT / "scripts/run-flutter-release-gate.mjs").read_text()
         self.assertEqual(script.count('"scripts/build-flutter-android-apk.mjs"'), 1)
