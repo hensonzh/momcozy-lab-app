@@ -246,6 +246,20 @@ class StagingDeliveryContractTest(unittest.TestCase):
         self.assertNotIn("actions/upload-artifact@", workflow)
         self.assertNotIn("actions/upload-artifact@", STAGING_RELEASE.read_text())
 
+    def test_android_ci_and_signed_release_share_gradle_dependency_cache(self) -> None:
+        action = "gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb"
+        ci = APP_CI.read_text().split("  android-compile:", 1)[1].split("  quality-and-build:", 1)[0]
+        release = STAGING_RELEASE.read_text()
+        for workflow in (ci, release):
+            self.assertEqual(workflow.count(action), 1)
+            self.assertLess(workflow.index("actions/setup-java@v4"), workflow.index(action))
+            self.assertLess(workflow.index(action), workflow.index("subosito/flutter-action@"))
+        self.assertIn("cache-read-only: ${{ github.event_name != 'push' || github.ref != 'refs/heads/main' }}", ci)
+        self.assertIn("cache-read-only: true", release)
+        self.assertIn("flutter build apk --debug --flavor staging", ci)
+        self.assertIn("MOMCOZY_REQUIRE_RELEASE_SIGNING: \"1\"", release)
+        self.assertIn("Run the signed release gate and live Product-Agent join smoke", release)
+
     def test_android_gradle_properties_do_not_pin_a_host_aapt2_path(self) -> None:
         properties = (ROOT / "android" / "gradle.properties").read_text()
 
