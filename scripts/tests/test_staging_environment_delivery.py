@@ -254,11 +254,81 @@ class StagingDeliveryContractTest(unittest.TestCase):
             self.assertEqual(workflow.count(action), 1)
             self.assertLess(workflow.index("actions/setup-java@v4"), workflow.index(action))
             self.assertLess(workflow.index(action), workflow.index("subosito/flutter-action@"))
-        self.assertIn("cache-read-only: ${{ github.event_name != 'push' || github.ref != 'refs/heads/main' }}", ci)
+        self.assertIn("cache-read-only: ${{ steps.gradle-changes.outputs.changed != 'true' }}", ci)
         self.assertIn("cache-read-only: true", release)
         self.assertIn("flutter build apk --debug --flavor staging", ci)
         self.assertIn("MOMCOZY_REQUIRE_RELEASE_SIGNING: \"1\"", release)
         self.assertIn("Run the signed release gate and live Product-Agent join smoke", release)
+
+    def test_android_compile_checkout_skips_design_archives_but_keeps_build_inputs(self) -> None:
+        ci = APP_CI.read_text().split("  android-compile:", 1)[1].split("  quality-and-build:", 1)[0]
+        checkout = ci.split("      - uses: actions/checkout@v4", 1)[1].split("      - name:", 1)[0]
+        self.assertIn("fetch-depth: 2", checkout)
+        self.assertIn("sparse-checkout:", checkout)
+        for path in ("android", "assets", "config", "lib", "scripts", "tool"):
+            self.assertIn(f"            {path}\n", checkout)
+        for archive in ("docs", "test", "design-contract"):
+            self.assertNotIn(f"            {archive}\n", checkout)
+        # Full regression lanes and signed release still check out all files.
+        quality = APP_CI.read_text().split("  quality:", 1)[1].split("  android-compile:", 1)[0]
+        golden = APP_CI.read_text().split("  golden:", 1)[1]
+        for section in (quality, golden, STAGING_RELEASE.read_text()):
+            self.assertNotIn("sparse-checkout:", section)
+        self.assertIn("flutter test --no-pub --exclude-tags=golden", quality)
+        self.assertIn("flutter test --no-pub --tags=golden", golden)
+
+    def test_gradle_cache_writes_only_when_native_dependencies_change(self) -> None:
+        ci = APP_CI.read_text().split("  android-compile:", 1)[1].split("  quality-and-build:", 1)[0]
+        release = STAGING_RELEASE.read_text()
+        self.assertIn("git diff --quiet", ci)
+        self.assertIn("':(glob)android/**/*.gradle*'", ci)
+        self.assertIn("android/gradle/wrapper pubspec.lock flutter-toolchain.json", ci)
+        self.assertIn("GITHUB_EVENT_NAME", ci)
+        self.assertIn("GITHUB_REF", ci)
+        self.assertIn("BASE_SHA: ${{ github.event.before }}", ci)
+        self.assertIn("cache-read-only: ${{ steps.gradle-changes.outputs.changed != 'true' }}", ci)
+        self.assertIn("cache-read-only: true", release)
+        self.assertIn("flutter build apk --debug --flavor staging", ci)
+        self.assertIn("Run the signed release gate and live Product-Agent join smoke", release)
+
+    def test_gradle_cache_write_decision_uses_native_changes_only(self) -> None:
+        import textwrap
+
+        workflow = APP_CI.read_text().split("  android-compile:", 1)[1].split("  quality-and-build:", 1)[0]
+        step = workflow.split("      - name: Detect Android dependency changes\n", 1)[1].split("      - name:", 1)[0]
+        script = textwrap.dedent(step.split("        run: |\n", 1)[1])
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            subprocess.run(["git", "config", "user.name", "CI Test"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "ci@example.test"], cwd=root, check=True)
+            def commit(path: str, contents: str) -> str:
+                file = root / path
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_text(contents)
+                subprocess.run(["git", "add", path], cwd=root, check=True)
+                subprocess.run(["git", "commit", "-qm", path], cwd=root, check=True)
+                return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+
+            before = commit("android/settings.gradle.kts", "v1")
+            dart_only = commit("lib/main.dart", "new UI")
+            native_source = commit("android/app/src/main/kotlin/Widget.kt", "class Widget")
+            native_change = commit("android/settings.gradle.kts", "v2")
+            for base, head, event, ref, expected in (
+                (before, dart_only, "push", "refs/heads/main", "false"),
+                (dart_only, native_source, "push", "refs/heads/main", "false"),
+                (native_source, native_change, "push", "refs/heads/main", "true"),
+                (before, native_change, "pull_request", "refs/pull/1/merge", "false"),
+            ):
+                with self.subTest(base=base, head=head, event=event):
+                    output = root / "decision.txt"
+                    output.write_text("")
+                    result = subprocess.run(["bash", "-e", "-c", script], cwd=root,
+                        env={**os.environ, "BASE_SHA": base, "GITHUB_SHA": head,
+                             "GITHUB_EVENT_NAME": event, "GITHUB_REF": ref,
+                             "GITHUB_OUTPUT": str(output)}, capture_output=True, text=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(output.read_text().strip(), f"changed={expected}")
 
     def test_android_gradle_properties_do_not_pin_a_host_aapt2_path(self) -> None:
         properties = (ROOT / "android" / "gradle.properties").read_text()

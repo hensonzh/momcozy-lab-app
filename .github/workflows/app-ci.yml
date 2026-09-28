@@ -71,6 +71,39 @@ jobs:
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          sparse-checkout: |
+            android
+            assets
+            config
+            ios
+            lib
+            scripts
+            tool
+
+      - name: Detect Android dependency changes
+        id: gradle-changes
+        env:
+          BASE_SHA: ${{ github.event.before }}
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" != push || "${GITHUB_REF}" != refs/heads/main ]]; then
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            if ! git fetch --no-tags --depth=1 origin "${BASE_SHA}"; then
+              echo "changed=true" >> "${GITHUB_OUTPUT}"
+              exit 0
+            fi
+          fi
+          if git diff --quiet "${BASE_SHA}" "${GITHUB_SHA}" -- \
+            ':(glob)android/**/*.gradle*' ':(glob)android/**/*.properties' \
+            android/gradlew android/gradle/wrapper pubspec.lock flutter-toolchain.json; then
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "changed=true" >> "${GITHUB_OUTPUT}"
+          fi
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -81,7 +114,7 @@ jobs:
       - name: Cache Android Gradle dependencies
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb
         with:
-          cache-read-only: ${{ github.event_name != 'push' || github.ref != 'refs/heads/main' }}
+          cache-read-only: ${{ steps.gradle-changes.outputs.changed != 'true' }}
 
       - name: Set up Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2

@@ -28,6 +28,32 @@ one-click delivery workflows. Cold-cache timings are not a speed guarantee.
   backend deployment workflows already take about one minute; bypassing their
   verification is not a useful optimization.
 
+## Follow-up: targeted cache writes and Android checkout
+
+The first follow-up run showed that Backend's second MinIO build hit the same
+layers but needlessly exported its cache again; the object-storage job already
+exports the pinned image. The container job now only **reads** the cache; the
+object-storage job still builds and tests it on every run and writes cache on
+trusted `main` pushes. Agent retains its own repository-scoped MinIO cache.
+Cold runs can still spend minutes building MinIO; measure the next warm run
+rather than assuming a cache hit.
+
+The Android compilation job previously checked out the full App repository,
+including design archives and golden snapshots that are not used by the APK
+compiler. It now sparsely checks out source, native projects, assets and build
+scripts. Quality and macOS golden jobs still fetch and run the **full** suites;
+the signed release checkout is unchanged. The Android job still runs a real
+staging debug APK build and checks the arm64 PDF library.
+
+Gradle restoration stays on for every Android job. PR/non-main runs are read-only.
+On `main`, an ordinary UI/Dart change is also read-only, avoiding expensive
+post-job cleanup/upload; only a change to native Gradle settings, Gradle wrapper,
+`pubspec.lock` or Flutter toolchain config enables a cache write. A missing
+cache never skips compilation. The protected release remains read-only.
+The prior build-61 CI had an ~8.3-minute Android compilation step plus ~1.9
+minutes of Gradle post-cache processing; validate the improvement with a
+new exact-SHA CI run after this workflow change.
+
 ## Short operator sequence
 
 1. Push each **clean** latest commit to its own `main`; require the matching
