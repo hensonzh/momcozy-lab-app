@@ -2311,6 +2311,7 @@ class _AgentHubPageState extends State<AgentHubPage>
                           files: List<AgentStreamFileInput>.unmodifiable(
                             _attachedFiles,
                           ),
+                          loadImageThumbnail: widget.loadImageThumbnail,
                           canAttachImage:
                               widget.pickImage != null &&
                               !_attachmentUploadPending &&
@@ -4301,6 +4302,7 @@ class AgentComposerBar extends StatefulWidget {
     required this.canAttachImage,
     required this.canAttachFile,
     required this.isAttachmentPending,
+    this.loadImageThumbnail,
     this.attachmentUploadProgress,
     required this.onChanged,
     required this.onSend,
@@ -4319,6 +4321,7 @@ class AgentComposerBar extends StatefulWidget {
   final bool isInputLocked;
   final List<AgentStreamImageInput> images;
   final List<AgentStreamFileInput> files;
+  final AgentImageContentLoader? loadImageThumbnail;
   final bool canAttachImage;
   final bool canAttachFile;
   final bool isAttachmentPending;
@@ -4516,71 +4519,78 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                       MediaQuery.textScalerOf(context).scale(14) > 20;
                   final width = largeText
                       ? math.min(320.0, constraints.maxWidth * .92)
-                      : 64.0;
-                  return SingleChildScrollView(
-                    key: const ValueKey('agent-pending-attachments'),
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.all(2),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (imageCount > 0)
-                          Row(
-                            key: const ValueKey('agent-image-attachment-chip'),
-                            children: [
-                              for (var index = 0; index < imageCount; index++)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: SizedBox(
-                                    width: width,
-                                    child: AgentComposerImageAttachment(
-                                      key: ValueKey(
-                                        'agent-image-attachment-$index',
+                      : 94.0;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: SingleChildScrollView(
+                      key: const ValueKey('agent-pending-attachments'),
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.all(2),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (imageCount > 0)
+                            Row(
+                              key: const ValueKey(
+                                'agent-image-attachment-chip',
+                              ),
+                              children: [
+                                for (var index = 0; index < imageCount; index++)
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 16),
+                                    child: SizedBox(
+                                      width: width,
+                                      child: AgentComposerImageAttachment(
+                                        key: ValueKey(
+                                          'agent-image-attachment-$index',
+                                        ),
+                                        image: images[index],
+                                        loadImageThumbnail:
+                                            widget.loadImageThumbnail,
+                                        removeButtonKey: ValueKey(
+                                          index == 0
+                                              ? 'agent-remove-image-button'
+                                              : 'agent-remove-image-$index',
+                                        ),
+                                        onRemove: isInputLocked
+                                            ? null
+                                            : () => widget.onRemoveImage(index),
                                       ),
-                                      image: images[index],
-                                      removeButtonKey: ValueKey(
-                                        index == 0
-                                            ? 'agent-remove-image-button'
-                                            : 'agent-remove-image-$index',
-                                      ),
-                                      onRemove: isInputLocked
-                                          ? null
-                                          : () => widget.onRemoveImage(index),
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
-                        if (fileCount > 0)
-                          Row(
-                            key: const ValueKey('agent-file-attachment-chip'),
-                            children: [
-                              for (var index = 0; index < fileCount; index++)
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    right: index == fileCount - 1 ? 0 : 8,
-                                  ),
-                                  child: SizedBox(
-                                    width: width,
-                                    child: AgentComposerFileAttachment(
-                                      key: ValueKey(
-                                        'agent-file-attachment-$index',
+                              ],
+                            ),
+                          if (fileCount > 0)
+                            Row(
+                              key: const ValueKey('agent-file-attachment-chip'),
+                              children: [
+                                for (var index = 0; index < fileCount; index++)
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      right: index == fileCount - 1 ? 0 : 8,
+                                    ),
+                                    child: SizedBox(
+                                      width: width,
+                                      child: AgentComposerFileAttachment(
+                                        key: ValueKey(
+                                          'agent-file-attachment-$index',
+                                        ),
+                                        file: files[index],
+                                        removeButtonKey: ValueKey(
+                                          index == 0
+                                              ? 'agent-remove-file-button'
+                                              : 'agent-remove-file-$index',
+                                        ),
+                                        onRemove: isInputLocked
+                                            ? null
+                                            : () => widget.onRemoveFile(index),
                                       ),
-                                      file: files[index],
-                                      removeButtonKey: ValueKey(
-                                        index == 0
-                                            ? 'agent-remove-file-button'
-                                            : 'agent-remove-file-$index',
-                                      ),
-                                      onRemove: isInputLocked
-                                          ? null
-                                          : () => widget.onRemoveFile(index),
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
-                      ],
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
                   );
                 },

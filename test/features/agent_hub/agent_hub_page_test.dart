@@ -1241,6 +1241,47 @@ void main() {
     },
   );
 
+  testWidgets('restored pending photo displays its owned thumbnail', (
+    tester,
+  ) async {
+    const fileId = '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518';
+    final stored = AgentHubInteractionSnapshot.fromMap(
+      AgentHubInteractionSnapshot(
+        composerText: 'Review my photo',
+        attachedImages: const [
+          AgentStreamImageInput(dataUrl: '', fileId: fileId, name: 'photo.png'),
+        ],
+      ).toMap(includeImageData: false),
+    );
+    final store = _MemoryAgentHubInteractionStateStore(stored);
+    final requested = <String>[];
+    final bytes = Uint8List.fromList(
+      File(
+        'test/goldens/design_system/agent-attachment-pending-image-390-1x.png',
+      ).readAsBytesSync(),
+    );
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          interactionStateStore: store,
+          loadImageThumbnail: (id) async {
+            requested.add(id);
+            return bytes;
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(requested, [fileId]);
+    final tile = find.byKey(const ValueKey('agent-image-attachment-0'));
+    expect(tile, findsOneWidget);
+    expect(
+      find.descendant(of: tile, matching: find.byType(Image)),
+      findsOneWidget,
+    );
+    expect(find.text('photo.png'), findsOneWidget);
+  });
+
   testWidgets('Agent Hub keeps camera and gallery image sources distinct', (
     tester,
   ) async {

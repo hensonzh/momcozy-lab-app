@@ -27,7 +27,7 @@ class AgentComposerFileAttachment extends StatelessWidget {
       preview: const Center(
         child: MomCozyLineIcon(
           MomCozyLineGlyph.file,
-          size: 21,
+          size: 26,
           color: MomHomeTokens.rose,
         ),
       ),

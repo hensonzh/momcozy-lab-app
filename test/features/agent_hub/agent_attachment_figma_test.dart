@@ -23,6 +23,25 @@ void main() {
         tester,
         scale: 1,
         capture: (state) async {
+          if (state == 'pending-image') {
+            final image = tester.getRect(
+              find.byKey(const ValueKey('agent-image-attachment-0')),
+            );
+            final file = tester.getRect(
+              find.byKey(const ValueKey('agent-file-attachment-0')),
+            );
+            expect(image.width, 94);
+            expect(file.width, 94);
+            expect(image.top, file.top);
+            expect(image.left, closeTo(18, 1));
+            expect(file.left, closeTo(128, 2));
+            final remove = tester.getRect(
+              find.byKey(const ValueKey('agent-remove-image-button')),
+            );
+            expect(remove.size, const Size(32, 32));
+            expect(remove.right, image.right);
+            return;
+          }
           if (state != 'menu') return;
           final menu = find.byKey(const ValueKey('agent-attachment-menu'));
           final rect = tester.getRect(menu);

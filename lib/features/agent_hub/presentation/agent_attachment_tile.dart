@@ -26,7 +26,7 @@ class AgentAttachmentTile extends StatelessWidget {
     if (largeText) return _buildLargeTextTile(context);
 
     return SizedBox(
-      width: 64,
+      width: 94,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,26 +35,29 @@ class AgentAttachmentTile extends StatelessWidget {
             clipBehavior: Clip.none,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(16),
                 child: ColoredBox(
-                  color: const Color(0xFFF5E7ED),
-                  child: SizedBox.square(dimension: 64, child: preview),
+                  color: const Color(0xFFFBF2F6),
+                  child: SizedBox.square(dimension: 94, child: preview),
                 ),
               ),
               Positioned(
-                top: -1,
-                right: -1,
+                top: 0,
+                right: 0,
                 child: IconButton(
                   key: removeButtonKey,
                   onPressed: onRemove,
                   tooltip: '$removeLabel $name',
-                  icon: const Icon(Icons.close_rounded, size: 18),
+                  icon: const Icon(Icons.close_rounded, size: 22),
                   color: MomHomeTokens.rose,
                   style: IconButton.styleFrom(
                     backgroundColor: MomHomeTokens.surface,
-                    minimumSize: const Size.square(24),
-                    maximumSize: const Size.square(24),
-                    fixedSize: const Size.square(24),
+                    shape: const CircleBorder(
+                      side: BorderSide(color: Color(0xFFE9E1E6)),
+                    ),
+                    minimumSize: const Size.square(32),
+                    maximumSize: const Size.square(32),
+                    fixedSize: const Size.square(32),
                     padding: EdgeInsets.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -62,12 +65,16 @@ class AgentAttachmentTile extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 7),
           Text(
             name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
+            style: MomHomeTokens.text(
+              14,
+              color: MomHomeTokens.secondary,
+              weight: FontWeight.w600,
+            ),
           ),
         ],
       ),

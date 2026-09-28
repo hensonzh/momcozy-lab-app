@@ -67,11 +67,13 @@ class AgentComposerImageAttachment extends StatelessWidget {
     required this.image,
     required this.removeButtonKey,
     required this.onRemove,
+    this.loadImageThumbnail,
   });
 
   final AgentStreamImageInput image;
   final Key removeButtonKey;
   final VoidCallback? onRemove;
+  final AgentImageContentLoader? loadImageThumbnail;
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +85,9 @@ class AgentComposerImageAttachment extends StatelessWidget {
       onRemove: onRemove,
       preview: _AgentDataUrlImage(
         image: image,
+        loadImageContent: loadImageThumbnail,
         fit: BoxFit.cover,
-        cacheWidth: 192,
+        cacheWidth: 282,
       ),
     );
   }
