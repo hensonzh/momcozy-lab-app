@@ -240,30 +240,14 @@ Android packaging 检查：通过
 非视觉测试：816 passed
 ```
 
-非视觉测试之所以使用独立筛选，是因为当前多数 Golden 测试文件并没有正确添加 `golden` tag。仓库文档中的：
+**2026-09-28 更新：** 含 `matchesGoldenFile` 的测试库已标注 `@Tags(['golden'])`，CI 的 `scripts/tests/test_golden_tagging.py` 会拦截新增漏标文件。现在按文件级标签分流：
 
 ```bash
-flutter test --exclude-tags=golden
+flutter test --no-pub --exclude-tags=golden  # 非 Golden 测试
+MOMCOZY_GOLDEN_PRECISION_TOLERANCE=0.011 flutter test --no-pub --tags=golden  # macOS Golden 测试
 ```
 
-并不能可靠排除全部视觉测试。这是现有测试基础设施缺口，不要误判为已解决。
-
-当前可靠的非视觉测试命令：
-
-```bash
-python3 - <<'PY'
-from pathlib import Path
-import subprocess
-
-files = []
-for path in sorted(Path('test').rglob('*_test.dart')):
-    text = path.read_text(errors='ignore')
-    if 'matchesGoldenFile' not in text:
-        files.append(str(path))
-
-raise SystemExit(subprocess.call(['flutter', 'test', '--no-pub', *files]))
-PY
-```
+混合了截图断言与普通断言的测试文件整体在 Golden 通道运行；发布门禁仍只运行非 Golden 通道，视觉门禁由 App CI 的独立 macOS job 承担。
 
 ### 3.3 Visual/Golden 状态
 

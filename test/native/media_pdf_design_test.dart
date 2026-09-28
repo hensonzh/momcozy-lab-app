@@ -1,3 +1,6 @@
+@Tags(['golden'])
+library;
+
 import 'dart:ffi' show DynamicLibrary;
 import 'dart:io';
 import 'dart:ui' as ui;
