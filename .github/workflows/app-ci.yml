@@ -75,13 +75,6 @@ jobs:
           --mode debug
           --format apk
 
-      - name: Upload the verified APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: momcozy-local-debug-${{ github.sha }}
-          path: build/app/outputs/flutter-apk/app-local-debug.apk
-          if-no-files-found: error
-          retention-days: 7
 
   golden:
     runs-on: macos-15
