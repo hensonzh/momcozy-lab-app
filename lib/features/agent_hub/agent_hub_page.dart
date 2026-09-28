@@ -1173,6 +1173,14 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
 
+  bool get _hideShortcutsForAttachmentTurn =>
+      _attachmentUploadPending ||
+      _attachedImages.isNotEmpty ||
+      _attachedFiles.isNotEmpty ||
+      (_state.isActive &&
+          (_activeRequest?.images.isNotEmpty == true ||
+              _activeRequest?.files.isNotEmpty == true));
+
   Future<void> _waitForCompletedReplyRunSettlement() async {
     final settlement = _runSettlementCompleter;
     final waitingState = _state;
@@ -2266,6 +2274,7 @@ class _AgentHubPageState extends State<AgentHubPage>
                   animation: Listenable.merge([
                     _visibleReplyRunningNotifier,
                     _composerLockedNotifier,
+                    _runStateNotifier,
                   ]),
                   builder: (context, child) {
                     final isVisibleReplyRunning =
@@ -2283,19 +2292,20 @@ class _AgentHubPageState extends State<AgentHubPage>
                               'Could not sync history. Tap to try again.',
                             ),
                           ),
-                        _AgentHomeShortcuts(
-                          onSelected:
-                              widget.runner == null ||
-                                  isComposerLocked ||
-                                  isRestoring ||
-                                  isVisibleReplyRunning ||
-                                  _attachmentUploadPending
-                              ? null
-                              : (prompt) {
-                                  _composerController.text = prompt;
-                                  unawaited(_sendMessage());
-                                },
-                        ),
+                        if (!_hideShortcutsForAttachmentTurn)
+                          _AgentHomeShortcuts(
+                            onSelected:
+                                widget.runner == null ||
+                                    isComposerLocked ||
+                                    isRestoring ||
+                                    isVisibleReplyRunning ||
+                                    _attachmentUploadPending
+                                ? null
+                                : (prompt) {
+                                    _composerController.text = prompt;
+                                    unawaited(_sendMessage());
+                                  },
+                          ),
                         AgentComposerBar(
                           controller: _composerController,
                           focusNode: _composerFocusNode,
