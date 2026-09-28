@@ -385,6 +385,7 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
                             kind: kind,
                             width: width,
                             observation: c.latest(kind),
+                            summaryValue: c.todayCardValue(kind),
                             failed: state.failedMetrics.contains(kind),
                             onTap: () => record(kind),
                           ),
@@ -422,12 +423,14 @@ class MeHomeMetric extends StatelessWidget {
     required this.width,
     required this.onTap,
     this.observation,
+    this.summaryValue,
     this.failed = false,
   });
   final MeMetric kind;
   final double width;
   final VoidCallback onTap;
   final MeObservation? observation;
+  final String? summaryValue;
   final bool failed;
   @override
   Widget build(BuildContext context) {
@@ -436,6 +439,7 @@ class MeHomeMetric extends StatelessWidget {
     final verticalScale = (scaler.scale(22) / 22).clamp(1.0, double.infinity);
     final emptyValue = observation == null && !failed;
     final valueText =
+        summaryValue ??
         observation?.displayValue ??
         (failed ? 'Could not load' : 'No entry yet');
     final valueStyle = MeDesign.text(

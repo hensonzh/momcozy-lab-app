@@ -148,7 +148,7 @@ class RecordsApiRepository
     return _fetchPumpMilkRecordsRange(
       start: range.start,
       end: range.end,
-      limit: 50,
+      limit: 100,
     );
   }
 

@@ -181,7 +181,7 @@ void main() {
       expect(transport.lastQuery, {
         'start_at': '2026-06-29T00:00:00.000Z',
         'end_at': '2026-06-30T00:00:00.000Z',
-        'limit': 50,
+        'limit': 100,
       });
       expect(transport.lastQuery, isNot(containsPair('user_id', anything)));
       expect(records.single.id, 'pump-001');

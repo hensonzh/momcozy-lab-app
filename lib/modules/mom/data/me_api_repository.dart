@@ -99,6 +99,10 @@ class MeApiRepository implements MeRepository {
                 kind: MeMetric.pump,
                 occurredAt: e.occurredAt!.toLocal(),
                 value: '${e.measuredVolumeMl?.toStringAsFixed(0) ?? '—'} ml',
+                fields: {
+                  if (e.measuredVolumeMl != null)
+                    'volume_ml': e.measuredVolumeMl!,
+                },
               ),
             ),
       );
