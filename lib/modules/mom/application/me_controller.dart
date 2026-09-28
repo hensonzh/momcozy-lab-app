@@ -119,19 +119,52 @@ class MeController extends ChangeNotifier {
     _notify();
   }
 
-  MeObservation? latest(MeMetric kind) {
+  List<MeObservation> _today(MeMetric kind) {
     final date = now().toLocal();
-    final values =
-        state?.records
-            .where(
-              (e) =>
-                  e.kind == kind &&
-                  e.occurredAt.year == date.year &&
-                  e.occurredAt.month == date.month &&
-                  e.occurredAt.day == date.day,
-            )
-            .toList() ??
+    return state?.records.where((record) {
+          final at = record.occurredAt.toLocal();
+          return record.kind == kind &&
+              at.year == date.year &&
+              at.month == date.month &&
+              at.day == date.day;
+        }).toList() ??
         [];
+  }
+
+  /// The Me cards summarize today's records; individual records stay unchanged.
+  String? todayCardValue(MeMetric kind) {
+    if (kind != MeMetric.feed && kind != MeMetric.pump) return null;
+    final records = {
+      for (final record in _today(kind)) record.id: record,
+    }.values;
+    if (records.isEmpty) return null;
+    if (kind == MeMetric.feed) {
+      final count = records.length;
+      return '$count ${count == 1 ? 'time' : 'times'}';
+    }
+
+    double total = 0;
+    for (final record in records) {
+      final raw = record.fields['volume_ml'];
+      final parsed = raw == null
+          ? double.tryParse(
+              RegExp(
+                    r'^(\d+(?:\.\d+)?) ml$',
+                  ).firstMatch(record.value.trim())?.group(1) ??
+                  '',
+            )
+          : raw is num && raw.isFinite && raw >= 0
+          ? raw.toDouble()
+          : null;
+      if (parsed == null || !parsed.isFinite) return '— ml';
+      total += parsed;
+    }
+    final amount = total.toStringAsFixed(2).replaceFirst(RegExp(r'\.?0+$'), '');
+    return '$amount ml';
+  }
+
+  MeObservation? latest(MeMetric kind) {
+    final values = _today(kind);
     values.sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
     if (kind == MeMetric.diaper && values.isNotEmpty) {
       final latest = values.first;
