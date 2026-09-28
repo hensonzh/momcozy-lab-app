@@ -239,6 +239,9 @@ class StagingDeliveryContractTest(unittest.TestCase):
             release_gate,
         )
         self.assertIn("golden: {}", test_config)
+        self.assertIn("python3 -m unittest discover -s scripts/tests", workflow)
+        self.assertIn("runs-on: ubuntu-latest", workflow)
+        self.assertIn("runs-on: macos-15", workflow)
         self.assertIn("class _TolerantGoldenFileComparator", flutter_test_config)
         self.assertIn("result.diffPercent <= _precisionTolerance", flutter_test_config)
 
