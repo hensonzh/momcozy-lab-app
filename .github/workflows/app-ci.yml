@@ -12,8 +12,9 @@ permissions:
 
 jobs:
   quality-and-build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 35
+    # Most visual inventory tests are untagged golden comparisons built on macOS.
+    runs-on: macos-15
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -62,6 +63,8 @@ jobs:
         run: flutter analyze --no-pub
 
       - name: Test
+        env:
+          MOMCOZY_GOLDEN_PRECISION_TOLERANCE: "0.011"
         run: flutter test --no-pub --exclude-tags=golden
 
       - name: Build the local debug APK

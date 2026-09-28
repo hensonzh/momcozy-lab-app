@@ -52,17 +52,43 @@ void main() {
   });
 
   test('shipped web entry points and download artwork are English', () {
-    final han = RegExp(r'[\u3400-\u9fff]');
-    for (final path in [
-      'web/index.html',
-      'dist/android-apk/index.html',
-      'dist/android-apk/assets/momcozy-lab-download-qr.svg',
-    ]) {
-      final text = File(path).readAsStringSync();
-      expect(han.hasMatch(text), isFalse, reason: path);
-      expect(text, isNot(contains('Momcozy Lab')), reason: path);
+    final temporary = Directory.systemTemp.createTempSync('momcozy-web-copy-');
+    try {
+      final apk = File('${temporary.path}/fixture.apk')..writeAsBytesSync([1]);
+      final dist = '${temporary.path}/dist';
+      final generated = Process.runSync(
+        'node',
+        ['scripts/build-flutter-apk-download-site.mjs'],
+        environment: {
+          ...Platform.environment,
+          'MOMCOZY_APK_FLAVOR': 'local',
+          'MOMCOZY_APK_MODE': 'debug',
+          'MOMCOZY_APK_INPUT': apk.path,
+          'MOMCOZY_DOWNLOAD_DIST': dist,
+          'MOMCOZY_DOWNLOAD_BASE_URL': 'https://example.org/app',
+          'MOMCOZY_API_BASE_URL': 'http://127.0.0.1:8769',
+          'MOMCOZY_AGENT_API_BASE_URL': 'http://127.0.0.1:8010',
+        },
+      );
+      expect(
+        generated.exitCode,
+        0,
+        reason: '${generated.stdout}\n${generated.stderr}',
+      );
+      final han = RegExp(r'[\u3400-\u9fff]');
+      for (final path in [
+        'web/index.html',
+        '$dist/index.html',
+        '$dist/assets/momcozy-lab-download-qr.svg',
+      ]) {
+        final text = File(path).readAsStringSync();
+        expect(han.hasMatch(text), isFalse, reason: path);
+        expect(text, isNot(contains('Momcozy Lab')), reason: path);
+      }
+      expect(File('web/index.html').readAsStringSync(), contains('lang="en"'));
+    } finally {
+      temporary.deleteSync(recursive: true);
     }
-    expect(File('web/index.html').readAsStringSync(), contains('lang="en"'));
   });
 
   test('visible App copy uses the Momcozy AI brand, not CozyMate', () {

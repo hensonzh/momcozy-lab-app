@@ -303,11 +303,11 @@ function renderDownloadPage(manifest) {
     manifest.buildNumber,
   );
   return `<!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Momcozy Android 内测包下载</title>
+  <title>Momcozy AI Android preview download</title>
   <style>
     :root {
       --bg: #fbf7f5;
@@ -356,11 +356,11 @@ function renderDownloadPage(manifest) {
 </head>
 <body>
   <main>
-    <h1>momcozy AI 内测版</h1>
-    <p class="intro">使用 Android 手机扫描或点击二维码下载 APK。</p>
-    <p class="version">版本 ${escapeHtml(displayVersion)}</p>
-    <a class="qr-link" href="${escapeHtml(manifest.apkUrl)}" aria-label="下载 momcozy AI Android APK">
-      <img class="qr" src="${escapeHtml(manifest.qrCodePath)}" alt="momcozy AI APK 下载二维码" />
+    <h1>momcozy AI preview</h1>
+    <p class="intro">Scan or tap the QR code on your Android phone to download the APK.</p>
+    <p class="version">Version ${escapeHtml(displayVersion)}</p>
+    <a class="qr-link" href="${escapeHtml(manifest.apkUrl)}" aria-label="Download momcozy AI Android APK">
+      <img class="qr" src="${escapeHtml(manifest.qrCodePath)}" alt="momcozy AI APK download QR code" />
     </a>
   </main>
 </body>
@@ -399,8 +399,8 @@ function renderQrCodeSvg(value, label) {
   }
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${qrSize} ${canvasHeight}" role="img" aria-labelledby="title description">
-  <title id="title">${escapeXml(label)} APK 下载二维码</title>
-  <desc id="description">扫描后直接下载 Android APK</desc>
+  <title id="title">${escapeXml(label)} APK download QR code</title>
+  <desc id="description">Scan to download the Android APK</desc>
   <rect width="${qrSize}" height="${canvasHeight}" rx="16" fill="#fff" />
   <path d="${pathCommands.join("")}" fill="#171217" shape-rendering="crispEdges" />
   <text x="${qrSize / 2}" y="${qrSize + 36}" fill="#342431" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" text-anchor="middle">${escapeXml(label)}</text>
