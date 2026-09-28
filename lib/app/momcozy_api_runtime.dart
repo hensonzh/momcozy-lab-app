@@ -394,7 +394,36 @@ class MomCozyApiRuntime {
 
   Uri get agentApiBaseUri => Uri.parse(_defaultAgentApiBaseUrl);
 
-  void handleAgentApplicationEvent(AgentStreamEvent event) {}
+  final ValueNotifier<Set<String>> updatedPrimaryTabs = ValueNotifier(
+    <String>{},
+  );
+  final Set<String> _seenTabUpdateEvents = <String>{};
+  String? _activePrimaryTab;
+
+  void selectPrimaryTab(String? tab) {
+    _activePrimaryTab = tab;
+    if (tab == null || !updatedPrimaryTabs.value.contains(tab)) return;
+    updatedPrimaryTabs.value = {...updatedPrimaryTabs.value}..remove(tab);
+  }
+
+  void handleAgentApplicationEvent(AgentStreamEvent event) {
+    if (event.type != 'product.tabs.updated') return;
+    final replayKey = event.replayKey;
+    if (replayKey != null && !_seenTabUpdateEvents.add(replayKey)) return;
+    final tabs = event.payload['tabs'];
+    if (tabs is! List) return;
+    final updated = <String>{...updatedPrimaryTabs.value};
+    for (final tab in tabs) {
+      if (tab is String &&
+          const {'me', 'baby', 'schedule'}.contains(tab) &&
+          tab != _activePrimaryTab) {
+        updated.add(tab);
+      }
+    }
+    if (updated.length != updatedPrimaryTabs.value.length) {
+      updatedPrimaryTabs.value = updated;
+    }
+  }
 
   BlePlatform get blePlatform {
     return _blePlatform ??= _blePlatformFactory();

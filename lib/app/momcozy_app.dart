@@ -522,10 +522,28 @@ class MomCozyRouteShell extends StatefulWidget {
 
 class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   int _activation = 0;
+  MomCozyApiRuntime? _tabRuntime;
+
+  String? get _selectedTab => switch (widget.location) {
+    '/me' => 'me',
+    '/baby' => 'baby',
+    '/schedule' => 'schedule',
+    _ => null,
+  };
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _tabRuntime = MomCozyRuntimeScope.maybeOf(context);
+    _tabRuntime?.selectPrimaryTab(_selectedTab);
+  }
 
   @override
   void didUpdateWidget(covariant MomCozyRouteShell oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.location != widget.location) {
+      _tabRuntime?.selectPrimaryTab(_selectedTab);
+    }
     if (oldWidget.location != widget.location &&
         _primaryNavigationRoutes.contains(widget.location)) {
       _activation++;
@@ -571,9 +589,18 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
       ),
       bottomNavigationBar: hideNavigation
           ? null
-          : MomCozyBottomNavigation(
+          : _tabRuntime == null
+          ? MomCozyBottomNavigation(
               location: location,
               onSelectTab: widget.onSelectTab,
+            )
+          : ValueListenableBuilder<Set<String>>(
+              valueListenable: _tabRuntime!.updatedPrimaryTabs,
+              builder: (context, updatedTabs, child) => MomCozyBottomNavigation(
+                location: location,
+                onSelectTab: widget.onSelectTab,
+                updatedTabs: updatedTabs,
+              ),
             ),
     );
   }
