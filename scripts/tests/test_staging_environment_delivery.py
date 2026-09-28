@@ -207,19 +207,42 @@ class StagingDeliveryContractTest(unittest.TestCase):
                 provenance["sourceServices"], manifest["sourceServices"]
             )
 
-    def test_app_ci_runs_flutter_gates_and_builds_local_artifact(self) -> None:
+    def test_app_ci_checks_a_staging_android_build_in_parallel(self) -> None:
         workflow = APP_CI.read_text()
+        quality = workflow.split("  quality:", 1)[1].split("  android-compile:", 1)[0]
+        android = workflow.split("  android-compile:", 1)[1].split("  quality-and-build:", 1)[0]
+        required_check = workflow.split("  quality-and-build:", 1)[1].split("  golden:", 1)[0]
 
         for required in (
-            "flutter-version: 3.44.4",
             "dart format --output=none --set-exit-if-changed",
             "flutter analyze --no-pub",
-            "flutter test --no-pub",
-            "scripts/build-mobile-app.mjs",
-            "--environment local",
-            "Build the local debug APK",
+            "flutter test --no-pub --exclude-tags=golden",
         ):
-            self.assertIn(required, workflow)
+            self.assertIn(required, quality)
+        self.assertNotIn("flutter build apk", quality)
+        self.assertNotIn("needs:", android)
+        for required in (
+            "runs-on: ubuntu-latest",
+            "flutter-version: 3.44.4",
+            'node-version: "20"',
+            "--environment staging",
+            "flutter build apk --debug --flavor staging",
+            "--target-platform android-arm64",
+            "--dart-define-from-file=config/environments/staging.json",
+            "--dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=true",
+            "lib/arm64-v8a/libpdfium.so",
+        ):
+            self.assertIn(required, android)
+        for required in (
+            "if: always()",
+            "needs:",
+            "- quality",
+            "- android-compile",
+            "needs.quality.result",
+            "needs.android-compile.result",
+        ):
+            self.assertIn(required, required_check)
+        self.assertNotIn("--environment local", workflow)
         self.assertNotIn("actions/upload-artifact@", workflow)
         self.assertNotIn("actions/upload-artifact@", STAGING_RELEASE.read_text())
 
