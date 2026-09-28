@@ -1,5 +1,6 @@
 import '../../../domain/mother/postpartum_stage.dart';
 import 'dart:async';
+import '../../../app/primary_tab_activity.dart';
 import 'package:flutter/material.dart';
 import '../application/me_controller.dart';
 import '../domain/me_experience.dart';
@@ -25,6 +26,7 @@ class MeHomePage extends StatefulWidget {
 
 class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
   Timer? timer;
+  final _tabRefresh = PrimaryTabRefresh(0);
   @override
   void initState() {
     super.initState();
@@ -53,6 +55,14 @@ class _MeHomePageState extends State<MeHomePage> with WidgetsBindingObserver {
         widget.controller.load();
       }
       schedule();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tabRefresh.shouldRefresh(context, widget.controller.now())) {
+      unawaited(widget.controller.load());
     }
   }
 

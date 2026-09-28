@@ -8,6 +8,7 @@ import '../features/notifications/presentation/notification_scope.dart';
 import 'mom_module_routes.dart';
 import 'baby_module_routes.dart';
 import 'mom_bottom_navigation.dart';
+import 'primary_tab_activity.dart';
 import '../shared/widgets/momcozy_components.dart';
 import '../shared/design_system/mom_home_tokens.dart';
 import '../shared/design_system/mom_settings_theme.dart';
@@ -272,6 +273,51 @@ GoRouter createMomCozyRouter({
   final resolvedAgentHubBuilder =
       agentHubBuilder ??
       (context, uri, extra) => _buildDefaultAgentHubPage(context, uri, extra);
+  final routesByPath = {for (final route in momCozyRoutes) route.path: route};
+  GoRoute routeFor(String path) {
+    final route = routesByPath[path]!;
+    return GoRoute(
+      path: path,
+      builder: (context, state) {
+        if (runtimeController != null && !capabilities.isRouteEnabled(path)) {
+          return _BackendCapabilityUnavailablePage(route: route);
+        }
+        if (path == '/') {
+          final runtime = MomCozyRuntimeScope.of(context);
+          return KeyedSubtree(
+            key: ValueKey((
+              runtime,
+              runtime.session.status,
+              runtime.session.userId,
+            )),
+            child: resolvedAgentHubBuilder(context, state.uri, state.extra),
+          );
+        }
+        return MomCozyRoutePage(
+          route: route,
+          uri: state.uri,
+          extra: state.extra,
+          extendedProductResourcesEnabled:
+              capabilities.extendedProductApiEnabled,
+          onLogout: runtimeController == null
+              ? null
+              : () => runtimeController.logout(sessionStore: sessionStore),
+          onDeleteAccount: runtimeController == null
+              ? null
+              : () async {
+                  await runtimeController.runtime.authRepository
+                      .deleteAccount();
+                  await runtimeController.logout(
+                    sessionStore: sessionStore,
+                    revokeRemote: false,
+                  );
+                },
+          onBabySelected: runtimeController?.selectBaby,
+        );
+      },
+    );
+  }
+
   return GoRouter(
     initialLocation: initialLocation,
     refreshListenable: runtimeController == null
@@ -327,58 +373,29 @@ GoRouter createMomCozyRouter({
         ),
       ...momModuleRoutes,
       ...babyModuleRoutes,
-      ShellRoute(
-        builder: (context, state, child) {
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
           final runtime = MomCozyRuntimeScope.of(context);
           return MomCozyRouteTelemetry(
             location: state.uri.path,
             observability: runtime.observability,
             child: MomCozyRouteShell(
               location: state.uri.path,
-              uri: state.uri,
-              extra: state.extra,
-              agentHubBuilder: resolvedAgentHubBuilder,
-              child: child,
+              child: navigationShell,
+              onSelectTab: (index) {
+                if (index != navigationShell.currentIndex) {
+                  navigationShell.goBranch(index);
+                }
+              },
             ),
           );
         },
-        routes: [
-          for (final route in momCozyRoutes)
-            GoRoute(
-              path: route.path,
-              builder: (context, state) =>
-                  runtimeController != null &&
-                      !capabilities.isRouteEnabled(route.path)
-                  ? _BackendCapabilityUnavailablePage(route: route)
-                  // The shell keeps one Agent Hub alive across tab changes.
-                  // Keep its nested Navigator mounted without creating a
-                  // second chat page for this route.
-                  : route.path == '/'
-                  ? const SizedBox.shrink()
-                  : MomCozyRoutePage(
-                      route: route,
-                      uri: state.uri,
-                      extra: state.extra,
-                      extendedProductResourcesEnabled:
-                          capabilities.extendedProductApiEnabled,
-                      onLogout: runtimeController == null
-                          ? null
-                          : () => runtimeController.logout(
-                              sessionStore: sessionStore,
-                            ),
-                      onDeleteAccount: runtimeController == null
-                          ? null
-                          : () async {
-                              await runtimeController.runtime.authRepository
-                                  .deleteAccount();
-                              await runtimeController.logout(
-                                sessionStore: sessionStore,
-                                revokeRemote: false,
-                              );
-                            },
-                      onBabySelected: runtimeController?.selectBaby,
-                    ),
-            ),
+        branches: [
+          for (final path in ['/me', '/baby', '/', '/schedule', '/more'])
+            StatefulShellBranch(routes: [routeFor(path)]),
+          StatefulShellBranch(
+            routes: [routeFor('/notifications'), routeFor('/media-viewer')],
+          ),
         ],
       ),
     ],
@@ -492,32 +509,29 @@ class MomCozyRouteShell extends StatefulWidget {
     super.key,
     required this.location,
     required this.child,
-    this.uri,
-    this.extra,
-    this.agentHubBuilder,
+    this.onSelectTab,
   });
 
   final String location;
   final Widget child;
-  final Uri? uri;
-  final Object? extra;
-  final MomCozyAgentHubBuilder? agentHubBuilder;
+  final ValueChanged<int>? onSelectTab;
 
   @override
   State<MomCozyRouteShell> createState() => _MomCozyRouteShellState();
 }
 
 class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
-  late bool _hasBuiltAgentHub = widget.location == '/';
+  int _activation = 0;
 
   @override
   void didUpdateWidget(covariant MomCozyRouteShell oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.location != widget.location &&
+        _primaryNavigationRoutes.contains(widget.location)) {
+      _activation++;
+    }
     if (oldWidget.location == '/' && widget.location != '/') {
       FocusManager.instance.primaryFocus?.unfocus();
-    }
-    if (widget.location == '/') {
-      _hasBuiltAgentHub = true;
     }
   }
 
@@ -525,8 +539,6 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   Widget build(BuildContext context) {
     final location = widget.location;
     final hideNavigation = !_primaryNavigationRoutes.contains(location);
-    final content = _buildContent(context);
-
     return Scaffold(
       // Let Schedule scroll beneath the navigation's transparent avatar inset.
       extendBody: location == '/schedule',
@@ -537,56 +549,32 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
         bottom: hideNavigation,
         child: Column(
           children: [
-            Expanded(child: MomCozyPageBody(safeArea: false, child: content)),
+            Expanded(
+              child: MomCozyPageBody(
+                safeArea: false,
+                child: PrimaryTabActivity(
+                  selectedIndex: switch (location) {
+                    '/me' => 0,
+                    '/baby' => 1,
+                    '/' => 2,
+                    '/schedule' => 3,
+                    '/more' => 4,
+                    _ => -1,
+                  },
+                  activation: _activation,
+                  child: widget.child,
+                ),
+              ),
+            ),
           ],
         ),
       ),
       bottomNavigationBar: hideNavigation
           ? null
-          : MomCozyBottomNavigation(location: location),
-    );
-  }
-
-  Widget _buildContent(BuildContext context) {
-    final agentHubBuilder = widget.agentHubBuilder;
-    if (agentHubBuilder == null) return widget.child;
-
-    final location = widget.location;
-    final isAgentRoute = location == '/';
-    if (!_hasBuiltAgentHub) return widget.child;
-
-    final runtime = MomCozyRuntimeScope.of(context);
-    final agentHub = KeyedSubtree(
-      key: ValueKey<String>(
-        'agent-hub-session:${runtime.session.status.name}:${runtime.session.userId}',
-      ),
-      child: agentHubBuilder(
-        context,
-        isAgentRoute ? widget.uri : null,
-        isAgentRoute ? widget.extra : null,
-      ),
-    );
-
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Offstage(
-          offstage: !isAgentRoute,
-          child: ExcludeFocus(
-            excluding: !isAgentRoute,
-            child: TickerMode(enabled: isAgentRoute, child: agentHub),
-          ),
-        ),
-        Positioned.fill(
-          child: Offstage(
-            offstage: isAgentRoute,
-            child: ExcludeFocus(
-              excluding: isAgentRoute,
-              child: TickerMode(enabled: !isAgentRoute, child: widget.child),
+          : MomCozyBottomNavigation(
+              location: location,
+              onSelectTab: widget.onSelectTab,
             ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -618,7 +606,11 @@ class MomCozyRoutePage extends StatelessWidget {
       return buildBabyHome(context, onBabySelected: onBabySelected);
     }
     if (route.path == '/more') {
-      return MorePage(onLogout: onLogout, onDeleteAccount: onDeleteAccount);
+      return MorePage(
+        key: ValueKey(MomCozyRuntimeScope.of(context)),
+        onLogout: onLogout,
+        onDeleteAccount: onDeleteAccount,
+      );
     }
 
     if (route.path == '/') {
@@ -657,6 +649,7 @@ Widget _buildDefaultAgentHubPage(
   Object? extra,
 ) {
   final runtime = MomCozyRuntimeScope.of(context);
+  final tabActivity = PrimaryTabActivity.maybeOf(context);
   String? currentAccessToken() {
     return runtime.currentSession.accessToken ??
         MomCozyRuntimeScope.read(context)?.currentSession.accessToken ??
@@ -666,7 +659,9 @@ Widget _buildDefaultAgentHubPage(
   final targetConversationId = uri?.queryParameters['conversationId'];
   return AgentHubPage(
     key: ObjectKey(_agentSessionInteractionKey(runtime)),
-    isVisible: uri != null,
+    isVisible: tabActivity == null
+        ? uri != null
+        : tabActivity.selectedIndex == 2,
     now: runtime.now,
     initialConversationId: targetConversationId,
     stateCacheKey: _agentSessionInteractionKey(runtime),

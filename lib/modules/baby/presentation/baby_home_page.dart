@@ -1,5 +1,6 @@
 import 'baby_motion.dart';
 import 'dart:async';
+import '../../../app/primary_tab_activity.dart';
 import '../../../shared/widgets/momcozy_line_icon.dart';
 import 'package:flutter/material.dart';
 import '../../../domain/baby/baby_profile.dart';
@@ -40,6 +41,7 @@ class BabyHomePage extends StatefulWidget {
 class _BabyHomePageState extends State<BabyHomePage>
     with WidgetsBindingObserver {
   Timer? _timer;
+  final _tabRefresh = PrimaryTabRefresh(1);
   final _scroll = ScrollController();
   GrowthMetric _metric = GrowthMetric.weight;
   bool _switching = false;
@@ -85,6 +87,14 @@ class _BabyHomePageState extends State<BabyHomePage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) unawaited(_load());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tabRefresh.shouldRefresh(context, widget.controller.now())) {
+      unawaited(_load());
+    }
   }
 
   @override

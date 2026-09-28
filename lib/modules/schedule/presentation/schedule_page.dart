@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../../app/primary_tab_activity.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../domain/shared/local_date.dart';
 import '../../../domain/shared/product_failure.dart';
@@ -31,6 +32,7 @@ class SchedulePage extends StatefulWidget {
 
 class _SchedulePageState extends State<SchedulePage> {
   bool _expanded = true;
+  final _tabRefresh = PrimaryTabRefresh(3);
   late final controller = ScheduleController(
     repository: widget.repository,
     timezoneProvider: widget.timezoneProvider,
@@ -40,6 +42,14 @@ class _SchedulePageState extends State<SchedulePage> {
   void initState() {
     super.initState();
     unawaited(controller.load());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tabRefresh.shouldRefresh(context, widget.now())) {
+      unawaited(controller.load());
+    }
   }
 
   @override
