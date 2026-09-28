@@ -9,9 +9,11 @@ class MomCozyBottomNavigation extends StatelessWidget {
     super.key,
     required this.location,
     this.onSelectTab,
+    this.updatedTabs = const {},
   });
   final String location;
   final ValueChanged<int>? onSelectTab;
+  final Set<String> updatedTabs;
   static const _surface = Color(0xfffffcfa);
   static const _assetRoot = 'assets/images/navigation_figma/';
   static const _tabs = [
@@ -177,8 +179,18 @@ class MomCozyBottomNavigation extends StatelessWidget {
   }) {
     final selected = location == path;
     final center = path == '/';
+    final updated = updatedTabs.contains(switch (path) {
+      '/me' => 'me',
+      '/baby' => 'baby',
+      '/schedule' => 'schedule',
+      _ => null,
+    });
     return Semantics(
-      label: compactLabels ? label : null,
+      label: updated
+          ? '$label, updated'
+          : compactLabels
+          ? label
+          : null,
       selected: selected,
       button: true,
       child: InkWell(
@@ -249,6 +261,26 @@ class MomCozyBottomNavigation extends StatelessWidget {
                       ),
               ),
             ),
+            if (updated)
+              Positioned(
+                key: ValueKey('bottom-nav-update-${path.substring(1)}'),
+                top: 23,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Transform.translate(
+                    offset: const Offset(19, 0),
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: MomCozyColors.badge,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             if (!compactLabels)
               Positioned(
                 top: 65,
