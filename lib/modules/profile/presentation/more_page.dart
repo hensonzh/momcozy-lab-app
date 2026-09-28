@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/primary_tab_activity.dart';
+
 import '../../../app/momcozy_api_runtime.dart';
 import '../../../features/auth/presentation/auth_page.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
@@ -25,6 +27,8 @@ class MorePage extends StatefulWidget {
 class _MorePageState extends State<MorePage> {
   MomCozyApiRuntime? _runtime;
   Future<({String name, String email})>? _identity;
+  ({String name, String email})? _cachedIdentity;
+  final _tabRefresh = PrimaryTabRefresh(4);
   bool _deleting = false;
   String? _deleteMessage;
 
@@ -32,10 +36,24 @@ class _MorePageState extends State<MorePage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final runtime = MomCozyRuntimeScope.of(context);
+    final refresh = _tabRefresh.shouldRefresh(context, runtime.now());
     if (!identical(runtime, _runtime)) {
       _runtime = runtime;
-      _identity = _loadIdentity(runtime);
+      _cachedIdentity = null;
+      _identity = _loadIdentityAndCache(runtime);
+    } else if (refresh) {
+      _identity = _loadIdentityAndCache(runtime);
     }
+  }
+
+  Future<({String name, String email})> _loadIdentityAndCache(
+    MomCozyApiRuntime runtime,
+  ) async {
+    final value = await _loadIdentity(runtime);
+    if (mounted && identical(runtime, _runtime)) {
+      setState(() => _cachedIdentity = value);
+    }
+    return value;
   }
 
   Future<({String name, String email})> _loadIdentity(
@@ -59,11 +77,14 @@ class _MorePageState extends State<MorePage> {
   Widget build(BuildContext context) =>
       FutureBuilder<({String name, String email})>(
         future: _identity,
+        initialData: _cachedIdentity,
         builder: (context, snapshot) => _content(
           context,
           name: snapshot.data?.name ?? '',
           email: snapshot.data?.email ?? '',
-          loading: snapshot.connectionState != ConnectionState.done,
+          loading:
+              snapshot.data == null &&
+              snapshot.connectionState != ConnectionState.done,
         ),
       );
 

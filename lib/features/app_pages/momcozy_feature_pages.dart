@@ -47,7 +47,7 @@ class MomCozyFeaturePage extends StatelessWidget {
       case '/schedule':
         final runtime = MomCozyRuntimeScope.of(context);
         return SchedulePage(
-          key: ValueKey('schedule-page-${runtime.currentSession.userId}'),
+          key: ValueKey(runtime),
           repository: runtime.scheduleRepository,
           timezoneProvider: runtime.timezoneProvider,
           now: runtime.now,

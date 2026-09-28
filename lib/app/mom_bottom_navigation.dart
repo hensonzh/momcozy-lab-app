@@ -5,8 +5,13 @@ import '../shared/design_system/momcozy_design_system.dart';
 
 /// Shared navigation, calibrated against Figma 483:1058 / 691:116.
 class MomCozyBottomNavigation extends StatelessWidget {
-  const MomCozyBottomNavigation({super.key, required this.location});
+  const MomCozyBottomNavigation({
+    super.key,
+    required this.location,
+    this.onSelectTab,
+  });
   final String location;
+  final ValueChanged<int>? onSelectTab;
   static const _surface = Color(0xfffffcfa);
   static const _assetRoot = 'assets/images/navigation_figma/';
   static const _tabs = [
@@ -119,13 +124,14 @@ class MomCozyBottomNavigation extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        for (final tab in _tabs)
+                        for (var index = 0; index < _tabs.length; index++)
                           Expanded(
                             child: _destination(
                               context,
-                              label: tab.label,
-                              path: tab.path,
-                              asset: tab.asset,
+                              index: index,
+                              label: _tabs[index].label,
+                              path: _tabs[index].path,
+                              asset: _tabs[index].asset,
                               labelHeight: labelHeight,
                               compactLabels: compactLabels,
                             ),
@@ -162,6 +168,7 @@ class MomCozyBottomNavigation extends StatelessWidget {
 
   Widget _destination(
     BuildContext context, {
+    required int index,
     required String label,
     required String path,
     required String asset,
@@ -177,7 +184,13 @@ class MomCozyBottomNavigation extends StatelessWidget {
       child: InkWell(
         key: ValueKey('bottom-nav-${label.toLowerCase()}'),
         borderRadius: BorderRadius.circular(14),
-        onTap: () => context.go(path),
+        onTap: () {
+          if (onSelectTab != null) {
+            onSelectTab!(index);
+          } else {
+            context.go(path);
+          }
+        },
         child: Stack(
           clipBehavior: Clip.none,
           children: [
