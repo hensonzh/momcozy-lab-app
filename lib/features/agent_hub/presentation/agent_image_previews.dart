@@ -39,9 +39,13 @@ class AgentSentImages extends StatelessWidget {
                 images[index],
                 loadImageContent: loadImageContent,
               ),
-              child: SizedBox(
-                width: 112,
-                height: 240,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minWidth: 112,
+                  maxWidth: 112,
+                  minHeight: 44,
+                  maxHeight: 240,
+                ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(14),
                   child: _AgentDataUrlImage(
@@ -281,8 +285,9 @@ class _AgentDataUrlImageState extends State<_AgentDataUrlImage> {
         future: remoteBytes,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(strokeWidth: 2),
+            return const SizedBox(
+              height: 112,
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
             );
           }
           final loadedBytes = snapshot.data;
@@ -295,11 +300,11 @@ class _AgentDataUrlImageState extends State<_AgentDataUrlImage> {
               errorBuilder: (_, _, _) => const _AgentImageFallback(),
             );
           }
-          return const _AgentImageFallback();
+          return const SizedBox(height: 112, child: _AgentImageFallback());
         },
       );
     }
-    return const _AgentImageFallback();
+    return const SizedBox(height: 112, child: _AgentImageFallback());
   }
 }
 
