@@ -4,12 +4,99 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as image_codec;
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import '../../support/agent_image_scenarios.dart';
 
 void main() {
   final imageBytes = File('assets/images/mom/milk-hero.png').readAsBytesSync();
+  testWidgets('sent images size their tap target to decoded aspect ratio', (
+    tester,
+  ) async {
+    Uint8List png(int width, int height) => Uint8List.fromList(
+      image_codec.encodePng(
+        image_codec.copyResize(
+          image_codec.decodePng(imageBytes)!,
+          width: width,
+          height: height,
+        ),
+      ),
+    );
+
+    for (final (width, height, expectedHeight) in [
+      (320, 160, 56.0),
+      (160, 320, 224.0),
+    ]) {
+      final bytes = png(width, height);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AgentSentImages(
+              images: [
+                AgentStreamImageInput(
+                  dataUrl: '',
+                  localBytes: bytes,
+                  name: 'photo.png',
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.runAsync(
+        () => precacheImage(
+          ResizeImage(MemoryImage(bytes), width: 336),
+          tester.element(find.byType(MaterialApp)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final target = find.byKey(const ValueKey('agent-sent-image-0'));
+      expect(tester.getSize(target).width, 112);
+      expect(tester.getSize(target).height, closeTo(expectedHeight, 1));
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets('remote thumbnail uses a compact square until decoded', (
+    tester,
+  ) async {
+    final pending = Completer<Uint8List>();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: AgentSentImages(
+            images: const [
+              AgentStreamImageInput(dataUrl: '', fileId: 'remote'),
+            ],
+            loadImageThumbnail: (_) => pending.future,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    final target = find.byKey(const ValueKey('agent-sent-image-0'));
+    expect(tester.getSize(target), const Size(112, 112));
+    final bytes = Uint8List.fromList(
+      image_codec.encodePng(
+        image_codec.copyResize(
+          image_codec.decodePng(imageBytes)!,
+          width: 320,
+          height: 160,
+        ),
+      ),
+    );
+    pending.complete(bytes);
+    await tester.runAsync(
+      () => precacheImage(
+        ResizeImage(MemoryImage(bytes), width: 336),
+        tester.element(find.byType(MaterialApp)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.getSize(target).height, closeTo(56, 1));
+  });
+
   testWidgets('empty thumbnail stops loading and preserves original access', (
     tester,
   ) async {
