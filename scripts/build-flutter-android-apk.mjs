@@ -13,7 +13,7 @@ if (process.argv.includes("--help")) {
   console.log(`Usage:
   node scripts/build-flutter-android-apk.mjs [--check-config] \\
     --mode <debug|release> \\
-    --flavor <local|staging|production> \\
+    --flavor <local|staging|play|production> \\
     [--format <apk|appbundle>] \\
     [--dart-define=KEY=VALUE]
 `);
@@ -23,7 +23,7 @@ if (process.argv.includes("--help")) {
 const options = parseArgs(process.argv.slice(2));
 try {
   options.dartDefines = withFlutterApiDartDefines({
-    flavor: options.flavor,
+    flavor: options.flavor === "play" ? "staging" : options.flavor,
     dartDefines: options.dartDefines,
   });
 } catch (error) {
@@ -35,6 +35,10 @@ if (options.checkConfig) {
     `Flutter Android ${options.format} config is valid for ${options.flavor}.`,
   );
   process.exit(0);
+}
+
+if (options.flavor === "play") {
+  fail("B build is not enabled until the single-host B backend, signing path and release gates are approved.");
 }
 
 const buildVariant = `${options.flavor}${capitalize(options.mode)}`;
@@ -148,7 +152,7 @@ function parseArgs(args) {
   if (!["debug", "release"].includes(mode)) {
     fail(`Unsupported or missing --mode: ${mode || "(empty)"}`);
   }
-  if (!["local", "staging", "production"].includes(flavor)) {
+  if (!["local", "staging", "play", "production"].includes(flavor)) {
     fail(`Unsupported or missing --flavor: ${flavor || "(empty)"}`);
   }
   if (!["apk", "appbundle"].includes(format)) {

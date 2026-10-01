@@ -262,13 +262,11 @@ if (options.releaseLane === "north-america-staging") {
     [PRODUCT_API_DEFINE]: target.productApiBaseUrl,
     [AGENT_API_DEFINE]: target.agentApiBaseUrl,
   };
-  if (options.platform === "android") {
-    // The existing staging flavor is A's install identity; B needs a new flavor.
-    fail("B Android application ID is not implemented in a separate native flavor; A staging must remain unchanged.");
-  }
-  const project = readFileSync(path.join(projectRoot, "ios/Runner.xcodeproj/project.pbxproj"), "utf8");
-  if (project.split(`PRODUCT_BUNDLE_IDENTIFIER = ${target.iosBundleId};`).length - 1 !== 3) {
-    fail("B iOS Bundle ID does not match the existing staging Xcode configurations.");
+  if (options.platform === "ios") {
+    const project = readFileSync(path.join(projectRoot, "ios/Runner.xcodeproj/project.pbxproj"), "utf8");
+    if (project.split(`PRODUCT_BUNDLE_IDENTIFIER = ${target.iosBundleId};`).length - 1 !== 3) {
+      fail("B iOS Bundle ID does not match the existing staging Xcode configurations.");
+    }
   }
 } else {
   config = loadConfig(configPath, options.environment);
@@ -305,9 +303,12 @@ console.log(`Product API: ${resolved.productUrl}`);
 console.log(`Agent API:   ${resolved.agentUrl}`);
 console.log(`Config:      ${path.relative(projectRoot, configPath)}`);
 if (options.releaseLane) console.log(`Login define: MOMCOZY_INTERNAL_INVITE_LOGIN=${options.releaseLane === "legacy-staging"}`);
+if (options.releaseLane === "north-america-staging" && options.platform === "android") {
+  console.log("Android flavor: play");
+}
 if (options.checkConfig) process.exit(0);
 if (options.releaseLane === "north-america-staging") {
-  fail("B build is not enabled until its managed-service backend and signing path are approved.");
+  fail("B build is not enabled until the single-host B backend, signing path and release gates are approved.");
 }
 if (options.releaseLane === "legacy-staging" && !hasAndroidReleaseSigning()) {
   fail("A release signing variables are incomplete; refuse a debug-signed distribution artifact.");
@@ -319,7 +320,7 @@ if (options.platform === "android") {
     "--mode",
     options.mode,
     "--flavor",
-    options.environment,
+    options.releaseLane === "north-america-staging" ? "play" : options.environment,
     "--format",
     options.format,
     ...dartDefines,

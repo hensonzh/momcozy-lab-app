@@ -22,6 +22,10 @@ void main() {
     );
     expect(androidBuild, contains('applicationIdSuffix = ".local"'));
     expect(androidBuild, contains('applicationIdSuffix = ".staging"'));
+    expect(
+      androidBuild,
+      contains('create("play") {\n            dimension = "environment"\n            applicationId = "com.momcozy.mai"'),
+    );
     expect(androidBuild, isNot(contains('create("test")')));
 
     final xcodeProject = File(
