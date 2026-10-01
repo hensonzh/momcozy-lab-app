@@ -14,7 +14,7 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
                 + 通知 worker + 邮件 worker + 一次性迁移任务
   Agent 项目:   Agent API + Agent worker + 一次性迁移任务
                 └─ 加入 Backend 创建的 B 网络，使用 B 的共享基础设施
-  B HTTPS 反向代理: 两个独立 API 域名 -> 对应 loopback 端口
+  B HTTPS 反向代理: 两个独立 API 域名 -> 127.0.0.1:8001 / :8002
   B 邮件 worker: 出站 Resend SMTP；Agent worker: 出站模型 API
 ```
 
@@ -25,11 +25,13 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
 - **B API 域名（2026-10-01）**：Product
   `https://backend-us-dev.lute-momcozylab.luteos.cloud`，Agent
   `https://agent-us-dev.lute-momcozylab.luteos.cloud`；两条 DNS A 记录
-  均指向 `32.199.186.149`。两端到 :443 均超时；反向代理、证书、入口放行与
+  均指向 `32.199.186.149`。2026-10-01 对目标实例所绑定安全组的只读检查
+  发现 TCP 80/443 没有匹配的入站规则；目标机临时监听这两个端口时，外部仍超时。
+  两端到 :443 均超时；反向代理、证书、入口放行与
   HTTPS 健康检查尚未完成。域名中的 `dev` 不改变 B 的
   `deployment_target=north-america-staging`、`APP_ENV=staging` 身份。
   Backend/Agent 的 `deploy/us-east-uat/nginx-*.conf` 是 B 独立的待安装
-  反代模板（端口分别转 `127.0.0.1:8101` / `:8102`）；仅用合成证书做过
+  反代模板（端口分别转 `127.0.0.1:8001` / `:8002`）；仅用合成证书做过
   Nginx 语法检验，**目标机尚无公网证书、未启用反代**。
 - **PostgreSQL**：B 单机自启动一个 PostgreSQL 实例；同实例内 Product
   使用 `momcozy_lab_backend_uat`，Agent 使用 `momcozy_lab_agent_uat`，
@@ -99,7 +101,8 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
   `AUTH_INVITE_CODES=`，未轮换其余凭据。Backend/Agent 静态预检、两服务共享配置
   匹配检查以及 Backend Compose 静态渲染均通过；没有发送邮件或启动服务。
   目标 JSON 与 env 已写入上述两个 B 域名，
-  但域名 HTTPS 超时，主机无 :80/:443 listener 和公信证书。
+  但域名 HTTPS 超时，主机无 :80/:443 listener 和公信证书；目标实例绑定的
+  `launch-wizard-25` 安全组也无 TCP 80/443 入站规则，需按变更流程放行并复测。
   **尚未部署** PostgreSQL、Redis、MinIO、Product、Agent 或反向代理。
   历史托管数据确认不迁入。B Docker 新环境守卫通过，但普通 `ubuntu`
   用户无 Docker socket 权限，守卫以 `sudo -n` 执行；发布 runner 的权限模型
