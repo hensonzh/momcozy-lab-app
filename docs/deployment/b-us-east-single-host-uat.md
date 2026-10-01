@@ -73,7 +73,7 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
 保留 B 专属 `deploy/Dockerfile`、非密钥 `deploy/config_us-east-uat`、
 `release-source.json`、B 专属 Compose/私有 env 模板与目标静态校验；
 删除已失效的 B Kubernetes `workloads.yaml`/`migration-job.yaml`。旧版 IT Kubernetes/托管资源申请表
-仅作历史记录，**不得继续作为当前申请或发布清单**。B 专属 CI 的验证任务覆盖合成 PostgreSQL/Redis 隔离、两库合成 dump/隔离恢复、Redis RDB 与 MinIO 两桶合成隔离恢复、Compose 静态渲染及 Dockerfile 构建；验证成功后的独立任务仅在 GitHub `dev` push 时向私有 GHCR 发布 B 镜像并记录 digest，**不连接目标机、不执行部署**。Backend/Agent 有 B 私有目录占位文件初始化工具与只读发布准入预检；Backend 还有跨服务凭据匹配、实时数据库 revision 回滚预检和 PostgreSQL 两库恢复脚本。目标机 root/锁/0600 私有配置已准备，非密钥 URL 已填写；2026-10-01 已在 B 主机首次生成全新专属 PostgreSQL/Redis/MinIO/JWT/内部服务凭据，重复运行未轮换，外部服务密钥与邀请策略仍待同步；MinIO/Redis 的**正式数据**备份与隔离恢复、离机留存、可执行 B 发布/回滚 runner 与上线验收仍未完成。合成恢复不能当作目标机真实恢复。
+仅作历史记录，**不得继续作为当前申请或发布清单**。B 专属 CI 的验证任务覆盖合成 PostgreSQL/Redis 隔离、两库合成 dump/隔离恢复、Redis RDB 与 MinIO 两桶合成隔离恢复、Compose 静态渲染及 Dockerfile 构建；验证成功后的独立任务仅在 GitHub `dev` push 时向私有 GHCR 发布 B 镜像并记录 digest，**不连接目标机、不执行部署**。Backend/Agent 有 B 私有目录占位文件初始化工具与只读发布准入预检；Backend 还有跨服务凭据匹配、实时数据库 revision 回滚预检和 PostgreSQL 两库恢复脚本。目标机 root/锁/0600 私有配置已准备，非密钥 URL 已填写；2026-10-01 已在 B 主机首次生成全新专属 PostgreSQL/Redis/MinIO/JWT/内部服务凭据，重复运行未轮换，随后 Resend 和从 A 读取的 OpenAI 密钥已安全同步到 B 私有 env，只有邀请策略占位；MinIO/Redis 的**正式数据**备份与隔离恢复、离机留存、可执行 B 发布/回滚 runner 与上线验收仍未完成。合成恢复不能当作目标机真实恢复。
 
 ## 目标机准备进度（2026-10-01）
 
@@ -90,14 +90,18 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
   构建对应 B 镜像及固定 MinIO 源码镜像，PostgreSQL/Redis 无持久卷隔离测试通过。目标机上的镜像仍是本地构建，
   没有从私有 GHCR 拉取并验证不可变 digest，也没有切换 `current`。业务容器数为 0。
 - B 两份私有 env 已在目标机完成本地一次性专属凭据初始化，权限仍为 0600；
-  不复用 A 的 DB/Redis/MinIO/JWT/服务密钥，后续发布只读取它们。Provider
-  密钥与邀请策略仍有 `REPLACE_WITH` 占位；目标 JSON 与 env 已写入上述两个
-  B 域名。静态目标检查不等于 HTTPS 可达；私有 env 预检继续拒绝，
+  不复用 A 的 DB/Redis/MinIO/JWT/服务密钥，后续发布只读取它们。
+  Resend 与 A 链路当前 OpenAI 密钥已在 B 私有 env 中同步；目标机上的
+  SMTP/STARTTLS 登录和 OpenAI `/v1/models` 鉴权通过，但未发送邮件或模型推理。
+  Backend 只剩 `AUTH_INVITE_CODES` 占位，故其静态预检仍拒绝；Agent 静态预检
+  与两服务共享配置匹配检查通过。目标 JSON 与 env 已写入上述两个 B 域名，
+  但域名 HTTPS 超时，主机无 :80/:443 listener 和公信证书。
   **尚未部署** PostgreSQL、Redis、MinIO、Product、Agent 或反向代理。
-  历史托管数据确认不迁入，仍需落实 HTTPS/TLS 与外部服务密钥。
-  主机到 Resend 587、OpenAI 443 和 GHCR 443 的 TCP 连通测试通过，但真实邮件/模型
-  认证与调用未验证。完成 MinIO/Redis 真实备份与隔离恢复及离机留存，提供可审核的 B 发布/回滚
-  入口，最后完成真实服务、邮件和 Agent 10 并发验收。不得绕过这些门禁。
+  历史托管数据确认不迁入。B Docker 新环境守卫通过，但普通 `ubuntu`
+  用户无 Docker socket 权限，守卫以 `sudo -n` 执行；发布 runner 的权限模型
+  需明确。完成邀请策略、HTTPS/TLS、公有端口与证书、真实备份与隔离恢复及
+  离机留存，提供可审核的 B 发布/回滚入口，再完成真实邮件、服务和 Agent
+  10 并发验收。不得绕过这些门禁。
 
 ## B 镜像发布任务（与目标机部署分离）
 
