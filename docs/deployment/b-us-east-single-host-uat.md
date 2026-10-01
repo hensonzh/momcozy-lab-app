@@ -8,7 +8,7 @@ A 链路保持原样，App 的 B 分发/商店策略不因服务端改用单机�
 ## 边界与拓扑
 
 ```text
-GitHub dev -> 独立 B 构建/发布流水线（尚未接通）-> 美东独立服务器
+GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（尚未接通）
   B 专属发布目录/锁、私有 env、Docker Compose 项目/网络/卷
   Backend 项目: PostgreSQL + Redis + MinIO + Product API
                 + 通知 worker + 邮件 worker + 一次性迁移任务
@@ -44,8 +44,7 @@ GitHub dev -> 独立 B 构建/发布流水线（尚未接通）-> 美东独立�
 1. 固定美东目标机和 B 域名/公网证书/反代端口；核对 B 流水线从 GitHub `dev` 拉取、使用 `deploy/Dockerfile`，标记 commit 和镜像 digest。
 2. 实现 B 专属 Compose/私有 env/发布 root 和锁、初始化 DB/ACL/Bucket、
    非公网网络与卷；建立并演练两个数据库、MinIO 和 Redis 的备份恢复。
-   **B Compose 模板、只读私有 env 预检及面向 GitHub `dev` 的 B 专属验证 workflow 已推送并运行通过，但发布流水线尚未接通**，不得拿 A 的部署脚本
-   修改几个 URL 直接使用。
+   **B Compose 模板、只读私有 env 预检和 GitHub `dev` 的验证已通过；B 镜像发布与目标机服务部署是两道独立门禁**。目标机发布入口尚未接通，不得拿 A 的部署脚本修改几个 URL 直接使用。
 3. 数据处置：托管 RDS/Redis/S3 不再作为目标；是否需要保留/搬运旧数据
    需先确认。空库才按 Product -> Agent 顺序做迁移；逐项检查版本和
    schema。迁移前备份，失败则停止发布，不自动降级数据库。
@@ -59,7 +58,7 @@ GitHub dev -> 独立 B 构建/发布流水线（尚未接通）-> 美东独立�
 保留 B 专属 `deploy/Dockerfile`、非密钥 `deploy/config_us-east-uat`、
 `release-source.json`、B 专属 Compose/私有 env 模板与目标静态校验；
 删除已失效的 B Kubernetes `workloads.yaml`/`migration-job.yaml`。旧版 IT Kubernetes/托管资源申请表
-仅作历史记录，**不得继续作为当前申请或发布清单**。B 专属 CI 只做合成数据的 PostgreSQL/Redis 隔离测试、Compose 渲染与本地镜像构建；不推镜像、不连接 UAT、不执行发布。Backend/Agent 已有默认不写入的 B 私有目录占位文件初始化工具、只读跨服务凭据匹配检查及发布准入预检；Backend 另有只读回滚检查，从 B 专属 PostgreSQL 实时读取数据库 revision 并校验 B 发布指针，但不执行回滚；可执行 runner 仍需在 B 锁内重新核对。目标机 `/opt/momcozy-lab-us-east-uat` 根目录、锁及两份私有 env 路径已固化为模板，但公网 URL、真实密钥、主机配置仍未填写。PostgreSQL 两库的备份/隔离恢复脚本已编写并用本地合成数据验证，相关 CI 测试已编写但尚未推送；未在目标机演练；MinIO/Redis 的真实备份恢复、可执行发布 CLI 与上线验收仍是后续实施，不在本轮假装完成。
+仅作历史记录，**不得继续作为当前申请或发布清单**。B 专属 CI 的验证任务覆盖合成 PostgreSQL/Redis 隔离、两库合成 dump/隔离恢复、Compose 静态渲染及 Dockerfile 构建；验证成功后的独立任务仅在 GitHub `dev` push 时向私有 GHCR 发布 B 镜像并记录 digest，**不连接目标机、不执行部署**。Backend/Agent 有 B 私有目录占位文件初始化工具与只读发布准入预检；Backend 还有跨服务凭据匹配、实时数据库 revision 回滚预检和 PostgreSQL 两库恢复脚本。目标机 root/锁/0600 占位配置已准备，但真实 URL/密钥未填写；MinIO/Redis 的真实备份与隔离恢复、离机留存、可执行 B 发布/回滚 runner 与上线验收仍未完成。合成恢复不能当作目标机真实恢复。
 
 ## 目标机准备进度（2026-10-01）
 
@@ -70,12 +69,23 @@ GitHub dev -> 独立 B 构建/发布流水线（尚未接通）-> 美东独立�
   env/目标 JSON 占位文件，以及 B 专属锁；备份目录通过持久 bind mount 映射到 `/data`。
   Backend 的 PostgreSQL 恢复脚本增加挂载源检查，避免挂载消失时写入根盘；
   `/data` 同时承载状态卷与备份，**不是异地备份**，仍需独立留存和恢复演练。
-- 目标机已从 GitHub `dev` 拉取 Backend/Agent 已提交的干净快照，构建 B 镜像及固定
-  MinIO 源码镜像，PostgreSQL/Redis 无持久卷隔离测试通过。只构建了本地镜像，没有 GHCR
-  不可变 digest，也没有推送或切换 `current`。业务容器数为 0。
+- 目标机已从 GitHub `dev` 拉取 Backend/Agent 已提交的干净快照；最新检出的提交分别是
+  Backend `62ea6c0d29620d0ed07483c79abf80f3be58847a`、Agent
+  `a689e662a21e91bcb95d4180e671cd5869c94154`，各自的 B 验证 CI 已通过。目标机已
+  构建对应 B 镜像及固定 MinIO 源码镜像，PostgreSQL/Redis 无持久卷隔离测试通过。目标机上的镜像仍是本地构建，
+  没有从私有 GHCR 拉取并验证不可变 digest，也没有切换 `current`。业务容器数为 0。
 - 两份 env 仍有 `REPLACE_WITH` 和无效示例域名；目标 JSON 的 URL 仍是 `TBD`。预检
   按预期拒绝，**尚未部署** PostgreSQL、Redis、MinIO、Product、Agent 或反向代理。
   仍需确认历史数据是否迁入，批准两个 HTTPS 域名/DNS/TLS，配置 B 专属密钥。
   主机到 Resend 587、OpenAI 443 和 GHCR 443 的 TCP 连通测试通过，但真实邮件/模型
   认证与调用未验证。完成 MinIO/Redis 真实备份与隔离恢复及离机留存，提供可审核的 B 发布/回滚
   入口，最后完成真实服务、邮件和 Agent 10 并发验收。不得绕过这些门禁。
+
+## B 镜像发布任务（与目标机部署分离）
+
+Backend/Agent 的 B 验证 workflow 在 GitHub `dev` **push 且验证任务成功**后，另起
+`b-image` 任务从各自 `deploy/Dockerfile` 构建，发布到私有 GHCR 的
+`b-dev-<完整 commit SHA>` 标签，并记录不可变 digest。PR／手动 workflow 派发只验证，
+不发布镜像。CI 不 SSH 目标机、不启动服务、不切换 `current`；目标机尚未配置私有 GHCR 拉取身份或拉取并核验 digest。镜像发布成功不代表
+B 服务已部署或可对外使用。实际部署仍须先验证目标机私有配置、域名/TLS、
+历史数据处置及 PostgreSQL/MinIO/Redis 的备份与隔离恢复门禁。
