@@ -22,6 +22,15 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
   PostgreSQL/Redis/MinIO 命名卷、API 端口和 TLS 域名均独立。仅 API 经反向
   代理对外服务；状态服务不直接对公网开放。不能把 B 伪装成 A 的 `staging`
   或 `production` 目标。应用 `APP_ENV=staging` 是进程模式，不代表发布目标。
+- **B API 域名（2026-10-01）**：Product
+  `https://backend-us-dev.lute-momcozylab.luteos.cloud`，Agent
+  `https://agent-us-dev.lute-momcozylab.luteos.cloud`；两条 DNS A 记录
+  均指向 `32.199.186.149`。两端到 :443 均超时；反向代理、证书、入口放行与
+  HTTPS 健康检查尚未完成。域名中的 `dev` 不改变 B 的
+  `deployment_target=north-america-staging`、`APP_ENV=staging` 身份。
+  Backend/Agent 的 `deploy/us-east-uat/nginx-*.conf` 是 B 独立的待安装
+  反代模板（端口分别转 `127.0.0.1:8101` / `:8102`）；仅用合成证书做过
+  Nginx 语法检验，**目标机尚无公网证书、未启用反代**。
 - **PostgreSQL**：B 单机自启动一个 PostgreSQL 实例；同实例内 Product
   使用 `momcozy_lab_backend_uat`，Agent 使用 `momcozy_lab_agent_uat`，
   两套角色/权限与 Alembic 迁移独立。此前由 IT 在托管 RDS 建过同名库，
@@ -58,7 +67,7 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
 保留 B 专属 `deploy/Dockerfile`、非密钥 `deploy/config_us-east-uat`、
 `release-source.json`、B 专属 Compose/私有 env 模板与目标静态校验；
 删除已失效的 B Kubernetes `workloads.yaml`/`migration-job.yaml`。旧版 IT Kubernetes/托管资源申请表
-仅作历史记录，**不得继续作为当前申请或发布清单**。B 专属 CI 的验证任务覆盖合成 PostgreSQL/Redis 隔离、两库合成 dump/隔离恢复、Compose 静态渲染及 Dockerfile 构建；验证成功后的独立任务仅在 GitHub `dev` push 时向私有 GHCR 发布 B 镜像并记录 digest，**不连接目标机、不执行部署**。Backend/Agent 有 B 私有目录占位文件初始化工具与只读发布准入预检；Backend 还有跨服务凭据匹配、实时数据库 revision 回滚预检和 PostgreSQL 两库恢复脚本。目标机 root/锁/0600 占位配置已准备，但真实 URL/密钥未填写；MinIO/Redis 的真实备份与隔离恢复、离机留存、可执行 B 发布/回滚 runner 与上线验收仍未完成。合成恢复不能当作目标机真实恢复。
+仅作历史记录，**不得继续作为当前申请或发布清单**。B 专属 CI 的验证任务覆盖合成 PostgreSQL/Redis 隔离、两库合成 dump/隔离恢复、Redis RDB 与 MinIO 两桶合成隔离恢复、Compose 静态渲染及 Dockerfile 构建；验证成功后的独立任务仅在 GitHub `dev` push 时向私有 GHCR 发布 B 镜像并记录 digest，**不连接目标机、不执行部署**。Backend/Agent 有 B 私有目录占位文件初始化工具与只读发布准入预检；Backend 还有跨服务凭据匹配、实时数据库 revision 回滚预检和 PostgreSQL 两库恢复脚本。目标机 root/锁/0600 私有配置已准备，非密钥 URL 已填写，真实密钥仍占位；MinIO/Redis 的**正式数据**备份与隔离恢复、离机留存、可执行 B 发布/回滚 runner 与上线验收仍未完成。合成恢复不能当作目标机真实恢复。
 
 ## 目标机准备进度（2026-10-01）
 
@@ -74,9 +83,10 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
   `a689e662a21e91bcb95d4180e671cd5869c94154`，各自的 B 验证 CI 已通过。目标机已
   构建对应 B 镜像及固定 MinIO 源码镜像，PostgreSQL/Redis 无持久卷隔离测试通过。目标机上的镜像仍是本地构建，
   没有从私有 GHCR 拉取并验证不可变 digest，也没有切换 `current`。业务容器数为 0。
-- 两份 env 仍有 `REPLACE_WITH` 和无效示例域名；目标 JSON 的 URL 仍是 `TBD`。预检
-  按预期拒绝，**尚未部署** PostgreSQL、Redis、MinIO、Product、Agent 或反向代理。
-  仍需确认历史数据是否迁入，批准两个 HTTPS 域名/DNS/TLS，配置 B 专属密钥。
+- 两份 env 仍有 `REPLACE_WITH` 密钥占位；目标 JSON 与 env 已写入上述两个
+  B 域名。静态目标检查不等于 HTTPS 可达；私有 env 预检按预期拒绝，
+  **尚未部署** PostgreSQL、Redis、MinIO、Product、Agent 或反向代理。
+  仍需确认历史数据是否迁入，落实 HTTPS/TLS 与 B 专属密钥。
   主机到 Resend 587、OpenAI 443 和 GHCR 443 的 TCP 连通测试通过，但真实邮件/模型
   认证与调用未验证。完成 MinIO/Redis 真实备份与隔离恢复及离机留存，提供可审核的 B 发布/回滚
   入口，最后完成真实服务、邮件和 Agent 10 并发验收。不得绕过这些门禁。

@@ -11,7 +11,7 @@
 | --- | --- | --- |
 | A 邀请码管理现状 | 2026-09-27 只读检查：未认证请求旧 `/v1/admin/invite-codes/ui` 返回 200 HTML；按用户决定**不实施针对 `SERVICE_API_KEY` 暴露的隔离**，本地 410 禁用改动已撤回，线上未作修改 | 旧页仍可能暴露服务密钥，未查看线上正文，不能断言是否已泄漏；独立操作员鉴权/BFF/审计管理后台未实现。后续发布不能误称此风险已修复，也不能顺带停用旧页或轮换密钥。 |
 | A APK 编译／发布门禁 | `app-staging-release.yml` 声明 `legacy-staging` 与 `MOMCOZY_INTERNAL_INVITE_LOGIN=true`；release gate 实际传入 define，并运行登录页 Widget 检查；预构建 APK 发布要求同配置构建记录与 SHA256；人工脚本锁定 A URL 和邀请码模式，实际发布及显式 A 构建会拒绝缺失 release signing 的环境。Backend、Agent、App 的本地 Product OpenAPI 快照已对齐。只读核对旧的本地 staging APK：包名 `com.momcozymai.app.flutterpoc.staging`，build 57，两份旧包均为 Android Debug 证书签名 | **旧包不是本次门禁产物，不能作签名/登录模式验收**；尚未生成或验收新的可分发 APK。构建记录不是独立签名的供应链证明；GitHub Environment 仍名为 `staging`，A 专属环境迁移未做。 |
-| B 目标预检（未启用发布） | Backend、Agent 的 `scripts/release.py --deployment-target north-america-staging` 已识别 B，但在任何发布动作前明确拒绝；各有 `config/release-targets/north-america-staging.json.example` 与无副作用的 root/lock/env/URL 防串线检查。App 的目标模板与 `build-mobile-app.mjs --release-lane north-america-staging --check-config` 校验 B API、邮箱模式、AAB/IPA 与原生身份 | B 独立 Compose、只读私有 env 预检与 GitHub `dev` 的验证 CI 已通过；验证通过后的独立镜像任务可向私有 GHCR 发布 B 镜像，但**不部署目标机**。美东主机已安装 Docker 并建立 B 专属 root/锁/0600 占位配置；真实密钥、域名/TLS、数据去留、三项状态服务真实恢复与离机留存、可执行发布/回滚 runner、Agent 10 并发验收和 App 签名/分发仍待落地。B 实际发布被阻断，镜像或预检成功不等于上线。 |
+| B 目标预检（未启用发布） | Backend、Agent 的 `scripts/release.py --deployment-target north-america-staging` 已识别 B，但在任何发布动作前明确拒绝；各有 `config/release-targets/north-america-staging.json.example` 与无副作用的 root/lock/env/URL 防串线检查。App 的目标模板与 `build-mobile-app.mjs --release-lane north-america-staging --check-config` 校验 B API、邮箱模式、AAB/IPA 与原生身份 | B 独立 Compose、只读私有 env 预检与 GitHub `dev` 的验证 CI 已通过；验证通过后的独立镜像任务可向私有 GHCR 发布 B 镜像，但**不部署目标机**。美东主机已安装 Docker 并建立 B 专属 root/锁/0600 私有配置；两个域名已确定并解析到主机，但 TLS/入口未通，真实密钥、数据去留、三项状态服务真实恢复与离机留存、可执行发布/回滚 runner、Agent 10 并发验收和 App 签名/分发仍待落地。B 实际发布被阻断，镜像或预检成功不等于上线。 |
 
 从 `app/` 执行本地无发布检查：
 
@@ -22,9 +22,9 @@ flutter test --no-pub --dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=false test/fea
 node scripts/check-north-america-staging-target.mjs # 当前因 B 值未批准／未填写而预期失败
 ```
 
-Backend/Agent 分别提供同名但独立的 `config/release-targets/north-america-staging.json.example` 与 `scripts/check_release_target.py --config <文件>`。各自模板已填 B 专属 root/lock/私有 env 路径，只有公网 URL 仍为 `TBD`，执行模板预检预期失败；检查只读声明，不会启动 Compose，也不会开启 B 发布。实际 B 发布 CLI 仍拒绝执行。
+Backend/Agent 分别提供同名但独立的 `config/release-targets/north-america-staging.json.example` 与 `scripts/check_release_target.py --config <文件>`。各自模板已填 B 专属 root/lock/私有 env 路径和域名（Backend `backend-us-dev.lute-momcozylab.luteos.cloud`、Agent `agent-us-dev.lute-momcozylab.luteos.cloud`）。模板的只读元数据检查可通过，但**不代表 DNS/TLS/服务通过验收**，不会启动 Compose，也不会开启 B 发布。实际 B 发布 CLI 仍拒绝执行。
 
-App 的非密钥声明须在审批后由 `.example` 复制到被 Git 忽略的 `config/release-lanes/north-america-staging.json`；真实密钥只进入目标环境的私有 secret。域名、Android Play 包名、iOS Bundle ID 未确认时保留 `TBD`，不要绕开检查或拿 A 的 `staging.json` 代替 B。`--release-lane north-america-staging --check-config` 仅验证声明；不带 `--check-config` 的 B 构建仍拒绝。
+App 的非密钥声明须在审批后由 `.example` 复制到被 Git 忽略的 `config/release-lanes/north-america-staging.json`；真实密钥只进入目标环境的私有 secret。两个 B API 域名已填，但 iOS Bundle ID 仍为 `TBD`，且 HTTPS 尚未可达；不要绕开检查或拿 A 的 `staging.json` 代替 B。`--release-lane north-america-staging --check-config` 仅验证声明；不带 `--check-config` 的 B 构建仍拒绝。
 
 ## 1. 决策与边界
 
@@ -93,7 +93,7 @@ ACL 身份）、两个 MinIO 桶；Agent worker 每进程目标 10 并发，需�
 4. 获得 Resend 所需域名、DNS 和 key 授权，部署 B 邮件 worker，真实收件箱完整登录/重置闭环；对 B App 源码做契约和端到端测试。
 5. 按两套 **分别**预留版本号/build number、签名与发布：A 仅 APK+二维码+私有邀请码后台；B Play AAB 测试轨道和 TestFlight 新 IPA。各自记录不可变构建来源、签名、API URL、契约 hash、审核与真实设备验收。
 
-**目前的阻断项（不得写成“已经实现两套”）：** B 的主机/域名/独立 Compose 和数据卷/独立原生 Android 身份/发布入口/Play 身份及 Resend 端到端未就绪；B 发布 CLI 和 App 实际构建被明确阻断。A 的邀请码本地门禁已补，但尚无新 APK 真实构建/发布验证，独立管理入口未实现。现有可执行 workflow 仍只有 A 的 `staging` 及另一个 `production` 目标；不得把静态预检当作两条完整云端发布链路。
+**目前的阻断项（不得写成“已经实现两套”）：** B 主机和两个 DNS 已准备，但 HTTPS 入口/证书、持久数据卷正式初始化、独立原生 Android 身份的发布验收、目标机发布入口/Play 身份及 Resend 端到端未就绪；B 发布 CLI 和 App 实际构建被明确阻断。A 的邀请码本地门禁已补，但尚无新 APK 真实构建/发布验证，独立管理入口未实现。现有可执行部署 workflow 仍只有 A 的 `staging` 及另一个 `production` 目标；不得把静态预检或 B 镜像发布当作两条完整云端发布链路。
 
 ## 5. 必须留给负责人确认的决定
 

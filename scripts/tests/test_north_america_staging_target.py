@@ -23,7 +23,10 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
             )
 
     def test_template_is_explicitly_unready(self) -> None:
-        result = self.check(json.loads(EXAMPLE.read_text()))
+        template = json.loads(EXAMPLE.read_text())
+        self.assertEqual(template["productApiBaseUrl"], "https://backend-us-dev.lute-momcozylab.luteos.cloud")
+        self.assertEqual(template["agentApiBaseUrl"], "https://agent-us-dev.lute-momcozylab.luteos.cloud")
+        result = self.check(template)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("TBD", result.stderr)
 
@@ -31,8 +34,8 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
         data = {
             "deploymentTarget": "north-america-staging",
             "runtimeEnvironment": "staging",
-            "productApiBaseUrl": "https://api.na-reviewed.org",
-            "agentApiBaseUrl": "https://agent.na-reviewed.org",
+            "productApiBaseUrl": "https://backend-us-dev.lute-momcozylab.luteos.cloud",
+            "agentApiBaseUrl": "https://agent-us-dev.lute-momcozylab.luteos.cloud",
             "androidApplicationId": "com.momcozy.mai",
             "iosBundleId": "com.momcozy.mai.staging",
         }
@@ -53,12 +56,17 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
         wrong_play_app = data | {"androidApplicationId": "com.momcozy.mai.other"}
         self.assertIn("play flavor", self.check(wrong_play_app).stderr)
 
+        for name in ("productApiBaseUrl", "agentApiBaseUrl"):
+            with self.subTest(name=name):
+                wrong_origin = data | {name: "https://unapproved.na-reviewed.org"}
+                self.assertIn("approved B HTTPS origin", self.check(wrong_origin).stderr)
+
     def test_b_cannot_reuse_a_android_identity_or_placeholder_domains(self) -> None:
         data = {
             "deploymentTarget": "north-america-staging",
             "runtimeEnvironment": "staging",
-            "productApiBaseUrl": "https://api.na-reviewed.org",
-            "agentApiBaseUrl": "https://agent.na-reviewed.org",
+            "productApiBaseUrl": "https://backend-us-dev.lute-momcozylab.luteos.cloud",
+            "agentApiBaseUrl": "https://agent-us-dev.lute-momcozylab.luteos.cloud",
             "androidApplicationId": "com.momcozymai.app.flutterpoc.staging",
             "iosBundleId": "com.momcozy.mai.staging",
         }
