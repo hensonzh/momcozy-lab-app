@@ -3,6 +3,6 @@
   "runtimeEnvironment": "staging",
   "productApiBaseUrl": "TBD",
   "agentApiBaseUrl": "TBD",
-  "androidApplicationId": "TBD",
+  "androidApplicationId": "com.momcozy.mai",
   "iosBundleId": "TBD"
 }

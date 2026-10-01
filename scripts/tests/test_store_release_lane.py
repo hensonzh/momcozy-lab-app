@@ -36,13 +36,14 @@ class StoreReleaseLaneTests(unittest.TestCase):
                 "runtimeEnvironment": "staging",
                 "productApiBaseUrl": "https://product.na-reviewed.org",
                 "agentApiBaseUrl": "https://agent.na-reviewed.org",
-                "androidApplicationId": "com.momcozy.mai.na",
+                "androidApplicationId": "com.momcozy.mai",
                 "iosBundleId": "com.momcozy.mai.staging",
             }))
             self.assertIn("appbundle", self.check("android", "apk", path).stderr)
             result = self.check("android", "appbundle", path)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("Android application ID", result.stderr)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("Android flavor: play", result.stdout)
+            self.assertIn("MOMCOZY_INTERNAL_INVITE_LOGIN=false", result.stdout)
             result = self.check("ios", "ipa", path)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn("MOMCOZY_INTERNAL_INVITE_LOGIN=false", result.stdout)
@@ -68,6 +69,55 @@ class StoreReleaseLaneTests(unittest.TestCase):
             ], cwd=ROOT, env=env, text=True, capture_output=True, check=False)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("must match the B target", result.stderr)
+
+    def test_b_play_builder_accepts_staging_runtime_only_with_explicit_apis(self) -> None:
+        base = ["node", "scripts/build-flutter-android-apk.mjs", "--mode", "release", "--flavor", "play", "--format", "appbundle", "--check-config"]
+        for has_apis, args in (
+            (False, base),
+            (True, base + [
+                "--dart-define=MOMCOZY_API_BASE_URL=https://product.na-reviewed.org",
+                "--dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent.na-reviewed.org",
+            ]),
+        ):
+            with self.subTest(apis=has_apis):
+                result = subprocess.run(args, cwd=ROOT, text=True, capture_output=True, check=False)
+                if has_apis:
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertIn("valid for play", result.stdout)
+                else:
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIn("MOMCOZY_API_BASE_URL", result.stderr)
+
+    def test_b_android_build_remains_blocked_without_b_services(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "target.json"
+            path.write_text(json.dumps({
+                "deploymentTarget": "north-america-staging",
+                "runtimeEnvironment": "staging",
+                "productApiBaseUrl": "https://product.na-reviewed.org",
+                "agentApiBaseUrl": "https://agent.na-reviewed.org",
+                "androidApplicationId": "com.momcozy.mai",
+                "iosBundleId": "com.momcozy.mai.staging",
+            }))
+            result = subprocess.run([
+                "node", "scripts/build-mobile-app.mjs", "--platform", "android",
+                "--environment", "staging", "--mode", "release", "--format", "appbundle",
+                "--release-lane", "north-america-staging", "--config", str(path),
+            ], cwd=ROOT, text=True, capture_output=True, check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("B build is not enabled", result.stderr)
+            self.assertNotIn("$ node", result.stdout)
+
+    def test_direct_play_builder_cannot_bypass_b_release_gate(self) -> None:
+        result = subprocess.run([
+            "node", "scripts/build-flutter-android-apk.mjs", "--mode", "release",
+            "--flavor", "play", "--format", "appbundle",
+            "--dart-define=MOMCOZY_API_BASE_URL=https://product.na-reviewed.org",
+            "--dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent.na-reviewed.org",
+        ], cwd=ROOT, text=True, capture_output=True, check=False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("B build is not enabled", result.stderr)
+        self.assertNotIn("$ flutter", result.stdout)
 
     def test_explicit_a_lane_checks_urls_and_invite_mode(self) -> None:
         config = json.loads((ROOT / "config/environments/staging.json").read_text())

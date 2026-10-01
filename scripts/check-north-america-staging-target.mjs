@@ -65,11 +65,15 @@ try {
       androidId === `${aBaseId}${aSuffix}`) {
     throw new Error("androidApplicationId must be a reviewed B Play package distinct from the A APK.");
   }
+  const playId = gradle.match(/create\("play"\)\s*\{[^}]*applicationId\s*=\s*"([^"]+)"/)?.[1];
+  if (androidId !== playId) {
+    throw new Error("androidApplicationId must match the native play flavor applicationId.");
+  }
   if (!/^[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(iosId) ||
       iosId === "com.momcozymai.app.flutterpoc") {
     throw new Error("iosBundleId must be an approved, non-provisional B App ID.");
   }
-  console.log("B target declaration passes static checks; cloud isolation, native IDs, signing, contracts and stores remain unverified. No build or release was performed.");
+  console.log(`B target declaration passes static checks for ${androidId}; cloud isolation, signing, contracts and stores remain unverified. No build or release was performed.`);
 } catch (error) {
   console.error(`FAIL ${error.message}${error.code === "ENOENT" ? ` Copy ${examplePath} to ${targetPath} after approval.` : ""}`);
   process.exit(1);

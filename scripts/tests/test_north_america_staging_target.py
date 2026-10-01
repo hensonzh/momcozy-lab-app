@@ -33,7 +33,7 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
             "runtimeEnvironment": "staging",
             "productApiBaseUrl": "https://api.na-reviewed.org",
             "agentApiBaseUrl": "https://agent.na-reviewed.org",
-            "androidApplicationId": "com.momcozy.mai.na",
+            "androidApplicationId": "com.momcozy.mai",
             "iosBundleId": "com.momcozy.mai.staging",
         }
         for field, a_field in (
@@ -48,6 +48,10 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
         result = self.check(data)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("remain unverified", result.stdout)
+        self.assertIn("com.momcozy.mai", result.stdout)
+
+        wrong_play_app = data | {"androidApplicationId": "com.momcozy.mai.other"}
+        self.assertIn("play flavor", self.check(wrong_play_app).stderr)
 
     def test_b_cannot_reuse_a_android_identity_or_placeholder_domains(self) -> None:
         data = {
@@ -59,7 +63,7 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
             "iosBundleId": "com.momcozy.mai.staging",
         }
         self.assertIn("androidApplicationId", self.check(data).stderr)
-        data["androidApplicationId"] = "com.momcozy.mai.na"
+        data["androidApplicationId"] = "com.momcozy.mai"
         data["agentApiBaseUrl"] = "https://agent.example.test"
         self.assertIn("agentApiBaseUrl", self.check(data).stderr)
 

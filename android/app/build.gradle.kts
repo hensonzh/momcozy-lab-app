@@ -165,6 +165,10 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".staging"
         }
+        create("play") {
+            dimension = "environment"
+            applicationId = "com.momcozy.mai"
+        }
         create("production") {
             dimension = "environment"
         }
