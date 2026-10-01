@@ -34,7 +34,9 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
 - **PostgreSQL**：B 单机自启动一个 PostgreSQL 实例；同实例内 Product
   使用 `momcozy_lab_backend_uat`，Agent 使用 `momcozy_lab_agent_uat`，
   两套角色/权限与 Alembic 迁移独立。此前由 IT 在托管 RDS 建过同名库，
-  **新自托管库并不自动继承其数据或密码**；先确认是否需导入并制定迁移方案。
+  **新自托管库不继承其数据或密码**。2026-10-01 已确认：原托管
+  RDS、Redis、S3 的历史数据均**不迁入**；B 从新卷/空库/空桶初始化，
+  不连接旧托管资源，不自动删除旧资源。
 - **Redis**：B 自启动一个 Redis；Product/Agent 均使用 DB 0，沿用现有
   Product `rate-limit:*`/`product:*` 与 Agent `agent-runtime:*`/
   `momcozy-agent-runtime:*` 键前缀。不同前缀防键名冲突，不等于权限隔离；
@@ -54,9 +56,13 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
 2. 实现 B 专属 Compose/私有 env/发布 root 和锁、初始化 DB/ACL/Bucket、
    非公网网络与卷；建立并演练两个数据库、MinIO 和 Redis 的备份恢复。
    **B Compose 模板、只读私有 env 预检和 GitHub `dev` 的验证已通过；B 镜像发布与目标机服务部署是两道独立门禁**。目标机发布入口尚未接通，不得拿 A 的部署脚本修改几个 URL 直接使用。
-3. 数据处置：托管 RDS/Redis/S3 不再作为目标；是否需要保留/搬运旧数据
-   需先确认。空库才按 Product -> Agent 顺序做迁移；逐项检查版本和
-   schema。迁移前备份，失败则停止发布，不自动降级数据库。
+3. 数据处置已确认：不迁移原托管数据。首次初始化前执行 Backend 的只读
+   `scripts/check_b_fresh_bootstrap.py`，B 命名或 Compose 标签的卷、网络、
+   容器（含已停止）存在就中止人工复核，不 prune、不覆盖。目标机于
+   2026-10-01 检查时这些资源均不存在；检查不证明所有未标记磁盘目录为空。
+   在密钥和恢复条件满足后，对**新库**按 Product -> Agent 顺序执行
+   Alembic schema 迁移；后续 schema 变更须先备份，失败就停止发布，
+   不自动降级数据库。
 4. 启动 Product API/通知 worker/邮件 worker，验证健康及注册邮件；再启动
    Agent API/worker，检查心跳和跨服务调用，做 10 run 并发压测。
 5. 最后构建 B App，确认 API URL、邮箱登录、签名和分发渠道，用合成账号
@@ -86,7 +92,7 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
 - 两份 env 仍有 `REPLACE_WITH` 密钥占位；目标 JSON 与 env 已写入上述两个
   B 域名。静态目标检查不等于 HTTPS 可达；私有 env 预检按预期拒绝，
   **尚未部署** PostgreSQL、Redis、MinIO、Product、Agent 或反向代理。
-  仍需确认历史数据是否迁入，落实 HTTPS/TLS 与 B 专属密钥。
+  历史托管数据确认不迁入，仍需落实 HTTPS/TLS 与 B 专属密钥。
   主机到 Resend 587、OpenAI 443 和 GHCR 443 的 TCP 连通测试通过，但真实邮件/模型
   认证与调用未验证。完成 MinIO/Redis 真实备份与隔离恢复及离机留存，提供可审核的 B 发布/回滚
   入口，最后完成真实服务、邮件和 Agent 10 并发验收。不得绕过这些门禁。
@@ -98,4 +104,4 @@ Backend/Agent 的 B 验证 workflow 在 GitHub `dev` **push 且验证任务成�
 `b-dev-<完整 commit SHA>` 标签，并记录不可变 digest。PR／手动 workflow 派发只验证，
 不发布镜像。CI 不 SSH 目标机、不启动服务、不切换 `current`；目标机尚未配置私有 GHCR 拉取身份或拉取并核验 digest。镜像发布成功不代表
 B 服务已部署或可对外使用。实际部署仍须先验证目标机私有配置、域名/TLS、
-历史数据处置及 PostgreSQL/MinIO/Redis 的备份与隔离恢复门禁。
+PostgreSQL/MinIO/Redis 的正式备份与隔离恢复门禁。
