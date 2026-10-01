@@ -11,7 +11,7 @@
 | --- | --- | --- |
 | A 邀请码管理现状 | 2026-09-27 只读检查：未认证请求旧 `/v1/admin/invite-codes/ui` 返回 200 HTML；按用户决定**不实施针对 `SERVICE_API_KEY` 暴露的隔离**，本地 410 禁用改动已撤回，线上未作修改 | 旧页仍可能暴露服务密钥，未查看线上正文，不能断言是否已泄漏；独立操作员鉴权/BFF/审计管理后台未实现。后续发布不能误称此风险已修复，也不能顺带停用旧页或轮换密钥。 |
 | A APK 编译／发布门禁 | `app-staging-release.yml` 声明 `legacy-staging` 与 `MOMCOZY_INTERNAL_INVITE_LOGIN=true`；release gate 实际传入 define，并运行登录页 Widget 检查；预构建 APK 发布要求同配置构建记录与 SHA256；人工脚本锁定 A URL 和邀请码模式，实际发布及显式 A 构建会拒绝缺失 release signing 的环境。Backend、Agent、App 的本地 Product OpenAPI 快照已对齐。只读核对旧的本地 staging APK：包名 `com.momcozymai.app.flutterpoc.staging`，build 57，两份旧包均为 Android Debug 证书签名 | **旧包不是本次门禁产物，不能作签名/登录模式验收**；尚未生成或验收新的可分发 APK。构建记录不是独立签名的供应链证明；GitHub Environment 仍名为 `staging`，A 专属环境迁移未做。 |
-| B 目标预检（未启用发布） | Backend、Agent 的 `scripts/release.py --deployment-target north-america-staging` 已识别 B，但在任何发布动作前明确拒绝；各有 `config/release-targets/north-america-staging.json.example` 与无副作用的 root/lock/env/URL 防串线检查。App 的目标模板与 `build-mobile-app.mjs --release-lane north-america-staging --check-config` 校验 B API、邮箱模式、AAB/IPA 与原生身份 | B 独立 Compose 模板、只读私有 env 预检和 面向 GitHub `dev` 的非发布验证 CI 已在本地准备、尚未推送；发布 root/锁、真实私有 env、备份恢复、域名/TLS、容量、流水线和 App 签名/分发仍待落地。B 的服务端及 App 实际发布仍被阻断，预检通过不等于可发布。 |
+| B 目标预检（未启用发布） | Backend、Agent 的 `scripts/release.py --deployment-target north-america-staging` 已识别 B，但在任何发布动作前明确拒绝；各有 `config/release-targets/north-america-staging.json.example` 与无副作用的 root/lock/env/URL 防串线检查。App 的目标模板与 `build-mobile-app.mjs --release-lane north-america-staging --check-config` 校验 B API、邮箱模式、AAB/IPA 与原生身份 | B 独立 Compose 模板、只读私有 env 预检和面向 GitHub `dev` 的非发布验证 CI 已推送并运行通过；发布 root/锁/私有 env 路径已固化模板，真实私有 env、备份恢复、域名/TLS、容量、发布流水线和 App 签名/分发仍待落地。B 的服务端及 App 实际发布仍被阻断，预检通过不等于可发布。 |
 
 从 `app/` 执行本地无发布检查：
 
@@ -22,7 +22,7 @@ flutter test --no-pub --dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=false test/fea
 node scripts/check-north-america-staging-target.mjs # 当前因 B 值未批准／未填写而预期失败
 ```
 
-Backend/Agent 分别提供同名但独立的 `config/release-targets/north-america-staging.json.example` 与 `scripts/check_release_target.py --config <文件>`。各自模板中的 root、lock、私有 env 路径及 URL 在审批前保留 `TBD`，执行模板预检预期失败；检查只读声明，不会启动 Compose，也不会开启 B 发布。实际 B 发布 CLI 仍拒绝执行。
+Backend/Agent 分别提供同名但独立的 `config/release-targets/north-america-staging.json.example` 与 `scripts/check_release_target.py --config <文件>`。各自模板已填 B 专属 root/lock/私有 env 路径，只有公网 URL 仍为 `TBD`，执行模板预检预期失败；检查只读声明，不会启动 Compose，也不会开启 B 发布。实际 B 发布 CLI 仍拒绝执行。
 
 App 的非密钥声明须在审批后由 `.example` 复制到被 Git 忽略的 `config/release-lanes/north-america-staging.json`；真实密钥只进入目标环境的私有 secret。域名、Android Play 包名、iOS Bundle ID 未确认时保留 `TBD`，不要绕开检查或拿 A 的 `staging.json` 代替 B。`--release-lane north-america-staging --check-config` 仅验证声明；不带 `--check-config` 的 B 构建仍拒绝。
 

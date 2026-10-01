@@ -44,7 +44,7 @@ GitHub dev -> 独立 B 构建/发布流水线（尚未接通）-> 美东独立�
 1. 固定美东目标机和 B 域名/公网证书/反代端口；核对 B 流水线从 GitHub `dev` 拉取、使用 `deploy/Dockerfile`，标记 commit 和镜像 digest。
 2. 实现 B 专属 Compose/私有 env/发布 root 和锁、初始化 DB/ACL/Bucket、
    非公网网络与卷；建立并演练两个数据库、MinIO 和 Redis 的备份恢复。
-   **B Compose 模板、只读私有 env 预检及 面向 GitHub `dev` 的 B 专属验证 workflow 已在本地准备（尚未推送，未生效），但发布流水线尚未接通**，不得拿 A 的部署脚本
+   **B Compose 模板、只读私有 env 预检及面向 GitHub `dev` 的 B 专属验证 workflow 已推送并运行通过，但发布流水线尚未接通**，不得拿 A 的部署脚本
    修改几个 URL 直接使用。
 3. 数据处置：托管 RDS/Redis/S3 不再作为目标；是否需要保留/搬运旧数据
    需先确认。空库才按 Product -> Agent 顺序做迁移；逐项检查版本和
@@ -59,4 +59,23 @@ GitHub dev -> 独立 B 构建/发布流水线（尚未接通）-> 美东独立�
 保留 B 专属 `deploy/Dockerfile`、非密钥 `deploy/config_us-east-uat`、
 `release-source.json`、B 专属 Compose/私有 env 模板与目标静态校验；
 删除已失效的 B Kubernetes `workloads.yaml`/`migration-job.yaml`。旧版 IT Kubernetes/托管资源申请表
-仅作历史记录，**不得继续作为当前申请或发布清单**。B 专属 CI 在提交并推送后只做合成数据的 PostgreSQL/Redis 隔离测试、Compose 渲染与本地镜像构建；不推镜像、不连接 UAT、不执行发布。B 独立发布 CLI/备份恢复与真实验收仍是后续实施，不在本轮假装完成。
+仅作历史记录，**不得继续作为当前申请或发布清单**。B 专属 CI 只做合成数据的 PostgreSQL/Redis 隔离测试、Compose 渲染与本地镜像构建；不推镜像、不连接 UAT、不执行发布。Backend/Agent 已有默认不写入的 B 私有目录占位文件初始化工具、只读跨服务凭据匹配检查及发布准入预检；Backend 另有只读回滚检查，从 B 专属 PostgreSQL 实时读取数据库 revision 并校验 B 发布指针，但不执行回滚；可执行 runner 仍需在 B 锁内重新核对。目标机 `/opt/momcozy-lab-us-east-uat` 根目录、锁及两份私有 env 路径已固化为模板，但公网 URL、真实密钥、主机配置仍未填写。PostgreSQL 两库的备份/隔离恢复脚本已编写并用本地合成数据验证，相关 CI 测试已编写但尚未推送；未在目标机演练；MinIO/Redis 的真实备份恢复、可执行发布 CLI 与上线验收仍是后续实施，不在本轮假装完成。
+
+## 目标机准备进度（2026-10-01）
+
+- 已经通过 JumpServer 验证 B 专属主机 `32.199.186.149`（`ubuntu@ip-172-31-29-24`），
+  16 vCPU／61 GiB 内存；`/data` 为独立的 200 GiB XFS 卷。已安装 Docker Engine 29.8.2
+  与 Compose 5.5.1，并将 Docker/containerd 数据根放在 `/data/momcozy-lab-us-east-uat/`。
+- 已建立 `/opt/momcozy-lab-us-east-uat` 的 0700 发布布局，两个服务独立的 0600
+  env/目标 JSON 占位文件，以及 B 专属锁；备份目录通过持久 bind mount 映射到 `/data`。
+  Backend 的 PostgreSQL 恢复脚本增加挂载源检查，避免挂载消失时写入根盘；
+  `/data` 同时承载状态卷与备份，**不是异地备份**，仍需独立留存和恢复演练。
+- 目标机已从 GitHub `dev` 拉取 Backend/Agent 已提交的干净快照，构建 B 镜像及固定
+  MinIO 源码镜像，PostgreSQL/Redis 无持久卷隔离测试通过。只构建了本地镜像，没有 GHCR
+  不可变 digest，也没有推送或切换 `current`。业务容器数为 0。
+- 两份 env 仍有 `REPLACE_WITH` 和无效示例域名；目标 JSON 的 URL 仍是 `TBD`。预检
+  按预期拒绝，**尚未部署** PostgreSQL、Redis、MinIO、Product、Agent 或反向代理。
+  仍需确认历史数据是否迁入，批准两个 HTTPS 域名/DNS/TLS，配置 B 专属密钥。
+  主机到 Resend 587、OpenAI 443 和 GHCR 443 的 TCP 连通测试通过，但真实邮件/模型
+  认证与调用未验证。完成 MinIO/Redis 真实备份与隔离恢复及离机留存，提供可审核的 B 发布/回滚
+  入口，最后完成真实服务、邮件和 Agent 10 并发验收。不得绕过这些门禁。
