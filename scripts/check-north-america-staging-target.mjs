@@ -8,6 +8,10 @@ import { resolveFlutterApiConfig } from "./flutter-api-config.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const examplePath = "config/release-lanes/north-america-staging.json.example";
 const targetPath = "config/release-lanes/north-america-staging.json";
+const approvedApiOrigins = {
+  productApiBaseUrl: "https://backend-us-dev.lute-momcozylab.luteos.cloud",
+  agentApiBaseUrl: "https://agent-us-dev.lute-momcozylab.luteos.cloud",
+};
 const keys = [
   "deploymentTarget", "runtimeEnvironment", "productApiBaseUrl",
   "agentApiBaseUrl", "androidApplicationId", "iosBundleId",
@@ -53,6 +57,9 @@ try {
         host === new URL(legacy.MOMCOZY_API_BASE_URL).hostname.toLowerCase() ||
         host === new URL(legacy.MOMCOZY_AGENT_API_BASE_URL).hostname.toLowerCase()) {
       throw new Error(`${name} must use a real B hostname distinct from both A endpoints.`);
+    }
+    if (url !== approvedApiOrigins[name]) {
+      throw new Error(`${name} must match the approved B HTTPS origin.`);
     }
   }
   const gradle = readFileSync(path.join(root, "android/app/build.gradle.kts"), "utf8");

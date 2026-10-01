@@ -34,8 +34,8 @@ class StoreReleaseLaneTests(unittest.TestCase):
             path.write_text(json.dumps({
                 "deploymentTarget": "north-america-staging",
                 "runtimeEnvironment": "staging",
-                "productApiBaseUrl": "https://product.na-reviewed.org",
-                "agentApiBaseUrl": "https://agent.na-reviewed.org",
+                "productApiBaseUrl": "https://backend-us-dev.lute-momcozylab.luteos.cloud",
+                "agentApiBaseUrl": "https://agent-us-dev.lute-momcozylab.luteos.cloud",
                 "androidApplicationId": "com.momcozy.mai",
                 "iosBundleId": "com.momcozy.mai.staging",
             }))
@@ -75,8 +75,8 @@ class StoreReleaseLaneTests(unittest.TestCase):
         for has_apis, args in (
             (False, base),
             (True, base + [
-                "--dart-define=MOMCOZY_API_BASE_URL=https://product.na-reviewed.org",
-                "--dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent.na-reviewed.org",
+                "--dart-define=MOMCOZY_API_BASE_URL=https://backend-us-dev.lute-momcozylab.luteos.cloud",
+                "--dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-us-dev.lute-momcozylab.luteos.cloud",
             ]),
         ):
             with self.subTest(apis=has_apis):
@@ -94,8 +94,8 @@ class StoreReleaseLaneTests(unittest.TestCase):
             path.write_text(json.dumps({
                 "deploymentTarget": "north-america-staging",
                 "runtimeEnvironment": "staging",
-                "productApiBaseUrl": "https://product.na-reviewed.org",
-                "agentApiBaseUrl": "https://agent.na-reviewed.org",
+                "productApiBaseUrl": "https://backend-us-dev.lute-momcozylab.luteos.cloud",
+                "agentApiBaseUrl": "https://agent-us-dev.lute-momcozylab.luteos.cloud",
                 "androidApplicationId": "com.momcozy.mai",
                 "iosBundleId": "com.momcozy.mai.staging",
             }))
@@ -112,8 +112,8 @@ class StoreReleaseLaneTests(unittest.TestCase):
         result = subprocess.run([
             "node", "scripts/build-flutter-android-apk.mjs", "--mode", "release",
             "--flavor", "play", "--format", "appbundle",
-            "--dart-define=MOMCOZY_API_BASE_URL=https://product.na-reviewed.org",
-            "--dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent.na-reviewed.org",
+            "--dart-define=MOMCOZY_API_BASE_URL=https://backend-us-dev.lute-momcozylab.luteos.cloud",
+            "--dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-us-dev.lute-momcozylab.luteos.cloud",
         ], cwd=ROOT, text=True, capture_output=True, check=False)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("B build is not enabled", result.stderr)

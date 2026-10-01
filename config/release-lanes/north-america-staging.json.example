@@ -1,8 +1,8 @@
 {
   "deploymentTarget": "north-america-staging",
   "runtimeEnvironment": "staging",
-  "productApiBaseUrl": "TBD",
-  "agentApiBaseUrl": "TBD",
+  "productApiBaseUrl": "https://backend-us-dev.lute-momcozylab.luteos.cloud",
+  "agentApiBaseUrl": "https://agent-us-dev.lute-momcozylab.luteos.cloud",
   "androidApplicationId": "com.momcozy.mai",
   "iosBundleId": "TBD"
 }
