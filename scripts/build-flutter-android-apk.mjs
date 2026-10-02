@@ -38,7 +38,17 @@ if (options.checkConfig) {
 }
 
 if (options.flavor === "play") {
-  fail("B build is not enabled until the single-host B backend, signing path and release gates are approved.");
+  if (process.env.MOMCOZY_B_PLAY_BUILD_APPROVED !== "1") {
+    fail("B play builder must be invoked by the approved B entrypoint.");
+  }
+  if (options.mode !== "release" || options.format !== "appbundle" ||
+      !options.dartDefines.includes("MOMCOZY_ENV=staging") ||
+      !options.dartDefines.includes("MOMCOZY_INTERNAL_INVITE_LOGIN=false")) {
+    fail("B play requires a release appbundle with staging runtime and email login.");
+  }
+  for (const key of ["MOMCOZY_FLUTTER_RELEASE_STORE_FILE", "MOMCOZY_FLUTTER_RELEASE_STORE_PASSWORD", "MOMCOZY_FLUTTER_RELEASE_KEY_ALIAS", "MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD"]) {
+    if (!process.env[key]) fail("B Android upload signing is required before building an appbundle.");
+  }
 }
 
 const buildVariant = `${options.flavor}${capitalize(options.mode)}`;

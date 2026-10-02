@@ -19,6 +19,20 @@ void main() {
         );
       }
 
+      for (final host in <String>[
+        'backend-us-dev.lute-momcozylab.luteos.cloud',
+        'agent-us-dev.lute-momcozylab.luteos.cloud',
+      ]) {
+        expect(
+          shouldEnableStagingCertificateTrust(
+            environment: 'staging',
+            apiBaseUri: Uri.parse('https://$host'),
+          ),
+          isFalse,
+          reason: 'B public CA endpoint must not load A private CA: $host',
+        );
+      }
+
       for (final candidate in <({String environment, String apiBaseUrl})>[
         (
           environment: 'production',

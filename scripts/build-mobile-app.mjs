@@ -308,7 +308,17 @@ if (options.releaseLane === "north-america-staging" && options.platform === "and
 }
 if (options.checkConfig) process.exit(0);
 if (options.releaseLane === "north-america-staging") {
-  fail("B build is not enabled until the single-host B backend, signing path and release gates are approved.");
+  if (options.platform === "android" && !hasAndroidReleaseSigning()) {
+    fail("B Android upload signing is required before building an appbundle.");
+  }
+  if (options.platform === "ios") {
+    if (process.env.MOMCOZY_B_IOS_SIGNING_READY !== "1") {
+      fail("B iOS signing must be verified before building an ipa.");
+    }
+    if (!process.env.MOMCOZY_B_EXPORT_OPTIONS_PLIST || !existsSync(process.env.MOMCOZY_B_EXPORT_OPTIONS_PLIST)) {
+      fail("B iOS export options must be prepared before building an ipa.");
+    }
+  }
 }
 if (options.releaseLane === "legacy-staging" && !hasAndroidReleaseSigning()) {
   fail("A release signing variables are incomplete; refuse a debug-signed distribution artifact.");
@@ -325,6 +335,9 @@ if (options.platform === "android") {
     options.format,
     ...dartDefines,
   ];
+  if (options.releaseLane === "north-america-staging") {
+    process.env.MOMCOZY_B_PLAY_BUILD_APPROVED = "1";
+  }
   run("node", args);
   process.exit(0);
 }
@@ -332,5 +345,8 @@ if (options.platform === "android") {
 const args = ["build", options.format, `--${options.mode}`];
 if (options.unsigned) args.push("--no-codesign");
 if (options.environment === "staging") args.push("--flavor", "staging");
+if (options.releaseLane === "north-america-staging") {
+  args.push(`--export-options-plist=${process.env.MOMCOZY_B_EXPORT_OPTIONS_PLIST}`);
+}
 args.push(...dartDefines);
 run("flutter", args);
