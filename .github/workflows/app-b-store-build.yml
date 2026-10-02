@@ -1,0 +1,289 @@
+name: app-b-store-build
+
+# An explicitly created B test release tag at the exact remote dev HEAD.
+# A's main/APK workflow is untouched. Store upload is a separate operation.
+on:
+  push:
+    tags: ['b-store-v*']
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: momcozy-b-store-build
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    if: startsWith(github.ref, 'refs/tags/b-store-v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require successful B CI on this exact remote dev SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$(gh api "repos/${GITHUB_REPOSITORY}/branches/dev" --jq '.commit.sha')" == "${EXPECTED_SHA}" ]]
+          gh api -X GET "repos/${GITHUB_REPOSITORY}/actions/workflows/app-b-ci.yml/runs" \
+            -f head_sha="${EXPECTED_SHA}" -f event=push -f status=success \
+            --jq '.workflow_runs[] | select(.event == "push" and .head_branch == "dev" and .conclusion == "success") | .head_sha' | grep -Fx "${EXPECTED_SHA}"
+      - name: Verify live B OpenAPI against reviewed App contracts
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 2 https://backend-us-dev.lute-momcozylab.luteos.cloud/openapi.json > "${RUNNER_TEMP}/b-product-openapi.json"
+          curl --fail --silent --show-error --retry 2 https://agent-us-dev.lute-momcozylab.luteos.cloud/openapi.json > "${RUNNER_TEMP}/b-agent-openapi.json"
+          python3 - <<'PYCODE'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP'])
+          for live, pinned in (
+              (root / 'b-product-openapi.json', Path('docs/backend-contract/product.openapi.generated.json')),
+              (root / 'b-agent-openapi.json', Path('docs/backend-contract/agent-runtime.openapi.generated.json')),
+          ):
+              if json.loads(live.read_text()) != json.loads(pinned.read_text()):
+                  raise SystemExit(f'B live OpenAPI differs from reviewed App contract: {pinned}')
+          PYCODE
+      - name: Verify release tag matches a fresh build number
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PYCODE'
+          import os, re
+          from pathlib import Path
+          text = Path('pubspec.yaml').read_text()
+          match = re.search(r'^version:\s*(\d+\.\d+\.\d+)\+(\d+)\s*$', text, re.M)
+          if not match or int(match[2]) <= 64 or os.environ['RELEASE_TAG'] != f'b-store-v{match[1]}-{match[2]}':
+              raise SystemExit('B tag/version mismatch or previously used build number')
+          PYCODE
+      - name: Verify both B public CA readiness endpoints
+        run: |
+          set -euo pipefail
+          for host in backend-us-dev.lute-momcozylab.luteos.cloud agent-us-dev.lute-momcozylab.luteos.cloud; do
+            curl --fail --silent --show-error --retry 2 "https://${host}/v1/health/ready" | python3 -c 'import json,sys; assert json.load(sys.stdin)["status"] == "ok"'
+          done
+
+  android:
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: b-store-build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb
+        with:
+          cache-read-only: true
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: 3.44.4
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Require isolated B release material
+        env:
+          B_STORE_BUILD_APPROVED: ${{ secrets.B_STORE_BUILD_APPROVED }}
+          B_STORE_ENCRYPT_CERT_BASE64: ${{ secrets.B_STORE_ENCRYPT_CERT_BASE64 }}
+          B_PLAY_KEYSTORE_BASE64: ${{ secrets.B_PLAY_KEYSTORE_BASE64 }}
+          MOMCOZY_FLUTTER_RELEASE_STORE_PASSWORD: ${{ secrets.B_PLAY_STORE_PASSWORD }}
+          MOMCOZY_FLUTTER_RELEASE_KEY_ALIAS: ${{ secrets.B_PLAY_KEY_ALIAS }}
+          MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD: ${{ secrets.B_PLAY_KEY_PASSWORD }}
+          B_PLAY_UPLOAD_CERT_SHA256: ${{ vars.B_PLAY_UPLOAD_CERT_SHA256 }}
+        run: |
+          set -euo pipefail
+          umask 077
+          for value in B_STORE_BUILD_APPROVED B_STORE_ENCRYPT_CERT_BASE64 B_PLAY_KEYSTORE_BASE64 MOMCOZY_FLUTTER_RELEASE_STORE_PASSWORD MOMCOZY_FLUTTER_RELEASE_KEY_ALIAS MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD B_PLAY_UPLOAD_CERT_SHA256; do
+            test -n "${!value}"
+          done
+          [[ "${B_STORE_BUILD_APPROVED}" == "north-america-staging" ]]
+          printf '%s' "${B_PLAY_KEYSTORE_BASE64}" | base64 --decode > "${RUNNER_TEMP}/b-play-upload.jks"
+          printf '%s' "${B_STORE_ENCRYPT_CERT_BASE64}" | base64 --decode > "${RUNNER_TEMP}/b-store-recipient.pem"
+          openssl x509 -in "${RUNNER_TEMP}/b-store-recipient.pem" -noout > /dev/null
+          test -s "${RUNNER_TEMP}/b-play-upload.jks"
+          flutter pub get
+          echo "MOMCOZY_FLUTTER_RELEASE_STORE_FILE=${RUNNER_TEMP}/b-play-upload.jks" >> "${GITHUB_ENV}"
+          echo "B_STORE_RECIPIENT_CERT=${RUNNER_TEMP}/b-store-recipient.pem" >> "${GITHUB_ENV}"
+      - name: Build signed Play appbundle from remote dev commit
+        env:
+          B_PLAY_UPLOAD_CERT_SHA256: ${{ vars.B_PLAY_UPLOAD_CERT_SHA256 }}
+          MOMCOZY_FLUTTER_RELEASE_STORE_PASSWORD: ${{ secrets.B_PLAY_STORE_PASSWORD }}
+          MOMCOZY_FLUTTER_RELEASE_KEY_ALIAS: ${{ secrets.B_PLAY_KEY_ALIAS }}
+          MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD: ${{ secrets.B_PLAY_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git status --porcelain --untracked-files=no)" = ""
+          node scripts/build-mobile-app.mjs --platform android --environment staging \
+            --mode release --format appbundle --release-lane north-america-staging \
+            --config config/release-lanes/north-america-staging.ci.json
+          bundle=build/app/outputs/bundle/playRelease/app-play-release.aab
+          test -s "${bundle}"
+          # Play upload keys are typically self-signed; strict PKIX validation
+          # rejects otherwise valid AABs. Verify signature and pin its cert.
+          jarsigner -verify "${bundle}" > "${RUNNER_TEMP}/b-aab-signature-check.txt"
+          grep -Eq 'jar verified|jar 已验证' "${RUNNER_TEMP}/b-aab-signature-check.txt"
+          expected_cert="$(printf '%s' "${B_PLAY_UPLOAD_CERT_SHA256}" | tr -d ': ' | tr '[:lower:]' '[:upper:]')"
+          [[ "${expected_cert}" =~ ^[0-9A-F]{64}$ ]]
+          actual_cert="$(keytool -printcert -jarfile "${bundle}" 2>/dev/null | sed -n 's/^[[:space:]]*SHA256:[[:space:]]*//p' | head -1 | tr -d ': ' | tr '[:lower:]' '[:upper:]')"
+          test "${actual_cert}" = "${expected_cert}"
+          mkdir -p output
+          openssl cms -encrypt -binary -aes256 -in "${bundle}" -outform DER \
+            -out output/momcozy-b-play.aab.cms "${B_STORE_RECIPIENT_CERT}"
+          (cd output && sha256sum momcozy-b-play.aab.cms > android.sha256)
+          printf 'source_sha=%s\nversion=%s\nplaintext_sha256=%s\n' \
+            "${GITHUB_SHA}" "$(grep '^version:' pubspec.yaml)" "$(sha256sum "${bundle}" | cut -d ' ' -f 1)" > output/android-source.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: b-play-encrypted-${{ github.sha }}
+          path: output/
+          if-no-files-found: error
+          retention-days: 14
+
+  ios:
+    needs: preflight
+    runs-on: macos-15
+    timeout-minutes: 90
+    environment: b-store-build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: 3.44.4
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Verify clean source before ephemeral iOS signing configuration
+        run: |
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git status --porcelain --untracked-files=no)" = ""
+      - name: Install ephemeral iOS distribution signing and encryption recipient
+        env:
+          B_STORE_BUILD_APPROVED: ${{ secrets.B_STORE_BUILD_APPROVED }}
+          B_STORE_ENCRYPT_CERT_BASE64: ${{ secrets.B_STORE_ENCRYPT_CERT_BASE64 }}
+          B_IOS_P12_BASE64: ${{ secrets.B_IOS_P12_BASE64 }}
+          B_IOS_P12_PASSWORD: ${{ secrets.B_IOS_P12_PASSWORD }}
+          B_IOS_PROFILE_BASE64: ${{ secrets.B_IOS_PROFILE_BASE64 }}
+          B_IOS_TEAM_ID: ${{ vars.B_IOS_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          umask 077
+          for value in B_STORE_BUILD_APPROVED B_STORE_ENCRYPT_CERT_BASE64 B_IOS_P12_BASE64 B_IOS_P12_PASSWORD B_IOS_PROFILE_BASE64 B_IOS_TEAM_ID; do
+            test -n "${!value}"
+          done
+          [[ "${B_STORE_BUILD_APPROVED}" == "north-america-staging" ]]
+          [[ "${B_IOS_TEAM_ID}" == "YP9F4937J4" ]]
+          printf '%s' "${B_STORE_ENCRYPT_CERT_BASE64}" | base64 --decode > "${RUNNER_TEMP}/b-store-recipient.pem"
+          openssl x509 -in "${RUNNER_TEMP}/b-store-recipient.pem" -noout > /dev/null
+          printf '%s' "${B_IOS_P12_BASE64}" | base64 --decode > "${RUNNER_TEMP}/b-ios-distribution.p12"
+          printf '%s' "${B_IOS_PROFILE_BASE64}" | base64 --decode > "${RUNNER_TEMP}/b-ios.mobileprovision"
+          flutter pub get
+          security create-keychain -p "${B_IOS_P12_PASSWORD}" "${RUNNER_TEMP}/b-build.keychain-db"
+          security unlock-keychain -p "${B_IOS_P12_PASSWORD}" "${RUNNER_TEMP}/b-build.keychain-db"
+          security set-keychain-settings -lut 21600 "${RUNNER_TEMP}/b-build.keychain-db"
+          security import "${RUNNER_TEMP}/b-ios-distribution.p12" -k "${RUNNER_TEMP}/b-build.keychain-db" -P "${B_IOS_P12_PASSWORD}" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "${B_IOS_P12_PASSWORD}" "${RUNNER_TEMP}/b-build.keychain-db" > /dev/null
+          security list-keychains -d user -s "${RUNNER_TEMP}/b-build.keychain-db"
+          security default-keychain -d user -s "${RUNNER_TEMP}/b-build.keychain-db"
+          security cms -D -i "${RUNNER_TEMP}/b-ios.mobileprovision" -o "${RUNNER_TEMP}/b-profile.plist"
+          python3 - <<'PY'
+          import os, plistlib
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          profile = plistlib.loads((root / "b-profile.plist").read_bytes())
+          team = os.environ["B_IOS_TEAM_ID"]
+          if team not in profile["TeamIdentifier"] or profile["Entitlements"]["application-identifier"] != team + ".com.momcozy.mai.staging":
+              raise SystemExit("B iOS profile identity does not match")
+          profiles = Path.home() / "Library/MobileDevice/Provisioning Profiles"
+          profiles.mkdir(parents=True, exist_ok=True)
+          target = profiles / (profile["UUID"] + ".mobileprovision")
+          target.write_bytes((root / "b-ios.mobileprovision").read_bytes())
+          export = {"method": "app-store-connect", "destination": "export", "signingStyle": "manual", "teamID": team,
+                    "manageAppVersionAndBuildNumber": False,
+                    "provisioningProfiles": {"com.momcozy.mai.staging": profile["UUID"]}}
+          (root / "b-export-options.plist").write_bytes(plistlib.dumps(export))
+          # Runner's Release-staging configuration inherits this xcconfig. Keep
+          # signing settings ephemeral on the runner, never in the Git commit.
+          with Path('ios/Flutter/Release.xcconfig').open('a') as config:
+              config.write(f'\nCODE_SIGN_STYLE = Manual\nPROVISIONING_PROFILE_SPECIFIER = {profile["UUID"]}\nDEVELOPMENT_TEAM = {team}\nCODE_SIGN_IDENTITY = Apple Distribution\n')
+          PY
+          echo "B_STORE_RECIPIENT_CERT=${RUNNER_TEMP}/b-store-recipient.pem" >> "${GITHUB_ENV}"
+          echo "MOMCOZY_B_EXPORT_OPTIONS_PLIST=${RUNNER_TEMP}/b-export-options.plist" >> "${GITHUB_ENV}"
+          echo "MOMCOZY_B_IOS_SIGNING_READY=1" >> "${GITHUB_ENV}"
+      - name: Build signed TestFlight IPA from remote dev commit
+        env:
+          B_IOS_TEAM_ID: ${{ vars.B_IOS_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          node scripts/build-mobile-app.mjs --platform ios --environment staging \
+            --mode release --format ipa --release-lane north-america-staging \
+            --config config/release-lanes/north-america-staging.ci.json
+          ipa="$(find build/ios/ipa -maxdepth 1 -name '*.ipa' -type f -print -quit)"
+          test -n "${ipa}"
+          test -s "${ipa}"
+          mkdir -p "${RUNNER_TEMP}/b-exported-ipa"
+          unzip -q "${ipa}" -d "${RUNNER_TEMP}/b-exported-ipa"
+          app="${RUNNER_TEMP}/b-exported-ipa/Payload/Runner.app"
+          test -d "${app}"
+          codesign --verify --deep --strict --verbose=2 "${app}"
+          codesign -dv --verbose=4 "${app}" 2> "${RUNNER_TEMP}/b-ios-signature.txt"
+          grep -Fx "TeamIdentifier=${B_IOS_TEAM_ID}" "${RUNNER_TEMP}/b-ios-signature.txt"
+          codesign -d --entitlements "${RUNNER_TEMP}/b-exported-entitlements.plist" "${app}"
+          security cms -D -i "${app}/embedded.mobileprovision" -o "${RUNNER_TEMP}/b-exported-profile.plist"
+          python3 - <<'PY'
+          import datetime, os, plistlib
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP'])
+          app = root / 'b-exported-ipa/Payload/Runner.app'
+          info = plistlib.loads((app / 'Info.plist').read_bytes())
+          entitlements = plistlib.loads((root / 'b-exported-entitlements.plist').read_bytes())
+          profile = plistlib.loads((root / 'b-exported-profile.plist').read_bytes())
+          expected_id = 'com.momcozy.mai.staging'
+          team = os.environ['B_IOS_TEAM_ID']
+          if info['CFBundleIdentifier'] != expected_id or str(info['CFBundleVersion']) != os.environ['GITHUB_REF_NAME'].rsplit('-', 1)[-1]:
+              raise SystemExit('B IPA identity or build number mismatch')
+          if team not in profile['TeamIdentifier'] or profile['Entitlements']['application-identifier'] != f'{team}.{expected_id}':
+              raise SystemExit('B exported profile identity mismatch')
+          if profile['UUID'] != plistlib.loads((root / 'b-profile.plist').read_bytes())['UUID']:
+              raise SystemExit('B exported profile is not the approved profile')
+          if profile['ExpirationDate'] <= datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None):
+              raise SystemExit('B exported provisioning profile expired')
+          if profile.get('ProvisionedDevices') or profile.get('ProvisionsAllDevices'):
+              raise SystemExit('B IPA is not using an App Store distribution profile')
+          if entitlements.get('application-identifier') != f'{team}.{expected_id}' or entitlements.get('get-task-allow') is not False:
+              raise SystemExit('B IPA signing entitlements do not match store identity')
+          if entitlements.get('aps-environment') != 'production':
+              raise SystemExit('B IPA push entitlement is not production')
+          PY
+          mkdir -p output
+          openssl cms -encrypt -binary -aes256 -in "${ipa}" -outform DER \
+            -out output/momcozy-b-testflight.ipa.cms "${B_STORE_RECIPIENT_CERT}"
+          (cd output && shasum -a 256 momcozy-b-testflight.ipa.cms > ios.sha256)
+          printf 'source_sha=%s\nversion=%s\nplaintext_sha256=%s\n' \
+            "${GITHUB_SHA}" "$(grep '^version:' pubspec.yaml)" "$(shasum -a 256 "${ipa}" | cut -d ' ' -f 1)" > output/ios-source.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: b-testflight-encrypted-${{ github.sha }}
+          path: output/
+          if-no-files-found: error
+          retention-days: 14

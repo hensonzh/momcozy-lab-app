@@ -57,7 +57,7 @@ class StoreReleaseLaneTests(unittest.TestCase):
                 "--release-lane", "north-america-staging", "--config", str(path),
             ], cwd=ROOT, env=env, text=True, capture_output=True, check=False)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("B build is not enabled", result.stderr)
+            self.assertIn("B iOS signing", result.stderr)
             self.assertNotIn("$ flutter", result.stdout)
 
             env["MOMCOZY_API_BASE_URL"] = "https://backend-test.lute-momcozylab.luteos.cloud:8443"
@@ -88,7 +88,7 @@ class StoreReleaseLaneTests(unittest.TestCase):
                     self.assertNotEqual(result.returncode, 0)
                     self.assertIn("MOMCOZY_API_BASE_URL", result.stderr)
 
-    def test_b_android_build_remains_blocked_without_b_services(self) -> None:
+    def test_b_android_build_requires_upload_signing(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "target.json"
             path.write_text(json.dumps({
@@ -105,7 +105,7 @@ class StoreReleaseLaneTests(unittest.TestCase):
                 "--release-lane", "north-america-staging", "--config", str(path),
             ], cwd=ROOT, text=True, capture_output=True, check=False)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("B build is not enabled", result.stderr)
+            self.assertIn("B Android upload signing", result.stderr)
             self.assertNotIn("$ node", result.stdout)
 
     def test_direct_play_builder_cannot_bypass_b_release_gate(self) -> None:
@@ -116,7 +116,7 @@ class StoreReleaseLaneTests(unittest.TestCase):
             "--dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-us-dev.lute-momcozylab.luteos.cloud",
         ], cwd=ROOT, text=True, capture_output=True, check=False)
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("B build is not enabled", result.stderr)
+        self.assertIn("B play builder must be invoked by the approved B entrypoint", result.stderr)
         self.assertNotIn("$ flutter", result.stdout)
 
     def test_explicit_a_lane_checks_urls_and_invite_mode(self) -> None:
