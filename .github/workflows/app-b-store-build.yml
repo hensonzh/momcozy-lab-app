@@ -252,7 +252,7 @@ jobs:
           codesign --verify --deep --strict --verbose=2 "${app}"
           codesign -dv --verbose=4 "${app}" 2> "${RUNNER_TEMP}/b-ios-signature.txt"
           grep -Fx "TeamIdentifier=${B_IOS_TEAM_ID}" "${RUNNER_TEMP}/b-ios-signature.txt"
-          codesign -d --entitlements "${RUNNER_TEMP}/b-exported-entitlements.plist" "${app}"
+          codesign -d --entitlements :- "${app}" > "${RUNNER_TEMP}/b-exported-entitlements.plist"
           security cms -D -i "${app}/embedded.mobileprovision" -o "${RUNNER_TEMP}/b-exported-profile.plist"
           python3 - <<'PY'
           import datetime, os, plistlib

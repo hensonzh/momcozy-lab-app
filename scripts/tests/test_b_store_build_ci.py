@@ -11,6 +11,11 @@ WORKFLOW = ROOT / ".github/workflows/app-b-store-build.yml"
 
 
 class BStoreBuildContractTests(unittest.TestCase):
+    def test_ipa_entitlements_use_xml_codesign_output(self) -> None:
+        text = WORKFLOW.read_text()
+        self.assertIn('codesign -d --entitlements :- "${app}" > "${RUNNER_TEMP}/b-exported-entitlements.plist"', text)
+        self.assertNotIn('codesign -d --entitlements "${RUNNER_TEMP}/b-exported-entitlements.plist"', text)
+
     def test_signed_ios_build_pins_xcode_26(self) -> None:
         text = WORKFLOW.read_text()
         self.assertIn("  ios:\n    needs: preflight\n    runs-on: macos-26", text)
