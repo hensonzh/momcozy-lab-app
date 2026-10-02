@@ -8,7 +8,7 @@ A 链路保持原样，App 的 B 分发/商店策略不因服务端改用单机�
 ## 边界与拓扑
 
 ```text
-GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（尚未接通）
+GitHub dev -> B 验证/镜像 digest 核验 -> 目标机首次发布入口（未在目标机验收）
   B 专属发布目录/锁、私有 env、Docker Compose 项目/网络/卷
   Backend 项目: PostgreSQL + Redis + MinIO + Product API
                 + 通知 worker + 邮件 worker + 一次性迁移任务
@@ -45,7 +45,8 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
   B 专属 ACL 只授权各自键/频道并禁止服务身份切换 DB，Redis ACL 无数据库级
   权限边界。分别验证 Lua、Stream 和锁。
 - **MinIO**：B 自启动一个 S3 兼容 MinIO 服务，Product/Agent 各一个
-  私有 Bucket、各自身份与桶策略。Bucket 最终名称由运维确认。使用 B
+  私有 Bucket、各自身份与桶策略。桶名固定为
+  `momcozy-product-us-east-uat`、`momcozy-agent-us-east-uat`，首次部署前仍需目标机核验。使用 B
   专属卷、备份与恢复；不再依赖托管 S3、之前单对 AK/SK 或 A 的 MinIO。
 - **Agent 10 并发**：B 的单 worker 目标为批量认领 10、并行处理 10 个
   run；A 保留 2 的部署配置。10 run 不等于已经通过压测。按同机资源
@@ -57,7 +58,7 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
 1. 固定美东目标机和 B 域名/公网证书/反代端口；核对 B 流水线从 GitHub `dev` 拉取、使用 `deploy/Dockerfile`，标记 commit 和镜像 digest。
 2. 实现 B 专属 Compose/私有 env/发布 root 和锁、初始化 DB/ACL/Bucket、
    非公网网络与卷；建立并演练两个数据库、MinIO 和 Redis 的备份恢复。
-   **B Compose 模板、只读私有 env 预检和 GitHub `dev` 的验证已通过；B 镜像发布与目标机服务部署是两道独立门禁**。目标机发布入口尚未接通，不得拿 A 的部署脚本修改几个 URL 直接使用。
+   **B Compose 模板、只读私有 env 预检和 GitHub `dev` 的验证已通过；B 镜像发布与目标机服务部署是两道独立门禁**。首次发布入口已有代码但未在目标机执行/验收；更新和回滚 runner 仍未实现。不得拿 A 的部署脚本修改几个 URL 直接使用。
 3. 数据处置已确认：不迁移原托管数据。首次初始化前执行 Backend 的只读
    `scripts/check_b_fresh_bootstrap.py`，B 命名或 Compose 标签的卷、网络、
    容器（含已停止）存在就中止人工复核，不 prune、不覆盖。目标机于
@@ -65,8 +66,9 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
    在密钥和恢复条件满足后，对**新库**按 Product -> Agent 顺序执行
    Alembic schema 迁移；后续 schema 变更须先备份，失败就停止发布，
    不自动降级数据库。
-4. 启动 Product API/通知 worker/邮件 worker，验证健康及注册邮件；再启动
-   Agent API/worker，检查心跳和跨服务调用，做 10 run 并发压测。
+4. 启动 Product API/通知 worker/邮件 worker，核验公网 ready；再启动
+   Agent API/worker，核验公网 ready。注册邮件、模型服务及 10-run 压测
+   分别验收，不以外部提供商的单点故障阻塞 App 构建。
 5. 最后构建 B App，确认 API URL、邮箱登录、签名和分发渠道，用合成账号
    验证端到端；A/B 的镜像、数据、备份与回滚均需独立验收。
 
@@ -114,8 +116,9 @@ GitHub dev -> B 验证/镜像发布 -> GHCR digest -> B 目标机发布入口（
 ## B 镜像发布任务（与目标机部署分离）
 
 Backend/Agent 的 B 验证 workflow 在 GitHub `dev` **push 且验证任务成功**后，另起
-`b-image` 任务从各自 `deploy/Dockerfile` 构建，发布到私有 GHCR 的
-`b-dev-<完整 commit SHA>` 标签，并记录不可变 digest。PR／手动 workflow 派发只验证，
+`b-image` 任务从各自 `deploy/Dockerfile` 构建 `linux/amd64` 镜像，发布到私有
+GHCR 的 `b-dev-<完整 commit SHA>` 标签，对最终 digest 做离线镜像核验并记录
+不可变 digest。PR／手动 workflow 派发只验证，
 不发布镜像。CI 不 SSH 目标机、不启动服务、不切换 `current`；目标机尚未配置私有 GHCR 拉取身份或拉取并核验 digest。镜像发布成功不代表
 B 服务已部署或可对外使用。实际部署仍须先验证目标机私有配置、域名/TLS、
 PostgreSQL/MinIO/Redis 的正式备份与隔离恢复门禁。
@@ -131,5 +134,12 @@ PostgreSQL/MinIO/Redis 的正式备份与隔离恢复门禁。
 - B 主机已安装 Nginx/Certbot，但安装包默认站点启动后已立即停用；没有
   公信证书或已启用的 B 站点。先经审批开放 80/443 并复测，才能签发证书、
   启用 HTTPS 反向代理。GHCR 私有镜像在目标机读取被拒，还需安全配置只读
-  拉取身份；B 发布入口目前仅作静态准入，没有容器启动操作。真实数据备份、
-  隔离恢复、回滚与服务验收仍是门禁，**不得宣称后端已上线**。
+  拉取身份；只读准入入口不会启动容器，首次发布入口也未在目标机执行。真实数据备份、
+  隔离恢复、更新/回滚与服务验收仍是门禁，**不得宣称后端已上线**。
+
+## 2026-10-02 B 构建与发布入口校正（代码就绪，目标机待验收）
+
+- Backend/Agent 的 `dev` 镜像作业现在先发布 `linux/amd64`，再对**所发布的 digest** 检查用户、来源标签、模块与 Alembic head；CI 仍不登录目标机。
+- 两服务 B Compose 子进程使用最小白名单环境，防止操作者 shell 的 A 配置覆盖 B 私有 env；B 目标机变更脚本还拒绝继承远端 Docker context/host，强制本地 Unix socket。B 的 PostgreSQL/Redis 基础镜像与隔离恢复演练固定相同 digest；B 专用 MinIO Dockerfile 固定构建基础镜像、目标为 amd64，A 的 MinIO 构建文件不变。
+- Backend 提供 `scripts/b_first_release.py`：先以只读 `--preflight` 检查准入；只在显式 `--apply` 且首次空白 B 环境下运行，并以独立总锁串行化各阶段，要求可信公网证书及目标机镜像身份，通过单机基础服务启动、双库迁移、三类**真实数据**备份与隔离恢复后按 Product → Agent 顺序激活并验证公网 HTTPS。途中失败保留现场，不能自动回滚/重试；外部邮件与模型服务的 E2E 仍单独验收。
+- 这是代码与本地合成验证，**本版远程 CI、GHCR 最终 digest 和美东目标机尚未验收**。应在提交并推送相关服务仓库后跑远程 CI，审查私有 GHCR 只读拉取和目标机镜像导入/真实恢复，然后才考虑执行首次发布。现有业务数据的版本更新、回滚和 10-run 压测仍是未完成项。此前按 2026-10-01 记录的端口、证书和容器状态为历史观察，不能当作当前事实。
