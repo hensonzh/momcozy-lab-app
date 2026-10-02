@@ -51,6 +51,13 @@ class BDevCIContractTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, text)
 
+    def test_ios_compile_uses_xcode_26_without_changing_golden_runner(self) -> None:
+        text = WORKFLOW.read_text()
+        self.assertIn("  ios-compile:\n    runs-on: macos-26", text)
+        self.assertIn("  golden:\n    runs-on: macos-15", text)
+        self.assertIn("sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer", text)
+        self.assertIn("xcodebuild -version | grep -Fx 'Xcode 26.6'", text)
+
     def test_ci_config_compiles_normal_login_against_approved_b_hosts(self) -> None:
         target = json.loads(TARGET.read_text())
         self.assertEqual(target["deploymentTarget"], "north-america-staging")
