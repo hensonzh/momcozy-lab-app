@@ -77,7 +77,7 @@ GitHub dev -> B 验证/镜像 digest 核验 -> 目标机首次发布入口（未
 保留 B 专属 `deploy/Dockerfile`、非密钥 `deploy/config_us-east-uat`、
 `release-source.json`、B 专属 Compose/私有 env 模板与目标静态校验；
 删除已失效的 B Kubernetes `workloads.yaml`/`migration-job.yaml`。旧版 IT Kubernetes/托管资源申请表
-仅作历史记录，**不得继续作为当前申请或发布清单**。B 专属 CI 的验证任务覆盖合成 PostgreSQL/Redis 隔离、两库合成 dump/隔离恢复、Redis RDB 与 MinIO 两桶合成隔离恢复、Compose 静态渲染及 Dockerfile 构建；验证成功后的独立任务仅在 GitHub `dev` push 时向私有 GHCR 发布 B 镜像并记录 digest，**不连接目标机、不执行部署**。Backend/Agent 有 B 私有目录占位文件初始化工具与只读发布准入预检；Backend 还有跨服务凭据匹配、实时数据库 revision 回滚预检和 PostgreSQL 两库恢复脚本。目标机 root/锁/0600 私有配置已准备，非密钥 URL 已填写；2026-10-01 已在 B 主机首次生成全新专属 PostgreSQL/Redis/MinIO/JWT/内部服务凭据，重复运行未轮换，随后 Resend 和从 A 读取的 OpenAI 密钥已安全同步到 B 私有 env；B 决定只走普通邮箱注册／验证／登录，目标机私有 env 已显式关闭邀请码路径；MinIO/Redis 的**正式数据**备份与隔离恢复、离机留存、可执行 B 发布/回滚 runner 与上线验收仍未完成。合成恢复不能当作目标机真实恢复。
+仅作历史记录，**不得继续作为当前申请或发布清单**。B 专属 CI 的验证任务覆盖合成 PostgreSQL/Redis 隔离、两库合成 dump/隔离恢复、Redis RDB 与 MinIO 两桶合成隔离恢复、Compose 静态渲染及 Dockerfile 构建；验证成功后的独立任务仅在 GitHub `dev` push 时向私有 GHCR 发布 B 镜像并记录 digest，**不连接目标机、不执行部署**。Backend/Agent 有 B 私有目录占位文件初始化工具与只读发布准入预检；Backend 还有跨服务凭据匹配、实时数据库 revision 回滚预检和 PostgreSQL 两库恢复脚本。目标机 root/锁/0600 私有配置已准备，非密钥 URL 已填写；2026-10-01 已在 B 主机首次生成全新专属 PostgreSQL/Redis/MinIO/JWT/内部服务凭据，重复运行未轮换，随后 Resend 和从 A 读取的 OpenAI 密钥已安全同步到 B 私有 env；B 决定只走普通邮箱注册／验证／登录，目标机私有 env 已显式关闭邀请码路径；MinIO/Redis 的**正式数据**备份与隔离恢复、首次发布入口尚未在目标机验收，后续更新/回滚 runner 与上线验收仍未完成；离机留存已暂缓，不再作为发布门禁。合成恢复不能当作目标机真实恢复。
 
 ## 目标机准备进度（2026-10-01）
 
@@ -108,10 +108,9 @@ GitHub dev -> B 验证/镜像 digest 核验 -> 目标机首次发布入口（未
   **尚未部署** PostgreSQL、Redis、MinIO、Product、Agent 或反向代理。
   历史托管数据确认不迁入。B Docker 新环境守卫通过，但普通 `ubuntu`
   用户无 Docker socket 权限，守卫以 `sudo -n` 执行；发布 runner 的权限模型
-  需明确。后续仍要完成 HTTPS/TLS、公有端口与证书、真实备份与隔离恢复
-  及离机留存，提供可审核的 B 发布/回滚入口，
-  再完成真实邮件、服务和 Agent
-  10 并发验收。不得绕过这些门禁。
+  需明确。后续仍要完成 HTTPS/TLS、公有端口与证书、真实备份与隔离恢复，
+  在目标机验收首次发布入口，并补齐更新/回滚，再完成真实邮件、服务和 Agent
+  10 并发验收。离机留存暂缓，不是发布门禁；不得绕过其余门禁。
 
 ## B 镜像发布任务（与目标机部署分离）
 
