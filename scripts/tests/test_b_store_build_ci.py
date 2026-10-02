@@ -11,6 +11,12 @@ WORKFLOW = ROOT / ".github/workflows/app-b-store-build.yml"
 
 
 class BStoreBuildContractTests(unittest.TestCase):
+    def test_signed_ios_build_pins_xcode_26(self) -> None:
+        text = WORKFLOW.read_text()
+        self.assertIn("  ios:\n    needs: preflight\n    runs-on: macos-26", text)
+        self.assertIn("sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer", text)
+        self.assertIn("xcodebuild -version | grep -Fx 'Xcode 26.6'", text)
+
     def test_workflow_builds_at_exact_remote_dev_commit_after_ci(self) -> None:
         text = WORKFLOW.read_text()
         for required in (

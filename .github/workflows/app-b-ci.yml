@@ -90,10 +90,14 @@ jobs:
           "${aapt}" dump badging build/app/outputs/flutter-apk/app-play-debug.apk | grep -F "package: name='com.momcozy.mai'"
 
   ios-compile:
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      - name: Pin Xcode 26.6 for device_info_plus iOS APIs
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
+          xcodebuild -version | grep -Fx 'Xcode 26.6'
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
         with:
           flutter-version: 3.44.4
