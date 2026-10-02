@@ -145,6 +145,8 @@ PostgreSQL/MinIO/Redis 的正式备份与隔离恢复门禁。
 
 ## 2026-10-02 受保护商店构建验收（不等于商店分发）
 
+以下 `1.0.0+66` 为当时的人工审批构建历史记录；当前自动门禁见本节末尾。
+
 App GitHub Environment `b-store-build` 已建立：只允许 `b-store-v*` tag 进入，
 需 `hensonzh` 审批，管理员不能绕过；Android 上传证书和 iOS 单一 Apple
 Distribution 身份／App Store profile 已核对，所需环境 secrets/variables 已配置。
@@ -157,3 +159,17 @@ Distribution 身份／App Store profile 已核对，所需环境 secrets/variabl
 明文仅留在仓库外的本机 0700/0600 目录。**尚未上传 Google Play 或
 TestFlight，也未宣称已分发**。远程 CI 所验证的 Backend／Agent 公网 API
 是当时运行中的 B 版本；它不证明新 GHCR digest 已部署在目标机。
+
+## 2026-10-02 B 商店构建改为自动门禁
+
+App `dev` 上 `1.0.0+67` 提交 `427a7dcfb0105b95cdd45d921c31b2cb6948e22c`
+的 B CI 运行 `37008400750` 全部通过；唯一标签 `b-store-v1.0.0-67`
+指向该 SHA。仓库启用无 bypass actors 的 `dev` 分支规则集（禁删除、非快进）和
+`b-store-v*` 标签规则集（禁更新、删除），Environment `b-store-build` 仍仅允许
+`b-store-v*` 访问签名密钥，保留禁止管理员绕过，移除了 Required reviewers。
+目前 `dev` 并**未**配置 PR 评审或 required status check；不能宣称这两项已启用。
+
+构建运行 `37009537423` 首次尝试停在旧人工审批后，改动 Environment 时等待的
+两个作业失败且未执行构建；第 2 次尝试在新规则下自动启动，preflight、签名
+Android AAB、签名 iOS IPA 均成功，加密制品上传 Actions artifact。商店上传仍
+是独立受控操作，不因自动构建而自动提交 Google Play 或 TestFlight。

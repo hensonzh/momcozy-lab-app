@@ -25,19 +25,39 @@ push 上执行：
 3. 独立 runner 编译 Play flavor 的 **debug APK**（检查包名及 PDF native library）和 iOS staging scheme 的**无签名 simulator App**（检查 Bundle ID）。B 的公信 CA 域名不能启用 A 的内部 CA 信任路径。
 4. `b-ci` 汇总门禁要求上述四项作业全部成功。工作流不获取签名或商店密钥、不生成可分发的 AAB/IPA、不上传商店、不部署后端。push 到 `dev` 的 CI 成功也不意味着 B 已部署或 App 已发布。
 
-A 的 `app-ci.yml` 原本监听所有 PR，因此目标为 `dev` 的 PR 也可能同时运行通用/A 导向检查；B 的合并门禁以独立 `app-b-ci / b-ci` 为准。B 正式商店构建/上传另走审批后的发布作业。
+A 的 `app-ci.yml` 原本监听所有 PR，因此目标为 `dev` 的 PR 也可能同时运行通用/A 导向检查；B 的 CI 以独立 `app-b-ci / b-ci` 汇总作业为准。B 的签名构建由新发布标签触发，不自动上传商店。
 
-## B 商店包：从远程不可变提交构建（待配置启用）
+## B 商店包：从远程 `dev` 提交自动签名构建
 
-上一轮本地 worktree 的 AAB/IPA 只作为测试证据；已上传的 iOS build 64 不能复用。
-当前源码预留 `1.0.0+65`。`.github/workflows/app-b-store-build.yml` **不会由普通 `dev` push 自动触发**：
+截至 2026-10-02，`1.0.0+67` 的 `b-store-v1.0.0-67` 标签指向 App 提交
+`427a7dcfb0105b95cdd45d921c31b2cb6948e22c`；该提交的 `app-b-ci` push run
+`37008400750` 通过。`app-b-store-build.yml` **不会由普通 `dev` push 自动触发**，
+只响应新的 `b-store-v*` 标签。签名构建运行 `37009537423` 的第 2 次尝试中，
+preflight、Android AAB、iOS IPA 全部成功并上传加密 Actions artifact。
 
-1. B App 源码合入远程 `dev`，其准确 commit 的 `app-b-ci` push run 通过；GitHub `dev` 分支保护须要求 PR 评审、`b-ci` 必需检查且禁止 force push。
-2. 在 GitHub 建立独立 `b-store-build` Environment，**由管理员配置** required reviewers、仅允许 B 发布 tag 的 deployment branch/tag policy；为 `b-store-v*` 设置禁止删除/更新的 tag ruleset。仅在此 Environment 设置 B 专属密钥：`B_STORE_BUILD_APPROVED=north-america-staging`、`B_STORE_ENCRYPT_CERT_BASE64`（接收方 X.509 **公钥证书**）、`B_PLAY_KEYSTORE_BASE64`、`B_PLAY_STORE_PASSWORD`、`B_PLAY_KEY_ALIAS`、`B_PLAY_KEY_PASSWORD`、`B_IOS_P12_BASE64`、`B_IOS_P12_PASSWORD`、`B_IOS_PROFILE_BASE64`，以及 vars `B_PLAY_UPLOAD_CERT_SHA256`、`B_IOS_TEAM_ID`。iOS 描述文件必须对应 `com.momcozy.mai.staging` 的 App Store Connect 分发身份，Play 上传证书指纹须和预期一致；解密私钥不得放入 GitHub 或仓库。A 的 `staging` Environment 不复用。GitHub 作业的默认令牌不能读取管理权限 API，因此保护/审批设置必须由管理员在启用前独立验收，不能假装已被作业自证。
-3. 核对商店当前最高 build/version 后，在已通过 CI 的**当前远程 `dev` HEAD** 建立并推送唯一 tag `b-store-v1.0.0-65`。工作流检查 tag、源码 SHA、同 SHA 的成功 CI push run、B HTTPS ready 和**线上 OpenAPI 与 App 固定快照一致**；不满足就失败，不生成发布包。tag 不是普通 `dev` push，也不应重新指向其他 SHA；今后每次分发都先提高 build number。
-4. 审批后，独立 GitHub runner 检出精确 SHA，各自签名构建 Play AAB / TestFlight IPA；验证 AAB 签名与上传证书指纹、IPA 代码签名/导出描述文件/entitlements、包身份与 build number。只上传加密后的短期 Actions artifact，附密文 SHA-256、明文 SHA-256 和源码 SHA；接收方解密后重新计算明文 SHA-256 再交商店。**该作业不自动上传 Google Play、App Store Connect，也不扩大测试群组或提交生产审核**；商店上传需要单独受控流程和接收状态验收。缺少实际受控签名构建与商店接收回执时，不能称为分发验收通过。
+1. App 源码先提交到远程 `dev`，同一 SHA 的 B CI push run 必须成功。GitHub 上的
+   `dev` branch ruleset 禁止删除和非快进更新；**目前没有强制 PR 评审或 required
+   status check**，不能把 workflow 的 tag preflight 当作分支合并保护。
+2. 独立 GitHub Environment `b-store-build` 仅允许 `b-store-v*` tag 访问 B 专属
+   签名密钥；无 Required reviewers、无等待计时，满足门禁即自动启动；管理员绕过
+   仍被禁用。另一条 tag ruleset 禁止改写或删除现有 `b-store-v*` tag，两条规则集
+   都无 bypass actors。仓库管理员须定期核对这些**仓库侧**保护及密钥配置；
+   workflow 的默认令牌不能自证管理员设置。Environment 的非秘密变量为
+   `B_PLAY_UPLOAD_CERT_SHA256` 和 `B_IOS_TEAM_ID`；签名/加密 secrets 仍仅存放
+   于这个 Environment，不写入仓库，也不复用 A 的 `staging` Environment。
+3. 每次构建须先核对商店已使用的最高 build number、提高 `pubspec.yaml` build
+   number，等待远程 `dev` 该 SHA 的 B CI 成功，然后在**当前远程 `dev` HEAD**
+   新建唯一 tag `b-store-v<version>-<build>`。不能移动旧标签。preflight 再校验
+   精确 SHA、同 SHA 的成功 B CI、版本号、B HTTPS ready 与线上 OpenAPI/固定快照。
+4. 独立 runner 从该 SHA 构建 Play 签名 AAB 与 TestFlight 签名 IPA，校验包名、
+   build number、上传证书/IPA 签名与描述文件。仅上传加密后的短期 Actions artifact，
+   附密文和明文 SHA-256、源码 SHA；接收方解密后须重算明文哈希并复核签名。
+   **构建成功不等于上传或分发**：Google Play/TestFlight 上传、测试群组和审核
+   仍需独立受控流程及商店接收回执。
 
-此流程目前只有代码草稿；远程 `dev` 尚无这些提交，仓库也没有 `dev` 分支保护或 `b-store-build` Environment，更没有经 CI 跑通的正式制品。不能因本地脚本通过就称为已经启用。
+`1.0.0+67` 首次尝试在旧审批规则下等待；移除 Required reviewers 后 GitHub
+把尚未启动 runner 的两个作业标为失败。对**同一运行、同一 tag/SHA**执行失败作业
+rerun 后，第 2 次尝试无需审批并成功。这不是新建版本或重用另一构建号。
 
 ## Staging Android 发布
 
