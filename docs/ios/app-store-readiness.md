@@ -2,7 +2,7 @@
 
 Last verified: 2026-09-25 (historical pre-upload snapshot)
 
-> **2026-09-26 update:** Build 59 has been uploaded, but external TestFlight review and the public link have not been completed. Read [`testflight-staging-build-59-handoff.md`](testflight-staging-build-59-handoff.md) first; the "no signed build or TestFlight upload" assertions below are historical and must not be used as current status.
+> **2026-10-02 update:** B staging signed build 67 was produced by GitHub CI and decrypted locally, but its App Store Connect upload, export compliance, and external TestFlight status could not be verified. See [`testflight-build-67-current.md`](testflight-build-67-current.md). Build 59 was historically uploaded; see [`testflight-staging-build-59-handoff.md`](testflight-staging-build-59-handoff.md). All unsigned/no-upload statements below are historical 2026-09-25 observations, not current release status.
 
 ## Scope
 
@@ -11,9 +11,9 @@ Last verified: 2026-09-25 (historical pre-upload snapshot)
 - Intended release: a new App Store app, not an update to an existing Momcozy listing
 - Production Bundle ID: pending company confirmation
 - Internal TestFlight staging Bundle ID: `com.momcozy.mai.staging` (registered under team `YP9F4937J4`)
-- App Store Connect: `Momcozy AI` staging record (Apple ID `6816097872`, SKU `momcozy-lab-ios-staging`); no signed build or TestFlight upload yet
+- App Store Connect: `Momcozy AI` staging record (Apple ID `6816097872`, SKU `momcozy-lab-ios-staging`); build 59 historically uploaded; build 67 Apple-side status unverified
 
-## Staging iOS lane (2026-09-25)
+## Staging iOS lane (historical 2026-09-25 preflight)
 
 The shared Xcode scheme `staging` uses `Debug-staging`, `Profile-staging`, and
 `Release-staging` configurations. `Runner` keeps its original provisional ID;

@@ -1,0 +1,29 @@
+# B staging iOS TestFlight — Build 67 current handoff
+
+Verified on 2026-10-02. This document distinguishes local/GitHub build evidence from **Apple account state**, which could not be read during this check. Do not treat a successful GitHub build as a TestFlight upload, completed export compliance, or external distribution.
+
+## Verified artifact
+
+| Item | Evidence |
+| --- | --- |
+| Source | `b-store-v1.0.0-67` at `427a7dcfb0105b95cdd45d921c31b2cb6948e22c` (an ancestor of `dev`) |
+| GitHub Actions | `app-b-store-build` run `37009537423`, attempt 2, success |
+| IPA | `~/.config/momcozy-lab/b-store-build/artifacts/build-67/b-testflight-encrypted-427a7dcfb0105b95cdd45d921c31b2cb6948e22c/momcozy-b-ios-1.0.0-67.ipa` |
+| IPA SHA-256 | `0ca48b68d79e32eb8a863902b075625e7cb98134e6d1df6d902b89862ce6aefb` |
+| IPA identity | `com.momcozy.mai.staging`, `1.0.0 (67)`; distribution profile team `YP9F4937J4` |
+| App Store Connect record | Historical App ID `6816097872`; **current account contents not verified** |
+
+The signed IPA was decrypted locally from the CI artifact. CI **builds and uploads an encrypted artifact to GitHub**, not to App Store Connect. The current `dev` HEAD can advance independently of the source tag. Do not change the build number of this IPA or assume it is already on Apple's servers.
+
+## Account actions still requiring live verification
+
+1. Open **Apps → Momcozy AI → TestFlight → iOS Builds** and inventory each build's processing/compliance status, groups, testers, and whether build 67 is present. Historical records say 58 was Internal Only and 59 uploaded; they do not prove which builds are currently available. Check any later builds individually.
+2. If 67 is absent, use the signed IPA above to upload it with an authorized App Store Connect account (or approved API credential), then verify Apple processing completes and TestFlight lists **1.0.0 (67)** with the correct App ID. A local file and successful upload command alone are not sufficient.
+3. On **build 67 → Manage / Provide Export Compliance Information**, answer Apple's actual questionnaire based on the app's real encryption use and proposed distribution. Its IPA does **not** declare `ITSAppUsesNonExemptEncryption` or `ITSEncryptionExportComplianceCode`. This means the question has **not been answered by the IPA**; it does not mean the app uses no encryption. The app uses HTTPS, secure storage, and WebRTC, and has a `crypto` package for SHA-256 digests. The previous answer for build 59 (`standard encryption`, `not in France`) must not be copied uncritically: an external public TestFlight link could be forwarded outside North America. Have the exporter determine the correct algorithm/territory classification and provide French/US documentation **only if Apple's questionnaire requires it**. Save the answer or attach approved documentation, and verify the build no longer says Missing Compliance. Only after the classification is settled may a future source build include the corresponding Info.plist declaration/code to avoid repeated prompts; changing source now cannot fix the already signed build 67.
+4. Fill **TestFlight → Test Information** separately from **Distribution → iOS App 1.0**. Proposed English Beta App Description (not yet approved): “Explore AI-assisted maternal and baby care: organize questions, keep care records, and manage reminders. Some services may not be available in this beta. This app is not a diagnostic or emergency service.” The Feedback Email, reviewer contact, and a working staging review account with synthetic data must be validated and entered in the account; no password or private contact data belongs in Git. Review support/privacy URL, localized description, screenshots, category, age rating, and App Privacy disclosures against `app-store-metadata-draft.md` and `app-privacy-draft.md`; those files are drafts, **not legally approved answers**.
+5. Once 67 has processed, has a truthful compliance answer, and is ready for intended testers, move external testing to 67 and verify its Beta App Review state. For old builds no longer needed, Apple provides **Expire Build**; this stops new installs for both internal and external testers. Check current tester impact before expiring, and do not promise deletion of already-uploaded build history. Do not confuse an internal-only build with an external candidate.
+6. External availability requires the external group/build, complete test information, TestFlight App Review approval, and verified invitations/public link. A group name containing “North America” is **not** a geographic access restriction. Complete actual installation/login testing with a non-team test account.
+
+**Blocker observed on 2026-10-02:** the computer-use inventory returned no browser and `Sky Computer Use native pipe startup failed`; no authorized App Store Connect API `.p8` credential was configured locally. Therefore this check did **not** upload build 67, change Apple's build state, submit a compliance answer, expire old builds, or save App Store metadata. Resume these exact steps through an accessible logged-in session or an approved API credential and record the resulting Apple-side evidence here.
+
+Apple references: [beta export compliance](https://developer.apple.com/help/app-store-connect/test-a-beta-version/provide-export-compliance-information-for-beta-builds/), [export compliance overview](https://developer.apple.com/help/app-store-connect/manage-app-information/overview-of-export-compliance/), [encryption documentation matrix](https://developer.apple.com/help/app-store-connect/reference/export-compliance-documentation-for-encryption/), [stop testing a build](https://developer.apple.com/help/app-store-connect/test-a-beta-version/stop-testing-a-build/), [TestFlight information](https://developer.apple.com/help/app-store-connect/test-a-beta-version/provide-test-information/).
