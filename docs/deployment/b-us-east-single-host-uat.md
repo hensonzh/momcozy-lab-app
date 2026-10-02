@@ -142,3 +142,18 @@ PostgreSQL/MinIO/Redis 的正式备份与隔离恢复门禁。
 - 两服务 B Compose 子进程使用最小白名单环境，防止操作者 shell 的 A 配置覆盖 B 私有 env；B 目标机变更脚本还拒绝继承远端 Docker context/host，强制本地 Unix socket。B 的 PostgreSQL/Redis 基础镜像与隔离恢复演练固定相同 digest；B 专用 MinIO Dockerfile 固定构建基础镜像、目标为 amd64，A 的 MinIO 构建文件不变。
 - Backend 提供 `scripts/b_first_release.py`：先以只读 `--preflight` 检查准入；只在显式 `--apply` 且首次空白 B 环境下运行，并以独立总锁串行化各阶段，要求可信公网证书及目标机镜像身份，通过单机基础服务启动、双库迁移、三类**真实数据**备份与隔离恢复后按 Product → Agent 顺序激活并验证公网 HTTPS。途中失败保留现场，不能自动回滚/重试；外部邮件与模型服务的 E2E 仍单独验收。
 - 这是代码与本地合成验证，**本版远程 CI、GHCR 最终 digest 和美东目标机尚未验收**。应在提交并推送相关服务仓库后跑远程 CI，审查私有 GHCR 只读拉取和目标机镜像导入/真实恢复，然后才考虑执行首次发布。现有业务数据的版本更新、回滚和 10-run 压测仍是未完成项。此前按 2026-10-01 记录的端口、证书和容器状态为历史观察，不能当作当前事实。
+
+## 2026-10-02 受保护商店构建验收（不等于商店分发）
+
+App GitHub Environment `b-store-build` 已建立：只允许 `b-store-v*` tag 进入，
+需 `hensonzh` 审批，管理员不能绕过；Android 上传证书和 iOS 单一 Apple
+Distribution 身份／App Store profile 已核对，所需环境 secrets/variables 已配置。
+`b-store-v1.0.0-65` 首次试跑暴露 P12 打包兼容及 `codesign` entitlements
+输出格式问题，**该次运行失败，不能当作已验收产物**。修复并在 `dev` 上预留
+`1.0.0+66` 后，`b-store-v1.0.0-66` 指向提交
+`945974ca7bb82856aac8431cdd49059639eef7af`；GitHub Actions 运行
+`36998606412` 的 preflight、Android、iOS 均成功，签名 AAB／IPA 已加密上传。
+独立下载后核对密文 SHA-256、解密后 SHA-256、AAB 签名与 IPA codesign，
+明文仅留在仓库外的本机 0700/0600 目录。**尚未上传 Google Play 或
+TestFlight，也未宣称已分发**。远程 CI 所验证的 Backend／Agent 公网 API
+是当时运行中的 B 版本；它不证明新 GHCR digest 已部署在目标机。
