@@ -2,7 +2,7 @@
 
 Verified on 2026-10-02. This document distinguishes local/GitHub build evidence from **Apple account state**, which could not be read during this check. Do not treat a successful GitHub build as a TestFlight upload, completed export compliance, or external distribution.
 
-## Apple-side update — 2026-10-03
+## Apple-side update — 2026-10-03 (historical pre-compliance snapshot)
 
 - Apple Transporter delivered the verified `1.0.0 (67)` IPA to the `Momcozy AI` record (Apple ID `6816097872`) at 09:40 China time. App Store Connect subsequently listed build 67, and its build metadata showed binary status **Validated**, upload date 09:44 China time, bundle ID `com.momcozy.mai.staging`, and build number 67.
 - TestFlight now lists build 67 as **Missing Compliance**, with 0 groups and 0 individual testers. No export-compliance questionnaire, beta review, invitation, or public link was submitted in this check.
@@ -17,6 +17,15 @@ Verified on 2026-10-02. This document distinguishes local/GitHub build evidence 
 - Proposed app-purpose text for review, **not submitted**: “Momcozy AI supports maternal and baby care with AI-assisted information, care records, schedules, reminders, and optional video consultation. It uses HTTPS, secure credential storage, and WebRTC for communication.” The source inventory includes a bundled WebRTC framework, secure storage, HTTPS, and SHA-256 hashing; hash use alone is not an encryption claim. Have the exporter validate this inventory and any exemption/documentation before filing.
 - The TestFlight Test Information form is editable under App Manager but currently empty: beta description, feedback email, privacy URL, reviewer contact, reviewer login, and notes still need review. Do not save guessed contact details, a nonworking review account, or unsupported legal answers.
 
+## Compliance saved and external review preparation — 2026-10-03
+
+- With the owner's explicit confirmation, the build-67 export-compliance questionnaire was saved as **standard encryption algorithms** and **not planned for distribution in France** for the email-only North-American tester program. Apple changed build 67 from **Missing Compliance** to **Ready to Submit**. This is a statement of the intended invitation plan, not a claim of geographic blocking. Revisit the answer before any wider invitation, public link, or France distribution. Build 64 remains Missing Compliance and was not changed.
+- The TestFlight Test Information form is editable, but Beta App Description, feedback email, privacy URL, reviewer name/phone/email, reviewer login, and review notes are not yet saved. The App requires login. A verified review account with synthetic data must be available before Beta App Review. No testers were invited and build 67 has not been added to the external group or sent to review.
+- Proposed English Beta App Description (**draft, not submitted**): “Explore maternal and baby care with AI-assisted information, care records, schedules, and reminders. Some features may change or be unavailable in this beta. Momcozy AI is not a diagnostic or emergency service.”
+- Proposed build-67 What to Test (**draft, not submitted**): “Please test email sign-up and sign-in, AI conversations, care records, schedules, reminders, and app stability. Share confusing behavior or crashes through TestFlight feedback. Do not use this beta for emergency or diagnostic decisions.”
+- Proposed Beta App Review Notes (**draft, not submitted**): “Use the review credentials supplied in TestFlight Test Information to sign in to the staging app. The review account is verified and uses synthetic data; no invitation code is required. Please review AI-assisted information, care records, and reminders. The app is not intended for diagnosis or emergencies. Camera and microphone prompts occur when initiating features that need them.” Verify each step and any feature availability before saving.
+- Remaining operator inputs: approved feedback/reviewer contact, verified privacy-policy URL, and a working staging review account with credentials delivered through a controlled local channel. The draft privacy URL returned HTTP 429 during this check, so it was not entered or treated as validated. Obtain the approved external tester emails only after the build/review gates are ready.
+
 ## Verified artifact
 
 | Item | Evidence |
@@ -30,7 +39,7 @@ Verified on 2026-10-02. This document distinguishes local/GitHub build evidence 
 
 The signed IPA was decrypted locally from the CI artifact. CI **builds and uploads an encrypted artifact to GitHub**, not to App Store Connect. The current `dev` HEAD can advance independently of the source tag. Do not change the build number of this IPA or assume it is already on Apple's servers.
 
-## Account actions still requiring live verification
+## Original account action checklist (partially superseded by 2026-10-03 updates)
 
 1. Open **Apps → Momcozy AI → TestFlight → iOS Builds** and inventory each build's processing/compliance status, groups, testers, and whether build 67 is present. Historical records say 58 was Internal Only and 59 uploaded; they do not prove which builds are currently available. Check any later builds individually.
 2. If 67 is absent, use the signed IPA above to upload it with an authorized App Store Connect account (or approved API credential), then verify Apple processing completes and TestFlight lists **1.0.0 (67)** with the correct App ID. A local file and successful upload command alone are not sufficient.
