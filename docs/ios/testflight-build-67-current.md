@@ -2,6 +2,13 @@
 
 Verified on 2026-10-02. This document distinguishes local/GitHub build evidence from **Apple account state**, which could not be read during this check. Do not treat a successful GitHub build as a TestFlight upload, completed export compliance, or external distribution.
 
+## Apple-side update — 2026-10-03
+
+- Apple Transporter delivered the verified `1.0.0 (67)` IPA to the `Momcozy AI` record (Apple ID `6816097872`) at 09:40 China time. App Store Connect subsequently listed build 67, and its build metadata showed binary status **Validated**, upload date 09:44 China time, bundle ID `com.momcozy.mai.staging`, and build number 67.
+- TestFlight now lists build 67 as **Missing Compliance**, with 0 groups and 0 individual testers. No export-compliance questionnaire, beta review, invitation, or public link was submitted in this check.
+- The signed-in App Store Connect user has the **Developer** role. Its displayed permissions include uploading builds and managing TestFlight builds/testers **for internal testing only**, while App metadata is read-only. The TestFlight test-information form was read-only and only the internal group appeared. An account holder/admin must grant appropriate App Manager access to `Momcozy AI`, or an already authorized App Manager/Admin account must be used, before the agent can complete external testing steps. Do not attempt to bypass this role boundary.
+- The local IPA SHA-256 remained `0ca48b68d79e32eb8a863902b075625e7cb98134e6d1df6d902b89862ce6aefb` before delivery. Upload/validation is **not** export-compliance completion or external availability.
+
 ## Verified artifact
 
 | Item | Evidence |
