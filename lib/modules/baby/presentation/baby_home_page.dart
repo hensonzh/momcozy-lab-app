@@ -473,7 +473,7 @@ class _BabyHomePageState extends State<BabyHomePage>
                   builder: (context, constraints) {
                     final stack =
                         MediaQuery.textScalerOf(context).scale(1) > 1.35 ||
-                        constraints.maxWidth < 380;
+                        constraints.maxWidth < 280;
                     final cards = [
                       BabyPressFeedback(
                         child: BabyStatusCard(
