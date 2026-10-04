@@ -121,19 +121,41 @@ class BabyStatusCard extends StatelessWidget {
               color: MomHomeTokens.secondary,
             ),
           ),
-        Text(
-          cumulative ? value.substring('Total '.length) : value,
-          style: BabyDesign.text(
-            label == 'Baby\'s mood after feeding'
-                ? 16
-                : hasRecord
-                ? 22
-                : 16,
-            weight: FontWeight.w700,
-            line: label == 'Baby\'s mood after feeding' || !hasRecord ? 22 : 31,
-            color: hasRecord ? MomHomeTokens.ink : MomHomeTokens.secondary,
+        if (!large && !hasRecord)
+          SizedBox(
+            width: double.infinity,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                value,
+                maxLines: 1,
+                softWrap: false,
+                style: BabyDesign.text(
+                  12,
+                  line: 17,
+                  weight: FontWeight.w700,
+                  color: MomHomeTokens.secondary,
+                ),
+              ),
+            ),
+          )
+        else
+          Text(
+            cumulative ? value.substring('Total '.length) : value,
+            style: BabyDesign.text(
+              label == 'Baby\'s mood after feeding'
+                  ? 16
+                  : hasRecord
+                  ? 22
+                  : 16,
+              weight: FontWeight.w700,
+              line: label == 'Baby\'s mood after feeding' || !hasRecord
+                  ? 22
+                  : 31,
+              color: hasRecord ? MomHomeTokens.ink : MomHomeTokens.secondary,
+            ),
           ),
-        ),
         if (value == 'Sleeping now')
           Text(
             detail,
@@ -211,16 +233,6 @@ class BabyGrowthMetrics extends StatelessWidget {
         line: 18,
         color: MomHomeTokens.secondary,
       );
-      final heading = TextPainter(
-        text: TextSpan(
-          text: growthMetricLabel(GrowthMetric.headCircumference),
-          style: labelStyle,
-        ),
-        textDirection: Directionality.of(context),
-        textScaler: MediaQuery.textScalerOf(context),
-      )..layout(maxWidth: cardWidth - 24);
-      final headingHeight = heading.height;
-      heading.dispose();
       final cards = [
         for (final metric in GrowthMetric.values)
           Builder(
@@ -254,13 +266,26 @@ class BabyGrowthMetrics extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              height: columns == 3 ? headingHeight : null,
-                              child: Text(
+                            if (metric == GrowthMetric.headCircumference &&
+                                columns == 3)
+                              SizedBox(
+                                width: double.infinity,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Head\ncircumference',
+                                    semanticsLabel: growthMetricLabel(metric),
+                                    maxLines: 2,
+                                    style: labelStyle,
+                                  ),
+                                ),
+                              )
+                            else
+                              Text(
                                 growthMetricLabel(metric),
                                 style: labelStyle,
                               ),
-                            ),
                             const SizedBox(height: 8),
                             if (record != null) ...[
                               Text(
@@ -281,17 +306,27 @@ class BabyGrowthMetrics extends StatelessWidget {
                                 ),
                               ),
                             ] else
-                              Text(
-                                controller.latestGrowth.loading
-                                    ? 'Loading…'
-                                    : controller.latestGrowth.failure != null
-                                    ? 'Not loaded yet'
-                                    : 'No entry yet',
-                                style: const TextStyle(
-                                  fontFamily: 'NotoSansSCHome',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: MomHomeTokens.secondary,
+                              SizedBox(
+                                width: double.infinity,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    controller.latestGrowth.loading
+                                        ? 'Loading…'
+                                        : controller.latestGrowth.failure !=
+                                              null
+                                        ? 'Not loaded yet'
+                                        : 'No entry yet',
+                                    maxLines: 1,
+                                    softWrap: false,
+                                    style: BabyDesign.text(
+                                      12,
+                                      line: 17,
+                                      weight: FontWeight.w700,
+                                      color: MomHomeTokens.secondary,
+                                    ),
+                                  ),
                                 ),
                               ),
                           ],
