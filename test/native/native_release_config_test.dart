@@ -25,7 +25,7 @@ void main() {
     expect(
       androidBuild,
       contains(
-        'create("play") {\n            dimension = "environment"\n            applicationId = "com.momcozy.mai"',
+        'create("play") {\n            dimension = "environment"\n            applicationId = "momcozy.com.mai"',
       ),
     );
     expect(androidBuild, isNot(contains('create("test")')));

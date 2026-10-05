@@ -36,7 +36,7 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
             "runtimeEnvironment": "staging",
             "productApiBaseUrl": "https://backend-us-dev.lute-momcozylab.luteos.cloud",
             "agentApiBaseUrl": "https://agent-us-dev.lute-momcozylab.luteos.cloud",
-            "androidApplicationId": "com.momcozy.mai",
+            "androidApplicationId": "momcozy.com.mai",
             "iosBundleId": "com.momcozy.mai.staging",
         }
         for field, a_field in (
@@ -51,10 +51,12 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
         result = self.check(data)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("remain unverified", result.stdout)
-        self.assertIn("com.momcozy.mai", result.stdout)
+        self.assertIn("momcozy.com.mai", result.stdout)
 
-        wrong_play_app = data | {"androidApplicationId": "com.momcozy.mai.other"}
+        wrong_play_app = data | {"androidApplicationId": "momcozy.com.mai.other"}
         self.assertIn("play flavor", self.check(wrong_play_app).stderr)
+        old_play_app = data | {"androidApplicationId": "com.momcozy.mai"}
+        self.assertIn("play flavor", self.check(old_play_app).stderr)
 
         for name in ("productApiBaseUrl", "agentApiBaseUrl"):
             with self.subTest(name=name):

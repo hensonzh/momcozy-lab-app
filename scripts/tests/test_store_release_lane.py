@@ -36,7 +36,7 @@ class StoreReleaseLaneTests(unittest.TestCase):
                 "runtimeEnvironment": "staging",
                 "productApiBaseUrl": "https://backend-us-dev.lute-momcozylab.luteos.cloud",
                 "agentApiBaseUrl": "https://agent-us-dev.lute-momcozylab.luteos.cloud",
-                "androidApplicationId": "com.momcozy.mai",
+                "androidApplicationId": "momcozy.com.mai",
                 "iosBundleId": "com.momcozy.mai.staging",
             }))
             self.assertIn("appbundle", self.check("android", "apk", path).stderr)
@@ -96,7 +96,7 @@ class StoreReleaseLaneTests(unittest.TestCase):
                 "runtimeEnvironment": "staging",
                 "productApiBaseUrl": "https://backend-us-dev.lute-momcozylab.luteos.cloud",
                 "agentApiBaseUrl": "https://agent-us-dev.lute-momcozylab.luteos.cloud",
-                "androidApplicationId": "com.momcozy.mai",
+                "androidApplicationId": "momcozy.com.mai",
                 "iosBundleId": "com.momcozy.mai.staging",
             }))
             result = subprocess.run([
