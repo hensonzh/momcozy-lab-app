@@ -167,7 +167,7 @@ android {
         }
         create("play") {
             dimension = "environment"
-            applicationId = "com.momcozy.mai"
+            applicationId = "momcozy.com.mai"
         }
         create("production") {
             dimension = "environment"

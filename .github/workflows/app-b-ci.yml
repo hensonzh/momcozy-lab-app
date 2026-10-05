@@ -87,7 +87,7 @@ jobs:
           unzip -Z1 build/app/outputs/flutter-apk/app-play-debug.apk | grep -Fx lib/arm64-v8a/libpdfium.so
           aapt="$(find "${ANDROID_HOME}/build-tools" -maxdepth 2 -name aapt -type f | sort -V | tail -1)"
           test -n "${aapt}"
-          "${aapt}" dump badging build/app/outputs/flutter-apk/app-play-debug.apk | grep -F "package: name='com.momcozy.mai'"
+          "${aapt}" dump badging build/app/outputs/flutter-apk/app-play-debug.apk | grep -F "package: name='momcozy.com.mai'"
 
   ios-compile:
     runs-on: macos-26
