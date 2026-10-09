@@ -31,6 +31,10 @@ if (root / 'flutter_service_worker.js').exists():
     raise SystemExit('Web demo must not install a persistent service worker')
 if (root / 'assets/assets/certificates').exists():
     raise SystemExit('Internal certificate included in public demo')
+for name in ('BabyNotoSans-VF.ttf', 'NotoSansCJKsc-Regular.otf', 'NotoSansCJKsc-Bold.otf'):
+    font = root / 'assets/assets/fonts' / name
+    if not font.is_file() or font.stat().st_size > 1_000_000:
+        raise SystemExit(f'Missing or not subsetted Web demo font: {font}')
 for font in ('roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2', 'notosanssc/v37/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYkldv7JjxkkgFsFSSOPMOkySAZ73y9ViAt3acb8NexQ2w.119.woff2'):
     if not (root / 'demo-fonts' / font).is_file():
         raise SystemExit(f'Missing local font fallback: {font}')

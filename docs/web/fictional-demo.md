@@ -30,6 +30,7 @@ Use pinned Flutter 3.44.4 / Dart 3.12.2 and Node >= 20:
 cd app
 flutter pub get
 npm ci --ignore-scripts
+python3 -m pip install -r scripts/web-demo-requirements.txt
 npx playwright install chromium
 flutter test --no-pub test/web_demo
 flutter analyze --no-pub
@@ -44,7 +45,10 @@ refresh, another tab and scripted chat at 390 px, plus 1280 px desktop. It
 uncaught browser error. `web_demo/index.html` additionally applies a strict
 Content Security Policy with `connect-src 'self'` and `form-action 'none'`.
 The build gate removes Flutter's legacy service worker, internal CA and mobile
-`version.json`, and hosts CanvasKit and fallback fonts locally.
+`version.json`, and hosts CanvasKit and fallback fonts locally. The
+Web-only post-build step subsets the three large bundled fonts without touching
+mobile source assets; raw Flutter Web builds are not publishable and must not
+replace the checked artifact.
 
 ## CI and publication
 

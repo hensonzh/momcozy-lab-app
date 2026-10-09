@@ -14,6 +14,8 @@ on:
       - 'web_demo/**'
       - 'scripts/build-web-demo.sh'
       - 'scripts/check_web_demo_artifact.py'
+      - 'scripts/subset_web_demo_fonts.py'
+      - 'scripts/web-demo-requirements.txt'
       - 'scripts/tests/web_demo_browser.test.mjs'
       - 'package.json'
       - 'package-lock.json'
@@ -37,6 +39,9 @@ jobs:
           flutter-version: 3.44.4
           channel: stable
           cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -44,6 +49,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci --ignore-scripts
+          python3 -m pip install -r scripts/web-demo-requirements.txt
           flutter pub get
           npx playwright install --with-deps chromium
       - name: Format, analyze and test the fictional demo
