@@ -6,6 +6,11 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "playwright": "1.64.0",
     "qrcode": "1.5.4"
+  },
+  "scripts": {
+    "test:web-demo": "node --test scripts/tests/web_demo_browser.test.mjs",
+    "build:web-demo": "bash scripts/build-web-demo.sh"
   }
 }

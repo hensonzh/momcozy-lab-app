@@ -1,0 +1,64 @@
+name: web-demo
+
+on:
+  pull_request:
+    branches: [dev]
+  push:
+    branches: [dev]
+    paths:
+      - '.github/workflows/web-demo.yml'
+      - 'lib/**'
+      - 'test/web_demo/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'web_demo/**'
+      - 'scripts/build-web-demo.sh'
+      - 'scripts/check_web_demo_artifact.py'
+      - 'scripts/tests/web_demo_browser.test.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Independent from the mobile release pipeline. No staging or production secrets.
+jobs:
+  web-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MOMCOZY_WEB_DEMO_BASE_HREF: /momcozy-ai-web-demo/
+      MOMCOZY_WEB_DEMO_BUILD: build/web-demo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: 3.44.4
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - name: Install dependencies
+        run: |
+          npm ci --ignore-scripts
+          flutter pub get
+          npx playwright install --with-deps chromium
+      - name: Format, analyze and test the fictional demo
+        run: |
+          dart format --output=none --set-exit-if-changed lib test
+          flutter analyze --no-pub
+          flutter test --no-pub test/web_demo
+      - name: Build public static site and reject sensitive assets
+        run: bash scripts/build-web-demo.sh
+      - name: Real Chromium flows and strict network isolation
+        run: npm run test:web-demo
+      - name: Upload only the verified static artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: momcozy-ai-web-demo
+          path: build/web-demo/
+          if-no-files-found: error
+          retention-days: 7

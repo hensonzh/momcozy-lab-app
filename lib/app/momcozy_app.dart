@@ -510,11 +510,13 @@ class MomCozyRouteShell extends StatefulWidget {
     required this.location,
     required this.child,
     this.onSelectTab,
+    this.appBar,
   });
 
   final String location;
   final Widget child;
   final ValueChanged<int>? onSelectTab;
+  final PreferredSizeWidget? appBar;
 
   @override
   State<MomCozyRouteShell> createState() => _MomCozyRouteShellState();
@@ -558,6 +560,7 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
     final location = widget.location;
     final hideNavigation = !_primaryNavigationRoutes.contains(location);
     return Scaffold(
+      appBar: widget.appBar,
       // Let Schedule scroll beneath the navigation's transparent avatar inset.
       extendBody: location == '/schedule',
       backgroundColor: location == '/me'
