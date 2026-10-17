@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 
 /// Smooths presentation only; the caller keeps the complete server text.
 class AgentTextReveal extends StatefulWidget {
@@ -27,18 +28,20 @@ class AgentTextReveal extends StatefulWidget {
 }
 
 class _AgentTextRevealState extends State<AgentTextReveal>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   static const _step = Duration(milliseconds: 24);
   late final Ticker _ticker;
   late List<String> _characters;
   late int _visible;
   Duration _lastStep = Duration.zero;
   bool _reduceMotion = false;
+  bool _motionResolved = false;
   int _completionStep = 1;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _ticker = createTicker(_tick);
     // Restored replies and history must never replay their typing animation.
     _characters = widget.text.characters.toList();
@@ -48,9 +51,23 @@ class _AgentTextRevealState extends State<AgentTextReveal>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _syncMotion();
+  }
+
+  @override
+  void didChangeAccessibilityFeatures() {
+    if (!mounted || !_motionResolved) return;
+    final wasReduced = _reduceMotion;
+    final visible = _visible;
+    _syncMotion();
+    if (wasReduced != _reduceMotion || visible != _visible) setState(() {});
+  }
+
+  void _syncMotion() {
     _reduceMotion =
-        MediaQuery.disableAnimationsOf(context) ||
+        MomCozyMotion.isReduced(context) ||
         !TickerMode.valuesOf(context).enabled;
+    _motionResolved = true;
     if (_reduceMotion) _showAll();
   }
 
@@ -107,6 +124,7 @@ class _AgentTextRevealState extends State<AgentTextReveal>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _ticker.dispose();
     super.dispose();
   }

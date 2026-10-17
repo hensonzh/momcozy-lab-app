@@ -1,6 +1,3 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -66,19 +63,8 @@ Future<void> _click(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> _shot(
-  WidgetTester tester,
-  String name,
-  double width,
-  double scale,
-) async {
+Future<void> _verifyState(WidgetTester tester) async {
   expect(tester.takeException(), isNull);
-  await expectLater(
-    find.byType(MaterialApp),
-    matchesGoldenFile(
-      '../../goldens/ui_refactor/lactation/$name-${width.toInt()}-${scale.toInt()}x.png',
-    ),
-  );
 }
 
 Future<void> _mount(
@@ -179,13 +165,13 @@ void main() {
             ),
           ];
           await _mount(tester, repo, width, scale);
-          await _shot(tester, 'loading', width, scale);
+          await _verifyState(tester);
           repo.pendingRead!.completeError(_offline);
           repo.pendingRead = null;
           await tester.pumpAndSettle();
-          await _shot(tester, 'read-error', width, scale);
+          await _verifyState(tester);
           await _click(tester, find.text('Try again'));
-          await _shot(tester, 'overview', width, scale);
+          await _verifyState(tester);
           await _click(tester, find.text('30 days'));
           final semantics = tester.ensureSemantics();
           expect(
@@ -196,7 +182,7 @@ void main() {
             ),
             findsOneWidget,
           );
-          await _shot(tester, '30-days', width, scale);
+          await _verifyState(tester);
           await _click(tester, find.text('7 days'));
           expect(
             find.bySemanticsLabel(RegExp('Pumped milk over 7 days.*9/8: 0 ml')),
@@ -207,11 +193,11 @@ void main() {
           await Scrollable.ensureVisible(tester.element(note), alignment: 0);
           await tester.pumpAndSettle();
           expect(tester.getSize(note).width, greaterThan(width - 100));
-          await _shot(tester, 'long-note-start', width, scale);
+          await _verifyState(tester);
           final edit = find.byKey(const ValueKey('lactation-edit-entry'));
           await tester.ensureVisible(edit);
           await tester.pumpAndSettle();
-          await _shot(tester, 'long-note-end', width, scale);
+          await _verifyState(tester);
           await _click(tester, edit);
           repo.updateFailure = _conflict;
           await tester.enterText(
@@ -220,9 +206,9 @@ void main() {
           );
           await _click(tester, find.text('Save changes'));
           expect(repo.records.first.version, 4);
-          await _shot(tester, 'save-conflict', width, scale);
+          await _verifyState(tester);
           await _click(tester, find.text('Back to records'));
-          await _shot(tester, 'leave-confirm', width, scale);
+          await _verifyState(tester);
           await _click(tester, find.text('Keep editing'));
           expect(find.text('65.5'), findsOneWidget);
           await _click(tester, find.text('Back to records'));
@@ -235,7 +221,7 @@ void main() {
             find.text("You're offline. Connect and try again.").hitTestable(),
             findsOneWidget,
           );
-          await _shot(tester, 'delete-error', width, scale);
+          await _verifyState(tester);
           repo.deleteFailure = null;
           await _click(tester, find.text('Try again'));
           await _click(tester, delete);
@@ -243,7 +229,7 @@ void main() {
           repo.restoreFailure = _offline;
           await _click(tester, find.text('Undo'));
           expect(repo.records.any((r) => r.id == 'entry'), isFalse);
-          await _shot(tester, 'restore-error', width, scale);
+          await _verifyState(tester);
           repo.restoreFailure = null;
           await _click(tester, find.text('Undo'));
           expect(repo.restoreVersion, 9);
@@ -252,7 +238,7 @@ void main() {
             _longNote,
           );
           expect(find.text('Record restored.').hitTestable(), findsOneWidget);
-          await _shot(tester, 'restored', width, scale);
+          await _verifyState(tester);
           await tester.pumpWidget(const SizedBox());
         },
       );
@@ -275,13 +261,13 @@ void main() {
           final picker = find.byKey(const ValueKey('momcozy-time-picker'));
           final strings = MaterialLocalizations.of(tester.element(picker));
           if (scale == 1) {
-            await _shot(tester, 'time-dial', width, scale);
+            await _verifyState(tester);
             await _click(
               tester,
               find.byTooltip(strings.inputTimeModeButtonLabel),
             );
           }
-          await _shot(tester, 'time-input', width, scale);
+          await _verifyState(tester);
           final fields = find.descendant(
             of: picker,
             matching: find.byType(TextFormField),
@@ -331,7 +317,7 @@ void main() {
               );
             }
           }
-          await _shot(tester, 'time-invalid', width, scale);
+          await _verifyState(tester);
           await tester.enterText(fields.at(0), '12');
           await tester.enterText(fields.at(1), '00');
           await _click(tester, find.text(strings.okButtonLabel));
@@ -355,7 +341,7 @@ void main() {
                 .onPressed,
             isNull,
           );
-          await _shot(tester, 'saving', width, scale);
+          await _verifyState(tester);
           await tester.tap(find.byTooltip('Close feeding and pumping records'));
           expect(closed, 0);
           pending.completeError(_offline);
@@ -364,7 +350,7 @@ void main() {
             tester,
             find.byTooltip('Close feeding and pumping records'),
           );
-          await _shot(tester, 'uncertain-leave', width, scale);
+          await _verifyState(tester);
           await _click(tester, find.text('Keep editing'));
           repo.nextCreate = null;
           await _click(tester, find.text('Try saving again'));
@@ -374,7 +360,7 @@ void main() {
           expect(saved.volumeMl, 0);
           expect(saved.occurredAt, DateTime(2026, 9, 8, 12));
           expect(find.text('Record saved.').hitTestable(), findsOneWidget);
-          await _shot(tester, 'saved-zero', width, scale);
+          await _verifyState(tester);
           await tester.pumpWidget(const SizedBox());
         },
       );

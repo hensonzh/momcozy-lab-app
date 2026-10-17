@@ -12,7 +12,7 @@ class MomCozySpacing {
   static const spacious = 32.0;
 
   // Shared roles from the approved product design; page-specific overrides
-  // are documented in docs/ui-reference/common/design-system.md.
+  // remain shared layout roles for the active product.
   static const pageGutter = 8.0;
   static const statusGap = 10.0;
   static const headingGap = 14.0;

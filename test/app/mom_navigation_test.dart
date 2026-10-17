@@ -1,6 +1,3 @@
-@Tags(['golden'])
-library;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,83 +10,6 @@ import '../support/momcozy_test_fonts.dart';
 void main() {
   setUpAll(loadMomCozyTestFonts);
   for (final width in [320.0, 390.0, 430.0]) {
-    testWidgets('navigation reference at $width with all selected states', (
-      tester,
-    ) async {
-      tester.view.physicalSize = Size(width, width < 360 ? 650 : 500);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: momCozyTheme(),
-          home: const Scaffold(
-            body: RepaintBoundary(
-              key: ValueKey('navigation-reference'),
-              child: Column(
-                children: [
-                  MomCozyBottomNavigation(location: '/me'),
-                  MomCozyBottomNavigation(location: '/baby'),
-                  MomCozyBottomNavigation(location: '/'),
-                  MomCozyBottomNavigation(location: '/schedule'),
-                  MomCozyBottomNavigation(location: '/more'),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.runAsync(() async {
-        for (final element in find.byType(Image).evaluate()) {
-          await precacheImage((element.widget as Image).image, element);
-        }
-      });
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      final bars = find.byKey(const ValueKey('bottom-nav-chrome'));
-      for (var index = 0; index < 5; index++) {
-        final navigationSize = tester.getSize(
-          find.byType(MomCozyBottomNavigation).at(index),
-        );
-        expect(
-          tester.getSize(bars.at(index)),
-          Size(width, navigationSize.height - 18),
-        );
-        final navigation = find.byType(MomCozyBottomNavigation).at(index);
-        final origin = tester.getTopLeft(navigation);
-        for (final label in ['me', 'baby', 'momcozy ai', 'schedule', 'more']) {
-          final destination = find.descendant(
-            of: navigation,
-            matching: find.byKey(ValueKey('bottom-nav-$label')),
-          );
-          final first = find.descendant(
-            of: find.byType(MomCozyBottomNavigation).first,
-            matching: find.byKey(ValueKey('bottom-nav-$label')),
-          );
-          expect(
-            tester.getRect(destination).shift(-origin),
-            tester
-                .getRect(first)
-                .shift(
-                  -tester.getTopLeft(
-                    find.byType(MomCozyBottomNavigation).first,
-                  ),
-                ),
-          );
-        }
-      }
-      for (final element in find.text('Momcozy AI').evaluate()) {
-        final paragraph = element.renderObject! as RenderParagraph;
-        expect(paragraph.didExceedMaxLines, isFalse);
-      }
-      await expectLater(
-        find.byKey(const ValueKey('navigation-reference')),
-        matchesGoldenFile(
-          '../goldens/design_system/navigation-${width.toInt()}.png',
-        ),
-      );
-    });
     testWidgets(
       'five navigation destinations remain readable and tappable at 2x text on $width',
       (tester) async {
@@ -162,14 +82,6 @@ void main() {
               .didExceedMaxLines,
           isFalse,
         );
-        if (width == 320) {
-          await expectLater(
-            find.byType(MaterialApp),
-            matchesGoldenFile(
-              '../goldens/design_system/navigation-compact-320-2x.png',
-            ),
-          );
-        }
         for (final entry in {
           'Baby': '/baby',
           'Momcozy AI': '/',

@@ -121,6 +121,7 @@ abstract interface class MilkTrendRepository {
     required int days,
     bool includeToday = true,
     int? utcOffsetMinutes,
+    String? timezone,
   });
 }
 
@@ -450,12 +451,16 @@ class MilkTrendDay {
     required this.measuredVolumeMl,
     required this.pumpingCount,
     required this.measuredPumpingCount,
+    this.complete = true,
   });
 
   final DateTime date;
   final double? measuredVolumeMl;
   final int pumpingCount;
   final int measuredPumpingCount;
+
+  /// False when the server reached its bounded read limit or did not report coverage.
+  final bool complete;
 }
 
 class GrowthRecord {

@@ -23,12 +23,14 @@ class BabyGrowthCurve extends StatelessWidget {
     required this.onMetricChanged,
     required this.onEditProfile,
     required this.onRetry,
+    this.chatFirstExperience = false,
   });
   final BabyProfile baby;
   final GrowthMetric metric;
   final ResourceState<List<BabyGrowthRecord>> records;
   final ValueChanged<GrowthMetric> onMetricChanged;
   final VoidCallback onEditProfile, onRetry;
+  final bool chatFirstExperience;
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +82,9 @@ class BabyGrowthCurve extends StatelessWidget {
               ),
               onPressed: () => onMetricChanged(value),
               child: Text(
-                growthMetricLabel(value),
+                chatFirstExperience
+                    ? growthMetricLabelZh(value)
+                    : growthMetricLabel(value),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -101,12 +105,18 @@ class BabyGrowthCurve extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Growth trends',
+                chatFirstExperience ? '生长趋势' : 'Growth trends',
                 style: BabyDesign.text(16, line: 22, weight: FontWeight.w700),
               ),
               const SizedBox(height: 12),
               Text(
-                'Birth to 6 months · ${babySexLabel(baby.sex)} · $unit',
+                chatFirstExperience
+                    ? '出生至 6 个月 · ${switch (baby.sex) {
+                        BabySex.female => '女孩',
+                        BabySex.male => '男孩',
+                        BabySex.unspecified => '未填写出生时性别',
+                      }} · $unit'
+                    : 'Birth to 6 months · ${babySexLabel(baby.sex)} · $unit',
                 style: BabyDesign.text(
                   12,
                   line: 17,
@@ -135,8 +145,10 @@ class BabyGrowthCurve extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      const Text(
-                        'Add the date of birth and sex recorded at birth to see the corresponding growth reference range.',
+                      Text(
+                        chatFirstExperience
+                            ? '填写宝宝出生日期和出生时登记性别后，可查看对应的生长参考范围。'
+                            : 'Add the date of birth and sex recorded at birth to see the corresponding growth reference range.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: MomCozyTypography.captionSize,
@@ -145,7 +157,9 @@ class BabyGrowthCurve extends StatelessWidget {
                       BabyPressFeedback(
                         child: TextButton(
                           onPressed: onEditProfile,
-                          child: const Text('Complete profile'),
+                          child: Text(
+                            chatFirstExperience ? '完善宝宝资料' : 'Complete profile',
+                          ),
                         ),
                       ),
                     ],
@@ -153,12 +167,20 @@ class BabyGrowthCurve extends StatelessWidget {
                 )
               else if (records.failure != null && !records.hasValue) ...[
                 const SizedBox(height: 11),
-                ProductErrorView(
-                  useMomStyle: true,
-                  compactMomStyle: true,
-                  failure: records.failure!,
-                  onRetry: onRetry,
-                ),
+                if (chatFirstExperience)
+                  Column(
+                    children: [
+                      const Text('生长趋势暂时无法读取，请检查网络后重试。'),
+                      TextButton(onPressed: onRetry, child: const Text('重试读取')),
+                    ],
+                  )
+                else
+                  ProductErrorView(
+                    useMomStyle: true,
+                    compactMomStyle: true,
+                    failure: records.failure!,
+                    onRetry: onRetry,
+                  ),
               ] else if (records.loading && !records.hasValue)
                 const Padding(
                   padding: EdgeInsets.all(28),
@@ -167,8 +189,9 @@ class BabyGrowthCurve extends StatelessWidget {
               else ...[
                 const SizedBox(height: 12),
                 Semantics(
-                  label:
-                      '${baby.name}\'s ${growthMetricLabel(metric)} records from birth to 6 months. ${visible.isEmpty ? 'No measurements recorded during this period.' : visible.map((record) => '${record.recordedOn}: ${babyNumber(record.value)} $unit').join('; ')} The light green band shows the WHO reference range for this age.',
+                  label: chatFirstExperience
+                      ? '${baby.name}出生至 6 个月的${growthMetricLabelZh(metric)}记录。${visible.isEmpty ? '这段时间还没有测量记录。' : visible.map((record) => '${record.recordedOn}：${babyNumber(record.value)} $unit').join('；')}浅绿色区间是对应月龄的生长参考范围。'
+                      : '${baby.name}\'s ${growthMetricLabel(metric)} records from birth to 6 months. ${visible.isEmpty ? 'No measurements recorded during this period.' : visible.map((record) => '${record.recordedOn}: ${babyNumber(record.value)} $unit').join('; ')} The light green band shows the WHO reference range for this age.',
                   child: ExcludeSemantics(
                     child: SizedBox(
                       height:
@@ -182,16 +205,19 @@ class BabyGrowthCurve extends StatelessWidget {
                           references: references,
                           textScaler: MediaQuery.textScalerOf(context),
                           scale: GrowthChartScale.forRecords(metric, visible),
+                          chatFirstExperience: chatFirstExperience,
                         ),
                       ),
                     ),
                   ),
                 ),
                 if (visible.isEmpty)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(bottom: 8),
                     child: Text(
-                      'No measurements recorded from birth to 6 months.',
+                      chatFirstExperience
+                          ? '出生至 6 个月还没有测量记录。'
+                          : 'No measurements recorded from birth to 6 months.',
                       style: TextStyle(
                         fontSize: 13,
                         color: MomHomeTokens.secondary,
@@ -204,7 +230,11 @@ class BabyGrowthCurve extends StatelessWidget {
                 const Divider(height: 1, color: MomHomeTokens.border),
                 const SizedBox(height: 12),
                 Text(
-                  '${visible.isEmpty ? 'After you add measurements, you can see how ${baby.name} is growing' : 'The dark line shows ${baby.name}\'s measurements'}. The light green band shows the WHO reference range for this age. Look at trends over time rather than drawing conclusions from one measurement.',
+                  chatFirstExperience
+                      ? visible.isEmpty
+                            ? '保存测量值后可查看变化。浅绿色区间为对应月龄的参考范围；不要凭一次测量下结论。'
+                            : '深色线为${baby.name}已保存的测量值，浅绿色区间为对应月龄的参考范围；请关注长期变化，不凭一次测量下结论。'
+                      : '${visible.isEmpty ? 'After you add measurements, you can see how ${baby.name} is growing' : 'The dark line shows ${baby.name}\'s measurements'}. The light green band shows the WHO reference range for this age. Look at trends over time rather than drawing conclusions from one measurement.',
                   style: BabyDesign.text(
                     13,
                     line: 18,
@@ -259,6 +289,7 @@ class _GrowthPainter extends CustomPainter {
     required this.references,
     required this.textScaler,
     required this.scale,
+    required this.chatFirstExperience,
   });
   final LocalDate birth;
   final GrowthMetric metric;
@@ -266,6 +297,7 @@ class _GrowthPainter extends CustomPainter {
   final List<GrowthReferencePoint> references;
   final TextScaler textScaler;
   final GrowthChartScale scale;
+  final bool chatFirstExperience;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -323,7 +355,7 @@ class _GrowthPainter extends CustomPainter {
     }
     for (final month in [0, 2, 4, 6]) {
       label(
-        '$month mo',
+        chatFirstExperience ? '$month 月' : '$month mo',
         Offset(
           x(birth.addMonths(month).daysSince(birth)),
           plot.bottom + font * 1.5,
@@ -396,5 +428,6 @@ class _GrowthPainter extends CustomPainter {
       oldDelegate.birth != birth ||
       oldDelegate.metric != metric ||
       oldDelegate.records != records ||
-      oldDelegate.textScaler != textScaler;
+      oldDelegate.textScaler != textScaler ||
+      oldDelegate.chatFirstExperience != chatFirstExperience;
 }

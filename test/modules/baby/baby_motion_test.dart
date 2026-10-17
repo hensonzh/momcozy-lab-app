@@ -17,6 +17,33 @@ Widget host(Widget child, {bool reduced = false}) => MaterialApp(
 );
 
 void main() {
+  testWidgets('iOS reduce motion removes baby press and sheet movement', (
+    tester,
+  ) async {
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(reduceMotion: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    await tester.pumpWidget(
+      host(
+        Center(
+          child: BabyPressFeedback(
+            child: FilledButton(onPressed: () {}, child: const Text('save')),
+          ),
+        ),
+      ),
+    );
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.text('save')),
+    );
+    await tester.pump();
+    expect(tester.widget<AnimatedScale>(find.byType(AnimatedScale)).scale, 1);
+    expect(
+      BabyMotion.sheet(tester.element(find.text('save'))),
+      AnimationStyle.noAnimation,
+    );
+    await gesture.up();
+  });
+
   testWidgets(
     'press is visual only, releases on scroll/cancel, and never delays taps',
     (tester) async {

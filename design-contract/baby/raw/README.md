@@ -41,12 +41,12 @@
 
 弹窗只裁切前景内容，并排除参考中的 34px 模拟系统手势区；资料排除相同底部区域。App 不绘制假的系统条。首页去掉额外 20px 的底栏突出头像避让空间，再与 1216px 长内容比较。所有裁切坐标已记录，未进行任意拉伸。
 
-复现：在 `app` 中运行 `flutter test test/modules/baby/baby_figma_capture_test.dart`，得到 `build/figma-comparison/*.png` 和前景边界；按 cases 清单调用 skill 的 `scripts/compare_screens.py`。比较脚本拒绝尺寸不一致，差异均值只是诊断数据，不是“还原度百分比”。
+历史对照图及比较记录保留用于追溯；旧 Baby UI 截图生成夹具已清退，这些图不再作为可重复执行的现用回归基线。
 
 ## 验证和边界
 
 - `flutter analyze`：无问题，见 [日志](../evidence-assets/flutter-analyze.log)。
-- `flutter test test/modules/baby test/app/baby_route_refresh_test.dart test/app/navigation_figma_capture_test.dart test/shared/route_motion_test.dart test/app/status_card_accessibility_test.dart`：116 项通过。包含 320/393/430px、大文字、键盘、根导航浮层、草稿、保存锁定、失败、动效和 11 个新增同尺寸状态夹具。
+- 历史验证（2026-09-21）：116 项通过，当时包含已清退的旧导航截图夹具。当前行为验证请运行 `flutter test test/modules/baby test/app/baby_route_refresh_test.dart test/shared/route_motion_test.dart test/app/status_card_accessibility_test.dart`。包含 320/393/430px、大文字、键盘、根导航浮层、草稿、保存锁定、失败、动效和 11 个新增同尺寸状态夹具。
 - 30 份资源均非空，可解析；运行代码不引用 Figma 临时下载 URL。
 - `figma-to-app` skill 结构校验通过；脚本验证了相同图零差异、尺寸不一致拒绝、显式 DPR、裁切和越界拒绝。
 

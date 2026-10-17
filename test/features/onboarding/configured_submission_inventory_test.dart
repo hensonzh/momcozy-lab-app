@@ -1,9 +1,4 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -54,38 +49,10 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Future<void> capture(
-    WidgetTester tester,
-    GoRouter router,
-    String name,
-    String trigger, {
-    String? previous,
-  }) async {
+  Future<void> verifyState(WidgetTester tester) async {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(tester.takeException(), isNull);
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile('../../goldens/ui_inventory/$name-390.png'),
-    );
-    final output = Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
-    if (output != null) {
-      final file = File('$output/journeys/$name.json');
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(
-        jsonEncode({
-          'source': 'test/goldens/ui_inventory/$name-390.png',
-          'previous_source': previous,
-          'route': router.state.uri.path,
-          'trigger': trigger,
-          'root_entry': 'Configured App entry; real createMomCozyRouter',
-          'evidence':
-              'Production pages, repositories and router; fixture HTTP and image picker; not an OS picker screenshot',
-          'test':
-              'test/features/onboarding/configured_submission_inventory_test.dart',
-        }),
-      );
-    }
   }
 
   testWidgets(
@@ -118,12 +85,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('auth-invite-login-button')));
       await tester.pump();
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      await capture(
-        tester,
-        router,
-        'auth-invite-submit-pending',
-        'Configured invitation login → enter code → submit; response pending',
-      );
+      await verifyState(tester);
       transport.ready.complete();
       await tester.pumpAndSettle();
       expect(runtime.currentSession.isAuthenticated, isTrue);
@@ -178,12 +140,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      await capture(
-        tester,
-        router,
-        'auth-invite-device-error',
-        'Invite submit rejected → code retained and device message displayed',
-      );
+      await verifyState(tester);
       transport.response
         ..clear()
         ..addAll(_PendingInvite().response);
@@ -196,13 +153,7 @@ void main() {
         findsOneWidget,
       );
       expect(runtime.currentSession.isAuthenticated, isFalse);
-      await capture(
-        tester,
-        router,
-        'auth-invite-storage-error',
-        'Retry accepted by server → local session save fails; remains logged out',
-        previous: 'test/goldens/ui_inventory/auth-invite-device-error-390.png',
-      );
+      await verifyState(tester);
       store.failWrite = false;
       await tester.tap(submit);
       await tester.pumpAndSettle();

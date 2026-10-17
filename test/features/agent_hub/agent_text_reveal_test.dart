@@ -112,4 +112,17 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(tester.binding.transientCallbackCount, 0);
   });
+
+  testWidgets('iOS reduce motion displays streaming text without typing', (
+    tester,
+  ) async {
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(reduceMotion: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    await tester.pumpWidget(host(''));
+    const answer = '完整显示当前回复，不逐字播放动画';
+    await tester.pumpWidget(host(answer));
+    expect(visible(tester), answer);
+    expect(tester.binding.transientCallbackCount, 0);
+  });
 }

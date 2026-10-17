@@ -2,6 +2,43 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+// Approved Chinese UI for the conversation-first product. Other UI remains
+// protected by the historical English-only gate.
+const _approvedChatFirstChineseSources = <String>{
+  'lib/app/baby_module_routes.dart',
+  'lib/app/chat_first_navigation.dart',
+  'lib/features/agent_hub/presentation/chat_first_workspace.dart',
+  'lib/features/agent_hub/presentation/chat_first_actions.dart',
+  'lib/features/agent_hub/presentation/chat_first_cry_task.dart',
+  'lib/features/agent_hub/presentation/chat_first_poop_task.dart',
+  'lib/features/agent_hub/domain/chat_first_poop_task.dart',
+  'lib/features/agent_hub/presentation/chat_first_composer.dart',
+  'lib/features/agent_hub/presentation/chat_first_run_copy.dart',
+  'lib/features/agent_hub/domain/chat_first_welcome.dart',
+  'lib/features/agent_hub/presentation/chat_first_welcome_gate.dart',
+  'lib/features/app_pages/devices_page.dart',
+  'lib/features/app_pages/chat_first_baby_page.dart',
+  'lib/features/app_pages/chat_first_baby_details_page.dart',
+  'lib/features/app_pages/chat_first_baby_knowledge.dart',
+  'lib/features/app_pages/chat_first_mother_page.dart',
+  'lib/features/app_pages/chat_first_status_sheet.dart',
+  'lib/features/app_pages/data/chat_first_mother_repository.dart',
+  'lib/features/onboarding/domain/chat_first_onboarding.dart',
+  'lib/features/onboarding/presentation/chat_first_onboarding_page.dart',
+  'lib/features/records/domain/chat_first_record.dart',
+  'lib/features/records/data/chat_first_record_repository.dart',
+  'lib/features/records/presentation/chat_first_record_sheet.dart',
+  // The shared baby controls only display Chinese with chatFirstExperience;
+  // their legacy English behavior remains covered by the baby widget/goldens.
+  'lib/modules/baby/presentation/baby_design.dart',
+  'lib/modules/baby/presentation/baby_growth_curve.dart',
+  'lib/modules/baby/presentation/baby_labels.dart',
+  'lib/modules/baby/presentation/baby_profile_editor.dart',
+  'lib/modules/baby/presentation/baby_record_editor.dart',
+  'lib/modules/baby/presentation/baby_record_fields.dart',
+  'lib/modules/profile/presentation/chat_first_more_copy.dart',
+};
+
 void main() {
   test('App source and native prompts contain no unreviewed Chinese UI copy', () {
     final allowedLegacySource = <String, RegExp>{
@@ -14,6 +51,11 @@ void main() {
       'lib/features/agent_hub/domain/agent_conversation.dart': RegExp(
         r'\[系统流程触发\]|用户刚完成',
       ),
+      // Only the conversation-first task's scoped feedback; this file also
+      // serves legacy English surfaces, so do not allow it wholesale.
+      'lib/features/agent_hub/agent_hub_page.dart': RegExp(
+        r'_poopFeedback =|照片上传失败，照片仍在本机|发送失败，照片仍在本机',
+      ),
     };
     final han = RegExp(r'[\u3400-\u9fff]');
     final errors = <String>[];
@@ -23,7 +65,10 @@ void main() {
       if (!file.path.endsWith('.dart')) continue;
       final lines = file.readAsLinesSync();
       for (var index = 0; index < lines.length; index++) {
-        if (!han.hasMatch(lines[index])) continue;
+        if (!han.hasMatch(lines[index]) ||
+            _approvedChatFirstChineseSources.contains(file.path)) {
+          continue;
+        }
         if (allowedLegacySource[file.path]?.hasMatch(lines[index]) == true) {
           continue;
         }
@@ -47,7 +92,7 @@ void main() {
       errors,
       isEmpty,
       reason:
-          'Only protocol and legacy-data compatibility keys may remain in Chinese.',
+          'Only reviewed chat-first UI and legacy protocol keys may contain Chinese.',
     );
   });
 

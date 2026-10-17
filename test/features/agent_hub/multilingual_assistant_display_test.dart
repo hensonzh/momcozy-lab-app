@@ -5,6 +5,40 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 
 void main() {
+  testWidgets('CJK quoted emphasis does not expose raw Markdown markers', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: AgentMarkdownText('先看看\n\n**「记录」**整理日常\n**「听哭闹」**描述情境'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('**', findRichText: true), findsNothing);
+    expect(find.textContaining('记录', findRichText: true), findsWidgets);
+  });
+
+  testWidgets('CJK emphasis handling leaves literal code spans unchanged', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: AgentMarkdownText(
+            '`**「记录」**整理日常`\n\n```text\n**「记录」**整理日常\n```',
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('**「记录」**整理日常', findRichText: true),
+      findsWidgets,
+    );
+  });
+
   testWidgets('historic assistant text using the former brand is replaced', (
     tester,
   ) async {

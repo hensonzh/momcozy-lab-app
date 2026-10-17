@@ -183,7 +183,7 @@ class MomCozyAuthTokenResponse {
     return MomCozySession(
       status: MomCozySessionStatus.authenticated,
       userId: user.id,
-      babyId: trimmedSessionValue(babyId) ?? 'demo-baby',
+      babyId: babyId.trim(),
       locale: trimmedSessionValue(locale) ?? 'en-US',
       accessToken: accessToken,
       refreshToken: refreshToken,

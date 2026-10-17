@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/services.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 
@@ -41,6 +42,44 @@ void main() {
     expect(restored?.refreshToken, 'refresh-secret');
   });
 
+  test(
+    'an account without a baby is stored and restored without a placeholder',
+    () async {
+      final storage = _MemorySessionStorage();
+      final store = FlutterSecureMomCozySessionStore(storage: storage);
+      const noBaby = MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'new-owner',
+        babyId: '',
+        locale: 'en-US',
+        accessToken: 'issued-token',
+      );
+      await store.writeSession(noBaby);
+      final payload =
+          jsonDecode(storage.values['momcozy.session.v1.payload']!) as Map;
+      expect(payload['baby_id'], '');
+      expect((await store.readSession())?.babyId, isEmpty);
+    },
+  );
+
+  test(
+    'legacy session with no baby does not create a demo association',
+    () async {
+      final storage = _MemorySessionStorage(
+        initialValues: {
+          'momcozy.session.v1.status': 'authenticated',
+          'momcozy.session.v1.userId': 'legacy-owner',
+          'momcozy.session.v1.accessToken': 'issued-token',
+        },
+      );
+      final restored = await FlutterSecureMomCozySessionStore(
+        storage: storage,
+      ).readSession();
+      expect(restored?.userId, 'legacy-owner');
+      expect(restored?.babyId, isEmpty);
+    },
+  );
+
   test('fails closed when the atomic payload cannot be verified', () async {
     final storage = _MemorySessionStorage(
       readOverride: (key, value) {
@@ -75,6 +114,37 @@ void main() {
     expect(await store.readSession(), isNull);
     expect(storage.values, isNot(contains('momcozy.session.v1.payload')));
   });
+
+  test(
+    'secure storage failures retain only a non-secret platform code',
+    () async {
+      final storage = _MemorySessionStorage(
+        readOverride: (_, _) => throw PlatformException(
+          code: 'keychain-unavailable',
+          message: 'may include sensitive device details',
+          details: -34018,
+        ),
+      );
+      final store = FlutterSecureMomCozySessionStore(storage: storage);
+      await expectLater(
+        store.readSession(),
+        throwsA(
+          isA<MomCozySessionPersistenceException>()
+              .having(
+                (error) => error.causeCode,
+                'causeCode',
+                'keychain-unavailable',
+              )
+              .having((error) => error.causeStatus, 'causeStatus', -34018)
+              .having(
+                (error) => error.toString(),
+                'safe diagnostic',
+                isNot(contains('sensitive device details')),
+              ),
+        ),
+      );
+    },
+  );
 }
 
 class _MemorySessionStorage implements MomCozySessionStorage {

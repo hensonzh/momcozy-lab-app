@@ -1,4 +1,5 @@
 import 'package:momcozy_flutter_app/domain/shared/feeding_methods.dart';
+import 'chat_first_onboarding.dart';
 
 enum OnboardingStatus { required, completed }
 
@@ -47,9 +48,42 @@ class OnboardingState {
     required this.status,
     required this.profileConfirmed,
     this.primaryInfantId,
+    this.entryAllowed,
+    this.role,
+    this.profileScope,
   });
 
   factory OnboardingState.fromMap(Map<String, Object?> map) {
+    if (map.containsKey('profile_scope')) {
+      final allowed = map['can_enter_app'];
+      final status = map['status'];
+      final scope = map['profile_scope'];
+      final role = FamilyRole.fromWire(map['role']);
+      final valid =
+          allowed is bool &&
+          ((status == 'required' &&
+                  !allowed &&
+                  scope == 'none' &&
+                  role == null) ||
+              (status == 'completed' &&
+                  allowed &&
+                  (scope == 'chat_first' || scope == 'legacy_full') &&
+                  role != null)) &&
+          (map['role'] == null || role != null);
+      if (!valid) {
+        throw const FormatException('Invalid chat-first onboarding state.');
+      }
+      return OnboardingState(
+        status: allowed
+            ? OnboardingStatus.completed
+            : OnboardingStatus.required,
+        profileConfirmed: scope == 'legacy_full',
+        entryAllowed: allowed,
+        role: role,
+        profileScope: scope as String,
+        primaryInfantId: _nullableString(map['primary_infant_id']),
+      );
+    }
     final confirmed = map['profile_confirmed'];
     final status = map['status'];
     final valid =
@@ -72,9 +106,12 @@ class OnboardingState {
   final OnboardingStatus status;
   final bool profileConfirmed;
   final String? primaryInfantId;
+  final bool? entryAllowed;
+  final FamilyRole? role;
+  final String? profileScope;
 
-  bool get canEnterApp => profileConfirmed;
-  bool get isCompleted => profileConfirmed;
+  bool get canEnterApp => entryAllowed ?? profileConfirmed;
+  bool get isCompleted => canEnterApp;
 }
 
 class OnboardingInfantDraft {

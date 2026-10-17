@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
 from contextlib import contextmanager
+from datetime import date, datetime, timedelta, timezone
 import os
 import re
 import subprocess
@@ -12,8 +12,10 @@ import time
 from pathlib import Path
 from uuid import UUID
 from urllib.error import HTTPError
+from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree
+from zoneinfo import ZoneInfo
 
 APP = Path(__file__).resolve().parents[1]
 BACKEND = APP.parent / "backend"
@@ -85,10 +87,16 @@ def adb(device, *args, capture=False, secret=False):
 def latin_keyboard(device):
     # Emulator owners may use an IME with CJK composition, which corrupts
     # `adb shell input text` even when characters are sent one at a time.
-    latin = "com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME"
     original = adb(device, "shell", "settings", "get", "secure", "default_input_method", capture=True).strip()
     available = adb(device, "shell", "ime", "list", "-s", capture=True).splitlines()
-    if latin not in available:
+    latin_options = (
+        "com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME",
+        "com.android.inputmethod.latin/.LatinIME",
+    )
+    latin = original if original in latin_options and original in available else next(
+        (ime for ime in latin_options if ime in available), None
+    )
+    if latin is None:
         raise RuntimeError("The emulator has no Latin input method for test credentials")
     changed = original != latin
     try:
@@ -184,18 +192,6 @@ def verify_account(account):
     return token
 
 
-def local_onboarding_payload():
-    return {
-        "stage": "postpartum", "display_name": "Local App Test", "age": 32,
-        "delivery_date": datetime.now(timezone.utc).date().isoformat(),
-        "client_timezone_offset_minutes": 0,
-        "delivery_count": 1, "has_cesarean_history": False,
-        "delivery_type": "vaginal", "gestation_weeks": 39, "gestation_days": 2,
-        "feeding_methods": ["direct"], "infant_count": 1,
-        "infants": [{"nickname": "Local Baby", "sex": "female"}],
-    }
-
-
 def request_product_json(method, path, token, payload=None):
     body = json.dumps(payload).encode() if payload is not None else None
     request = Request(
@@ -213,31 +209,232 @@ def request_product_json(method, path, token, payload=None):
     return result
 
 
-def ensure_onboarding(token):
-    state = request_product_json("GET", "/v1/onboarding/me", token)
-    if state.get("status") == "required" and state.get("profile_confirmed") is False:
-        state = request_product_json(
-            "PUT", "/v1/onboarding/me/profile", token, local_onboarding_payload()
-        )
-        confirmed = request_product_json("GET", "/v1/onboarding/me", token)
-        if state != confirmed:
-            raise RuntimeError("Local onboarding confirmation did not persist")
-    if state.get("status") != "completed" or state.get("profile_confirmed") is not True:
-        raise RuntimeError("Local onboarding is not confirmed")
-    try:
-        baby_id = str(UUID(str(state["primary_infant_id"])))
-    except (KeyError, TypeError, ValueError) as error:
-        raise RuntimeError("Local onboarding returned no primary infant") from error
+def verify_fresh_chat_first(token):
+    state = request_product_json("GET", "/v1/onboarding/me/chat-first", token)
+    if (state.get("status") != "required" or state.get("can_enter_app") is not False
+            or state.get("role") is not None or state.get("profile_scope") != "none"
+            or state.get("primary_infant_id") is not None):
+        raise RuntimeError("Fresh account onboarding is not empty")
+    legacy = request_product_json("GET", "/v1/onboarding/me", token)
+    if legacy.get("status") != "required" or legacy.get("profile_confirmed") is not False:
+        raise RuntimeError("Fresh account has a legacy onboarding profile")
     babies = request_product_json("GET", "/v1/babies", token)
-    if not isinstance(babies.get("items"), list) or not any(
-        isinstance(baby, dict) and baby.get("id") == baby_id
-        for baby in babies["items"]
-    ):
-        raise RuntimeError("Local onboarding baby is not owned by the fresh account")
-    return baby_id
+    if babies.get("items") != []:
+        raise RuntimeError("Fresh account has a prefilled baby profile")
 
 
-def install_and_login(device, account, token):
+def verify_chat_first_role(token, role):
+    state = request_product_json("GET", "/v1/onboarding/me/chat-first", token)
+    if (state.get("status") != "completed" or state.get("can_enter_app") is not True
+            or state.get("role") != role or state.get("profile_scope") != "chat_first"
+            or state.get("primary_infant_id") is not None):
+        raise RuntimeError("Local chat-first role did not persist")
+    legacy = request_product_json("GET", "/v1/onboarding/me", token)
+    if legacy.get("status") != "required" or legacy.get("profile_confirmed") is not False:
+        raise RuntimeError("Role-only account unexpectedly completed legacy onboarding")
+    babies = request_product_json("GET", "/v1/babies", token)
+    if babies.get("items") != []:
+        raise RuntimeError("Role-only account has a fabricated baby profile")
+
+
+def verify_mother_facts(token, delivery_date):
+    personal = request_product_json("GET", "/v1/profile/me", token)
+    if personal.get("age") != 30 or personal.get("preferred_name") is not None:
+        raise RuntimeError("Mother profile has missing answers or a sample name")
+    maternal = request_product_json("GET", "/v1/profile/lactation", token)
+    if maternal.get("actual_delivery_date") != delivery_date.isoformat():
+        raise RuntimeError("Mother delivery date did not persist")
+    # Use a one-day UTC window; the endpoint returns the owner's profile
+    # independently of whether there are records in that window.
+    today = datetime.now(timezone.utc).date()
+    start = datetime(today.year, today.month, today.day, tzinfo=timezone.utc)
+    query = urlencode({
+        "start": start.isoformat(),
+        "end": (start + timedelta(days=1)).isoformat(),
+    })
+    experience = request_product_json("GET", f"/v1/profile/me-experience?{query}", token)
+    profile = experience.get("profile")
+    if (not isinstance(profile, dict) or profile.get("gestation_weeks") != 39
+            or profile.get("gestation_days") != 0 or profile.get("baby_count") != 1
+            or profile.get("delivery_count") != 2):
+        raise RuntimeError("Mother answers did not persist in the owner profile")
+    concerns = experience.get("concerns")
+    if not isinstance(concerns, list) or [item.get("note") for item in concerns] != ["奶量够不够"]:
+        raise RuntimeError("Mother concern did not persist")
+
+
+def verify_app_saved_status(token, *, today):
+    zone = ZoneInfo("Asia/Shanghai")
+    start = datetime(today.year, today.month, today.day, tzinfo=zone)
+    end_day = today + timedelta(days=1)
+    end = datetime(end_day.year, end_day.month, end_day.day, tzinfo=zone)
+    query = urlencode({"start": start.isoformat(), "end": end.isoformat()})
+    records = request_product_json("GET", f"/v1/profile/me-experience?{query}", token).get("records")
+    if (not isinstance(records, list) or len(records) != 1 or not isinstance(records[0], dict)
+            or records[0].get("kind") != "mood" or records[0].get("value") != "一般"):
+        raise RuntimeError("The App did not persist exactly one owner-scoped mood record")
+    record_id = records[0].get("id")
+    try:
+        UUID(record_id)
+    except (TypeError, ValueError):
+        raise RuntimeError("The App status record has no valid ID") from None
+    print("A fresh App status save was read back exactly once for its owner.", flush=True)
+    return record_id
+
+
+def labeled_node(nodes, text):
+    return next((node for node in nodes
+                 if text in node.get("content-desc", "") or text in node.get("text", "")), None)
+
+
+def exact_labeled_node(nodes, text):
+    return next((node for node in nodes
+                 if text in (node.get("content-desc"), node.get("text"))), None)
+
+
+def first_exact_labeled_node(nodes, labels):
+    for label in labels:
+        node = exact_labeled_node(nodes, label)
+        if node is not None:
+            return node
+    return None
+
+
+def tap_label(device, label, *, exact=False):
+    finder = exact_labeled_node if exact else labeled_node
+    tap_node(device, wait_for(device, lambda nodes: finder(nodes, label), label))
+
+
+def refresh_role():
+    role = os.environ.get("MOMCOZY_LOCAL_REFRESH_ROLE", "father")
+    if role not in ("father", "mother"):
+        raise RuntimeError("MOMCOZY_LOCAL_REFRESH_ROLE must be father or mother")
+    return role
+
+
+def date_picker_day(nodes, day):
+    suffix = f"{day.strftime('%B')} {day.day}, {day.year}"
+    return next((node for node in nodes
+                 if node.get("class") == "android.widget.Button"
+                 and node.get("content-desc", "").startswith(f"{day.day}, ")
+                 and suffix in node.get("content-desc", "")), None)
+
+
+def is_chat_first_home(nodes):
+    return all(labeled_node(nodes, label) is not None
+               for label in ("记录", "听哭闹", "看便便"))
+
+
+def baby_profile_name_field(nodes):
+    return next((node for node in nodes
+                 if node.get("class") == "android.widget.EditText"
+                 and "如何称呼宝宝？" in node.get("hint", "")), None)
+
+
+def screenshot(device, name):
+    SCREENSHOTS.mkdir(parents=True, exist_ok=True)
+    (SCREENSHOTS / name).write_bytes(
+        subprocess.check_output(["adb", "-s", device, "exec-out", "screencap", "-p"])
+    )
+
+
+def select_mother_flow(device):
+    tap_label(device, "妈妈", exact=True)
+    wait_for(device, lambda nodes: labeled_node(nodes, "你现在处于哪个阶段？"), "mother stage")
+    screenshot(device, "mother-stage.png")
+    tap_label(device, "产后", exact=True)
+    wait_for(device, lambda nodes: labeled_node(nodes, "先了解一些基本信息"), "mother basics")
+    screenshot(device, "mother-basics.png")
+    tap_label(device, "30岁")
+    tap_label(device, "2次")
+    tap_label(device, "继续", exact=True)
+    wait_for(device, lambda nodes: labeled_node(nodes, "关于这次分娩"), "mother delivery")
+    tap_label(device, "选择分娩日期")
+    today = date.today()
+    day = today - timedelta(days=1)
+    if day.month != today.month:
+        tap_label(device, "Previous month")
+    tap_node(device, wait_for(device, lambda nodes: date_picker_day(nodes, day), "recent delivery date"))
+    tap_node(device, wait_for(device,
+        lambda nodes: first_exact_labeled_node(nodes, ("OK", "确定")),
+        "date picker confirmation"))
+    tap_label(device, "39周")
+    tap_label(device, "1个宝宝")
+    screenshot(device, "mother-delivery.png")
+    tap_label(device, "继续", exact=True)
+    wait_for(device, lambda nodes: labeled_node(nodes, "现在你最在意什么？"), "mother concerns")
+    screenshot(device, "mother-concerns.png")
+    tap_label(device, "奶量够不够")
+    tap_label(device, "继续", exact=True)
+    wait_for(device, lambda nodes: labeled_node(nodes, "为你推荐"), "mother service introduction")
+    screenshot(device, "mother-services.png")
+    tap_label(device, "进入首页", exact=True)
+    return day
+
+
+def save_mother_status_in_app(device, token):
+    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "打开侧边栏"), "drawer button"))
+    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "我的"), "mother destination"))
+    wait_for(device, lambda nodes: labeled_node(nodes, "最近 2 天没有已保存状态记录"), "empty mother status")
+    tap_label(device, "记录我的状态")
+    wait_for(device, lambda nodes: labeled_node(nodes, "今天想记录哪一项？"), "status editor")
+    tap_label(device, "心情")
+    tap_label(device, "一般")
+    screenshot(device, "mother-status-editor.png")
+    tap_label(device, "保存状态")
+    wait_for(device, lambda nodes: labeled_node(nodes, "最近 2 天有 1 条已保存状态记录"), "saved status overview")
+    screenshot(device, "mother-status-saved.png")
+    verify_app_saved_status(token, today=datetime.now(ZoneInfo("Asia/Shanghai")).date())
+    tap_label(device, "查看最近状态")
+    wait_for(device, lambda nodes: labeled_node(nodes, "心情") and labeled_node(nodes, "一般"), "saved status detail")
+    screenshot(device, "mother-status-readback.png")
+    tap_label(device, "关闭身体与状态")
+    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "返回对话"), "chat return"))
+    wait_for(device, is_chat_first_home, "chat-first home after status save")
+
+
+def create_and_open_baby_details(device, token, delivery_date):
+    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "打开侧边栏"), "drawer button"))
+    tap_node(device, wait_for(device, lambda nodes: exact_labeled_node(nodes, "宝宝"), "baby destination"))
+    wait_for(device, lambda nodes: labeled_node(nodes, "当前账号还没有宝宝资料"), "empty real baby overview")
+    tap_label(device, "添加宝宝资料")
+    tap_node(device, wait_for(device, baby_profile_name_field, "baby profile editor"))
+    wait_for_field_focus(device, "如何称呼宝宝？")
+    type_text(device, "LocalTestBaby")
+    adb(device, "shell", "input", "keyevent", "KEYCODE_BACK")
+    tap_label(device, "女孩", exact=True)
+    tap_label(device, "保存宝宝资料")
+    wait_for(device, lambda nodes: labeled_node(nodes, "LocalTestBaby"), "saved baby profile")
+    tap_label(device, "查看完整记录与管理")
+    wait_for(device, lambda nodes: labeled_node(nodes, "宝宝记录与管理"), "Chinese baby details")
+    screenshot(device, "baby-details.png")
+    tap_label(device, "照护知识", exact=True)
+    tap_node(device, wait_for(
+        device,
+        lambda nodes: next((node for node in nodes
+                            if node.get("class") == "android.widget.Button"
+                            and "宝宝安全睡眠" in node.get("content-desc", "")), None),
+        "general baby knowledge",
+    ))
+    wait_for(device, lambda nodes: labeled_node(nodes, "每次睡眠都让宝宝仰卧"), "general safe-sleep guidance")
+    screenshot(device, "baby-knowledge.png")
+    babies = request_product_json("GET", "/v1/babies", token).get("items")
+    if (not isinstance(babies, list) or len(babies) != 1
+            or babies[0].get("name") != "LocalTestBaby"
+            or babies[0].get("birth_date") != delivery_date.isoformat()
+            or babies[0].get("sex") != "female"):
+        raise RuntimeError("Baby profile was not persisted for the current owner")
+    tap_label(device, "带着问题去对话", exact=True)
+    wait_for(device, lambda nodes: next((node for node in nodes
+                                         if node.get("class") == "android.widget.EditText"
+                                         and node.get("text") == "关于宝宝安全睡眠，我想了解哪些基本注意事项？"), None),
+             "unsent baby-knowledge draft")
+    screenshot(device, "baby-knowledge-draft.png")
+    if not is_chat_first_home(ui_nodes(device)):
+        raise RuntimeError("Knowledge draft did not return to the conversation home")
+
+
+def install_and_login(device, account, token, role, *, status_smoke=False, baby_details_smoke=False):
     if adb(device, "shell", "pm", "path", PACKAGE, capture=True).strip():
         adb(device, "uninstall", PACKAGE)
     adb(device, "install", str(APK))
@@ -256,27 +453,52 @@ def install_and_login(device, account, token):
     tap_node(device, find_node(ui_nodes(device), class_name="android.widget.Button", description="Sign in"))
     wait_for(
         device,
-        lambda nodes: next((n for n in nodes if "Your setup" in n.get("content-desc", "") or "Your setup" in n.get("text", "")), None),
-        "first-login onboarding gate",
+        lambda nodes: labeled_node(nodes, "你是宝宝的哪位家人？"),
+        "fresh-account role selection",
     )
-    ensure_onboarding(token)
-    # Re-bootstrap the retained App session so the onboarding gate re-fetches
-    # the server confirmation. No credentials are entered a second time.
+    screenshot(device, "role.png")
+    delivery_date = None
+    if role == "mother":
+        delivery_date = select_mother_flow(device)
+    else:
+        tap_label(device, "爸爸", exact=True)
+    wait_for(device, is_chat_first_home, "chat-first home")
+    verify_chat_first_role(token, role)
+    if role == "mother":
+        verify_mother_facts(token, delivery_date)
+        wait_for(device, lambda nodes: labeled_node(nodes, "宝宝出生 1 天"), "real delivery-day board")
+    screenshot(device, "home.png")
+    # Completion must survive a cold start, not only the in-memory gate.
     adb(device, "shell", "am", "force-stop", PACKAGE)
     adb(device, "shell", "monkey", "-p", PACKAGE, "-c", "android.intent.category.LAUNCHER", "1", capture=True)
-    wait_for(device, lambda nodes: next((n for n in nodes if n.get("content-desc", "").split("\n")[0] == "More"), None), "authenticated home")
-    tap_node(device, find_node(ui_nodes(device), description="More"))
-    wait_for(device, lambda nodes: any(account["email"] in (n.get("content-desc", "") + n.get("text", "")) for n in nodes), "new email on More page")
-    SCREENSHOTS.mkdir(parents=True, exist_ok=True)
-    (SCREENSHOTS / "account.png").write_bytes(subprocess.check_output(["adb", "-s", device, "exec-out", "screencap", "-p"]))
-    tap_node(device, find_node(ui_nodes(device), class_name="android.widget.Button", description="Me"))
-    wait_for(device, lambda nodes: next((n for n in nodes if n.get("class") == "android.widget.Button" and n.get("content-desc") == "Me" and n.get("selected") == "true"), None), "Me home tab")
-    (SCREENSHOTS / "home.png").write_bytes(subprocess.check_output(["adb", "-s", device, "exec-out", "screencap", "-p"]))
+    wait_for(device, is_chat_first_home, "restored chat-first home")
+    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "打开侧边栏"), "drawer button"))
+    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "我的"), "mother destination"))
+    if role == "mother":
+        delivery = delivery_date.isoformat()
+        wait_for(device, lambda nodes: labeled_node(nodes, "30 岁") and labeled_node(nodes, delivery),
+                 "saved mother profile")
+        screenshot(device, "mother-profile.png")
+    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "更多服务"), "section services"))
+    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "账号与设置"), "account destination"))
+    wait_for(device, lambda nodes: labeled_node(nodes, account["email"]), "new account email in UI")
+    screenshot(device, "account.png")
+    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "返回对话"), "chat return"))
+    wait_for(device, is_chat_first_home, "chat-first home after account")
+    if status_smoke:
+        save_mother_status_in_app(device, token)
+    if baby_details_smoke:
+        create_and_open_baby_details(device, token, delivery_date)
     if not adb(device, "shell", "pidof", PACKAGE, capture=True).strip():
         raise RuntimeError("App is no longer running on emulator")
 
 
 def main():
+    role = refresh_role()
+    status_smoke = os.environ.get("MOMCOZY_LOCAL_REFRESH_STATUS") == "1"
+    baby_details_smoke = os.environ.get("MOMCOZY_LOCAL_REFRESH_BABY_DETAILS") == "1"
+    if (status_smoke or baby_details_smoke) and role != "mother":
+        raise RuntimeError("The mother-only smoke requires MOMCOZY_LOCAL_REFRESH_ROLE=mother")
     device = emulator()
     print(f"Emulator: {device}", flush=True)
     run(["node", "scripts/local-dev-stack.mjs", "up"])
@@ -294,11 +516,13 @@ def main():
     print(f"Local APK built: {APK}", flush=True)
     account = create_account()
     token = verify_account(account)
+    verify_fresh_chat_first(token)
     with latin_keyboard(device):
-        install_and_login(device, account, token)
+        install_and_login(device, account, token, role,
+                          status_smoke=status_smoke, baby_details_smoke=baby_details_smoke)
     print(f"Emulator login verified for user {account['user_id']}.", flush=True)
     print(f"Email: {account['email']}", flush=True)
-    print(f"Screenshots: {SCREENSHOTS / 'account.png'}, {SCREENSHOTS / 'home.png'}", flush=True)
+    print(f"Screenshots: {SCREENSHOTS / 'role.png'}, {SCREENSHOTS / 'home.png'}, {SCREENSHOTS / 'account.png'}", flush=True)
 
 
 if __name__ == "__main__":

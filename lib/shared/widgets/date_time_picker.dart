@@ -9,6 +9,7 @@ Future<DateTime?> showMomCozyDatePicker({
   required DateTime firstDate,
   required DateTime lastDate,
   String? helpText,
+  Locale? locale,
   DateTime? currentDate,
   ThemeData? theme,
 }) {
@@ -24,11 +25,11 @@ Future<DateTime?> showMomCozyDatePicker({
         ? DatePickerEntryMode.inputOnly
         : DatePickerEntryMode.calendar,
   );
-  final locale = DatePickerTheme.of(context).locale;
-  if (locale != null) {
+  final resolvedLocale = locale ?? DatePickerTheme.of(context).locale;
+  if (resolvedLocale != null) {
     dialog = Localizations.override(
       context: context,
-      locale: locale,
+      locale: resolvedLocale,
       child: dialog,
     );
   }

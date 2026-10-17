@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 
@@ -34,15 +35,21 @@ class MomCozySessionPersistenceException implements Exception {
   const MomCozySessionPersistenceException({
     required this.operation,
     required this.causeType,
+    this.causeCode,
+    this.causeStatus,
   });
 
   final String operation;
   final String causeType;
+  final String? causeCode;
+  final int? causeStatus;
 
   @override
   String toString() {
     return 'MomCozySessionPersistenceException('
-        'operation: $operation, causeType: $causeType)';
+        'operation: $operation, causeType: $causeType'
+        '${causeCode == null ? '' : ', causeCode: $causeCode'}'
+        '${causeStatus == null ? '' : ', causeStatus: $causeStatus'})';
   }
 }
 
@@ -135,7 +142,7 @@ class FlutterSecureMomCozySessionStore implements MomCozySessionStore {
           parseMomCozySessionStatus(values[0]) ??
           statusForSessionSecrets(accessToken, refreshToken),
       userId: userId ?? 'demo-user',
-      babyId: babyId ?? 'demo-baby',
+      babyId: babyId ?? '',
       locale: locale ?? 'en-US',
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -147,7 +154,7 @@ class FlutterSecureMomCozySessionStore implements MomCozySessionStore {
       'schema_version': _schemaVersion,
       'status': session.status.name,
       'user_id': trimmedSessionValue(session.userId),
-      'baby_id': trimmedSessionValue(session.babyId),
+      'baby_id': session.babyId.trim(),
       'locale': trimmedSessionValue(session.locale),
       'access_token': trimmedSessionValue(session.accessToken),
       'refresh_token': trimmedSessionValue(session.refreshToken),
@@ -172,10 +179,14 @@ class FlutterSecureMomCozySessionStore implements MomCozySessionStore {
     if (status == null) {
       throw const FormatException('Session status is invalid.');
     }
+    final babyId = payload['baby_id'];
+    if (babyId is! String) {
+      throw const FormatException('Session baby id is invalid.');
+    }
     return MomCozySession(
       status: status,
       userId: _requiredString(payload, 'user_id'),
-      babyId: _requiredString(payload, 'baby_id'),
+      babyId: babyId.trim(),
       locale: _requiredString(payload, 'locale'),
       accessToken: _optionalString(payload['access_token']),
       refreshToken: _optionalString(payload['refresh_token']),
@@ -220,6 +231,10 @@ class FlutterSecureMomCozySessionStore implements MomCozySessionStore {
       MomCozySessionPersistenceException(
         operation: operation,
         causeType: cause.runtimeType.toString(),
+        causeCode: cause is PlatformException ? cause.code : null,
+        causeStatus: cause is PlatformException && cause.details is int
+            ? cause.details as int
+            : null,
       ),
       stackTrace,
     );

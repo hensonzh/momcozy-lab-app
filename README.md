@@ -4,6 +4,10 @@ IBCLC 使用独立 Flutter 入口 `lib/main_ibclc.dart`；本地运行与当前�
 
 Production Flutter client for MomCozyApp.
 
+对话优先 App 端基础版已按 [`docs/flutter/chat-first-product-architecture.md`](docs/flutter/chat-first-product-architecture.md) 收口：登录与角色引导、对话单首页、侧栏、真实资料和记录、宝宝知识到草稿的链路走当前本地服务契约。白板每日建议、供应商语音／哭声分析、旧 UI/API 破坏性清退不包含在本阶段；当前新引导需配套的 Product Backend 合同，不能直接视为兼容尚未升级的线上服务。未推送或发布。
+
+本地 Demo 增量对照：只读取 `../momcozy-lab-demo` 本地已提交 `main/f8118ab`，没有拉取远端。Flutter 端增加对话内哭声本地录音/试听卡和便便照片任务卡，以及记录表单的时间/奶量优先交互；便便照片确认后走现有图片上传和 Agent Run，失败与未同步明确区分。原始哭声音频不上传，分析尚无正式服务契约，按钮保持不可用；本机便便照片预览离页清理、不跨冷启动。当前代码与门禁范围详见 [增量账本](docs/flutter/chat-first-product-architecture.md#本地-demo-f8118ab-已提交版本增量仅-app)。不包含后端/Agent 改造、推送或部署。
+
 Human-facing documentation uses the canonical service names `Product Backend
 (backend/)` and `Agent Runtime (agent/)`. Existing build variables
 `MOMCOZY_API_BASE_URL` and `MOMCOZY_AGENT_API_BASE_URL` remain stable
@@ -93,7 +97,18 @@ make local-dev-start
 make local-dev-refresh
 ```
 
-该命令会启动并验证本地双服务、重新构建 `local` debug APK、创建一个唯一且已验证的本地邮箱账号、清除模拟器中旧 local App 的数据、安装并自动登录新账号。完成后打印新账号凭据，并将账号和首页截图保存到 `build/emulator-refresh/`。不会发布 APK 或修改云端。
+该命令会启动并验证本地双服务、重新构建 `local` debug APK、创建一个**没有示例姓名、分娩日期或宝宝档案**的全新已验证本地账号，替换模拟器中旧的 local App，再自动登录。它核验角色选择，从 App 选择「爸爸」进入对话首页，冷启动后检查账号身份，并将角色页、对话首页和账号页截图保存到 `build/emulator-refresh/`。命令只打印账号邮箱和 ID，不打印生成的密码；不会发布 APK 或修改云端。
+
+要验收妈妈的六段引导与资料保存，可运行 `MOMCOZY_LOCAL_REFRESH_ROLE=mother make local-dev-refresh`：同样创建全新空资料账号，通过 App 填写测试资料，核对当前账号的后端资料与白板，冷启动后检查妈妈资料页。该路径额外保存引导各阶段和妈妈资料页截图；不绕过引导写入样例资料。
+
+要连同真实宝宝资料、照护知识与“带着问题去对话”只预填草稿一起验收，运行 `MOMCOZY_LOCAL_REFRESH_ROLE=mother MOMCOZY_LOCAL_REFRESH_BABY_DETAILS=1 make local-dev-refresh`；脚本每次重建 APK、创建新账号、替换安装、登录并核验账号 UI、Backend 归属、输入框草稿和 App 仍在运行。截图在 `build/emulator-refresh/`，包括 `baby-knowledge-draft.png`。
+
+已启动本地双服务和 iOS Simulator 时，可运行 `python3 scripts/local_ios_chat_first_smoke.py`；妈妈六段引导和记录联调可运行 `MOMCOZY_IOS_SMOKE_ROLE=mother python3 scripts/local_ios_chat_first_smoke.py`。每次均新建空资料账号，真实登录并核对后端持久化与已登录渲染；妈妈路径还会从 App 保存亲喂、配方奶、瓶喂母乳、吸奶和生长记录，再由 Backend 按账号回读验证实际字段，确认无真实宝宝时尿布、睡眠不可保存。要验证有真实宝宝时的尿布和睡眠写入，运行 `MOMCOZY_IOS_SMOKE_ROLE=mother MOMCOZY_IOS_SMOKE_BABY_RECORDS=1 python3 scripts/local_ios_chat_first_smoke.py`：App 创建并选中当前账号的宝宝，再由 Backend 回读核对宝宝归属、记录种类及字段。截图保存在忽略的 `build/ios/chat-first-smoke/`（妈妈路径在 `mother/`；有宝宝路径在 `mother-with-baby/`）。测试结束会用**正常本地签名的 Debug App**替换包含临时测试参数的集成测试 App，再冷启动并保存截图；不要改用 `--no-codesign` 安装，它无法读取已保存的 iOS Keychain 会话。临时账号密码不会写入仓库或输出日志。
+上述有宝宝路径还会核验知识页进入对话后的草稿内容，不会自动发起用户提问 Run。
+
+妈妈记录联调还会在保存吸奶记录后重新打开妈妈信息页，刷新同一账号的今日记录，核对 **45 ml · 1 次**和详情，并保存 `ios-chat-first-mother-pumping.png`。该概览读取首页「记录」的 `/v1/records/pumping`；原有泌乳管理读取独立的 `/v1/lactation/records`，两者目前不会自动合并。
+
+要核验妈妈资料变化后欢迎语重新生成且冷启动不重复发起 Run，可运行 `MOMCOZY_IOS_SMOKE_ROLE=mother MOMCOZY_IOS_SMOKE_WELCOME_REFRESH=1 python3 scripts/local_ios_chat_first_smoke.py`。该模式使用另一全新测试账号，检查修改当前账号的真实资料前后各有一个已完成、签名不同的 Agent 欢迎 Run；正常签名冷启动后再次核对没有第三个。该模式不同时开启宝宝记录写入，截图保存在忽略的 `mother-welcome-refresh/`。它不替代跨日边界验收。
 
 在登录页使用上述账号即可进入 App，无需邮件验证码。仅在 `APP_ENV=local` 下创建，
 不授予管理员权限。重复启动保留已有账号、修改后的密码和业务数据。

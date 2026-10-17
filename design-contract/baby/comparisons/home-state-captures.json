@@ -1,5 +1,4 @@
 {
-  "source": "test/modules/baby/baby_home_state_capture_test.dart",
   "capturedOn": "2026-09-21",
   "states": [
     {
@@ -90,5 +89,6 @@
       "viewportPolicy": "logical pixels, dpr=1",
       "review": "same-size comparison"
     }
-  ]
+  ],
+  "sourceStatus": "Historical comparison images; old UI capture test retired."
 }

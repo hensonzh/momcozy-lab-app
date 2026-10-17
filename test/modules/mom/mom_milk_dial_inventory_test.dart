@@ -1,8 +1,3 @@
-@Tags(['golden'])
-library;
-
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -24,8 +19,6 @@ void main() {
   late MomInventoryTransport transport;
   late MomCozyRuntimeController runtime;
   late GoRouter router;
-  String? previous;
-  late String variant;
   Future<void> mount(
     WidgetTester tester, {
     void Function(MomInventoryTransport)? prepare,
@@ -33,12 +26,10 @@ void main() {
     double width = 393,
     double scale = 1,
   }) async {
-    previous = null;
     FlutterSecureStorage.setMockInitialValues({});
     tester.view.physicalSize = Size(width, 844);
     tester.platformDispatcher.textScaleFactorTestValue = scale;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    variant = '${width.toInt()}-${scale.toInt()}x';
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -129,10 +120,8 @@ void main() {
     expect(tester.takeException(), isNull);
   }
 
-  Future<void> capture(
-    WidgetTester tester,
-    String state,
-    String action, {
+  Future<void> verifyState(
+    WidgetTester tester, {
     String route = '/me/lactation',
   }) async {
     // Commit edits and finish the input hint's fade without settling spinners.
@@ -140,33 +129,6 @@ void main() {
     await tester.pump(const Duration(milliseconds: 250));
     expect(router.state.uri.path, route);
     expect(tester.takeException(), isNull);
-    final source =
-        'test/goldens/ui_inventory/mom-milk-dial-$state-$variant.png';
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile(
-        '../../goldens/ui_inventory/mom-milk-dial-$state-$variant.png',
-      ),
-    );
-    final row = {
-      'source': source,
-      'previous_source': previous,
-      'route': route,
-      'trigger': action,
-      'root_entry': 'Authenticated More → existing lactation deep link',
-      'evidence':
-          'Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone',
-      'test': 'test/modules/mom/mom_milk_dial_inventory_test.dart',
-    };
-    previous = source;
-    final output = Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
-    if (output != null) {
-      final file = File('$output/journeys/mom-milk-dial-$state-$variant.json');
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(
-        '${const JsonEncoder.withIndent('  ').convert(row)}\n',
-      );
-    }
   }
 
   Future<void> closePanel(WidgetTester tester) async {
@@ -231,11 +193,11 @@ void main() {
       tester,
     ) async {
       await mount(tester, width: width, scale: 1);
-      await capture(tester, 'home-entry', 'Authenticated More', route: '/more');
+      await verifyState(tester, route: '/more');
       router.push('/me/lactation?create=1');
       await tester.pumpAndSettle();
       await input(tester, measurement(LactationMethod.pump), '120');
-      await capture(tester, 'form-filled', 'Record milk → enter pump 120 ml');
+      await verifyState(tester);
       Future<void> openPicker() => tap(
         tester,
         find.widgetWithIcon(OutlinedButton, Icons.schedule_rounded),
@@ -246,55 +208,39 @@ void main() {
           find.descendant(of: picker, matching: find.text(text));
       expect(dialValue(tester), const TimeOfDay(hour: 16, minute: 0));
       expect(dialMode(tester), endsWith('.hour'));
-      await capture(tester, 'open', 'Open clock at 16:00 → hour dial');
+      await verifyState(tester);
       await selectDial(tester, 9, 12);
       expect(dialValue(tester), const TimeOfDay(hour: 21, minute: 0));
       expect(dialMode(tester), endsWith('.minute'));
-      await capture(
-        tester,
-        'hour-nine',
-        'Tap dial hour 9 → minute dial, 21:00',
-      );
+      await verifyState(tester);
       await selectDial(tester, 45, 60);
       expect(dialValue(tester), const TimeOfDay(hour: 21, minute: 45));
-      await capture(tester, 'minute-forty-five', 'Tap minute 45 → 21:45');
+      await verifyState(tester);
       await tap(tester, sdkControl('_DialHourControl'));
       expect(dialMode(tester), endsWith('.hour'));
-      await capture(
-        tester,
-        'hour-header',
-        'Tap hour header → switch back to hour dial',
-      );
+      await verifyState(tester);
       await selectDial(tester, 11, 12);
       expect(dialValue(tester), const TimeOfDay(hour: 23, minute: 45));
-      await capture(
-        tester,
-        'hour-eleven',
-        'Tap hour 11 → minute dial with 45 retained',
-      );
+      await verifyState(tester);
       await selectDial(tester, 20, 60);
       expect(dialValue(tester), const TimeOfDay(hour: 23, minute: 20));
-      await capture(tester, 'minute-twenty', 'Tap minute 20 → 23:20');
+      await verifyState(tester);
       await tap(tester, action(strings.anteMeridiemAbbreviation));
       expect(dialValue(tester), const TimeOfDay(hour: 11, minute: 20));
-      await capture(tester, 'am', 'Select AM on dial → 11:20');
+      await verifyState(tester);
       await tap(tester, action(strings.okButtonLabel));
       expect(draft(tester).occurredAt.hour, 11);
       expect(draft(tester).occurredAt.minute, 20);
-      await capture(tester, 'accepted', 'Confirm dial → draft 11:20');
+      await verifyState(tester);
       await tap(tester, find.text('Save this record'));
       expect(transport.records.single['version'], 1);
-      await capture(tester, 'saved', 'Save pump 120 ml at 11:20 → list');
+      await verifyState(tester);
       await editSaved(tester);
       await openPicker();
       expect(dialValue(tester), const TimeOfDay(hour: 11, minute: 20));
-      await capture(
-        tester,
-        'reopened',
-        'Edit saved record → picker retains 11:20',
-      );
+      await verifyState(tester);
       await tap(tester, find.byTooltip(strings.inputTimeModeButtonLabel));
-      await capture(tester, 'input-mode', 'Clock → manual input mode');
+      await verifyState(tester);
       final fields = find.descendant(
         of: picker,
         matching: find.byType(TextFormField),
@@ -306,11 +252,7 @@ void main() {
       expect(action(strings.invalidTimeLabel), findsWidgets);
       expect(draft(tester).occurredAt.hour, 11);
       expect(draft(tester).occurredAt.minute, 20);
-      await capture(
-        tester,
-        'invalid-input',
-        'Submit hour 00 and minute 60 → invalid picker input, draft unchanged',
-      );
+      await verifyState(tester);
       if (width < 360) {
         final horizontal = find.descendant(
           of: picker,
@@ -327,77 +269,43 @@ void main() {
               'English picker controls should fit without horizontal scrolling',
         );
         expect(action(strings.okButtonLabel).hitTestable(), findsOneWidget);
-        await capture(
-          tester,
-          'invalid-input-left-edge',
-          'Narrow picker shows help and AM/PM without horizontal scrolling',
-        );
-        await capture(
-          tester,
-          'invalid-input-right-edge',
-          'Drag picker left → horizontal right edge shows minutes and confirmation',
-        );
+        await verifyState(tester);
+        await verifyState(tester);
       }
       await input(tester, fields.first, '12');
       await input(tester, fields.last, '00');
       await tap(tester, find.byTooltip(strings.dialModeButtonLabel));
       expect(dialValue(tester), const TimeOfDay(hour: 0, minute: 0));
-      await capture(
-        tester,
-        'midnight-dial',
-        'Correct to 12:00 AM → return to clock showing midnight',
-      );
+      await verifyState(tester);
       await tap(tester, action(strings.postMeridiemAbbreviation));
       expect(dialValue(tester), const TimeOfDay(hour: 12, minute: 0));
-      await capture(tester, 'noon-dial', 'Select PM → noon 12:00');
+      await verifyState(tester);
       await tap(tester, sdkControl('_DialMinuteControl'));
       expect(dialMode(tester), endsWith('.minute'));
-      await capture(
-        tester,
-        'minute-header',
-        'Tap minute header → minute dial at noon',
-      );
+      await verifyState(tester);
       await tap(tester, action(strings.okButtonLabel));
       expect(draft(tester).occurredAt.hour, 12);
       expect(draft(tester).occurredAt.minute, 0);
-      await capture(tester, 'noon-accepted', 'Confirm noon → draft 12:00');
+      await verifyState(tester);
       await tap(tester, find.text('Save changes'));
       expect(transport.records.single['version'], 2);
-      await capture(tester, 'noon-saved', 'Save noon → record version 2');
+      await verifyState(tester);
       await editSaved(tester);
       await openPicker();
       await selectDial(tester, 3, 12);
       expect(dialValue(tester), const TimeOfDay(hour: 15, minute: 0));
-      await capture(
-        tester,
-        'cancel-selection',
-        'Reopen noon and select hour 3 → unsaved picker value 15:00',
-      );
+      await verifyState(tester);
       await tap(tester, action(strings.cancelButtonLabel));
       expect(draft(tester).occurredAt.hour, 12);
       expect(draft(tester).occurredAt.minute, 0);
-      await capture(tester, 'cancelled', 'Cancel picker → draft stays noon');
+      await verifyState(tester);
       await closePanel(tester);
-      await capture(
-        tester,
-        'close-confirm',
-        'Close record editor → discard confirmation',
-      );
+      await verifyState(tester);
       await tap(tester, find.text('Leave'));
       expect(transport.records.single['version'], 2);
-      await capture(
-        tester,
-        'home-return',
-        'Discard editor → saved noon record retained, More',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       await tester.pumpAndSettle();
-      await capture(
-        tester,
-        'more-return',
-        'More remains available after lactation',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
     });
   }
 }

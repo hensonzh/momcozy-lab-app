@@ -11,14 +11,21 @@ import '../../../shared/design_system/momcozy_motion.dart';
 import '../../../shared/design_system/momcozy_text_roles.dart';
 import '../../../shared/widgets/mom_settings_widgets.dart';
 import '../../../shared/widgets/mom_companion_widgets.dart';
+import 'chat_first_more_copy.dart';
 
 /// The fifth tab is an account surface. Health records belong in
 /// Me or Baby; More must not become another clinical profile store.
 class MorePage extends StatefulWidget {
-  const MorePage({super.key, required this.onLogout, this.onDeleteAccount});
+  const MorePage({
+    super.key,
+    required this.onLogout,
+    this.onDeleteAccount,
+    this.showChatFirstLinks = false,
+  });
 
   final Future<void> Function()? onLogout;
   final Future<void> Function()? onDeleteAccount;
+  final bool showChatFirstLinks;
 
   @override
   State<MorePage> createState() => _MorePageState();
@@ -106,16 +113,51 @@ class _MorePageState extends State<MorePage> {
           Semantics(
             header: true,
             child: Text(
-              'More',
+              widget.showChatFirstLinks ? ChatFirstMoreCopy.title : 'More',
               style: MomHomeTokens.text(26, weight: FontWeight.w700),
             ),
           ),
           const SizedBox(height: 22),
           Semantics(
-            label: 'Account information',
-            child: _AccountCard(name: name, email: email, loading: loading),
+            label: widget.showChatFirstLinks
+                ? ChatFirstMoreCopy.accountInfo
+                : 'Account information',
+            child: _AccountCard(
+              name: name,
+              email: email,
+              loading: loading,
+              chatFirst: widget.showChatFirstLinks,
+            ),
           ),
           const SizedBox(height: 16),
+          if (widget.showChatFirstLinks) ...[
+            MomHomeSurface(
+              gradient: const LinearGradient(
+                colors: [MomHomeTokens.surface, MomHomeTokens.surface],
+              ),
+              border: MomHomeTokens.border,
+              child: Column(
+                children: [
+                  ListTile(
+                    key: const ValueKey('more-account-details'),
+                    leading: const Icon(Icons.manage_accounts_outlined),
+                    title: const Text(ChatFirstMoreCopy.accountDetails),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push('/account'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    key: const ValueKey('more-privacy'),
+                    leading: const Icon(Icons.privacy_tip_outlined),
+                    title: const Text(ChatFirstMoreCopy.privacy),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push('/privacy'),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           TextButton(
             key: const ValueKey('more-logout'),
             onPressed: loading || _deleting || widget.onLogout == null
@@ -124,7 +166,9 @@ class _MorePageState extends State<MorePage> {
                     final messenger = ScaffoldMessenger.of(context);
                     try {
                       await widget.onLogout!();
+                      if (context.mounted) context.go('/login');
                     } catch (_) {
+                      if (!messenger.mounted) return;
                       messenger.showSnackBar(
                         SnackBar(
                           behavior: SnackBarBehavior.floating,
@@ -137,7 +181,9 @@ class _MorePageState extends State<MorePage> {
                             side: const BorderSide(color: MomHomeTokens.border),
                           ),
                           content: Text(
-                            'Sign-out could not finish. Reconnect and try again.',
+                            widget.showChatFirstLinks
+                                ? ChatFirstMoreCopy.signOutFailed
+                                : 'Sign-out could not finish. Reconnect and try again.',
                             style: MomHomeTokens.text(
                               13,
                               color: MomHomeTokens.surface,
@@ -147,7 +193,6 @@ class _MorePageState extends State<MorePage> {
                         ),
                       );
                     }
-                    if (context.mounted) context.go('/login');
                   },
             style: TextButton.styleFrom(
               alignment: Alignment.centerLeft,
@@ -164,11 +209,15 @@ class _MorePageState extends State<MorePage> {
               minimumSize: const Size.fromHeight(52),
               textStyle: MomHomeTokens.text(14, weight: FontWeight.w600),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.logout_rounded, size: 19),
-                SizedBox(width: 12),
-                Text('Sign out'),
+                const Icon(Icons.logout_rounded, size: 19),
+                const SizedBox(width: 12),
+                Text(
+                  widget.showChatFirstLinks
+                      ? ChatFirstMoreCopy.signOut
+                      : 'Sign out',
+                ),
               ],
             ),
           ),
@@ -185,7 +234,9 @@ class _MorePageState extends State<MorePage> {
                 spacing: 8,
                 children: [
                   Text(
-                    'Delete account',
+                    widget.showChatFirstLinks
+                        ? ChatFirstMoreCopy.deleteAccount
+                        : 'Delete account',
                     style: MomHomeTokens.text(
                       14,
                       weight: FontWeight.w700,
@@ -193,7 +244,9 @@ class _MorePageState extends State<MorePage> {
                     ),
                   ),
                   Text(
-                    'Your access will end immediately. Account identifiers are removed and a request is created to erase associated data. Some records may require retention.',
+                    widget.showChatFirstLinks
+                        ? ChatFirstMoreCopy.deleteDescription
+                        : 'Your access will end immediately. Account identifiers are removed and a request is created to erase associated data. Some records may require retention.',
                     style: MomHomeTokens.text(
                       12,
                       color: MomHomeTokens.secondary,
@@ -214,11 +267,17 @@ class _MorePageState extends State<MorePage> {
                         weight: FontWeight.w600,
                       ),
                     ),
-                    child: const Text('Request account deletion'),
+                    child: Text(
+                      widget.showChatFirstLinks
+                          ? ChatFirstMoreCopy.requestDeletion
+                          : 'Request account deletion',
+                    ),
                   ),
                   if (_deleting)
-                    const LinearProgressIndicator(
-                      semanticsLabel: 'Deleting account',
+                    LinearProgressIndicator(
+                      semanticsLabel: widget.showChatFirstLinks
+                          ? ChatFirstMoreCopy.deleting
+                          : 'Deleting account',
                     ),
                   if (_deleteMessage != null)
                     Semantics(
@@ -248,16 +307,28 @@ class _MorePageState extends State<MorePage> {
       context: context,
       animationStyle: MomCozyMotion.animationStyle(context),
       builder: (context) => MomSettingsDialog(
-        title: 'Delete your account?',
-        content: const Text(
-          'You will be signed out on every device and lose access to this account. Data erasure is processed separately. This cannot be undone.',
+        title: widget.showChatFirstLinks
+            ? ChatFirstMoreCopy.deleteDialogTitle
+            : 'Delete your account?',
+        content: Text(
+          widget.showChatFirstLinks
+              ? ChatFirstMoreCopy.deleteDialogBody
+              : 'You will be signed out on every device and lose access to this account. Data erasure is processed separately. This cannot be undone.',
         ),
         primaryAction: FilledButton(
           key: const ValueKey('account-confirm-delete'),
           style: FilledButton.styleFrom(backgroundColor: MomCozyColors.danger),
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Delete account', textAlign: TextAlign.center),
+          child: Text(
+            widget.showChatFirstLinks
+                ? ChatFirstMoreCopy.deleteAccount
+                : 'Delete account',
+            textAlign: TextAlign.center,
+          ),
         ),
+        cancelLabel: widget.showChatFirstLinks
+            ? ChatFirstMoreCopy.cancel
+            : 'Cancel',
         onCancel: () => Navigator.pop(context, false),
       ),
     );
@@ -270,15 +341,21 @@ class _MorePageState extends State<MorePage> {
     try {
       await widget.onDeleteAccount!();
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Account access removed. Your data erasure request is pending.',
+            widget.showChatFirstLinks
+                ? ChatFirstMoreCopy.deleteSuccess
+                : 'Account access removed. Your data erasure request is pending.',
           ),
         ),
       );
     } catch (error) {
       if (mounted) {
-        setState(() => _deleteMessage = accountAuthErrorText(error));
+        setState(
+          () => _deleteMessage = widget.showChatFirstLinks
+              ? ChatFirstMoreCopy.deleteFailed
+              : accountAuthErrorText(error),
+        );
       }
     } finally {
       if (mounted) setState(() => _deleting = false);
@@ -291,14 +368,20 @@ class _AccountCard extends StatelessWidget {
     required this.name,
     required this.email,
     required this.loading,
+    this.chatFirst = false,
   });
   final String name;
   final String email;
   final bool loading;
+  final bool chatFirst;
 
   @override
   Widget build(BuildContext context) {
-    final displayName = name.trim().isNotEmpty ? name.trim() : 'My account';
+    final displayName = name.trim().isNotEmpty
+        ? name.trim()
+        : chatFirst
+        ? ChatFirstMoreCopy.accountTitle
+        : 'My account';
     final initial = name
         .trim()
         .split(RegExp(r'\s+'))
@@ -365,9 +448,13 @@ class _AccountCard extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   loading
-                      ? 'Loading account…'
+                      ? chatFirst
+                            ? ChatFirstMoreCopy.accountLoading
+                            : 'Loading account…'
                       : email.isEmpty
-                      ? 'Manage your account information'
+                      ? chatFirst
+                            ? ChatFirstMoreCopy.accountEmpty
+                            : 'Manage your account information'
                       : email,
                   style: MomHomeTokens.text(
                     12,

@@ -9,7 +9,23 @@ from unittest.mock import call, patch
 from sys import path
 
 path.insert(0, str(Path(__file__).resolve().parents[1]))
-from local_dev_refresh_emulator import account_from_output, center_of, find_node, is_login_form, latin_keyboard, nodes_from_xml, type_text, wait_for, wait_for_field_focus, local_onboarding_payload, ensure_onboarding
+from local_dev_refresh_emulator import (
+    account_from_output,
+    center_of,
+    exact_labeled_node,
+    find_node,
+    is_login_form,
+    latin_keyboard,
+    labeled_node,
+    nodes_from_xml,
+    select_mother_flow,
+    type_text,
+    verify_chat_first_role,
+    verify_fresh_chat_first,
+    verify_mother_facts,
+    wait_for,
+    wait_for_field_focus,
+)
 
 
 UI = '''<hierarchy><node class="android.view.View" content-desc="Welcome back" bounds="[0,0][100,100]"/>
@@ -19,6 +35,22 @@ UI = '''<hierarchy><node class="android.view.View" content-desc="Welcome back" b
 
 
 class RefreshEmulatorTest(unittest.TestCase):
+    def test_baby_knowledge_smoke_checks_unsent_draft_on_conversation_return(self) -> None:
+        source = (Path(__file__).resolve().parents[1] / "local_dev_refresh_emulator.py").read_text()
+        self.assertIn('tap_label(device, "带着问题去对话", exact=True)', source)
+        self.assertIn('node.get("class") == "android.widget.EditText"', source)
+        self.assertIn('"unsent baby-knowledge draft"', source)
+        self.assertIn('screenshot(device, "baby-knowledge-draft.png")', source)
+
+    def test_knowledge_row_uses_combined_accessibility_label(self) -> None:
+        nodes = nodes_from_xml(
+            '<hierarchy><node class="android.widget.Button" '
+            'content-desc="宝宝安全睡眠&#10;记录睡眠时长的同时，每次睡眠都要留意安全的睡眠环境。" '
+            'bounds="[53,975][1028,1188]"/></hierarchy>'
+        )
+        self.assertIsNone(exact_labeled_node(nodes, "宝宝安全睡眠"))
+        self.assertEqual(labeled_node(nodes, "宝宝安全睡眠"), nodes[0])
+
     def test_accessibility_selectors_find_fields_and_button(self) -> None:
         nodes = nodes_from_xml(UI)
         email = find_node(nodes, class_name="android.widget.EditText", hint="Email")
@@ -29,6 +61,11 @@ class RefreshEmulatorTest(unittest.TestCase):
         self.assertEqual(center_of(button), (60, 150))
         with self.assertRaisesRegex(RuntimeError, "More"):
             find_node(nodes, description="More")
+
+    def test_refresh_role_locator_matches_the_current_role_entry(self) -> None:
+        source = (Path(__file__).resolve().parents[1] / "local_dev_refresh_emulator.py").read_text()
+        self.assertIn('labeled_node(nodes, "你是宝宝的哪位家人？")', source)
+        self.assertNotIn('labeled_node(nodes, "你在家庭中的角色是？")', source)
 
     def test_login_form_detection_does_not_depend_on_brand_title(self) -> None:
         new_login = UI.replace("Welcome back", "Momcozy")
@@ -65,42 +102,62 @@ class RefreshEmulatorTest(unittest.TestCase):
             node = wait_for_field_focus("emulator-5554", "Email")
         self.assertEqual(node.get("focused"), "true")
 
-    def test_local_profile_confirmation_is_isolated_and_idempotent(self) -> None:
-        baby_id = "88f0e03b-6f87-43cb-b485-6339214a8f93"
-        calls = []
-
-        def request(method, path, token, payload=None):
-            calls.append((method, path, payload))
-            if path == "/v1/onboarding/me" and len(calls) == 1:
-                return {"status": "required", "profile_confirmed": False}
-            if path == "/v1/babies":
-                return {"items": [{"id": baby_id}]}
-            return {"status": "completed", "profile_confirmed": True, "primary_infant_id": baby_id}
-
-        with patch("local_dev_refresh_emulator.request_product_json", side_effect=request):
-            self.assertEqual(ensure_onboarding("token"), baby_id)
-        self.assertEqual([path for _, path, _ in calls], [
-            "/v1/onboarding/me", "/v1/onboarding/me/profile", "/v1/onboarding/me", "/v1/babies",
-        ])
-        self.assertEqual(calls[1][2]["feeding_methods"], ["direct"])
-        self.assertEqual(calls[1][2]["infant_count"], 1)
-
-    def test_confirmed_account_is_not_rewritten(self) -> None:
-        baby_id = "88f0e03b-6f87-43cb-b485-6339214a8f93"
-        with patch("local_dev_refresh_emulator.request_product_json", side_effect=[
-            {"status": "completed", "profile_confirmed": True, "primary_infant_id": baby_id},
-            {"items": [{"id": baby_id}]},
-        ]) as request:
-            self.assertEqual(ensure_onboarding("token"), baby_id)
+    def test_fresh_account_preflight_rejects_prefilled_role_or_baby(self) -> None:
+        fresh = {"status": "required", "can_enter_app": False, "role": None,
+                 "profile_scope": "none", "primary_infant_id": None}
+        legacy = {"status": "required", "profile_confirmed": False}
+        babies = {"items": []}
+        with patch("local_dev_refresh_emulator.request_product_json", side_effect=[fresh, legacy, babies]) as request:
+            verify_fresh_chat_first("token")
         self.assertEqual(request.call_args_list, [
+            call("GET", "/v1/onboarding/me/chat-first", "token"),
             call("GET", "/v1/onboarding/me", "token"),
             call("GET", "/v1/babies", "token"),
         ])
+        with patch("local_dev_refresh_emulator.request_product_json", return_value={**fresh, "role": "mother"}):
+            with self.assertRaisesRegex(RuntimeError, "not empty"):
+                verify_fresh_chat_first("token")
+        with patch("local_dev_refresh_emulator.request_product_json", side_effect=[fresh, legacy, {"items": [{"id": "unexpected"}]}]):
+            with self.assertRaisesRegex(RuntimeError, "prefilled baby"):
+                verify_fresh_chat_first("token")
 
-    def test_local_onboarding_date_is_not_future_in_utc(self) -> None:
-        payload = local_onboarding_payload()
-        self.assertLessEqual(payload["delivery_date"], date.today().isoformat())
-        self.assertEqual(payload["client_timezone_offset_minutes"], 0)
+    def test_saved_role_does_not_complete_legacy_or_fabricate_a_baby(self) -> None:
+        role = {"status": "completed", "can_enter_app": True, "role": "father",
+                "profile_scope": "chat_first", "primary_infant_id": None}
+        legacy = {"status": "required", "profile_confirmed": False}
+        with patch("local_dev_refresh_emulator.request_product_json", side_effect=[role, legacy, {"items": []}]) as request:
+            verify_chat_first_role("token", "father")
+        self.assertEqual([args.args[0] for args in request.call_args_list], ["GET"] * 3)
+        with patch("local_dev_refresh_emulator.request_product_json", return_value={**role, "role": "mother"}):
+            with self.assertRaisesRegex(RuntimeError, "role did not persist"):
+                verify_chat_first_role("token", "father")
+
+    def test_mother_profile_checks_only_actual_saved_answers(self) -> None:
+        selected = date(2026, 10, 15)
+        def read(method, endpoint, token):
+            self.assertEqual((method, token), ("GET", "token"))
+            if endpoint == "/v1/profile/me":
+                return {"age": 30, "preferred_name": None}
+            if endpoint == "/v1/profile/lactation":
+                return {"actual_delivery_date": selected.isoformat()}
+            self.assertTrue(endpoint.startswith("/v1/profile/me-experience?"))
+            return {"profile": {"gestation_weeks": 39, "gestation_days": 0,
+                                "baby_count": 1, "delivery_count": 2},
+                    "concerns": [{"note": "奶量够不够"}]}
+        with patch("local_dev_refresh_emulator.request_product_json", side_effect=read) as request:
+            verify_mother_facts("token", selected)
+        self.assertEqual([args.args[0] for args in request.call_args_list], ["GET"] * 3)
+
+    def test_mother_delivery_date_comes_from_the_picker_not_a_seed_payload(self) -> None:
+        with patch("local_dev_refresh_emulator.date") as clock, \
+                patch("local_dev_refresh_emulator.tap_label") as tap, \
+                patch("local_dev_refresh_emulator.wait_for", return_value={}), \
+                patch("local_dev_refresh_emulator.tap_node"), \
+                patch("local_dev_refresh_emulator.screenshot"):
+            clock.today.return_value = date(2026, 10, 16)
+            selected = select_mother_flow("emulator-5554")
+        self.assertEqual(selected, date(2026, 10, 15))
+        self.assertIn(call("emulator-5554", "选择分娩日期"), tap.call_args_list)
 
     def test_account_result_has_unique_local_email_and_safe_input_password(self) -> None:
         data = json.dumps({

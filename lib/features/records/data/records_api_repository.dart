@@ -460,6 +460,7 @@ class RecordsApiRepository
     required int days,
     bool includeToday = true,
     int? utcOffsetMinutes,
+    String? timezone,
   }) async {
     final response = await transport.getJson(
       milkTrendsEndpoint,
@@ -468,10 +469,13 @@ class RecordsApiRepository
         'days': days,
         'include_today': includeToday,
         'utc_offset_minutes': ?utcOffsetMinutes,
+        'timezone': ?timezone,
       },
     );
     final records = response['items'];
-    if (records is! List) return const <MilkTrendDay>[];
+    if (records is! List) {
+      throw const FormatException('Invalid milk trend response.');
+    }
     return records
         .whereType<Map>()
         .map((record) => _milkTrendDay(Map<String, Object?>.from(record)))
@@ -683,10 +687,12 @@ MilkTrendDay? _milkTrendDay(Map<String, Object?> data) {
   final pumpedMilkVolumeMl = _double(data['pumped_milk_volume_ml']);
   final pumpingCount = _int(data['pumping_count']);
   final measuredOnly = data['measured_only'] ?? true;
+  final complete = data['complete'] ?? false;
   if (date == null ||
       pumpedMilkVolumeMl == null ||
       pumpingCount == null ||
-      measuredOnly is! bool) {
+      measuredOnly is! bool ||
+      complete is! bool) {
     throw const FormatException('Milk trend fields are invalid.');
   }
   return MilkTrendDay(
@@ -694,9 +700,10 @@ MilkTrendDay? _milkTrendDay(Map<String, Object?> data) {
     // The Product contract reports whether the aggregate contains only
     // explicitly measured records. A mixed aggregate cannot be presented as
     // an exact measured total, even though the wire value itself is numeric.
-    measuredVolumeMl: measuredOnly ? pumpedMilkVolumeMl : null,
+    measuredVolumeMl: measuredOnly && complete ? pumpedMilkVolumeMl : null,
     pumpingCount: pumpingCount,
-    measuredPumpingCount: measuredOnly ? pumpingCount : 0,
+    measuredPumpingCount: measuredOnly && complete ? pumpingCount : 0,
+    complete: complete,
   );
 }
 

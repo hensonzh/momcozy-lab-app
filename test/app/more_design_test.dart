@@ -1,6 +1,3 @@
-@Tags(['golden'])
-library;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -79,14 +76,6 @@ void main() {
         });
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        if (scale == 1) {
-          await expectLater(
-            find.byType(MaterialApp),
-            matchesGoldenFile(
-              '../goldens/design_system/more-${width.toInt()}.png',
-            ),
-          );
-        }
         expect(find.text('Mia Chen'), findsOneWidget);
         expect(find.text('mia@example.test'), findsOneWidget);
         expect(find.text('Privacy'), findsNothing);

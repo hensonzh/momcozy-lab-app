@@ -18,7 +18,7 @@ import 'package:momcozy_flutter_app/features/notifications/presentation/notifica
 import '../test/support/fixture_api_transport.dart';
 import '../test/support/notification_fakes.dart';
 
-// Run with scripts/capture-native-notification-permissions.py. The host only
+// Native permission integration is independent of retired UI capture tooling. The host only
 // responds to actual Android dialogs; business writes remain in this transport.
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../shared/design_system/momcozy_motion.dart';
 import '../../../domain/baby/baby_profile.dart';
 import '../../../domain/baby/baby_record.dart';
 import '../application/baby_record_editor_controller.dart';
@@ -17,6 +18,7 @@ Future<List<BabyRecord>?> showBabyRecordEditor(
   BabySleepRecord? activeSleep,
   DiaperKind? diaperKind,
   GrowthMetric growthMetric = GrowthMetric.weight,
+  bool chatFirstExperience = false,
 }) async {
   final controller = BabyRecordEditorController(
     repository: repository,
@@ -35,7 +37,10 @@ Future<List<BabyRecord>?> showBabyRecordEditor(
   try {
     final result = await showBabySheet<List<BabyRecord>>(
       context,
-      BabyRecordEditor(controller: controller),
+      BabyRecordEditor(
+        controller: controller,
+        chatFirstExperience: chatFirstExperience,
+      ),
     );
     // A dismissed sheet can still have a successfully committed snapshot.
     await controller.settled;
@@ -48,29 +53,42 @@ Future<List<BabyRecord>?> showBabyRecordEditor(
 }
 
 class BabyRecordEditor extends StatelessWidget {
-  const BabyRecordEditor({super.key, required this.controller});
+  const BabyRecordEditor({
+    super.key,
+    required this.controller,
+    this.chatFirstExperience = false,
+  });
   final BabyRecordEditorController controller;
+  final bool chatFirstExperience;
   @override
   Widget build(BuildContext context) => Theme(
     data: BabyDesign.theme(
       Theme.of(context),
-      reduceMotion: MediaQuery.disableAnimationsOf(context),
+      reduceMotion: MomCozyMotion.isReduced(context),
     ),
     child: AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
         final c = controller;
         final title = c.kind == BabyRecordKind.feeding
-            ? 'Log feeding'
+            ? chatFirstExperience
+                  ? '记录喂养'
+                  : 'Log feeding'
             : c.kind == BabyRecordKind.growth
-            ? 'Growth & development'
+            ? chatFirstExperience
+                  ? '记录生长'
+                  : 'Growth & development'
             : switch (c.dailyTab) {
-                BabyDailyTab.mental => 'Log mood after feeding',
-                BabyDailyTab.wet => 'Log wet diapers',
-                BabyDailyTab.stool => 'Log dirty diapers',
+                BabyDailyTab.mental =>
+                  chatFirstExperience ? '记录喂养后状态' : 'Log mood after feeding',
+                BabyDailyTab.wet =>
+                  chatFirstExperience ? '记录湿尿布' : 'Log wet diapers',
+                BabyDailyTab.stool =>
+                  chatFirstExperience ? '记录脏尿布' : 'Log dirty diapers',
               };
         return BabySheetBody(
           title: title,
+          closeTooltip: chatFirstExperience ? '关闭记录表单' : 'Close',
           bodyTop: c.isDaily && c.dailyTab == BabyDailyTab.stool ? 14 : 16,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -78,11 +96,17 @@ class BabyRecordEditor extends StatelessWidget {
             children: [
               if (c.isDaily)
                 BabyChoices(
-                  options: const {
-                    BabyDailyTab.mental: 'Mood',
-                    BabyDailyTab.wet: 'Wet diapers',
-                    BabyDailyTab.stool: 'Dirty diapers',
-                  },
+                  options: chatFirstExperience
+                      ? const {
+                          BabyDailyTab.mental: '喂养后状态',
+                          BabyDailyTab.wet: '湿尿布',
+                          BabyDailyTab.stool: '脏尿布',
+                        }
+                      : const {
+                          BabyDailyTab.mental: 'Mood',
+                          BabyDailyTab.wet: 'Wet diapers',
+                          BabyDailyTab.stool: 'Dirty diapers',
+                        },
                   selected: c.dailyTab,
                   onChanged: c.selectDailyTab,
                   columns: 3,
@@ -101,7 +125,10 @@ class BabyRecordEditor extends StatelessWidget {
                         : c.bottleSelected
                         ? 'bottle'
                         : c.feedingMethod?.name ?? 'empty',
-                    child: BabyRecordFields(controller: c),
+                    child: BabyRecordFields(
+                      controller: c,
+                      chatFirstExperience: chatFirstExperience,
+                    ),
                   ),
                 ),
               ),
@@ -115,7 +142,9 @@ class BabyRecordEditor extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
-                      'Could not save. Please try again.',
+                      chatFirstExperience
+                          ? '保存失败，请检查网络后重试。'
+                          : 'Could not save. Please try again.',
                       style: BabyDesign.text(13),
                     ),
                   ),
@@ -140,7 +169,15 @@ class BabyRecordEditor extends StatelessWidget {
                       }
                     }
                   : null,
-              child: BabyAnimatedLabel(c.busy ? 'Saving…' : 'Save'),
+              child: BabyAnimatedLabel(
+                c.busy
+                    ? chatFirstExperience
+                          ? '正在保存…'
+                          : 'Saving…'
+                    : chatFirstExperience
+                    ? '保存记录'
+                    : 'Save',
+              ),
             ),
           ),
         );

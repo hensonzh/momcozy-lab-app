@@ -32,6 +32,7 @@ REQUIRED_OPENAPI_PATHS = {
         "/v1/auth/logout",
         "/v1/files/upload",
         "/v1/onboarding/me",
+        "/v1/onboarding/me/chat-first",
         "/v1/onboarding/me/profile",
         "/v1/profile/lactation",
         "/v1/records/feeding",
@@ -58,13 +59,17 @@ REQUIRED_IDEMPOTENT_OPENAPI_OPERATIONS = {
 }
 REQUIRED_OPENAPI_OPERATIONS = {
     (PRODUCT_SERVICE, "GET", "/v1/onboarding/me"),
+    (PRODUCT_SERVICE, "GET", "/v1/onboarding/me/chat-first"),
+    (PRODUCT_SERVICE, "PUT", "/v1/onboarding/me/chat-first"),
     (PRODUCT_SERVICE, "PUT", "/v1/onboarding/me/profile"),
     (PRODUCT_SERVICE, "GET", "/v1/schedule"),
     (PRODUCT_SERVICE, "POST", "/v1/schedule/personal"),
     (PRODUCT_SERVICE, "PATCH", "/v1/schedule/personal/{task_id}"),
+    (PRODUCT_SERVICE, "POST", "/v1/realtime-voice-stream"),
 }
 REQUIRED_QUERY_KEYS = {
     (PRODUCT_SERVICE, "/v1/schedule"): {"start_date", "end_date", "timezone"},
+    (PRODUCT_SERVICE, "/v1/records/milk-trends"): {"start_date", "days", "timezone"},
     (
         AGENT_RUNTIME_SERVICE,
         "/v1/agent/runs/{run_id}/stream",
@@ -307,11 +312,63 @@ def _validate_mobile_wire_contracts(
         for field in sorted(required_fields - required):
             errors.append(f"POST {path}: server must require {field}")
 
+    voice_path = "/v1/realtime-voice-stream"
+    private_voice = operation(product, voice_path, "POST")
+    private_voice_schema = request(product, voice_path, "POST") if private_voice else {}
+    voice_body = private_voice.get("requestBody") if private_voice else None
+    if private_voice and (not isinstance(voice_body, dict)
+                          or voice_body.get("required") is not True
+                          or not private_voice_schema):
+        errors.append(f"POST {voice_path}: App requires a mandatory JSON body")
+    if private_voice_schema:
+        properties = private_voice_schema.get("properties")
+        fields = set(properties) if isinstance(properties, dict) else set()
+        required = set(_list(private_voice_schema.get("required")))
+        if "text" not in fields & required:
+            errors.append(f"POST {voice_path}: App requires non-null text in body")
+    if private_voice and any(
+        parameter.get("in") == "query" and parameter.get("name") == "text"
+        for parameter in _list(private_voice.get("parameters"))
+        if isinstance(parameter, dict)
+    ):
+        errors.append(f"POST {voice_path}: private text must not be in the URL")
+    if private_voice and not private_voice.get("security"):
+        errors.append(f"POST {voice_path}: bearer authentication is required")
+    if private_voice:
+        responses = private_voice.get("responses")
+        success = responses.get("200") if isinstance(responses, dict) else None
+        content = success.get("content") if isinstance(success, dict) else None
+        audio = content.get("audio/pcm") if isinstance(content, dict) else None
+        audio_schema = audio.get("schema") if isinstance(audio, dict) else None
+        if (not isinstance(audio_schema, dict)
+                or audio_schema.get("type") != "string"
+                or audio_schema.get("format") != "binary"
+                or "application/json" in content):
+            errors.append(f"POST {voice_path}: 200 must declare audio/pcm binary, not JSON")
+
     operation(product, "/v1/onboarding/me", "GET")
     operation(product, "/v1/onboarding/me/profile", "PUT")
     operation(agent, "/v1/agent/threads/{thread_id}/history", "GET")
     # The staging release smoke also lists the newly confirmed baby.
     operation(product, "/v1/babies", "GET")
+
+    product_components = product.get("components")
+    product_schemas = (
+        product_components.get("schemas") if isinstance(product_components, dict) else None
+    )
+    trend = (
+        product_schemas.get("MilkTrendDayRead")
+        if isinstance(product_schemas, dict)
+        else None
+    )
+    if not isinstance(trend, dict):
+        errors.append("MilkTrendDayRead: trend schema is missing")
+    else:
+        properties = trend.get("properties")
+        fields = set(properties) if isinstance(properties, dict) else set()
+        required = set(_list(trend.get("required")))
+        for field in sorted({"date", "pumped_milk_volume_ml", "pumping_count", "measured_only", "complete"} - (fields & required)):
+            errors.append(f"MilkTrendDayRead: App requires non-null {field}")
 
     components = agent.get("components")
     schemas = components.get("schemas") if isinstance(components, dict) else None

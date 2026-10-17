@@ -1,10 +1,12 @@
 # 宝宝首页：妈妈页风格重构交付
 
+> 旧版 UI 图片及生成证据已清退；本文保留原有未提交文字内容，失效的本地证据链接已解除，历史文件可从清退前的 Git 版本检索。
+
 宝宝首页已按 Figma 实现。入口仍是 `/baby`，统一了身份区、每日知识、今日状态、吃奶摘要、生长指标与曲线、睡眠监测预告、宝宝切换和保存反馈。记录编辑器仍沿用原业务入口，其独立重构列入下一阶段；本报告不表示整个 Goal 已完成。
 
 ## 设计与实现
 
-- [Figma 普通首页](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl?node-id=326-1086) · [大字号首页](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl?node-id=326-1236)。[28 个画板](figma-nodes.json)包括状态、字号和曲线选择参考，不是 28 个页面。画板先于 Flutter 实现建立；[设计读取](figma-design-context-0.json)、[实时节点核对](figma-live-verification.json)、[导出指纹](figma-artifacts.json)保留证据。
+- [Figma 普通首页](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl?node-id=326-1086) · [大字号首页](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl?node-id=326-1236)。28 个画板包括状态、字号和曲线选择参考，不是 28 个页面。画板先于 Flutter 实现建立；设计读取、实时节点核对、导出指纹保留证据。
 - 复用 MomHomeTokens、MomHomeSurface、MomHomeSectionHeader 和 momSettingsTheme。奶油背景、22 圆角卡片、14 间距、NotoSansSCHome 字体及玫瑰色操作保持一致。普通状态卡等高；大字号改为纵向卡片，知识标题使用完整可用宽度，喂养说明放在数值下方。
 - 曲线保留实际 WHO 数据、记录筛选与绘制计算。Figma 曲线展示布局与视觉关系，数值以 App 原计算为准；测量单位在实现中使用次级字号。缺少出生资料仍显示完善入口，不产生参考曲线。
 - 知识卡和阅读浮层通过 `useMomStyle` 显式采用新设计；其他调用方默认外观保持兼容。来源链接、内容边界及 Cozymate 跳转保持原逻辑。浮层关闭采用带“关闭”无障碍标签的图标，固定标题和底部操作，中间内容可滚动。
@@ -27,10 +29,10 @@
 
 ## 验证
 
-[新增回归](../../../test/modules/baby/baby_home_redesign_test.dart)先在旧首页因目标字体断言失败，再完成实现。[联合检查](joint-tests.log)为 19 个文件、182 项通过，覆盖宝宝首页、资料、原记录编辑器、记录仓库、日期、WHO 参考、保存撤销和原知识浮层。最后补足取消断言与图片解码等待后，[受影响的 30 项](final-affected-tests.log)通过；这 30 项包含在 182 项中，不重复计数。[静态分析](analyze.log)9 个文件无问题。
+新增回归先在旧首页因目标字体断言失败，再完成实现。联合检查为 19 个文件、182 项通过，覆盖宝宝首页、资料、原记录编辑器、记录仓库、日期、WHO 参考、保存撤销和原知识浮层。最后补足取消断言与图片解码等待后，受影响的 30 项通过；这 30 项包含在 182 项中，不重复计数。静态分析9 个文件无问题。
 
-[60 张运行视口](app-artifacts.json)包含 36 张本轮针对性画面和 24 张更新后的既有基准，普通宽度 320／390／430 与窄屏大字号由相应测试覆盖。已查看顶部、各分区、曲线、底部和浮层滚动末端；未发现布局溢出或操作遮挡。`app-review-1.jpg` 至 `app-review-5.jpg`、`figma-review-1.jpg` 至 `figma-review-4.jpg`保存视觉复核；两个旧基准中尚未解码的图片已通过测试等待修正，最终原图以 app-artifacts.json 为准。运行视口使用真实 Flutter 组件与隔离仓库，不等于线上设备发布验收。
+60 张运行视口包含 36 张本轮针对性画面和 24 张更新后的既有基准，普通宽度 320／390／430 与窄屏大字号由相应测试覆盖。已查看顶部、各分区、曲线、底部和浮层滚动末端；未发现布局溢出或操作遮挡。`app-review-1.jpg` 至 `app-review-5.jpg`、`figma-review-1.jpg` 至 `figma-review-4.jpg`保存视觉复核；两个旧基准中尚未解码的图片已通过测试等待修正，最终原图以 app-artifacts.json 为准。运行视口使用真实 Flutter 组件与隔离仓库，不等于线上设备发布验收。
 
-[源文件与行为核对](preservation-check.json)：734 个原始证据文件及最终 inventory manifest 均未改变；BabyHomeController 与本轮开始前逐字节相同；加载、记住宝宝、记录和历史回调忽略格式后相同，曲线记录筛选相同。[本轮实现差异](implementation.diff)相对 before/，避免把其他会话已有修改混入本轮成果。旧截图基准备份在 before-goldens/。
+源文件与行为核对：734 个原始证据文件及最终 inventory manifest 均未改变；BabyHomeController 与本轮开始前逐字节相同；加载、记住宝宝、记录和历史回调忽略格式后相同，曲线记录筛选相同。本轮实现差异相对 before/，避免把其他会话已有修改混入本轮成果。旧截图备份已按截图清理移除；需要追溯时可从清理前的 Git 版本恢复。
 
 下一阶段：宝宝记录历史及共享记录编辑器；随后复核已有无效路由与无入口动作评估画面，并对最终有限页面／浮层状态完成全局交付对照。无需重新盘点、补采或扩展截图矩阵。

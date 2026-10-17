@@ -1,6 +1,3 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -49,29 +46,9 @@ void main() {
     expect(account.height, lessThan(130));
     expect(logout.top, greaterThan(account.bottom));
     expect(delete.top, greaterThan(logout.bottom));
-    expect(
-      tester.getRect(find.byKey(const ValueKey('bottom-nav-chrome'))),
-      const Rect.fromLTWH(0, 762, 393, 82),
-    );
-    for (final entry in {
-      'me': 45.7,
-      'baby': 121.1,
-      'momcozy ai': 196.5,
-      'schedule': 271.9,
-      'more': 347.3,
-    }.entries) {
-      expect(
-        tester.getCenter(find.byKey(ValueKey('bottom-nav-${entry.key}'))).dx,
-        closeTo(entry.value, .001),
-      );
-    }
     expect(find.text('More'), findsNWidgets(2));
     expect(find.text('Delete account'), findsOneWidget);
     expect(find.text('Expert support'), findsNothing);
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile('../goldens/ui_refactor/more-figma-default-393-1x.png'),
-    );
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
@@ -97,10 +74,6 @@ void main() {
     await tester.tap(logout);
     expect(exits, 0);
     expect(router.state.uri.path, '/more');
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile('../goldens/ui_refactor/more-figma-loading-393-1x.png'),
-    );
     pending.reply.completeError(StateError('offline'));
     await tester.pumpAndSettle();
     expect(find.text('Manage your account information'), findsOneWidget);

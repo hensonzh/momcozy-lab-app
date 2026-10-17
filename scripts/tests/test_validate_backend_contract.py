@@ -111,6 +111,59 @@ class SplitBackendContractTest(unittest.TestCase):
         self.assertTrue(any("/v1/auth/change-password" in error for error in errors))
         self.assertTrue(any("AgentThreadRead" in error and "created_at" in error for error in errors))
 
+    def test_maternal_trend_requires_local_day_and_complete_aggregate_contract(self) -> None:
+        product = json.loads(PRODUCT_OPENAPI_PATH.read_text())
+        runtime = json.loads(AGENT_RUNTIME_OPENAPI_PATH.read_text())
+        self.assertEqual(
+            REQUIRED_QUERY_KEYS[(PRODUCT_SERVICE, "/v1/records/milk-trends")],
+            {"start_date", "days", "timezone"},
+        )
+        broken = deepcopy(product)
+        trend = broken["components"]["schemas"]["MilkTrendDayRead"]
+        trend["properties"].pop("complete")
+        trend["required"].remove("complete")
+        errors = _validate_mobile_wire_contracts(broken, runtime)
+        self.assertTrue(any("MilkTrendDayRead" in error and "complete" in error for error in errors))
+
+    def test_private_voice_stream_keeps_text_out_of_urls_and_requires_a_body(self) -> None:
+        product = json.loads(PRODUCT_OPENAPI_PATH.read_text())
+        runtime = json.loads(AGENT_RUNTIME_OPENAPI_PATH.read_text())
+        self.assertEqual(_validate_mobile_wire_contracts(product, runtime), [])
+
+        missing_post = deepcopy(product)
+        missing_post["paths"]["/v1/realtime-voice-stream"].pop("post")
+        self.assertTrue(any("POST /v1/realtime-voice-stream" in message
+                            for message in _validate_mobile_wire_contracts(missing_post, runtime)))
+
+        missing_body = deepcopy(product)
+        missing_body["paths"]["/v1/realtime-voice-stream"]["post"].pop("requestBody")
+        self.assertTrue(any("POST /v1/realtime-voice-stream" in message and "body" in message
+                            for message in _validate_mobile_wire_contracts(missing_body, runtime)))
+
+        text_in_url = deepcopy(product)
+        text_in_url["paths"]["/v1/realtime-voice-stream"]["post"]["parameters"] = [
+            {"name": "text", "in": "query", "required": True, "schema": {"type": "string"}},
+        ]
+        self.assertTrue(any("POST /v1/realtime-voice-stream" in message and "URL" in message
+                            for message in _validate_mobile_wire_contracts(text_in_url, runtime)))
+
+        optional_text = deepcopy(product)
+        optional_text["components"]["schemas"]["PrivateSpeechSynthesisRequest"]["required"].remove("text")
+        self.assertTrue(any("POST /v1/realtime-voice-stream" in message and "text" in message
+                            for message in _validate_mobile_wire_contracts(optional_text, runtime)))
+
+        wrong_media = deepcopy(product)
+        wrong_media["paths"]["/v1/realtime-voice-stream"]["post"]["responses"]["200"]["content"] = {
+            "application/json": {"schema": {"type": "object"}},
+        }
+        self.assertTrue(any("POST /v1/realtime-voice-stream" in message and "audio/pcm" in message
+                            for message in _validate_mobile_wire_contracts(wrong_media, runtime)))
+
+        no_auth = deepcopy(product)
+        no_auth["paths"]["/v1/realtime-voice-stream"]["post"].pop("security")
+        self.assertTrue(any("POST /v1/realtime-voice-stream" in message and "authentication" in message
+                            for message in _validate_mobile_wire_contracts(no_auth, runtime)))
+
     def test_mobile_wire_contract_accepts_current_snapshots(self) -> None:
         product = json.loads(PRODUCT_OPENAPI_PATH.read_text())
         runtime = json.loads(AGENT_RUNTIME_OPENAPI_PATH.read_text())

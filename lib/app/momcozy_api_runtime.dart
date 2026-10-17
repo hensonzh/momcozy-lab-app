@@ -475,9 +475,15 @@ class MomCozyApiRuntime {
     return AgentHubProfileRepository(transport: jsonTransport);
   }
 
-  AgentConversationApiRepository get agentConversationRepository {
-    return AgentConversationApiRepository(transport: agentJsonTransport);
-  }
+  AgentConversationApiRepository get agentConversationRepository =>
+      createAgentConversationRepository();
+
+  AgentConversationApiRepository createAgentConversationRepository({
+    bool identifyWelcomeBoundary = false,
+  }) => AgentConversationApiRepository(
+    transport: agentJsonTransport,
+    identifyWelcomeBoundary: identifyWelcomeBoundary,
+  );
 
   ScheduleRepository get scheduleRepository =>
       _scheduleRepository ??= ScheduleApiRepository(transport: jsonTransport);

@@ -1,10 +1,12 @@
 # 宝宝记录历史与共享编辑器交付
 
+> 旧版 UI 图片及生成证据已清退；本文保留原有未提交文字内容，失效的本地证据链接已解除，历史文件可从清退前的 Git 版本检索。
+
 宝宝记录历史及喂养、睡眠、尿便、生长、发育记录弹窗已按妈妈页设计体系完成 Figma 与 Flutter 实现。范围是最终清单中的 6 类页面状态和 8 类浮层状态；19 条原始证据、28 个设计画板及不同字号运行截图均不作为新增页面计数。整个 Goal 仍在进行。
 
 ## 设计与实现
 
-[历史页设计](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl?node-id=329-1086)、[喂养编辑器](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl?node-id=329-1199)、[大字号编辑器](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl?node-id=330-1804)先于相应 Flutter 实现完成。完整节点见 [figma-nodes.json](figma-nodes.json)，[设计读取](figma-design-context.json)、[最终实时核对](figma-live-verification.json)与[导出指纹](figma-artifacts.json)可追溯。
+[历史页设计](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl?node-id=329-1086)、[喂养编辑器](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl?node-id=329-1199)、[大字号编辑器](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl?node-id=330-1804)先于相应 Flutter 实现完成。完整节点见 figma-nodes.json，设计读取、最终实时核对与导出指纹可追溯。
 
 历史页将类型和月份组织为一张筛选卡，记录卡分离记录事实、发生时间和编辑／删除操作。编辑器统一奶油背景、白色表单卡、玫瑰色保存按钮、薄荷色选中状态与 Mom 字体。复用 MomSettingsCard、Mom ChoiceField、momSettingsTheme 和 MomHomeTokens。
 
@@ -23,10 +25,10 @@
 
 浮层的喂养、睡眠、尿布、生长、发育、编辑、校验、保存分别对应 Figma 的 feeding／nursing、sleep／sleep-active、wet／stool、growth、development、edit、validation、saving。baby_pages_test 覆盖五种记录、历史编辑删除恢复和窄屏键盘；baby_editor_states_test 覆盖亲喂可选时长、睡眠开始／结束、备注展开收起与未确认保存重试；baby_save_feedback_test 覆盖首页保存、校验、撤销和恢复。日期／时间测试在默认与 Mom 主题下断言选中绝对时间一致。
 
-[最终联合回归](joint-tests.log)：20 个测试文件、185 项通过，执行时未更新截图基准。[静态分析](analyze.log)：4 个生产文件与 3 个测试文件无问题；补充的编辑器测试文件见 [分析](final-editor-analyze.log)。前置失败与基准更新过程分别保存在 red-tests.log、joint-tests-initial.log、implementation-update.log、typography-update.log；更新基准本身不作为最终验收。随后补充生长非法值与挂起保存的同一操作用例，[编辑器复核](final-editor-tests.log)覆盖本文件 26 项，其中 25 项与联合回归重合，总计 186 个不同用例。
+最终联合回归：20 个测试文件、185 项通过，执行时未更新截图基准。静态分析：4 个生产文件与 3 个测试文件无问题；补充的编辑器测试文件见 分析。前置失败与基准更新过程分别保存在 red-tests.log、joint-tests-initial.log、implementation-update.log、typography-update.log；更新基准本身不作为最终验收。随后补充生长非法值与挂起保存的同一操作用例，编辑器复核覆盖本文件 26 项，其中 25 项与联合回归重合，总计 186 个不同用例。
 
-[68 张运行视口](app-artifacts.json)包含 35 张受影响既有基准和 33 张针对分页、大字号及滚动位置的新基准。已检查最终长表单及大字号标题；其余字号沿用同批回归。运行证据来自真实 Flutter 组件与隔离仓库，不是线上设备或发布验收。删除确认、放弃及日期时间选择沿用已有 Mom 主题系统控件。
+68 张运行视口包含 35 张受影响既有基准和 33 张针对分页、大字号及滚动位置的新基准。已检查最终长表单及大字号标题；其余字号沿用同批回归。运行证据来自真实 Flutter 组件与隔离仓库，不是线上设备或发布验收。删除确认、放弃及日期时间选择沿用已有 Mom 主题系统控件。
 
-[保留项核对](preservation-check.json)：两个业务控制器逐字节未变，19 张原始来源图与盘点 manifest 未变。[实现差异](implementation.diff)相对本轮 before/，避免混入其他会话修改；旧基准备份在 before-goldens/。保存、校验、撤销、数据归属和时间逻辑继续由原控制器处理。
+保留项核对：两个业务控制器逐字节未变，19 张原始来源图与盘点 manifest 未变。实现差异相对本轮 before/，避免混入其他会话修改；旧截图备份已按截图清理移除；需要追溯时可从清理前的 Git 版本恢复。保存、校验、撤销、数据归属和时间逻辑继续由原控制器处理。
 
 下一步复核最终清单中无效路由与无正常入口动作评估的已有截图，然后完成有限页面／浮层状态的全局交付对照，只补真实缺口。

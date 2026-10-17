@@ -196,7 +196,7 @@ class _ProductAssetVideoPlayerState extends State<ProductAssetVideoPlayer> {
           return _ProductAssetVideoFullscreenPage(controller: controller);
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          if (MediaQuery.disableAnimationsOf(context)) return child;
+          if (MomCozyMotion.isReduced(context)) return child;
           return FadeTransition(opacity: animation, child: child);
         },
       ),

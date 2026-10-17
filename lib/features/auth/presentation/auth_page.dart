@@ -856,7 +856,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
     final api = widget.runtimeController.runtime.authRepository;
     try {
       await widget.runtimeController.saveAuthenticatedSession(
-        tokens.toSession(babyId: 'demo-baby', locale: 'en-US'),
+        tokens.toSession(babyId: '', locale: 'en-US'),
         sessionStore: widget.sessionStore,
       );
       _password.clear();

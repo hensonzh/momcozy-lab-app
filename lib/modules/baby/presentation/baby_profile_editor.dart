@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../domain/baby/baby_profile.dart';
 import '../../../domain/shared/local_date.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/design_system/momcozy_motion.dart';
 import '../../../shared/widgets/mom_settings_widgets.dart';
 import '../../../shared/widgets/date_time_picker.dart';
 import '../application/baby_profile_controller.dart';
@@ -16,6 +17,7 @@ Future<BabyProfile?> showBabyProfileEditor(
   BabyProfile? profile,
   LocalDate? deliveryDate,
   bool closeOnSave = false,
+  bool chatFirstExperience = false,
 }) async {
   final c = BabyProfileController(
     repository: repository,
@@ -27,8 +29,11 @@ Future<BabyProfile?> showBabyProfileEditor(
   try {
     await Navigator.of(context, rootNavigator: true).push<void>(
       MaterialPageRoute(
-        builder: (_) =>
-            BabyProfileEditor(controller: c, closeOnSave: closeOnSave),
+        builder: (_) => BabyProfileEditor(
+          controller: c,
+          closeOnSave: closeOnSave,
+          chatFirstExperience: chatFirstExperience,
+        ),
       ),
     );
     return c.hasSaved ? c.savedProfile : null;
@@ -42,9 +47,11 @@ class BabyProfileEditor extends StatefulWidget {
     super.key,
     required this.controller,
     this.closeOnSave = false,
+    this.chatFirstExperience = false,
   });
   final BabyProfileController controller;
   final bool closeOnSave;
+  final bool chatFirstExperience;
   @override
   State<BabyProfileEditor> createState() => _BabyProfileEditorState();
 }
@@ -68,7 +75,8 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
       initialDate: DateTime(initial.year, initial.month, initial.day),
       firstDate: DateTime(1900),
       lastDate: DateTime(today.year, today.month, today.day),
-      helpText: 'Date of birth',
+      helpText: widget.chatFirstExperience ? '宝宝出生日期' : 'Date of birth',
+      locale: widget.chatFirstExperience ? const Locale('zh', 'CN') : null,
       theme: BabyDesign.theme(Theme.of(context)),
     );
     if (mounted && selected != null) {
@@ -86,7 +94,7 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
   Widget build(BuildContext context) => Theme(
     data: BabyDesign.theme(
       Theme.of(context),
-      reduceMotion: MediaQuery.disableAnimationsOf(context),
+      reduceMotion: MomCozyMotion.isReduced(context),
     ),
     child: AnimatedBuilder(
       animation: widget.controller,
@@ -106,7 +114,7 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                   : 60,
               leading: BabyPressFeedback(
                 child: IconButton(
-                  tooltip: 'Back',
+                  tooltip: widget.chatFirstExperience ? '返回' : 'Back',
                   onPressed: c.busy ? null : () => Navigator.pop(context),
                   icon: BabyDesign.asset('Back', width: 20, height: 20),
                   color: MomHomeTokens.rose,
@@ -116,7 +124,13 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
               title: SizedBox(
                 width: MediaQuery.sizeOf(context).width - 112,
                 child: Text(
-                  savedName.isEmpty ? 'Add a baby' : 'Baby profile',
+                  savedName.isEmpty
+                      ? widget.chatFirstExperience
+                            ? '添加宝宝'
+                            : 'Add a baby'
+                      : widget.chatFirstExperience
+                      ? '宝宝资料'
+                      : 'Baby profile',
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   softWrap: true,
@@ -141,43 +155,61 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                           MomSettingsCard(
                             borderInside: true,
                             children: [
-                              const BabyLabel('Baby\'s name', required: true),
-                              TextField(
-                                controller: name,
-                                enabled: c.editable,
-                                maxLength: 120,
-                                onChanged: c.setName,
-                                style: BabyDesign.text(
-                                  16,
-                                  color: c.busy
-                                      ? const Color(0xff99918c)
-                                      : MomHomeTokens.ink,
-                                ),
-                                decoration: InputDecoration(
-                                  fillColor: c.busy
-                                      ? const Color(0xfff2edeb)
-                                      : MomHomeTokens.surface,
-                                  disabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: const BorderSide(
-                                      color: MomHomeTokens.border,
+                              BabyLabel(
+                                widget.chatFirstExperience
+                                    ? '宝宝称呼'
+                                    : 'Baby\'s name',
+                                required: true,
+                              ),
+                              Semantics(
+                                container: true,
+                                label: widget.chatFirstExperience
+                                    ? '宝宝称呼'
+                                    : 'Baby\'s name',
+                                child: TextField(
+                                  controller: name,
+                                  enabled: c.editable,
+                                  maxLength: 120,
+                                  onChanged: c.setName,
+                                  style: BabyDesign.text(
+                                    16,
+                                    color: c.busy
+                                        ? const Color(0xff99918c)
+                                        : MomHomeTokens.ink,
+                                  ),
+                                  decoration: InputDecoration(
+                                    fillColor: c.busy
+                                        ? const Color(0xfff2edeb)
+                                        : MomHomeTokens.surface,
+                                    disabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                      borderSide: const BorderSide(
+                                        color: MomHomeTokens.border,
+                                      ),
                                     ),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 11.2,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: const BorderSide(
-                                      color: MomHomeTokens.border,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 11.2,
                                     ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                      borderSide: const BorderSide(
+                                        color: MomHomeTokens.border,
+                                      ),
+                                    ),
+                                    hintText: widget.chatFirstExperience
+                                        ? '如何称呼宝宝？'
+                                        : 'What do you call your baby?',
+                                    counterText: '',
                                   ),
-                                  hintText: 'What do you call your baby?',
-                                  counterText: '',
                                 ),
                               ),
-                              const BabyLabel('Date of birth', required: true),
+                              BabyLabel(
+                                widget.chatFirstExperience
+                                    ? '出生日期'
+                                    : 'Date of birth',
+                                required: true,
+                              ),
                               if (c.deliveryDate == null)
                                 OutlinedButton(
                                   onPressed: c.editable
@@ -190,7 +222,9 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                                   ),
                                   child: Text(
                                     c.birthDate?.toString() ??
-                                        'Choose date of birth',
+                                        (widget.chatFirstExperience
+                                            ? '选择出生日期'
+                                            : 'Choose date of birth'),
                                   ),
                                 )
                               else
@@ -201,7 +235,11 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                               if (c.deliveryDate != null || c.birthDate == null)
                                 Text(
                                   c.deliveryDate != null
-                                      ? 'Same as the delivery date in your profile'
+                                      ? widget.chatFirstExperience
+                                            ? '与妈妈资料中的分娩日期相同'
+                                            : 'Same as the delivery date in your profile'
+                                      : widget.chatFirstExperience
+                                      ? '请选择宝宝的出生日期'
                                       : 'Choose a date to complete your baby’s profile',
                                   style: BabyDesign.text(
                                     13,
@@ -213,12 +251,16 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                           MomSettingsCard(
                             borderInside: true,
                             children: [
-                              const BabyLabel(
-                                'Sex recorded at birth',
+                              BabyLabel(
+                                widget.chatFirstExperience
+                                    ? '出生时登记性别'
+                                    : 'Sex recorded at birth',
                                 required: true,
                               ),
                               Text(
-                                'Used to show the appropriate growth reference range',
+                                widget.chatFirstExperience
+                                    ? '用于匹配相应的生长参考范围'
+                                    : 'Used to show the appropriate growth reference range',
                                 style: BabyDesign.text(
                                   13,
                                   color: MomHomeTokens.secondary,
@@ -233,10 +275,15 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                                 child: BabyChoices(
                                   height: 44,
                                   radius: 16,
-                                  options: const {
-                                    BabySex.female: 'Girl',
-                                    BabySex.male: 'Boy',
-                                  },
+                                  options: widget.chatFirstExperience
+                                      ? const {
+                                          BabySex.female: '女孩',
+                                          BabySex.male: '男孩',
+                                        }
+                                      : const {
+                                          BabySex.female: 'Girl',
+                                          BabySex.male: 'Boy',
+                                        },
                                   selected: c.sex,
                                   enabled: c.editable,
                                   onChanged: c.setSex,
@@ -245,10 +292,24 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                             ],
                           ),
                           if (c.validation != null)
-                            Text(c.validation!, style: BabyDesign.text(13)),
+                            Text(
+                              widget.chatFirstExperience
+                                  ? switch (c.validation!) {
+                                      "Enter your baby's name." => '请输入宝宝称呼。',
+                                      'The name cannot exceed 120 characters.' =>
+                                        '宝宝称呼不能超过 120 个字符。',
+                                      'The date of birth cannot be in the future.' =>
+                                        '出生日期不能晚于今天。',
+                                      _ => '请检查宝宝资料后重试。',
+                                    }
+                                  : c.validation!,
+                              style: BabyDesign.text(13),
+                            ),
                           if (c.failure != null)
                             Text(
-                              'Could not save. Please try again.',
+                              widget.chatFirstExperience
+                                  ? '暂时无法保存，请检查网络后重试。'
+                                  : 'Could not save. Please try again.',
                               style: BabyDesign.text(13),
                             ),
                         ],
@@ -289,9 +350,15 @@ class _BabyProfileEditorState extends State<BabyProfileEditor> {
                               : null,
                           child: BabyAnimatedLabel(
                             c.busy
-                                ? 'Saving…'
+                                ? widget.chatFirstExperience
+                                      ? '保存中…'
+                                      : 'Saving…'
                                 : saved && !c.dirty
-                                ? 'Saved'
+                                ? widget.chatFirstExperience
+                                      ? '已保存'
+                                      : 'Saved'
+                                : widget.chatFirstExperience
+                                ? '保存宝宝资料'
                                 : 'Save baby profile',
                           ),
                         ),

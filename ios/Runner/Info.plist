@@ -29,7 +29,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Used for video consultations, camera checks, and photos or videos you choose to share.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Used for video consultations, microphone checks, and voice messages you choose to send.</string>
+	<string>Used for video consultations, microphone checks, and local crying recordings you choose to create. Crying recordings are not uploaded by this feature.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to choose an avatar or a parenting-related image to create your digital avatar or share with Momcozy AI.</string>
 	<key>FirebaseMessagingAutoInitEnabled</key>

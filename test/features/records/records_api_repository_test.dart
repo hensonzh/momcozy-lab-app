@@ -586,12 +586,14 @@ void main() {
             'pumped_milk_volume_ml': 0,
             'pumping_count': 2,
             'measured_only': false,
+            'complete': true,
           },
           {
             'date': '2026-07-02',
             'pumped_milk_volume_ml': 210.25,
             'pumping_count': 3,
             'measured_only': true,
+            'complete': true,
           },
         ],
       });
@@ -617,6 +619,71 @@ void main() {
       expect(trends.last.pumpingCount, 3);
       expect(trends.last.measuredPumpingCount, 3);
     });
+
+    test(
+      'requests IANA-local days and withholds capped or unmeasured totals',
+      () async {
+        final transport = FixtureApiJsonTransport({
+          'items': [
+            {
+              'date': '2026-10-15',
+              'pumped_milk_volume_ml': 0,
+              'pumping_count': 0,
+              'measured_only': true,
+              'complete': true,
+            },
+            {
+              'date': '2026-10-16',
+              'pumped_milk_volume_ml': 45,
+              'pumping_count': 2,
+              'measured_only': false,
+              'complete': true,
+            },
+            {
+              'date': '2026-10-17',
+              'pumped_milk_volume_ml': 900,
+              'pumping_count': 1000,
+              'measured_only': true,
+              'complete': false,
+            },
+          ],
+        });
+        final days = await RecordsApiRepository(transport: transport)
+            .fetchMilkTrends(
+              startDate: DateTime(2026, 10, 15),
+              days: 3,
+              timezone: 'Asia/Shanghai',
+            );
+        expect(transport.lastQuery, {
+          'start_date': '2026-10-15',
+          'days': 3,
+          'include_today': true,
+          'timezone': 'Asia/Shanghai',
+        });
+        expect(days[0].measuredVolumeMl, 0);
+        expect(days[0].complete, isTrue);
+        expect(days[1].pumpingCount, 2);
+        expect(days[1].measuredVolumeMl, isNull);
+        expect(days[2].complete, isFalse);
+        expect(days[2].measuredVolumeMl, isNull);
+
+        final oldBackend = FixtureApiJsonTransport({
+          'items': [
+            {
+              'date': '2026-10-16',
+              'pumped_milk_volume_ml': 45,
+              'pumping_count': 1,
+              'measured_only': true,
+            },
+          ],
+        });
+        final legacyDay = (await RecordsApiRepository(
+          transport: oldBackend,
+        ).fetchMilkTrends(startDate: DateTime(2026, 10, 16), days: 1)).single;
+        expect(legacyDay.complete, isFalse);
+        expect(legacyDay.measuredVolumeMl, isNull);
+      },
+    );
 
     test('rejects legacy milk trend field aliases', () async {
       final transport = FixtureApiJsonTransport({

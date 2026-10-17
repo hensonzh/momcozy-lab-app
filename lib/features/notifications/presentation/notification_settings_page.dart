@@ -11,8 +11,13 @@ import 'notification_coordinator.dart';
 import 'notification_permission_dialogs.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
-  const NotificationSettingsPage({super.key, required this.coordinator});
+  const NotificationSettingsPage({
+    super.key,
+    required this.coordinator,
+    this.onBack,
+  });
   final NotificationCoordinator? coordinator;
+  final VoidCallback? onBack;
   @override
   State<NotificationSettingsPage> createState() =>
       _NotificationSettingsPageState();
@@ -85,10 +90,11 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
             maxLines: 2,
             style: MomHomeTokens.text(20, weight: FontWeight.w700),
           ),
-          leading: Navigator.canPop(context)
+          leading: widget.onBack != null || Navigator.canPop(context)
               ? IconButton(
+                  key: const ValueKey('notification-settings-back'),
                   tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                  onPressed: () => Navigator.maybePop(context),
+                  onPressed: widget.onBack ?? () => Navigator.maybePop(context),
                   icon: SvgPicture.asset(
                     'assets/images/me_baby_overview/icons/back-button.svg',
                     width: 36,

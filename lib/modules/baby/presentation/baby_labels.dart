@@ -20,6 +20,35 @@ String growthMetricLabel(GrowthMetric metric) => switch (metric) {
   GrowthMetric.length => 'Length',
   GrowthMetric.headCircumference => 'Head circumference',
 };
+String growthMetricLabelZh(GrowthMetric metric) => switch (metric) {
+  GrowthMetric.weight => '体重',
+  GrowthMetric.length => '身长',
+  GrowthMetric.headCircumference => '头围',
+};
+const babyMentalLabelsZh = {
+  BabyMentalState.content: '平静满足',
+  BabyMentalState.active: '清醒活跃',
+  BabyMentalState.crying: '烦躁或哭闹',
+  BabyMentalState.drowsy: '困倦',
+};
+const stoolColorLabelsZh = {
+  StoolColor.yellow: '黄色',
+  StoolColor.yellowBrown: '黄褐色',
+  StoolColor.green: '绿色',
+  StoolColor.brown: '棕色',
+  StoolColor.black: '黑色',
+  StoolColor.red: '红色',
+  StoolColor.pale: '浅色或灰白色',
+  StoolColor.unsure: '不确定',
+};
+const stoolConsistencyLabelsZh = {
+  StoolConsistency.watery: '水样',
+  StoolConsistency.loose: '稀软',
+  StoolConsistency.pasty: '糊状',
+  StoolConsistency.formed: '成形',
+  StoolConsistency.hard: '偏硬',
+  StoolConsistency.unsure: '不确定',
+};
 String babyAgeLabel(BabyProfile baby, LocalDate today) {
   if (baby.ageDays(today) == null) return 'Age not set';
   return formatBabyAge(baby.birthDate, today);

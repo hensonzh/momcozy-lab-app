@@ -42,14 +42,19 @@ class AgentConversationMessage {
     required this.role,
     required this.content,
     this.id,
+    this.runId,
     this.sequence,
     this.createdAt,
     this.runState,
     this.images = const <AgentStreamImageInput>[],
     this.files = const <AgentStreamFileInput>[],
+    this.isChatFirstWelcome = false,
+    this.isChatFirstPoopTrigger = false,
+    this.chatFirstWelcomeKey,
   });
 
   final String? id;
+  final String? runId;
   final int? sequence;
   final DateTime? createdAt;
   final AgentConversationMessageRole role;
@@ -57,6 +62,9 @@ class AgentConversationMessage {
   final AgentStreamRunState? runState;
   final List<AgentStreamImageInput> images;
   final List<AgentStreamFileInput> files;
+  final bool isChatFirstWelcome;
+  final bool isChatFirstPoopTrigger;
+  final String? chatFirstWelcomeKey;
 }
 
 class AgentConversationHistory {
@@ -66,6 +74,8 @@ class AgentConversationHistory {
     required this.currentState,
     this.nextBeforeSequence,
     this.latestMessageCreatedAt,
+    this.currentRunIsChatFirstWelcome = false,
+    this.currentWelcomeKey,
   });
 
   final AgentConversationSummary thread;
@@ -73,6 +83,8 @@ class AgentConversationHistory {
   final AgentStreamRunState currentState;
   final int? nextBeforeSequence;
   final DateTime? latestMessageCreatedAt;
+  final bool currentRunIsChatFirstWelcome;
+  final String? currentWelcomeKey;
 }
 
 abstract interface class AgentConversationRepository {

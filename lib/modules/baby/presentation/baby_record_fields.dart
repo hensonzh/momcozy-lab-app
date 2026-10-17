@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../domain/baby/baby_record.dart';
 import '../../../domain/shared/local_date.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/design_system/momcozy_motion.dart';
 import '../../../shared/widgets/date_time_picker.dart';
 import '../../../shared/widgets/mom_settings_widgets.dart';
 import '../../../shared/widgets/zoned_datetime_field.dart';
@@ -13,8 +14,15 @@ import 'baby_labels.dart';
 enum _FeedingType { breast, bottle }
 
 class BabyRecordFields extends StatelessWidget {
-  const BabyRecordFields({super.key, required this.controller});
+  const BabyRecordFields({
+    super.key,
+    required this.controller,
+    this.chatFirstExperience = false,
+  });
   final BabyRecordEditorController controller;
+  final bool chatFirstExperience;
+  String _label(String english, String chinese) =>
+      chatFirstExperience ? chinese : english;
   Widget _number({
     required String keyName,
     required String label,
@@ -27,7 +35,11 @@ class BabyRecordFields extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     spacing: 14,
     children: [
-      BabyLabel(label, required: required),
+      BabyLabel(
+        label,
+        required: required,
+        chatFirstExperience: chatFirstExperience,
+      ),
       TextFormField(
         key: ValueKey(keyName),
         initialValue: value,
@@ -64,10 +76,11 @@ class BabyRecordFields extends StatelessWidget {
       ),
       firstDate: DateTime(earliest.year, earliest.month, earliest.day),
       lastDate: DateTime(today.year, today.month, today.day),
-      helpText: 'Measurement date',
+      helpText: _label('Measurement date', '测量日期'),
+      locale: chatFirstExperience ? const Locale('zh', 'CN') : null,
       theme: BabyDesign.theme(
         Theme.of(context),
-        reduceMotion: MediaQuery.disableAnimationsOf(context),
+        reduceMotion: MomCozyMotion.isReduced(context),
       ),
     );
     if (d != null && context.mounted) c.setDate(LocalDate.fromDateTime(d));
@@ -83,12 +96,18 @@ class BabyRecordFields extends StatelessWidget {
     final fields = <Widget>[];
     if (c.kind == BabyRecordKind.feeding) {
       fields.addAll([
-        const BabyLabel('Feeding method', required: true),
+        BabyLabel(
+          _label('Feeding method', '喂养方式'),
+          required: true,
+          chatFirstExperience: chatFirstExperience,
+        ),
         BabyChoices(
-          options: const {
-            _FeedingType.breast: 'Nursing',
-            _FeedingType.bottle: 'Bottle feeding',
-          },
+          options: chatFirstExperience
+              ? const {_FeedingType.breast: '亲喂', _FeedingType.bottle: '瓶喂'}
+              : const {
+                  _FeedingType.breast: 'Nursing',
+                  _FeedingType.bottle: 'Bottle feeding',
+                },
           selected: bottle
               ? _FeedingType.bottle
               : c.feedingMethod == BabyFeedingMethod.breastfeeding
@@ -103,21 +122,34 @@ class BabyRecordFields extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               spacing: 8,
               children: [
-                const BabyLabel('Milk type', required: true),
+                BabyLabel(
+                  _label('Milk type', '奶的种类'),
+                  required: true,
+                  chatFirstExperience: chatFirstExperience,
+                ),
                 BabyChoices(
-                  options: const {
-                    BabyFeedingMethod.expressedMilk: 'Breast milk',
-                    BabyFeedingMethod.formula: 'Formula',
-                  },
+                  options: chatFirstExperience
+                      ? const {
+                          BabyFeedingMethod.expressedMilk: '瓶喂母乳',
+                          BabyFeedingMethod.formula: '配方奶',
+                        }
+                      : const {
+                          BabyFeedingMethod.expressedMilk: 'Breast milk',
+                          BabyFeedingMethod.formula: 'Formula',
+                        },
                   selected: c.feedingMethod,
                   onChanged: c.setFeedingMethod,
                 ),
               ],
             ),
           ),
-        const BabyLabel('Time', required: true),
+        BabyLabel(
+          _label('Time', '记录时间'),
+          required: true,
+          chatFirstExperience: chatFirstExperience,
+        ),
         ZonedDateTimeField(
-          label: '',
+          label: chatFirstExperience ? '记录时间' : '',
           valueStyle: BabyDesign.text(16),
           fieldStyle: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(52),
@@ -147,27 +179,29 @@ class BabyRecordFields extends StatelessWidget {
           },
         ),
         if (c.feedingMethod == BabyFeedingMethod.breastfeeding) ...[
-          const BabyLabel('Nursing side'),
+          BabyLabel(_label('Nursing side', '亲喂侧别')),
           BabyChoices(
-            options: const {
-              FeedingSide.left: 'Left side',
-              FeedingSide.right: 'Right side',
-            },
+            options: chatFirstExperience
+                ? const {FeedingSide.left: '左侧', FeedingSide.right: '右侧'}
+                : const {
+                    FeedingSide.left: 'Left side',
+                    FeedingSide.right: 'Right side',
+                  },
             selected: c.feedingSide,
             onChanged: c.setSide,
           ),
           _number(
             keyName: 'nursing-duration',
-            label: 'Nursing duration',
+            label: _label('Nursing duration', '亲喂时长'),
             value: c.duration,
             onChanged: c.setDuration,
-            unit: 'Minutes',
+            unit: _label('Minutes', '分钟'),
             decimal: false,
           ),
         ] else if (bottle)
           _number(
             keyName: 'feeding-volume',
-            label: 'Amount bottle-fed',
+            label: _label('Amount bottle-fed', '瓶喂奶量'),
             value: c.volume,
             onChanged: c.setVolume,
             unit: 'ml',
@@ -178,9 +212,15 @@ class BabyRecordFields extends StatelessWidget {
       switch (c.dailyTab) {
         case BabyDailyTab.mental:
           fields.addAll([
-            const BabyLabel('Baby\'s mood after feeding', required: true),
+            BabyLabel(
+              _label('Baby\'s mood after feeding', '喂养后状态'),
+              required: true,
+              chatFirstExperience: chatFirstExperience,
+            ),
             BabyChoices(
-              options: babyMentalLabels,
+              options: chatFirstExperience
+                  ? babyMentalLabelsZh
+                  : babyMentalLabels,
               selected: c.mentalState,
               onChanged: c.setMentalState,
             ),
@@ -189,10 +229,10 @@ class BabyRecordFields extends StatelessWidget {
           fields.add(
             _number(
               keyName: 'wet-count',
-              label: 'Wet diapers today',
+              label: _label('Wet diapers today', '今日湿尿布次数'),
               value: c.wetCount,
               onChanged: c.setWetCount,
-              unit: 'diapers',
+              unit: _label('diapers', '次'),
               decimal: false,
               required: true,
             ),
@@ -201,16 +241,18 @@ class BabyRecordFields extends StatelessWidget {
           fields.addAll([
             _number(
               keyName: 'stool-count',
-              label: 'Dirty diapers today',
+              label: _label('Dirty diapers today', '今日脏尿布次数'),
               value: c.stoolCount,
               onChanged: c.setStoolCount,
-              unit: 'diapers',
+              unit: _label('diapers', '次'),
               decimal: false,
               required: true,
             ),
-            const BabyLabel('Stool color'),
+            BabyLabel(_label('Stool color', '便便颜色')),
             BabyChoices(
-              options: stoolColorLabels,
+              options: chatFirstExperience
+                  ? stoolColorLabelsZh
+                  : stoolColorLabels,
               selected: c.stoolColor,
               onChanged: c.setStoolColor,
               columns: 4,
@@ -232,9 +274,11 @@ class BabyRecordFields extends StatelessWidget {
                 ),
               ),
             ),
-            const BabyLabel('Stool consistency'),
+            BabyLabel(_label('Stool consistency', '便便性状')),
             BabyChoices(
-              options: stoolConsistencyLabels,
+              options: chatFirstExperience
+                  ? stoolConsistencyLabelsZh
+                  : stoolConsistencyLabels,
               selected: c.stoolConsistency,
               onChanged: c.setStoolConsistency,
               columns: 3,
@@ -243,10 +287,13 @@ class BabyRecordFields extends StatelessWidget {
       }
     } else if (c.kind == BabyRecordKind.growth) {
       fields.addAll([
-        const BabyLabel('Measurement'),
+        BabyLabel(_label('Measurement', '测量项目')),
         BabyChoices(
           options: {
-            for (final m in GrowthMetric.values) m: growthMetricLabel(m),
+            for (final m in GrowthMetric.values)
+              m: chatFirstExperience
+                  ? growthMetricLabelZh(m)
+                  : growthMetricLabel(m),
           },
           selected: c.growthMetric,
           onChanged: c.selectMetric,
@@ -254,7 +301,9 @@ class BabyRecordFields extends StatelessWidget {
         ),
         _number(
           keyName: 'growth-${c.growthMetric.name}',
-          label: '${growthMetricLabel(c.growthMetric)} value',
+          label: chatFirstExperience
+              ? '${growthMetricLabelZh(c.growthMetric)}数值'
+              : '${growthMetricLabel(c.growthMetric)} value',
           value: c.growthValues[c.growthMetric] ?? '',
           onChanged: (v) => c.setGrowthValue(c.growthMetric, v),
           unit: c.growthMetric == GrowthMetric.weight ? 'kg' : 'cm',
@@ -270,7 +319,7 @@ class BabyRecordFields extends StatelessWidget {
           MomSettingsCard(
             borderInside: true,
             children: [
-              const BabyLabel('Measurement date'),
+              BabyLabel(_label('Measurement date', '测量日期')),
               BabyPressFeedback(
                 child: OutlinedButton(
                   onPressed: c.editable ? () => _date(context) : null,

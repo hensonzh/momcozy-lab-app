@@ -1,9 +1,4 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
@@ -30,7 +25,6 @@ void main() {
   late AgentAttachmentInventoryTransport transport;
   late MomCozyRuntimeController runtime;
   late GoRouter router;
-  String? previous;
   bool failClipboard = false;
   Future<void> mount(
     WidgetTester tester, {
@@ -39,7 +33,6 @@ void main() {
     double width = 393,
     double textScale = 1,
   }) async {
-    previous = null;
     failClipboard = false;
     String? clipboard;
     final messenger =
@@ -204,49 +197,12 @@ void main() {
     expect(tester.takeException(), isNull);
   }
 
-  Future<void> capture(
-    WidgetTester tester,
-    String state,
-    String action, {
-    String route = '/',
-  }) async {
+  Future<void> verifyState(WidgetTester tester, {String route = '/'}) async {
     // Commit edits and finish the input hint's fade without settling spinners.
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));
     expect(router.state.uri.path, route);
     expect(tester.takeException(), isNull);
-    final suffix =
-        '${tester.view.physicalSize.width.round()}${tester.platformDispatcher.textScaleFactor > 1 ? '-2x' : ''}';
-    final source =
-        'test/goldens/ui_inventory/agent-attachment-journey-$state-$suffix.png';
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile(
-        '../../goldens/ui_inventory/agent-attachment-journey-$state-$suffix.png',
-      ),
-    );
-    final row = {
-      'source': source,
-      'previous_source': previous,
-      'route': route,
-      'trigger': action,
-      'root_entry': 'Authenticated More → tap Momcozy AI bottom navigation',
-      'evidence':
-          'Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.',
-      'test':
-          'test/features/agent_hub/agent_attachment_inventory_journey_test.dart',
-    };
-    previous = source;
-    final output = Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
-    if (output != null) {
-      final file = File(
-        '$output/journeys/agent-attachment-journey-$state-$suffix.json',
-      );
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(
-        '${const JsonEncoder.withIndent('  ').convert(row)}\n',
-      );
-    }
   }
 
   final input = find.byKey(const ValueKey('agent-composer-input'));
@@ -290,102 +246,74 @@ void main() {
       await frame(tester);
     }
     expect(find.byType(SnackBar), findsNothing);
-    await capture(
-      tester,
-      state,
-      'Swipe failure snackbar away → attachment controls visible again',
-    );
+    await verifyState(tester);
   }
 
   for (final width in [393.0, 320.0]) {
-    testWidgets('inventory attachment upload removal and tab retention $width', (
-      tester,
-    ) async {
-      await mount(tester, width: width, textScale: width == 320 ? 2 : 1);
-      await tester.enterText(input, 'Keep this unsent draft');
-      final uploadGate = Completer<void>();
-      transport.uploadGate = uploadGate;
-      await choose(tester, 'photo');
-      expect(transport.uploads.length, 1);
-      expect(tester.widget<TextField>(input).enabled, isFalse);
-      await capture(
-        tester,
-        'image-uploading',
-        'Photo result → multipart upload at 50%, composer locked',
-      );
-      uploadGate.complete();
-      transport.uploadGate = null;
-      await decodeImages(tester);
-      expect(
-        find.byKey(const ValueKey('agent-image-attachment-0')),
-        findsOneWidget,
-      );
-      await capture(
-        tester,
-        'image-ready',
-        'Upload succeeds → removable local image preview',
-      );
-      await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
-      await capture(
-        tester,
-        'image-tab-away',
-        'More tab with unsent image and text draft',
-        route: '/more',
-      );
-      await tap(tester, find.byKey(const ValueKey('bottom-nav-momcozy ai')));
-      expect(
-        tester.widget<TextField>(input).controller!.text,
-        'Keep this unsent draft',
-      );
-      expect(
-        find.byKey(const ValueKey('agent-image-attachment-0')),
-        findsOneWidget,
-      );
-      await capture(
-        tester,
-        'image-tab-return',
-        'Return to Momcozy AI → unsent image and draft retained',
-      );
-      final deleteGate = Completer<void>();
-      transport.deleteGate = deleteGate;
-      transport.deleteStatus = 503;
-      await tap(
-        tester,
-        find.byKey(const ValueKey('agent-remove-image-button')),
-      );
-      await capture(
-        tester,
-        'image-remove-pending',
-        'Remove image → preview removed immediately, cleanup runs in background',
-      );
-      deleteGate.complete();
-      transport.deleteGate = null;
-      await frame(tester);
-      expect(find.text('附件清理失败，已保留草稿，请重试。'), findsNothing);
-      expect(
-        find.byKey(const ValueKey('agent-image-attachment-0')),
-        findsNothing,
-      );
-      expect(tester.widget<TextField>(input).enabled, isNot(false));
-      transport.deleteStatus = 200;
-      await tester.pump(const Duration(seconds: 30));
-      await frame(tester);
-      expect(transport.deleteRequests.length, 2);
-      expect(transport.deleteKeys.toSet().length, 1);
-      expect(
-        find.byKey(const ValueKey('agent-image-attachment-0')),
-        findsNothing,
-      );
-      expect(
-        tester.widget<TextField>(input).controller!.text,
-        'Keep this unsent draft',
-      );
-      await capture(
-        tester,
-        'image-removed',
-        'Background retry → same idempotency key, text draft preserved',
-      );
-    });
+    testWidgets(
+      'inventory attachment upload removal and tab retention $width',
+      (tester) async {
+        await mount(tester, width: width, textScale: width == 320 ? 2 : 1);
+        await tester.enterText(input, 'Keep this unsent draft');
+        final uploadGate = Completer<void>();
+        transport.uploadGate = uploadGate;
+        await choose(tester, 'photo');
+        expect(transport.uploads.length, 1);
+        expect(tester.widget<TextField>(input).enabled, isFalse);
+        await verifyState(tester);
+        uploadGate.complete();
+        transport.uploadGate = null;
+        await decodeImages(tester);
+        expect(
+          find.byKey(const ValueKey('agent-image-attachment-0')),
+          findsOneWidget,
+        );
+        await verifyState(tester);
+        await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
+        await verifyState(tester, route: '/more');
+        await tap(tester, find.byKey(const ValueKey('bottom-nav-momcozy ai')));
+        expect(
+          tester.widget<TextField>(input).controller!.text,
+          'Keep this unsent draft',
+        );
+        expect(
+          find.byKey(const ValueKey('agent-image-attachment-0')),
+          findsOneWidget,
+        );
+        await verifyState(tester);
+        final deleteGate = Completer<void>();
+        transport.deleteGate = deleteGate;
+        transport.deleteStatus = 503;
+        await tap(
+          tester,
+          find.byKey(const ValueKey('agent-remove-image-button')),
+        );
+        await verifyState(tester);
+        deleteGate.complete();
+        transport.deleteGate = null;
+        await frame(tester);
+        expect(find.text('附件清理失败，已保留草稿，请重试。'), findsNothing);
+        expect(
+          find.byKey(const ValueKey('agent-image-attachment-0')),
+          findsNothing,
+        );
+        expect(tester.widget<TextField>(input).enabled, isNot(false));
+        transport.deleteStatus = 200;
+        await tester.pump(const Duration(seconds: 30));
+        await frame(tester);
+        expect(transport.deleteRequests.length, 2);
+        expect(transport.deleteKeys.toSet().length, 1);
+        expect(
+          find.byKey(const ValueKey('agent-image-attachment-0')),
+          findsNothing,
+        );
+        expect(
+          tester.widget<TextField>(input).controller!.text,
+          'Keep this unsent draft',
+        );
+        await verifyState(tester);
+      },
+    );
 
     testWidgets('inventory attachment mixed send and image viewer $width', (
       tester,
@@ -396,36 +324,20 @@ void main() {
       await choose(tester, 'file');
       await decodeImages(tester);
       expect(transport.uploads.length, 2);
-      await capture(
-        tester,
-        'mixed-ready-image',
-        'Camera result and PDF selected → both uploaded in composer',
-      );
+      await verifyState(tester);
       await tester.ensureVisible(
         find.byKey(const ValueKey('agent-file-attachment-0')),
       );
       await frame(tester);
-      await capture(
-        tester,
-        'mixed-ready-file',
-        'Scroll attachment strip → PDF and removal control visible',
-      );
+      await verifyState(tester);
       await send(tester, 'Review these isolated attachments');
       expect(transport.requests.single.images.length, 1);
       expect(transport.requests.single.files.length, 1);
       expect(transport.deleteRequests, isEmpty);
-      await capture(
-        tester,
-        'mixed-sent',
-        'Send text and two uploaded file IDs → waiting response',
-      );
+      await verifyState(tester);
       await finish(tester, 0, 'The example attachments were received.');
       await decodeImages(tester);
-      await capture(
-        tester,
-        'mixed-completed',
-        'Reply completes → sent image and PDF metadata in transcript',
-      );
+      await verifyState(tester);
       final sentImage = find.byKey(const ValueKey('agent-sent-image-0'));
       if (sentImage.evaluate().isEmpty) {
         await tester.scrollUntilVisible(
@@ -443,11 +355,7 @@ void main() {
       await tap(tester, sentImage);
       await decodeImages(tester);
       expect(find.byKey(const ValueKey('agent-image-stage')), findsOneWidget);
-      await capture(
-        tester,
-        'image-viewer',
-        'Tap sent image → full-screen local image',
-      );
+      await verifyState(tester);
       final stage = find.byKey(const ValueKey('agent-image-stage'));
       final center = tester.getCenter(stage);
       final first = await tester.startGesture(
@@ -472,36 +380,20 @@ void main() {
             .getMaxScaleOnAxis(),
         greaterThan(1),
       );
-      await capture(
-        tester,
-        'image-zoomed',
-        'Two-finger pinch → enlarged image',
-      );
+      await verifyState(tester);
       await tester.drag(stage, const Offset(70, 100));
       await frame(tester);
-      await capture(
-        tester,
-        'image-panned',
-        'Drag enlarged image → panned view',
-      );
+      await verifyState(tester);
       await tap(tester, find.byKey(const ValueKey('agent-sent-image-close')));
       expect(find.byKey(const ValueKey('agent-image-stage')), findsNothing);
-      await capture(
-        tester,
-        'image-viewer-return',
-        'Viewer return button → same conversation',
-      );
+      await verifyState(tester);
       await tap(tester, find.byKey(const ValueKey('agent-sent-file-0')));
       expect(
         find.byKey(const ValueKey('agent-sent-image-close')),
         findsNothing,
       );
       expect(router.state.uri.path, '/');
-      await capture(
-        tester,
-        'pdf-metadata-tapped',
-        'Tap sent PDF metadata → current page has no PDF preview action',
-      );
+      await verifyState(tester);
     });
   }
 
@@ -515,11 +407,7 @@ void main() {
       transport.pickerGate = gate;
       transport.cancelPick = true;
       await choose(tester, source);
-      await capture(
-        tester,
-        '$source-pick-pending',
-        'Open $source picker boundary → input locked while result pending; not an OS screenshot',
-      );
+      await verifyState(tester);
       gate.complete();
       transport.pickerGate = null;
       await frame(tester);
@@ -528,29 +416,17 @@ void main() {
         tester.widget<TextField>(input).controller!.text,
         'Unchanged draft',
       );
-      await capture(
-        tester,
-        '$source-pick-cancelled',
-        'Cancel $source selection → unchanged draft, no upload',
-      );
+      await verifyState(tester);
     }
     transport.cancelPick = false;
     transport.failPick = true;
     await choose(tester, 'camera');
     expect(find.text('Image upload failed. Try again.'), findsOneWidget);
-    await capture(
-      tester,
-      'camera-pick-failed',
-      'Camera picker reports failure → image upload failure snackbar',
-    );
+    await verifyState(tester);
     await dismissNotice(tester, 'camera-failure-dismissed');
     await choose(tester, 'file');
     expect(find.text('File upload failed. Try again.'), findsOneWidget);
-    await capture(
-      tester,
-      'file-pick-failed',
-      'Document picker reports failure → file upload failure snackbar',
-    );
+    await verifyState(tester);
     expect(transport.uploads, isEmpty);
   });
 
@@ -572,11 +448,7 @@ void main() {
         if (mode == 'oversized') {
           expect(find.text('Files must be 10 MB or smaller.'), findsOneWidget);
         }
-        await capture(
-          tester,
-          'pdf-$mode',
-          'Real document picker validates $mode selected bytes before upload',
-        );
+        await verifyState(tester);
         await dismissNotice(tester, 'pdf-$mode-notice-dismissed');
       }
       transport.documentMode = 'pdf';
@@ -587,29 +459,17 @@ void main() {
         find.byKey(const ValueKey('agent-file-attachment-0')),
         findsNothing,
       );
-      await capture(
-        tester,
-        'pdf-upload-failed',
-        'Valid PDF upload HTTP 503 → feedback and no pending file',
-      );
+      await verifyState(tester);
       await dismissNotice(tester, 'pdf-upload-failure-dismissed');
       transport.failUpload = false;
       await choose(tester, 'file');
       expect(transport.uploads.length, 2);
-      await capture(
-        tester,
-        'pdf-upload-recovered',
-        'Select PDF again → successful upload',
-      );
+      await verifyState(tester);
       await tap(tester, sendButton);
       expect(transport.requests.single.message, 'Please review this file');
       expect(transport.requests.single.files.length, 1);
       await finish(tester, 0, 'The isolated PDF request is complete.');
-      await capture(
-        tester,
-        'pdf-only-completed',
-        'Send without text → default file prompt and final reply',
-      );
+      await verifyState(tester);
     },
   );
 
@@ -620,21 +480,13 @@ void main() {
     transport.failUpload = true;
     await choose(tester, 'photo');
     expect(find.text('Image upload failed. Try again.'), findsOneWidget);
-    await capture(
-      tester,
-      'image-upload-failed',
-      'Image upload HTTP 503 → no attachment and retry feedback',
-    );
+    await verifyState(tester);
     await dismissNotice(tester, 'image-upload-failure-dismissed');
     transport.failUpload = false;
     transport.brokenImage = true;
     await choose(tester, 'photo');
     await decodeImages(tester);
-    await capture(
-      tester,
-      'image-decode-fallback',
-      'Uploaded image cannot decode locally → fallback thumbnail',
-    );
+    await verifyState(tester);
     await tap(tester, sendButton);
     expect(transport.requests.single.message, 'Please look at this image');
     await finish(tester, 0, 'The isolated image request is complete.');
@@ -644,44 +496,24 @@ void main() {
       find.byKey(const ValueKey('media-viewer-load-error')),
       findsOneWidget,
     );
-    await capture(
-      tester,
-      'image-viewer-error',
-      'Open corrupt local image → full-screen error with remote reload',
-    );
+    await verifyState(tester);
     transport.contentStatus = 503;
     await tap(tester, find.byKey(const ValueKey('media-viewer-retry')));
     expect(transport.contentRequests.length, 1);
-    await capture(
-      tester,
-      'image-remote-failed',
-      'Reload original via authenticated content repository → HTTP error',
-    );
+    await verifyState(tester);
     transport.contentStatus = 200;
     final gate = Completer<void>();
     transport.contentGate = gate;
     await tap(tester, find.byKey(const ValueKey('media-viewer-retry')));
     expect(find.byKey(const ValueKey('media-viewer-loading')), findsOneWidget);
-    await capture(
-      tester,
-      'image-remote-loading',
-      'Retry original image → loading indicator',
-    );
+    await verifyState(tester);
     gate.complete();
     transport.contentGate = null;
     await decodeImages(tester);
     expect(find.byKey(const ValueKey('agent-image-stage')), findsOneWidget);
     expect(transport.contentRequests.length, 2);
-    await capture(
-      tester,
-      'image-remote-recovered',
-      'Valid remote original received → image available',
-    );
+    await verifyState(tester);
     await tap(tester, find.byKey(const ValueKey('agent-sent-image-close')));
-    await capture(
-      tester,
-      'image-remote-return',
-      'Return after remote recovery → original transcript',
-    );
+    await verifyState(tester);
   });
 }

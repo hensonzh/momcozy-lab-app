@@ -17,8 +17,4 @@ python3 "$CODEX_HOME/skills/figma-to-app/scripts/validate_contract.py" \
 
 Baby UI 修改必须先更新契约中的状态或 override，再运行同尺寸截图和 Flutter 交互测试。参考图和 App 实际截图必须按状态一一比对，不要把 App golden 当作 Figma 参考图。
 
-本轮截图夹具：
-
-```bash
-flutter test test/modules/baby/baby_home_state_capture_test.dart
-```
+历史同尺寸截图保留用于追溯；旧 Baby 首页截图生成夹具已清退，不再作为当前可运行的回归命令。现用行为回归运行 `flutter test test/modules/baby/baby_current_flow_test.dart`。

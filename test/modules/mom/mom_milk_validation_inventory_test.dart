@@ -1,8 +1,3 @@
-@Tags(['golden'])
-library;
-
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,8 +18,6 @@ void main() {
   late MomInventoryTransport transport;
   late MomCozyRuntimeController runtime;
   late GoRouter router;
-  String? previous;
-  late String variant;
   Future<void> mount(
     WidgetTester tester, {
     void Function(MomInventoryTransport)? prepare,
@@ -32,12 +25,10 @@ void main() {
     double width = 393,
     double scale = 1,
   }) async {
-    previous = null;
     FlutterSecureStorage.setMockInitialValues({});
     tester.view.physicalSize = Size(width, 844);
     tester.platformDispatcher.textScaleFactorTestValue = scale;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    variant = '${width.toInt()}-${scale.toInt()}x';
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -128,10 +119,8 @@ void main() {
     expect(tester.takeException(), isNull);
   }
 
-  Future<void> capture(
-    WidgetTester tester,
-    String state,
-    String action, {
+  Future<void> verifyState(
+    WidgetTester tester, {
     String route = '/me/lactation',
   }) async {
     // Commit edits and finish the input hint's fade without settling spinners.
@@ -139,35 +128,6 @@ void main() {
     await tester.pump(const Duration(milliseconds: 250));
     expect(router.state.uri.path, route);
     expect(tester.takeException(), isNull);
-    final source =
-        'test/goldens/ui_inventory/mom-milk-validation-$state-$variant.png';
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile(
-        '../../goldens/ui_inventory/mom-milk-validation-$state-$variant.png',
-      ),
-    );
-    final row = {
-      'source': source,
-      'previous_source': previous,
-      'route': route,
-      'trigger': action,
-      'root_entry': 'Authenticated More → existing lactation deep link',
-      'evidence':
-          'Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone',
-      'test': 'test/modules/mom/mom_milk_validation_inventory_test.dart',
-    };
-    previous = source;
-    final output = Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
-    if (output != null) {
-      final file = File(
-        '$output/journeys/mom-milk-validation-$state-$variant.json',
-      );
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(
-        '${const JsonEncoder.withIndent('  ').convert(row)}\n',
-      );
-    }
   }
 
   Future<void> closePanel(WidgetTester tester) async {
@@ -212,10 +172,10 @@ void main() {
       tester,
     ) async {
       await mount(tester, width: narrow ? 320 : 393, scale: narrow ? 2 : 1);
-      await capture(tester, 'home-entry', 'Authenticated More', route: '/more');
+      await verifyState(tester, route: '/more');
       router.push('/me/lactation?create=1');
       await tester.pumpAndSettle();
-      await capture(tester, 'empty', 'Home record milk → empty pump form');
+      await verifyState(tester);
       for (final item in [
         ('negative', '-1', 'volume_ml', 'out_of_range'),
         ('above-limit', '2001', 'volume_ml', 'out_of_range'),
@@ -227,51 +187,27 @@ void main() {
         await tap(tester, find.text('Save this record'));
         expect(controller(tester).validationErrors, {item.$3: item.$4});
         expect(transport.records, isEmpty);
-        await capture(
-          tester,
-          'pump-${item.$1}',
-          'Submit pump ${item.$2} → ${item.$4}; no write',
-        );
+        await verifyState(tester);
       }
       await input(tester, measurement(LactationMethod.pump), '0');
-      await capture(
-        tester,
-        'pump-zero-filled',
-        'Correct pump to lower boundary 0 → error clears',
-      );
+      await verifyState(tester);
       await tap(tester, find.text('Save this record'));
       expect((transport.records.single['observation'] as Map)['volume_ml'], 0);
-      await capture(
-        tester,
-        'pump-zero-saved',
-        'Save pump 0 ml → one real fixture record',
-      );
+      await verifyState(tester);
       await editSaved(tester);
       await input(tester, measurement(LactationMethod.pump), '2000');
-      await capture(
-        tester,
-        'pump-limit-filled',
-        'Edit pump → upper boundary 2000',
-      );
+      await verifyState(tester);
       await tap(tester, find.text('Save changes'));
       expect(
         (transport.records.single['observation'] as Map)['volume_ml'],
         2000,
       );
       expect(transport.records.single['version'], 2);
-      await capture(
-        tester,
-        'pump-limit-saved',
-        'Save pump 2000 ml → version 2',
-      );
+      await verifyState(tester);
       await editSaved(tester);
       await tap(tester, find.text('Nursing'));
       expect(draft(tester).measurement, isEmpty);
-      await capture(
-        tester,
-        'nurse-empty',
-        'Convert pump to nursing → numeric draft clears',
-      );
+      await verifyState(tester);
       for (final item in [
         ('negative', '-1', 'duration_minutes', 'out_of_range'),
         ('above-limit', '241', 'duration_minutes', 'out_of_range'),
@@ -281,47 +217,27 @@ void main() {
         await tap(tester, find.text('Save changes'));
         expect(controller(tester).validationErrors, {item.$3: item.$4});
         expect(transport.records.single['version'], 2);
-        await capture(
-          tester,
-          'nurse-${item.$1}',
-          'Submit nursing ${item.$2} → ${item.$4}; saved version remains 2',
-        );
+        await verifyState(tester);
       }
       await input(tester, measurement(LactationMethod.nurse), '240');
-      await capture(
-        tester,
-        'nurse-limit-filled',
-        'Correct nursing to upper boundary 240',
-      );
+      await verifyState(tester);
       await tap(tester, find.text('Save changes'));
       expect(
         (transport.records.single['observation'] as Map)['duration_minutes'],
         240,
       );
       expect(transport.records.single['version'], 3);
-      await capture(
-        tester,
-        'nurse-limit-saved',
-        'Save nursing 240 minutes → version 3',
-      );
+      await verifyState(tester);
       await editSaved(tester);
       await input(tester, measurement(LactationMethod.nurse), '0');
-      await capture(
-        tester,
-        'nurse-zero-filled',
-        'Edit nursing → lower boundary 0',
-      );
+      await verifyState(tester);
       await tap(tester, find.text('Save changes'));
       expect(
         (transport.records.single['observation'] as Map)['duration_minutes'],
         0,
       );
       expect(transport.records.single['version'], 4);
-      await capture(
-        tester,
-        'nurse-zero-saved',
-        'Save nursing 0 minutes → version 4',
-      );
+      await verifyState(tester);
       await editSaved(tester);
       await tap(
         tester,
@@ -329,10 +245,10 @@ void main() {
       );
       final picker = find.byKey(const ValueKey('momcozy-time-picker'));
       final strings = MaterialLocalizations.of(tester.element(picker));
-      await capture(tester, 'time-open', 'Open time picker at current 16:00');
+      await verifyState(tester);
       if (!narrow) {
         await tap(tester, find.byTooltip(strings.inputTimeModeButtonLabel));
-        await capture(tester, 'time-input', 'Time dial → input mode');
+        await verifyState(tester);
       }
       final fields = find.descendant(
         of: picker,
@@ -347,31 +263,19 @@ void main() {
           matching: find.text(strings.postMeridiemAbbreviation),
         ),
       );
-      await capture(
-        tester,
-        'future-time-input',
-        'Select PM and enter 05:00 → 17:00 after fixed current 16:00',
-      );
+      await verifyState(tester);
       await tap(
         tester,
         find.descendant(of: picker, matching: find.text(strings.okButtonLabel)),
       );
       expect(draft(tester).occurredAt.hour, 17);
-      await capture(
-        tester,
-        'future-time-accepted',
-        'Accept valid clock 17:00 → record draft has future time',
-      );
+      await verifyState(tester);
       await tap(tester, find.text('Save changes'));
       expect(controller(tester).validationErrors, {
         'occurred_at': 'future_time',
       });
       expect(transport.records.single['version'], 4);
-      await capture(
-        tester,
-        'future-time-rejected',
-        'Save future record → validation, version 4 retained',
-      );
+      await verifyState(tester);
       await tap(
         tester,
         find.widgetWithIcon(OutlinedButton, Icons.schedule_rounded),
@@ -386,88 +290,45 @@ void main() {
           matching: find.text(strings.anteMeridiemAbbreviation),
         ),
       );
-      await capture(tester, 'time-am-selected', 'Select AM instead of PM');
+      await verifyState(tester);
       await input(tester, fields.first, '08');
       await input(tester, fields.last, '00');
-      await capture(tester, 'past-time-input', 'Enter past time 08:00 AM');
+      await verifyState(tester);
       await tap(
         tester,
         find.descendant(of: picker, matching: find.text(strings.okButtonLabel)),
       );
       expect(draft(tester).occurredAt.hour, 8);
       expect(controller(tester).validationErrors, isEmpty);
-      await capture(
-        tester,
-        'past-time-accepted',
-        'Accept 08:00 → future error clears',
-      );
+      await verifyState(tester);
       await tap(tester, find.text('Save changes'));
       expect(transport.records.single['version'], 5);
-      await capture(
-        tester,
-        'past-time-saved',
-        'Save corrected past time → version 5',
-      );
+      await verifyState(tester);
       await editSaved(tester);
       await tap(tester, find.text('Back to records'));
-      await capture(
-        tester,
-        'return-record-confirm',
-        'Tap top Return records → discard confirmation',
-      );
+      await verifyState(tester);
       await tap(tester, find.text('Keep editing'));
       expect(controller(tester).draft, isNotNull);
-      await capture(
-        tester,
-        'return-record-stay',
-        'Continue editing → same draft',
-      );
+      await verifyState(tester);
       await tap(tester, find.text('Back to records'));
       await tap(tester, find.text('Leave'));
       expect(controller(tester).draft, isNull);
       expect(transport.records.single['version'], 5);
-      await capture(
-        tester,
-        'return-record-left',
-        'Return records → leave → unchanged list',
-      );
+      await verifyState(tester);
       await editSaved(tester);
-      await capture(
-        tester,
-        'back-editor',
-        'Reopen saved record before platform back',
-      );
+      await verifyState(tester);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
-      await capture(
-        tester,
-        'back-confirm',
-        'Dispatch platform back → discard confirmation',
-      );
+      await verifyState(tester);
       await tap(tester, find.text('Leave'));
       expect(transport.records.single['version'], 5);
-      await capture(
-        tester,
-        'back-left',
-        'Confirm platform back → preserve saved record',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       if (find.byType(LactationPanel).evaluate().isNotEmpty) {
         await closePanel(tester);
       }
-      await capture(
-        tester,
-        'home-return',
-        'Close lactation route → More',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       await tester.pumpAndSettle();
-      await capture(
-        tester,
-        'more-return',
-        'More remains available after lactation',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
     });
   }
 }

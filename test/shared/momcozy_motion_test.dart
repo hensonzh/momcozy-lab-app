@@ -72,4 +72,27 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     scroll.dispose();
   });
+
+  testWidgets('iOS reduce motion also settles custom transitions', (
+    tester,
+  ) async {
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(reduceMotion: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    Duration? observed;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) {
+            observed = MomCozyMotion.duration(
+              context,
+              const Duration(milliseconds: 220),
+            );
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+    expect(observed, Duration.zero);
+  });
 }

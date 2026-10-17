@@ -13,7 +13,6 @@ analyzer:
   exclude:
     - build/**
     # Historical source snapshots retained as UI review evidence.
-    - docs/ui-refactor/**/before/**
 
 linter:
   # The lint rules applied to this project can be customized in the

@@ -107,6 +107,44 @@ void main() {
         active.dispose();
       },
     );
+
+    testWidgets(
+      'iOS reduce motion toggle stops and resumes ${status ? 'status sweeps' : 'reply rail'}',
+      (tester) async {
+        tester.platformDispatcher.accessibilityFeaturesTestValue =
+            const FakeAccessibilityFeatures();
+        addTearDown(
+          tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+        );
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: momCozyTheme(),
+            home: Scaffold(
+              body: status
+                  ? const Column(
+                      children: [
+                        AgentRunStatusLine(title: '正在查看记录'),
+                        AgentThinkingNote(title: 'Let me think…'),
+                      ],
+                    )
+                  : AgentHubPage(state: _thinking()),
+            ),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(tester.binding.transientCallbackCount, greaterThan(0));
+        tester.platformDispatcher.accessibilityFeaturesTestValue =
+            const FakeAccessibilityFeatures(reduceMotion: true);
+        await tester.pumpAndSettle();
+        expect(tester.binding.transientCallbackCount, 0);
+        tester.platformDispatcher.accessibilityFeaturesTestValue =
+            const FakeAccessibilityFeatures();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(tester.binding.transientCallbackCount, greaterThan(0));
+        await tester.pumpWidget(const SizedBox());
+      },
+    );
   }
 
   testWidgets('reduced motion keeps reply and status changes readable', (

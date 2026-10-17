@@ -174,10 +174,7 @@ class _MomCozyInviteAuthPageState extends State<MomCozyInviteAuthPage> {
       return;
     }
 
-    final session = tokens.toSession(
-      babyId: runtime.babyId,
-      locale: runtime.locale,
-    );
+    final session = tokens.toSession(babyId: '', locale: runtime.locale);
     try {
       await widget.runtimeController.saveAuthenticatedSession(
         session,

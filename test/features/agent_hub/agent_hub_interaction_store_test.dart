@@ -5,8 +5,99 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_task.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_poop_task.dart';
 
 void main() {
+  test(
+    'poop marker and remote trigger survive without private photo bytes',
+    () {
+      final snapshot = AgentHubInteractionSnapshot(
+        runState: const AgentStreamRunState(threadId: 'thread-poop'),
+        poopTasks: [
+          ChatFirstPoopTask(
+            id: 'local:poop:1',
+            createdAt: DateTime.utc(2026, 10, 17),
+            threadId: 'thread-poop',
+            runId: 'run-poop',
+            status: ChatFirstPoopTaskStatus.completed,
+          ),
+        ],
+        historyMessages: const [
+          AgentHubHistorySnapshot(
+            id: 'server-poop-user',
+            role: 'user',
+            runId: 'run-poop',
+            content: '',
+            isChatFirstPoopTrigger: true,
+          ),
+        ],
+      );
+      final encoded = jsonEncode(snapshot.toMap(includeImageData: false));
+      expect(encoded, isNot(contains('base64')));
+      expect(encoded, isNot(contains('capture.wav')));
+      expect(encoded, isNot(contains('photoBytes')));
+      final restored = AgentHubInteractionSnapshot.fromMap(
+        jsonDecode(encoded) as Map<String, dynamic>,
+      );
+      expect(
+        restored.poopTasks.single.status,
+        ChatFirstPoopTaskStatus.completed,
+      );
+      expect(restored.poopTasks.single.runId, 'run-poop');
+      expect(restored.historyMessages.single.isChatFirstPoopTrigger, isTrue);
+      expect(restored.historyMessages.single.runId, 'run-poop');
+      expect(AgentHubInteractionSnapshot.fromMap({}).poopTasks, isEmpty);
+    },
+  );
+
+  test('cry card marker round-trips without audio bytes or path', () {
+    final snapshot = AgentHubInteractionSnapshot(
+      runState: const AgentStreamRunState(threadId: 'thread-a'),
+      cryTasks: [
+        ChatFirstCryTask(
+          id: 'local:cry:test',
+          threadId: 'thread-a',
+          createdAt: DateTime.utc(2026, 10, 17),
+          precedingAssistantMessageId: 'reply-1',
+        ),
+      ],
+    );
+    final encoded = jsonEncode(snapshot.toMap(includeImageData: false));
+    expect(encoded, contains('local:cry:test'));
+    expect(encoded, isNot(contains('capture.wav')));
+    expect(encoded, isNot(contains('audio')));
+    expect(encoded, isNot(contains('filePath')));
+    final decoded = AgentHubInteractionSnapshot.fromMap(
+      jsonDecode(encoded) as Map<String, dynamic>,
+    );
+    expect(decoded.cryTasks.single.threadId, 'thread-a');
+    expect(decoded.cryTasks.single.precedingAssistantMessageId, 'reply-1');
+    expect(decoded.cryTasks.single.status, ChatFirstCryTaskStatus.pending);
+    expect(decoded.historyMessages, isEmpty);
+    expect(decoded.hasConversationHistory, isTrue);
+  });
+
+  test('legacy snapshots and untrusted cry entries are safely ignored', () {
+    expect(AgentHubInteractionSnapshot.fromMap({}).cryTasks, isEmpty);
+    final decoded = AgentHubInteractionSnapshot.fromMap({
+      'cryTasks': [
+        {'id': 'server-message', 'createdAt': '2026-10-17T00:00:00Z'},
+        {'id': 'local:cry:invalid', 'createdAt': 'not-a-date'},
+        {
+          'id': 'local:cry:valid',
+          'createdAt': '2026-10-17T00:00:00Z',
+          'status': 'future-status',
+          'audioPath': '/tmp/capture.wav',
+        },
+      ],
+    });
+    expect(decoded.cryTasks, hasLength(1));
+    expect(decoded.cryTasks.single.status, ChatFirstCryTaskStatus.pending);
+    expect(decoded.toMap().toString(), isNot(contains('audioPath')));
+    expect(decoded.toMap().toString(), isNot(contains('capture.wav')));
+  });
+
   test('phase one drops retired settings and form drafts from old caches', () {
     final restored = AgentHubInteractionSnapshot.fromMap({
       'composerText': '保留当前草稿',
@@ -63,6 +154,48 @@ void main() {
       AgentHubInteractionSnapshot.fromMap({}).pendingAttachmentCleanupIds,
       isEmpty,
     );
+  });
+
+  test('welcome identifiers survive the secure snapshot JSON round trip', () {
+    const oldKey = 'chat-first-welcome:aaaaaaaaaaaaaaaaaaaaaaaa';
+    const newKey = 'chat-first-welcome:bbbbbbbbbbbbbbbbbbbbbbbb';
+    const snapshot = AgentHubInteractionSnapshot(
+      currentRunIsChatFirstWelcome: true,
+      currentWelcomeKey: newKey,
+      historyMessages: [
+        AgentHubHistorySnapshot(
+          id: 'older-welcome',
+          role: 'assistant',
+          content: '旧资料欢迎',
+          isChatFirstWelcome: true,
+          chatFirstWelcomeKey: oldKey,
+        ),
+        AgentHubHistorySnapshot(
+          id: 'ordinary',
+          role: 'assistant',
+          content: '普通回答保留',
+        ),
+      ],
+    );
+    final restored = AgentHubInteractionSnapshot.fromMap(
+      jsonDecode(jsonEncode(snapshot.toMap(includeImageData: false)))
+          as Map<String, dynamic>,
+    );
+    expect(restored.currentRunIsChatFirstWelcome, isTrue);
+    expect(restored.currentWelcomeKey, newKey);
+    expect(restored.historyMessages.first.isChatFirstWelcome, isTrue);
+    expect(restored.historyMessages.first.chatFirstWelcomeKey, oldKey);
+    expect(restored.historyMessages.last.isChatFirstWelcome, isFalse);
+    expect(restored.historyMessages.last.content, '普通回答保留');
+
+    final legacy = AgentHubInteractionSnapshot.fromMap({
+      'historyMessages': [
+        {'role': 'assistant', 'content': '旧格式普通回答'},
+      ],
+    });
+    expect(legacy.currentRunIsChatFirstWelcome, isFalse);
+    expect(legacy.currentWelcomeKey, isNull);
+    expect(legacy.historyMessages.single.isChatFirstWelcome, isFalse);
   });
 
   group('restorable conversation detection', () {

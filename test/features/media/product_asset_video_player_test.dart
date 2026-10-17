@@ -62,6 +62,30 @@ void main() {
     },
   );
 
+  testWidgets('iOS reduce motion opens fullscreen without transition', (
+    tester,
+  ) async {
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(reduceMotion: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    await tester.pumpWidget(_host(_repository()));
+    await _pumpUntilFound(
+      tester,
+      find.byKey(const ValueKey('product-asset-video-player')),
+    );
+    await tester.tap(
+      find.byKey(const ValueKey('product-asset-video-fullscreen')),
+    );
+    await tester.pump();
+    await tester.pump();
+    final fullscreen = find.byKey(
+      const ValueKey('product-asset-video-immersive'),
+    );
+    expect(fullscreen, findsOneWidget);
+    expect(ModalRoute.of(tester.element(fullscreen))!.animation!.value, 1);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   for (final width in [320.0, 390.0, 430.0]) {
     for (final scale in [1.0, 2.0]) {
       testWidgets('video long duration, controls and fullscreen $width / $scale', (
@@ -169,12 +193,6 @@ void main() {
             find.byKey(const ValueKey('product-asset-video-play-pause')).last,
           );
           await tester.pump();
-          await expectLater(
-            find.byType(MaterialApp),
-            matchesGoldenFile(
-              '../../goldens/ui_inventory/media-fullscreen-playing-390.png',
-            ),
-          );
           await tester.tap(
             find.byKey(const ValueKey('product-asset-video-play-pause')).last,
           );

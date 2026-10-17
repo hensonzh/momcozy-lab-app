@@ -31,6 +31,7 @@ void main() {
       expect(tokens.expiresIn, 3600);
       expect(tokens.user.id, 'user-001');
       expect(tokens.user.displayName, 'Test User');
+      expect(tokens.toSession(babyId: '', locale: 'en-US').babyId, isEmpty);
     });
 
     test(

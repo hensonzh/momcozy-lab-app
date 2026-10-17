@@ -7,6 +7,7 @@ import 'package:momcozy_flutter_app/core/text/english_error_text.dart';
 import 'package:momcozy_flutter_app/core/update/app_release_lifecycle.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
 import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';
+import 'package:momcozy_flutter_app/features/onboarding/domain/chat_first_onboarding.dart';
 
 enum OnboardingGatePhase { idle, loading, ready, failure }
 
@@ -15,6 +16,7 @@ class OnboardingController extends ChangeNotifier {
     required this.runtimeController,
     this.onPrimaryInfantSelected,
     this.releasePolicy = const NoopOnboardingReleasePolicy(),
+    this.chatFirstMode = false,
   }) {
     runtimeController.addListener(_handleRuntimeChanged);
     _handleRuntimeChanged();
@@ -23,6 +25,10 @@ class OnboardingController extends ChangeNotifier {
   final MomCozyRuntimeController runtimeController;
   final Future<void> Function(String infantId)? onPrimaryInfantSelected;
   final OnboardingReleasePolicy releasePolicy;
+
+  /// The production app uses the new account-scoped entry contract. The old
+  /// full-profile path remains for existing clients and compatibility tests.
+  final bool chatFirstMode;
   OnboardingGatePhase _phase = OnboardingGatePhase.idle;
   OnboardingState? _state;
   String? _loadedUserId;
@@ -99,9 +105,11 @@ class OnboardingController extends ChangeNotifier {
     }
     try {
       final repository = _repository;
-      await _ensureReleaseReset(userId, repository);
+      if (!chatFirstMode) await _ensureReleaseReset(userId, repository);
       if (!isCurrent()) return;
-      final next = await repository.fetchState();
+      final next = chatFirstMode
+          ? await repository.fetchChatFirstState()
+          : await repository.fetchState();
       if (!isCurrent()) return;
       await _markReleaseCompletedIfNeeded(userId, next);
       if (!isCurrent()) return;
@@ -144,6 +152,30 @@ class OnboardingController extends ChangeNotifier {
       }
     }
     if (!_isCurrentAccount(userId, epoch)) return false;
+    _notify();
+    return true;
+  }
+
+  Future<bool> completeChatFirst(ChatFirstOnboardingDraft draft) async {
+    if (!chatFirstMode) {
+      throw StateError(
+        'Chat-first completion requires the new entry contract.',
+      );
+    }
+    final userId = runtimeController.currentSession.userId;
+    final epoch = _accountEpoch;
+    if (!_isCurrentAccount(userId, epoch)) return false;
+    final succeeded = await _run(() async {
+      final next = await _repository.completeChatFirst(draft);
+      if (!_isCurrentAccount(userId, epoch)) return;
+      if (!next.canEnterApp || next.role != draft.role) {
+        throw const FormatException('Onboarding completion was not accepted.');
+      }
+      ++_loadVersion;
+      _applyState(next);
+      _phase = OnboardingGatePhase.ready;
+    });
+    if (!succeeded || !_isCurrentAccount(userId, epoch)) return false;
     _notify();
     return true;
   }

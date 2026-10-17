@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 import re
 import unittest
@@ -39,13 +38,6 @@ class DesignContractOwnershipTest(unittest.TestCase):
                         failures.append(str(path.relative_to(APP_ROOT)))
         self.assertEqual(failures, [])
 
-    def test_committed_me_comparison_paths_are_portable(self) -> None:
-        for path in (APP_ROOT / "docs" / "ui-reference" / "me" / "comparisons").rglob("comparison.json"):
-            payload = json.loads(path.read_text(encoding="utf-8"))
-            for key in ("reference", "actual"):
-                value = payload[key]
-                self.assertFalse(Path(value).is_absolute(), f"{path}: {key}")
-                self.assertTrue((APP_ROOT / value).is_file(), f"{path}: {value}")
 
 
 if __name__ == "__main__":

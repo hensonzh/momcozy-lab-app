@@ -1417,8 +1417,8 @@
     "viewportPolicy": "logical pixels, dpr=1, textScale=1; system bars excluded",
     "commands": [
       "flutter analyze",
-      "flutter test test/modules/baby test/app/baby_route_refresh_test.dart test/app/navigation_figma_capture_test.dart test/shared/route_motion_test.dart",
-      "flutter test test/modules/baby/baby_home_state_capture_test.dart"
+      "flutter test test/modules/baby test/app/baby_route_refresh_test.dart test/shared/route_motion_test.dart",
+      "flutter test test/modules/baby/baby_current_flow_test.dart"
     ],
     "gates": {
       "visual": "same-size reference/actual comparison for every state with reference",

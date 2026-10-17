@@ -4,28 +4,38 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'domain/chat_first_cry_task.dart';
+import 'domain/chat_first_poop_task.dart';
 
 class AgentHubInteractionSnapshot {
   const AgentHubInteractionSnapshot({
     this.runState = const AgentStreamRunState(),
     this.historyMessages = const <AgentHubHistorySnapshot>[],
+    this.cryTasks = const <ChatFirstCryTask>[],
+    this.poopTasks = const <ChatFirstPoopTask>[],
     this.composerText = '',
     this.attachedImages = const <AgentStreamImageInput>[],
     this.attachedFiles = const <AgentStreamFileInput>[],
     this.pendingAttachmentCleanupIds = const <String>[],
     this.activeRequest,
     this.nextBeforeSequence,
+    this.currentRunIsChatFirstWelcome = false,
+    this.currentWelcomeKey,
   });
 
   final int? nextBeforeSequence;
   final AgentStreamRunState runState;
   final List<AgentHubHistorySnapshot> historyMessages;
+  final List<ChatFirstCryTask> cryTasks;
+  final List<ChatFirstPoopTask> poopTasks;
   final String composerText;
   final List<AgentStreamImageInput> attachedImages;
   final List<AgentStreamFileInput> attachedFiles;
   final List<String> pendingAttachmentCleanupIds;
 
   final AgentStreamRequest? activeRequest;
+  final bool currentRunIsChatFirstWelcome;
+  final String? currentWelcomeKey;
 
   bool get hasContent {
     return runState.events.isNotEmpty ||
@@ -34,6 +44,8 @@ class AgentHubInteractionSnapshot {
         runState.threadId?.trim().isNotEmpty == true ||
         runState.runId?.trim().isNotEmpty == true ||
         historyMessages.isNotEmpty ||
+        cryTasks.isNotEmpty ||
+        poopTasks.isNotEmpty ||
         composerText.trim().isNotEmpty ||
         attachedImages.isNotEmpty ||
         attachedFiles.isNotEmpty ||
@@ -43,6 +55,8 @@ class AgentHubInteractionSnapshot {
 
   bool get hasConversationHistory {
     return historyMessages.isNotEmpty ||
+        cryTasks.isNotEmpty ||
+        poopTasks.isNotEmpty ||
         runState.events.isNotEmpty ||
         runState.textContent.trim().isNotEmpty ||
         runState.provisionalTextContent.trim().isNotEmpty;
@@ -50,6 +64,14 @@ class AgentHubInteractionSnapshot {
 
   Map<String, Object?> toMap({bool includeImageData = true}) => {
     'runState': runState.toMap(),
+    if (cryTasks.isNotEmpty)
+      'cryTasks': cryTasks.map((task) => task.toMap()).toList(growable: false),
+    if (poopTasks.isNotEmpty)
+      'poopTasks': poopTasks
+          .map((task) => task.toMap())
+          .toList(growable: false),
+    if (currentRunIsChatFirstWelcome) 'currentRunIsChatFirstWelcome': true,
+    if (currentWelcomeKey != null) 'currentWelcomeKey': currentWelcomeKey,
     if (nextBeforeSequence != null) 'nextBeforeSequence': nextBeforeSequence,
     if (historyMessages.any(
       (message) =>
@@ -57,7 +79,8 @@ class AgentHubInteractionSnapshot {
           message.content.trim().isNotEmpty ||
           message.images.any(_hasFileReference) ||
           message.files.isNotEmpty ||
-          message.runState != null,
+          message.runState != null ||
+          message.isChatFirstPoopTrigger,
     ))
       'historyMessages': historyMessages
           .where(
@@ -66,7 +89,8 @@ class AgentHubInteractionSnapshot {
                 message.content.trim().isNotEmpty ||
                 message.images.any(_hasFileReference) ||
                 message.files.isNotEmpty ||
-                message.runState != null,
+                message.runState != null ||
+                message.isChatFirstPoopTrigger,
           )
           .map((message) => message.toMap(includeImageData: includeImageData))
           .toList(growable: false),
@@ -100,6 +124,14 @@ class AgentHubInteractionSnapshot {
     return AgentHubInteractionSnapshot(
       runState: _runStateFromMap(map['runState']),
       historyMessages: historyMessages,
+      cryTasks: (map['cryTasks'] as List? ?? const [])
+          .map(ChatFirstCryTask.fromMap)
+          .whereType<ChatFirstCryTask>()
+          .toList(growable: false),
+      poopTasks: (map['poopTasks'] as List? ?? const [])
+          .map(ChatFirstPoopTask.fromMap)
+          .whereType<ChatFirstPoopTask>()
+          .toList(growable: false),
       composerText: _string(map['composerText']) ?? '',
       attachedImages: _imagesFromList(map['attachedImages']),
       attachedFiles: _filesFromList(map['attachedFiles']),
@@ -111,6 +143,8 @@ class AgentHubInteractionSnapshot {
               .toSet()
               .toList(growable: false),
       activeRequest: activeRequest,
+      currentRunIsChatFirstWelcome: map['currentRunIsChatFirstWelcome'] == true,
+      currentWelcomeKey: _string(map['currentWelcomeKey']),
       nextBeforeSequence: map['nextBeforeSequence'] is int
           ? map['nextBeforeSequence'] as int
           : null,
@@ -123,14 +157,19 @@ class AgentHubHistorySnapshot {
     required this.role,
     required this.content,
     this.id,
+    this.runId,
     this.sequence,
     this.createdAt,
     this.runState,
     this.images = const <AgentStreamImageInput>[],
     this.files = const <AgentStreamFileInput>[],
+    this.isChatFirstWelcome = false,
+    this.isChatFirstPoopTrigger = false,
+    this.chatFirstWelcomeKey,
   });
 
   final String? id;
+  final String? runId;
   final int? sequence;
   final DateTime? createdAt;
   final String role;
@@ -138,13 +177,20 @@ class AgentHubHistorySnapshot {
   final AgentStreamRunState? runState;
   final List<AgentStreamImageInput> images;
   final List<AgentStreamFileInput> files;
+  final bool isChatFirstWelcome;
+  final bool isChatFirstPoopTrigger;
+  final String? chatFirstWelcomeKey;
 
   Map<String, Object?> toMap({bool includeImageData = true}) => {
     'role': role,
     if (id != null) 'id': id,
+    if (runId != null) 'runId': runId,
     if (sequence != null) 'sequence': sequence,
     if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
     'content': content,
+    if (isChatFirstWelcome) 'isChatFirstWelcome': true,
+    if (isChatFirstPoopTrigger) 'isChatFirstPoopTrigger': true,
+    if (chatFirstWelcomeKey != null) 'chatFirstWelcomeKey': chatFirstWelcomeKey,
     if (runState != null) 'runState': runState!.toMap(),
     if (images.any((image) => includeImageData || _hasFileReference(image)))
       'images': _imagesToPersistenceMaps(
@@ -161,15 +207,24 @@ class AgentHubHistorySnapshot {
     final content = _string(map['content'])?.trim() ?? '';
     final images = _imagesFromList(map['images']);
     final files = _filesFromList(map['files']);
-    if (content.isEmpty && images.isEmpty && files.isEmpty) return null;
+    if (content.isEmpty &&
+        images.isEmpty &&
+        files.isEmpty &&
+        map['isChatFirstPoopTrigger'] != true) {
+      return null;
+    }
     final role = _string(map['role']) == 'user' ? 'user' : 'assistant';
     final runStateValue = map['runState'] ?? map['run_state'];
     return AgentHubHistorySnapshot(
       role: role,
       id: _string(map['id']),
+      runId: _string(map['runId']),
       sequence: map['sequence'] is int ? map['sequence'] as int : null,
       createdAt: DateTime.tryParse(_string(map['createdAt']) ?? ''),
       content: content,
+      isChatFirstWelcome: map['isChatFirstWelcome'] == true,
+      isChatFirstPoopTrigger: map['isChatFirstPoopTrigger'] == true,
+      chatFirstWelcomeKey: _string(map['chatFirstWelcomeKey']),
       images: images,
       files: files,
       runState: runStateValue is Map

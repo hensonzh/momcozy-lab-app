@@ -1664,6 +1664,197 @@ void main() {
     );
   });
 
+  testWidgets(
+    'baby knowledge fills the existing chat while the welcome run is pending',
+    (tester) async {
+      const question = '关于宝宝安全睡眠，我想了解哪些基本注意事项？';
+      const welcome = AgentHubAutoRunRequest(
+        requestMessage: '请根据资料生成欢迎语',
+        idempotencyKey: 'chat-first-welcome:test-profile',
+        metadata: {'source': 'chat_first_welcome'},
+      );
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+      final runner = AgentStreamRunner(client);
+
+      Widget chat({required bool visible, String? prefill}) => _host(
+        AgentHubPage(
+          chatFirstExperience: true,
+          runner: runner,
+          isVisible: visible,
+          initialAutoRunRequest: welcome,
+          initialComposerText: prefill,
+        ),
+      );
+      await tester.pumpWidget(chat(visible: true));
+      await _pumpUntil(tester, () => client.requests.isNotEmpty);
+      expect(client.requests, hasLength(1));
+
+      await tester.pumpWidget(chat(visible: false));
+      await tester.pumpWidget(chat(visible: true, prefill: question));
+      await tester.pump();
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('agent-composer-input')),
+            )
+            .controller!
+            .text,
+        question,
+      );
+      expect(client.requests, hasLength(1), reason: 'A draft is not a run');
+    },
+  );
+
+  testWidgets('late welcome run preserves an unsent baby knowledge question', (
+    tester,
+  ) async {
+    const question = '关于宝宝安全睡眠，我想了解哪些基本注意事项？';
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          chatFirstExperience: true,
+          runner: AgentStreamRunner(client),
+          initialComposerText: question,
+          initialAutoRunRequest: const AgentHubAutoRunRequest(
+            requestMessage: '请根据资料生成欢迎语',
+            idempotencyKey: 'chat-first-welcome:late-profile',
+            metadata: {'source': 'chat_first_welcome'},
+          ),
+        ),
+      ),
+    );
+    await _pumpUntil(tester, () => client.requests.isNotEmpty);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller!
+          .text,
+      question,
+    );
+    expect(client.requests, hasLength(1));
+  });
+
+  testWidgets('late welcome keeps an unsent draft and its photo attachment', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    final runner = AgentStreamRunner(client);
+    final cacheKey = Object();
+    const photo = AgentStreamImageInput(
+      dataUrl: 'data:image/png;base64,fixture',
+      mimeType: 'image/png',
+      name: 'draft-photo.png',
+    );
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          chatFirstExperience: true,
+          stateCacheKey: cacheKey,
+          runner: runner,
+          pickImage: (_) async => photo,
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '尚未发送的宝宝问题',
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('draft-photo.png'), findsOneWidget);
+
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          chatFirstExperience: true,
+          stateCacheKey: cacheKey,
+          runner: runner,
+          pickImage: (_) async => photo,
+          initialAutoRunRequest: const AgentHubAutoRunRequest(
+            requestMessage: '请根据资料生成欢迎语',
+            idempotencyKey: 'chat-first-welcome:photo-profile',
+            metadata: {'source': 'chat_first_welcome'},
+          ),
+        ),
+      ),
+    );
+    await _pumpUntil(tester, () => client.requests.isNotEmpty);
+    expect(client.requests.single.images, isEmpty);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller!
+          .text,
+      '尚未发送的宝宝问题',
+    );
+    expect(find.text('draft-photo.png'), findsOneWidget);
+  });
+
+  testWidgets(
+    'cold draft restore does not replace the user text with prefill',
+    (tester) async {
+      final store = _MemoryAgentHubInteractionStateStore(
+        const AgentHubInteractionSnapshot(composerText: '我还在编辑原来的问题'),
+      );
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            interactionStateStore: store,
+            initialComposerText: '关于宝宝安全睡眠，我想了解哪些基本注意事项？',
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('agent-composer-input')),
+            )
+            .controller!
+            .text,
+        '我还在编辑原来的问题',
+      );
+    },
+  );
+
+  testWidgets('baby knowledge does not overwrite an existing unsent draft', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    final runner = AgentStreamRunner(client);
+    await tester.pumpWidget(_host(AgentHubPage(runner: runner)));
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '我还在编辑原来的问题',
+    );
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: runner,
+          initialComposerText: '关于宝宝安全睡眠，我想了解哪些基本注意事项？',
+        ),
+      ),
+    );
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller!
+          .text,
+      '我还在编辑原来的问题',
+    );
+    expect(client.requests, isEmpty);
+  });
+
   testWidgets('Agent Hub can auto-send an initial composer prefill once', (
     tester,
   ) async {
@@ -1705,6 +1896,50 @@ void main() {
     await tester.pump();
 
     expect(client.requests, hasLength(1));
+  });
+
+  testWidgets('legacy auto-send does not prefill over an active reply', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    final runner = AgentStreamRunner(client);
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          chatFirstExperience: true,
+          runner: runner,
+          initialAutoRunRequest: const AgentHubAutoRunRequest(
+            requestMessage: '先前的问题',
+            idempotencyKey: 'previous-run',
+          ),
+        ),
+      ),
+    );
+    await _pumpUntil(tester, () => client.requests.isNotEmpty);
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          chatFirstExperience: true,
+          runner: runner,
+          initialAutoRunRequest: const AgentHubAutoRunRequest(
+            requestMessage: '先前的问题',
+            idempotencyKey: 'previous-run',
+          ),
+          initialComposerText: '来自旧入口的自动发送问题',
+          initialAutoSend: true,
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(client.requests, hasLength(1));
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .controller!
+          .text,
+      isEmpty,
+    );
   });
 
   testWidgets(

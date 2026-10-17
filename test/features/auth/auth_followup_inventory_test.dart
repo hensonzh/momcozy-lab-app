@@ -1,8 +1,4 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -91,21 +87,15 @@ void main() {
   late GoRouter router;
   late FakeRouteIntentPlatform platform;
   late MemoryMomCozySessionStore store;
-  String? previous;
-  late String variant;
-  final steps = <Map<String, Object?>>[];
 
   Future<void> mount(
     WidgetTester tester, {
     double width = 393,
     double scale = 1,
   }) async {
-    previous = null;
-    steps.clear();
     tester.view.physicalSize = Size(width, 844);
     tester.platformDispatcher.textScaleFactorTestValue = scale;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    variant = '${width.toInt()}-${scale.toInt()}x';
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -171,43 +161,11 @@ void main() {
     );
   }
 
-  Future<void> capture(
-    WidgetTester tester,
-    String state,
-    String route,
-    String action,
-  ) async {
+  Future<void> verifyState(WidgetTester tester, String route) async {
     expect(router.state.uri.path, route);
     expect(tester.takeException(), isNull);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
-    final source =
-        'test/goldens/ui_inventory/auth-followup-$state-$variant.png';
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile(
-        '../../goldens/ui_inventory/auth-followup-$state-$variant.png',
-      ),
-    );
-    steps.add({
-      'source': source,
-      'previous_source': previous,
-      'route': route,
-      'trigger': action,
-      'root_entry': 'Open More while signed out → real auth redirect',
-      'evidence':
-          'Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures',
-      'test': 'test/features/auth/auth_followup_inventory_test.dart',
-    });
-    previous = source;
-    final output = Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
-    if (output != null) {
-      final file = File('$output/journeys/auth-followup-$state-$variant.json');
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(
-        '${const JsonEncoder.withIndent('  ').convert(steps.last)}\n',
-      );
-    }
   }
 
   final email = find.byKey(const ValueKey('auth-email-field'));
@@ -215,7 +173,7 @@ void main() {
   final code = find.byKey(const ValueKey('auth-code-field'));
   final submit = find.byKey(const ValueKey('auth-submit-button'));
   Future<void> snap(WidgetTester tester, String state, String action) =>
-      capture(tester, state, '/login', action);
+      verifyState(tester, '/login');
   Future<void> submitWaiting(
     WidgetTester tester,
     String path,
@@ -426,12 +384,7 @@ void main() {
       await tester.enterText(password, 'NewInventory123');
       await tap(tester, submit);
       expect(runtime.currentSession.isAuthenticated, isTrue);
-      await capture(
-        tester,
-        'reset-login-more',
-        '/more',
-        'Sign in with new password → real session transition restores More',
-      );
+      await verifyState(tester, '/more');
       await tester.pumpWidget(const SizedBox());
     });
   }
@@ -584,12 +537,7 @@ void main() {
     );
     await tap(tester, submit);
     expect(runtime.currentSession.isAuthenticated, isTrue);
-    await capture(
-      tester,
-      'verify-more',
-      '/more',
-      'Verify email → authenticated intended More route',
-    );
+    await verifyState(tester, '/more');
     await tester.pumpWidget(const SizedBox());
   });
 

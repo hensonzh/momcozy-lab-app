@@ -371,6 +371,292 @@ void main() {
       expect(history.currentState.hasCompletedAssistantMessage, isTrue);
     },
   );
+
+  test(
+    'hides chat-first welcome trigger while retaining the streamed reply',
+    () async {
+      final transport = FixtureApiJsonTransport({
+        'thread': {
+          'id': 'welcome-thread',
+          'title': 'Momcozy AI',
+          'status': 'active',
+          'metadata': <String, Object?>{},
+          'created_at': '2026-10-15T08:00:00Z',
+          'updated_at': '2026-10-15T08:01:00Z',
+        },
+        'items': [
+          {
+            'id': 'welcome-user',
+            'run_id': 'welcome-run',
+            'role': 'user',
+            'message_type': 'text',
+            'status': 'completed',
+            'sequence': 1,
+            'created_at': '2026-10-15T08:00:00Z',
+            'content': {
+              'text':
+                  '[Momcozy Chat 欢迎引导][cccccccccccccccccccccccc] 请根据当前账号资料介绍自己。',
+              'client_context': {'source': 'chat_first_welcome'},
+              'attachments': <Object?>[],
+            },
+          },
+          {
+            'id': 'welcome-answer',
+            'run_id': 'welcome-run',
+            'role': 'assistant',
+            'message_type': 'text',
+            'status': 'completed',
+            'sequence': 2,
+            'created_at': '2026-10-15T08:01:00Z',
+            'content': {'text': '你好，我是 Momcozy AI。'},
+          },
+        ],
+        'events': <Object?>[],
+        'next_before_sequence': null,
+      });
+      final history = await AgentConversationApiRepository(
+        transport: transport,
+      ).loadConversation('welcome-thread');
+      expect(history.messages, isEmpty);
+      expect(history.currentState.textContent, '你好，我是 Momcozy AI。');
+      expect(history.currentRunIsChatFirstWelcome, isTrue);
+    },
+  );
+
+  test(
+    'classifies both welcome replies without hiding ordinary turns',
+    () async {
+      const thread = {
+        'id': 'welcome-thread',
+        'title': 'Momcozy AI',
+        'status': 'active',
+        'created_at': '2026-10-15T08:00:00Z',
+        'updated_at': '2026-10-16T08:01:00Z',
+      };
+      Map<String, Object?> message(
+        int sequence,
+        String runId,
+        String role,
+        String text,
+      ) => {
+        'id': 'message-$sequence',
+        'sequence': sequence,
+        'run_id': runId,
+        'role': role,
+        'created_at': '2026-10-16T08:00:00Z',
+        'content': {'text': text},
+      };
+      final response = {
+        'thread': thread,
+        'items': [
+          message(
+            1,
+            'welcome-old',
+            'user',
+            '[Momcozy Chat 欢迎引导][aaaaaaaaaaaaaaaaaaaaaaaa] 初次引导',
+          ),
+          message(2, 'welcome-old', 'assistant', '旧资料的欢迎回复'),
+          message(3, 'ordinary-1', 'user', '宝宝今天睡得好吗？'),
+          message(4, 'ordinary-1', 'assistant', '请结合实际情况观察。'),
+          message(
+            5,
+            'welcome-new',
+            'user',
+            '[Momcozy Chat 欢迎引导][bbbbbbbbbbbbbbbbbbbbbbbb] 更新引导',
+          ),
+          message(6, 'welcome-new', 'assistant', '新资料的欢迎回复'),
+          message(7, 'ordinary-2', 'user', '怎么记录喂养？'),
+          message(8, 'ordinary-2', 'assistant', '在记录入口填写。'),
+        ],
+        'events': <Object>[],
+        'next_before_sequence': null,
+      };
+      final history = await AgentConversationApiRepository(
+        transport: FixtureApiJsonTransport(response),
+      ).loadConversation('welcome-thread');
+      expect(history.currentRunIsChatFirstWelcome, isFalse);
+      expect(history.messages.map((item) => item.content), [
+        '旧资料的欢迎回复',
+        '宝宝今天睡得好吗？',
+        '请结合实际情况观察。',
+        '新资料的欢迎回复',
+        '怎么记录喂养？',
+      ]);
+      expect(
+        history.messages
+            .where((item) => item.isChatFirstWelcome)
+            .map((item) => item.content),
+        ['旧资料的欢迎回复', '新资料的欢迎回复'],
+      );
+    },
+  );
+
+  test(
+    'classifies a welcome reply split from its trigger by pagination',
+    () async {
+      final thread = {
+        'id': 'welcome-thread',
+        'title': 'Momcozy AI',
+        'status': 'active',
+        'created_at': '2026-10-15T08:00:00Z',
+        'updated_at': '2026-10-16T08:01:00Z',
+      };
+      final transport = _PagedHistoryTransport([
+        {
+          'thread': thread,
+          'items': [
+            {
+              'id': 'welcome-answer',
+              'run_id': 'welcome-run',
+              'role': 'assistant',
+              'sequence': 2,
+              'created_at': '2026-10-15T08:01:00Z',
+              'content': {'text': '旧资料的欢迎回复'},
+            },
+            _message(
+              id: 'next-user',
+              runId: 'next-run',
+              text: '普通问题',
+              sequence: 3,
+            ),
+          ],
+          'events': <Object>[],
+          'next_before_sequence': 2,
+        },
+        {
+          'thread': thread,
+          'items': [
+            {
+              ..._message(
+                id: 'welcome-user',
+                runId: 'welcome-run',
+                text: '[Momcozy Chat 欢迎引导][aaaaaaaaaaaaaaaaaaaaaaaa] 初次引导',
+                sequence: 1,
+              ),
+              'client_context': {'source': 'chat_first_welcome'},
+            },
+          ],
+          'events': <Object>[],
+          'next_before_sequence': null,
+        },
+      ]);
+      final history = await AgentConversationApiRepository(
+        transport: transport,
+        identifyWelcomeBoundary: true,
+      ).loadConversation('welcome-thread');
+      expect(history.messages.first.content, '旧资料的欢迎回复');
+      expect(history.messages.first.isChatFirstWelcome, isTrue);
+      expect(history.messages.last.content, '普通问题');
+      expect(history.messages.last.isChatFirstWelcome, isFalse);
+      expect(transport.queries, [
+        {'limit': 20},
+        {'limit': 1, 'before_sequence': 2},
+      ]);
+    },
+  );
+
+  test(
+    'poop history classifies internal photo trigger without exposing prompt',
+    () async {
+      final history = await AgentConversationApiRepository(
+        transport: FixtureApiJsonTransport({
+          'thread': {
+            'id': 'thread-poop',
+            'title': 'Momcozy AI',
+            'status': 'active',
+            'created_at': '2026-10-17T08:00:00Z',
+            'updated_at': '2026-10-17T08:10:00Z',
+          },
+          'items': [
+            {
+              'id': 'poop-user',
+              'run_id': 'run-poop',
+              'role': 'user',
+              'sequence': 1,
+              'created_at': '2026-10-17T08:00:00Z',
+              'content': {
+                'text': '[momcozy_internal_poop_v1] 请结合这张宝宝便便照片观察。',
+                'attachments': [
+                  {
+                    'type': 'image',
+                    'asset_id': 'owned-photo',
+                    'content_type': 'image/png',
+                  },
+                ],
+              },
+            },
+            {
+              'id': 'poop-answer',
+              'run_id': 'run-poop',
+              'role': 'assistant',
+              'sequence': 2,
+              'created_at': '2026-10-17T08:01:00Z',
+              'content': {'text': '只能整理可见的观察线索。'},
+            },
+            {
+              'id': 'ordinary-user',
+              'run_id': 'run-ordinary',
+              'role': 'user',
+              'sequence': 3,
+              'created_at': '2026-10-17T08:02:00Z',
+              'content': {'text': '普通问题'},
+            },
+            {
+              'id': 'ordinary-answer',
+              'run_id': 'run-ordinary',
+              'role': 'assistant',
+              'sequence': 4,
+              'created_at': '2026-10-17T08:03:00Z',
+              'content': {'text': '普通回答'},
+            },
+          ],
+          'events': <Object>[],
+        }),
+      ).loadConversation('thread-poop');
+      expect(history.messages.first.isChatFirstPoopTrigger, isTrue);
+      expect(history.messages.first.runId, 'run-poop');
+      expect(history.messages.first.content, isEmpty);
+      expect(history.messages.first.images, isEmpty);
+      expect(history.messages[1].content, '只能整理可见的观察线索。');
+      expect(history.messages[2].content, '普通问题');
+      expect(history.currentState.textContent, '普通回答');
+    },
+  );
+
+  test('ordinary history does not require a boundary lookup', () async {
+    const thread = {
+      'id': 'ordinary-thread',
+      'title': 'Momcozy AI',
+      'status': 'active',
+      'created_at': '2026-10-15T08:00:00Z',
+      'updated_at': '2026-10-16T08:01:00Z',
+    };
+    final transport = _PagedHistoryTransport([
+      {
+        'thread': thread,
+        'items': [
+          {
+            'id': 'ordinary-answer',
+            'run_id': 'ordinary-run',
+            'role': 'assistant',
+            'sequence': 12,
+            'created_at': '2026-10-16T08:01:00Z',
+            'content': {'text': '普通回答'},
+          },
+        ],
+        'events': <Object>[],
+        'next_before_sequence': 12,
+      },
+    ]);
+    final history = await AgentConversationApiRepository(
+      transport: transport,
+    ).loadConversation('ordinary-thread');
+    expect(history.currentState.textContent, '普通回答');
+    expect(history.currentRunIsChatFirstWelcome, isFalse);
+    expect(transport.queries, [
+      {'limit': 20},
+    ]);
+  });
 }
 
 Map<String, Object?> _message({

@@ -8,6 +8,7 @@ import '../../../domain/baby/baby_record.dart';
 import 'baby_artwork.dart';
 import '../../../shared/widgets/product_feedback.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/design_system/momcozy_motion.dart';
 
 import '../../../shared/widgets/mom_settings_widgets.dart';
 import '../../../shared/zoned_time.dart';
@@ -286,7 +287,7 @@ class _BabyHomePageState extends State<BabyHomePage>
   Widget build(BuildContext context) => Theme(
     data: BabyDesign.theme(
       Theme.of(context),
-      reduceMotion: MediaQuery.disableAnimationsOf(context),
+      reduceMotion: MomCozyMotion.isReduced(context),
     ),
     child: ColoredBox(
       color: MomHomeTokens.background,

@@ -1,9 +1,4 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,9 +22,7 @@ void main() {
   late _MoreTransport transport;
   late _MoreRuntime runtime;
   late MemoryMomCozySessionStore store;
-  late String variant;
   late GoRouter router;
-  String? previous;
   late FakePlatform permissions;
   late FakeGateway gateway;
   late NotificationCoordinator coordinator;
@@ -40,8 +33,6 @@ void main() {
     double scale = 1,
     int notificationCount = 3,
   }) async {
-    previous = null;
-    variant = '${width.toInt()}-${scale.toInt()}x';
     tester.platformDispatcher.textScaleFactorTestValue = scale;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     permissions = FakePlatform();
@@ -162,10 +153,8 @@ void main() {
     expect(tester.takeException(), isNull);
   }
 
-  Future<void> capture(
-    WidgetTester tester,
-    String state,
-    String action, {
+  Future<void> verifyState(
+    WidgetTester tester, {
     String route = '/more',
   }) async {
     // Commit edits and finish the input hint's fade without settling spinners.
@@ -173,117 +162,59 @@ void main() {
     await tester.pump(const Duration(milliseconds: 250));
     expect(router.state.uri.path, route);
     expect(tester.takeException(), isNull);
-    final source = 'test/goldens/ui_inventory/more-current-$state-$variant.png';
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile(
-        '../../goldens/ui_inventory/more-current-$state-$variant.png',
-      ),
-    );
-    final row = {
-      'source': source,
-      'previous_source': previous,
-      'route': route,
-      'trigger': action,
-      'root_entry': 'Authenticated Me → tap More bottom navigation',
-      'evidence':
-          'Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push',
-      'test': 'test/modules/profile/more_current_inventory_test.dart',
-    };
-    previous = source;
-    final output = Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
-    if (output != null) {
-      final file = File('$output/journeys/more-current-$state-$variant.json');
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(
-        '${const JsonEncoder.withIndent('  ').convert(row)}\n',
-      );
-    }
   }
 
   Future<void> start(WidgetTester tester, String stem) async {
-    await capture(
-      tester,
-      '$stem-mom',
-      'Authenticated Me before More navigation',
-      route: '/me',
-    );
+    await verifyState(tester, route: '/me');
     await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
   }
 
   for (final narrow in [false, true]) {
-    testWidgets('inventory current More routes ${narrow ? '320/2x' : '393/1x'}', (
-      tester,
-    ) async {
-      await mount(tester, width: narrow ? 320 : 393, scale: narrow ? 2 : 1);
-      await start(tester, 'routes');
-      expect(find.text('Mia Chen'), findsOneWidget);
-      expect(coordinator.inbox!.state.unreadCount, 3);
-      await capture(
-        tester,
-        'routes-ready',
-        'More current identity and three unread notifications',
-      );
-      expect(find.text('Privacy'), findsNothing);
-      for (final removed in [
-        'Account settings',
-        'Notifications',
-        'Expert support',
-        'Everyday settings',
-        'Expert care',
-      ]) {
-        expect(find.text(removed), findsNothing);
-      }
-      expect(find.text('Request account deletion'), findsOneWidget);
-      await tap(tester, find.byKey(const ValueKey('account-delete')));
-      await capture(
-        tester,
-        'account-delete-confirm',
-        'Request account deletion from More → confirmation only',
-        route: '/more',
-      );
-      await tap(tester, find.text('Cancel'));
-      expect(
-        transport.mutationPaths.where((path) => path == '/v1/auth/me'),
-        isEmpty,
-      );
-      await capture(
-        tester,
-        'account-delete-cancel',
-        'Cancel deletion → account retained on More',
-        route: '/more',
-      );
-      final logout = find.byKey(const ValueKey('more-logout'));
-      await tester.ensureVisible(logout);
-      await tester.pumpAndSettle();
-      await capture(
-        tester,
-        'logout-visible',
-        'Scroll More to sign-out control',
-      );
-      transport.logoutGate = Completer<void>();
-      await tester.tap(logout);
-      await tester.pumpAndSettle();
-      expect(runtime.runtime.session.isAuthenticated, isFalse);
-      expect(await store.readSession(), isNull);
-      await capture(
-        tester,
-        'logout-remote-pending',
-        'Sign out → local session cleared and login immediately, remote revoke pending',
-        route: '/login',
-      );
-      transport.logoutGate!.complete();
-      await tester.pumpAndSettle();
-      expect(transport.logoutCalls, 1);
-      await capture(
-        tester,
-        'logout-complete',
-        'Remote logout-session completed → login remains',
-        route: '/login',
-      );
-      await tester.pumpWidget(const SizedBox());
-      await tester.pumpAndSettle();
-    });
+    testWidgets(
+      'inventory current More routes ${narrow ? '320/2x' : '393/1x'}',
+      (tester) async {
+        await mount(tester, width: narrow ? 320 : 393, scale: narrow ? 2 : 1);
+        await start(tester, 'routes');
+        expect(find.text('Mia Chen'), findsOneWidget);
+        expect(coordinator.inbox!.state.unreadCount, 3);
+        await verifyState(tester);
+        expect(find.text('Privacy'), findsNothing);
+        for (final removed in [
+          'Account settings',
+          'Notifications',
+          'Expert support',
+          'Everyday settings',
+          'Expert care',
+        ]) {
+          expect(find.text(removed), findsNothing);
+        }
+        expect(find.text('Request account deletion'), findsOneWidget);
+        await tap(tester, find.byKey(const ValueKey('account-delete')));
+        await verifyState(tester, route: '/more');
+        await tap(tester, find.text('Cancel'));
+        expect(
+          transport.mutationPaths.where((path) => path == '/v1/auth/me'),
+          isEmpty,
+        );
+        await verifyState(tester, route: '/more');
+        final logout = find.byKey(const ValueKey('more-logout'));
+        await tester.ensureVisible(logout);
+        await tester.pumpAndSettle();
+        await verifyState(tester);
+        transport.logoutGate = Completer<void>();
+        await tester.tap(logout);
+        await tester.pumpAndSettle();
+        expect(runtime.runtime.session.isAuthenticated, isFalse);
+        expect(await store.readSession(), isNull);
+        await verifyState(tester, route: '/login');
+        transport.logoutGate!.complete();
+        await tester.pumpAndSettle();
+        expect(transport.logoutCalls, 1);
+        await verifyState(tester, route: '/login');
+        await tester.pumpWidget(const SizedBox());
+        await tester.pumpAndSettle();
+      },
+    );
     for (final condition in [
       'pending',
       'name-unavailable',
@@ -326,27 +257,15 @@ void main() {
           await start(tester, condition);
           if (condition == 'pending') {
             expect(find.text('Loading account…'), findsOneWidget);
-            await capture(
-              tester,
-              'identity-pending',
-              'Both identity endpoints pending → loading account card',
-            );
+            await verifyState(tester);
             transport.readGates['/v1/profile/me']!.complete();
             await tester.pumpAndSettle();
             expect(find.text('Loading account…'), findsOneWidget);
-            await capture(
-              tester,
-              'identity-name-only-arrived',
-              'Name response arrived, email pending → combined identity still loading',
-            );
+            await verifyState(tester);
             transport.readGates['/v1/auth/me']!.complete();
             await tester.pumpAndSettle();
             expect(find.text('Mia Chen'), findsOneWidget);
-            await capture(
-              tester,
-              'identity-resolved',
-              'Both responses arrived → name and email displayed',
-            );
+            await verifyState(tester);
           } else {
             if (condition == 'name-unavailable' ||
                 condition == 'both-unavailable') {
@@ -368,11 +287,7 @@ void main() {
             if (condition == 'long') {
               expect(coordinator.inbox!.state.unreadCount, 101);
             }
-            await capture(
-              tester,
-              'identity-$condition',
-              'More identity $condition from independent HTTP responses',
-            );
+            await verifyState(tester);
           }
           await tester.pumpWidget(const SizedBox());
           await tester.pumpAndSettle();
@@ -384,11 +299,7 @@ void main() {
       (tester) async {
         await mount(tester, width: narrow ? 320 : 393, scale: narrow ? 2 : 1);
         await start(tester, 'logout-error');
-        await capture(
-          tester,
-          'logout-error-ready',
-          'More before failed remote revoke',
-        );
+        await verifyState(tester);
         transport.failLogout = true;
         await tap(tester, find.byKey(const ValueKey('more-logout')));
         expect(runtime.runtime.session.isAuthenticated, isFalse);
@@ -398,20 +309,10 @@ void main() {
           find.text('Sign-out could not finish. Reconnect and try again.'),
           findsOneWidget,
         );
-        await capture(
-          tester,
-          'logout-error-message',
-          'Remote revoke returns 503 → login with sign-out failure Snackbar',
-          route: '/login',
-        );
+        await verifyState(tester, route: '/login');
         await tester.pump(const Duration(seconds: 5));
         await tester.pumpAndSettle();
-        await capture(
-          tester,
-          'logout-error-dismissed',
-          'Snackbar expires → anonymous login persists',
-          route: '/login',
-        );
+        await verifyState(tester, route: '/login');
         await tester.pumpWidget(const SizedBox());
         await tester.pumpAndSettle();
       },

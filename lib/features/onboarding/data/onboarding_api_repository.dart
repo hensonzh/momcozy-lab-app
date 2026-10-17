@@ -1,7 +1,9 @@
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';
+import 'package:momcozy_flutter_app/features/onboarding/domain/chat_first_onboarding.dart';
 
 const onboardingMeEndpoint = '/v1/onboarding/me';
+const chatFirstOnboardingEndpoint = '$onboardingMeEndpoint/chat-first';
 const onboardingReleaseResetEndpoint = '$onboardingMeEndpoint/release-reset';
 
 class OnboardingApiRepository {
@@ -31,6 +33,26 @@ class OnboardingApiRepository {
   Future<OnboardingState> fetchState() async {
     return OnboardingState.fromMap(
       await transport.getJson(onboardingMeEndpoint),
+    );
+  }
+
+  Future<OnboardingState> fetchChatFirstState() async =>
+      OnboardingState.fromMap(
+        await transport.getJson(chatFirstOnboardingEndpoint),
+      );
+
+  Future<OnboardingState> completeChatFirst(
+    ChatFirstOnboardingDraft draft,
+  ) async {
+    final mutation = transport;
+    if (mutation is! ApiJsonMutationTransport) {
+      throw StateError('Chat-first onboarding mutation is not configured.');
+    }
+    return OnboardingState.fromMap(
+      await (mutation as ApiJsonMutationTransport).putJson(
+        chatFirstOnboardingEndpoint,
+        body: draft.toMap(),
+      ),
     );
   }
 

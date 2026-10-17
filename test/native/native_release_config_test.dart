@@ -88,7 +88,9 @@ void main() {
 
     final infoPlist = File('ios/Runner/Info.plist').readAsStringSync();
     expect(infoPlist, contains('share with Momcozy AI'));
-    expect(infoPlist, contains('voice messages'));
+    expect(infoPlist, contains('video consultations'));
+    expect(infoPlist, contains('local crying recordings'));
+    expect(infoPlist, contains('not uploaded by this feature'));
     expect(infoPlist, contains('parenting-related image'));
   });
 

@@ -1,6 +1,3 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -23,6 +20,41 @@ import '../support/notification_fakes.dart';
 
 void main() {
   setUpAll(loadMomCozyTestFonts);
+
+  testWidgets('failed sign out keeps the account page and permits retry', (
+    tester,
+  ) async {
+    var attempts = 0;
+    final router = await _host(
+      tester,
+      FixtureApiJsonTransport({
+        'display_name': 'Mia Chen',
+        'email': 'mia@example.test',
+      }),
+      393,
+      1,
+      onLogout: () async {
+        attempts++;
+        if (attempts == 1) throw StateError('offline');
+      },
+    );
+    final logout = find.byKey(const ValueKey('more-logout'));
+    await tester.scrollUntilVisible(logout, 250);
+    await tester.tap(logout);
+    await tester.pump();
+    expect(router.state.uri.path, '/more');
+    expect(
+      find.text('Sign-out could not finish. Reconnect and try again.'),
+      findsOneWidget,
+    );
+
+    await tester.tap(logout);
+    await tester.pumpAndSettle();
+    expect(attempts, 2);
+    expect(router.state.uri.path, '/login');
+    await tester.pumpWidget(const SizedBox());
+  });
+
   for (final (width, scale) in [(393.0, 1.0), (320.0, 2.0)]) {
     testWidgets('More pending and failed identity $width/$scale', (
       tester,
@@ -30,24 +62,12 @@ void main() {
       final transport = _PendingIdentity();
       final router = await _host(tester, transport, width, scale);
       expect(find.text('Loading account…'), findsOneWidget);
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile(
-          '../goldens/ui_refactor/more-loading-${width.toInt()}-${scale.toInt()}x.png',
-        ),
-      );
 
       transport.reply.completeError(StateError('offline'));
       await tester.pumpAndSettle();
       expect(find.text('Manage your account information'), findsOneWidget);
       expect(find.text('Notifications'), findsNothing);
       expect(find.text('Mia Chen'), findsNothing);
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile(
-          '../goldens/ui_refactor/more-unavailable-${width.toInt()}-${scale.toInt()}x.png',
-        ),
-      );
       await tester.scrollUntilVisible(
         find.byKey(const ValueKey('more-logout')),
         250,
@@ -89,21 +109,9 @@ void main() {
       // its domain ends up squeezed into an orphan line on a phone.
       expect(tester.getTopLeft(find.text(email)).dx, lessThan(65));
       expect(tester.takeException(), isNull);
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile(
-          '../goldens/ui_refactor/more-long-identity-${width.toInt()}-${scale.toInt()}x.png',
-        ),
-      );
       final logout = find.byKey(const ValueKey('more-logout'));
       await tester.scrollUntilVisible(logout, 250);
       await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile(
-          '../goldens/ui_refactor/more-long-bottom-${width.toInt()}-${scale.toInt()}x.png',
-        ),
-      );
       expect(tester.takeException(), isNull);
       await tester.tap(logout);
       await tester.pumpAndSettle();

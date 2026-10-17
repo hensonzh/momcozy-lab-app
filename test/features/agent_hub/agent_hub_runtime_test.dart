@@ -50,6 +50,29 @@ void main() {
     );
   });
 
+  test(
+    'chat-first requests explicitly use Chinese without changing legacy callers',
+    () {
+      const session = MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'mother-1',
+        babyId: '',
+        locale: 'en-US',
+        accessToken: 'token',
+      );
+      final request = buildSessionAgentHubRequest(
+        '你好',
+        session: session,
+        locale: 'zh-CN',
+      );
+      expect(request.locale, 'zh-CN');
+      expect(
+        buildDefaultAgentHubPayload(request)['client_context'],
+        containsPair('locale', 'zh-CN'),
+      );
+    },
+  );
+
   test('default Agent Hub controls use the dedicated Agent Runtime', () {
     final cancelClient = createDefaultAgentHubCancelClient();
 

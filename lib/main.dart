@@ -3,6 +3,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import 'app/momcozy_app.dart';
 import 'app/momcozy_api_runtime.dart';
+import 'app/momcozy_bootstrap.dart';
 import 'core/config/momcozy_app_capabilities.dart';
 import 'core/network/staging_certificate_trust.dart';
 import 'core/update/app_release_lifecycle.dart';
@@ -10,19 +11,24 @@ import 'features/media/data/product_asset_file_cache.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await configureStagingCertificateTrust();
-  const capabilities = MomCozyAppCapabilities.fromEnvironment();
-  final releasePolicy = await prepareAppReleaseLifecycle(
-    enabled: capabilities.releaseResetLifecycleEnabled,
-    loadReleaseId: () async => _releaseId(await PackageInfo.fromPlatform()),
-    clearFileCache: _clearAccountFileCaches,
-  );
-  final runtime = await MomCozyApiRuntime.bootstrap();
   runApp(
-    MomCozyFlutterApp(
-      apiRuntime: runtime,
-      capabilities: capabilities,
-      onboardingReleasePolicy: releasePolicy,
+    MomCozyBootstrap(
+      load: () async {
+        await configureStagingCertificateTrust();
+        const capabilities = MomCozyAppCapabilities.fromEnvironment();
+        final releasePolicy = await prepareAppReleaseLifecycle(
+          enabled: capabilities.releaseResetLifecycleEnabled,
+          loadReleaseId: () async =>
+              _releaseId(await PackageInfo.fromPlatform()),
+          clearFileCache: _clearAccountFileCaches,
+        );
+        final runtime = await MomCozyApiRuntime.bootstrap();
+        return MomCozyFlutterApp(
+          apiRuntime: runtime,
+          capabilities: capabilities,
+          onboardingReleasePolicy: releasePolicy,
+        );
+      },
     ),
   );
 }

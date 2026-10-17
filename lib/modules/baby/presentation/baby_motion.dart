@@ -9,7 +9,7 @@ abstract final class BabyMotion {
   static Duration duration(BuildContext context, Duration value) =>
       MomCozyMotion.duration(context, value);
   static AnimationStyle sheet(BuildContext context) =>
-      MediaQuery.disableAnimationsOf(context)
+      MomCozyMotion.isReduced(context)
       ? AnimationStyle.noAnimation
       : const AnimationStyle(
           duration: Duration(milliseconds: 280),
@@ -46,7 +46,7 @@ class _BabyPressFeedbackState extends State<BabyPressFeedback> {
 
   @override
   Widget build(BuildContext context) {
-    final reduced = MediaQuery.disableAnimationsOf(context);
+    final reduced = MomCozyMotion.isReduced(context);
     return Listener(
       onPointerDown: (event) {
         if (_enabled && !reduced && _pointer == null) {
@@ -108,7 +108,7 @@ class _BabyContentTransitionState extends State<BabyContentTransition>
   void didUpdateWidget(BabyContentTransition oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.selection != widget.selection) {
-      if (MediaQuery.disableAnimationsOf(context)) {
+      if (MomCozyMotion.isReduced(context)) {
         _fade.value = 1;
       } else {
         _fade.forward(from: 0);
@@ -119,7 +119,7 @@ class _BabyContentTransitionState extends State<BabyContentTransition>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (MediaQuery.disableAnimationsOf(context)) _fade.value = 1;
+    if (MomCozyMotion.isReduced(context)) _fade.value = 1;
   }
 
   @override
@@ -138,7 +138,7 @@ class _BabyContentTransitionState extends State<BabyContentTransition>
     );
     // Skip resize animation entirely for reduced motion. A zero-duration
     // RenderAnimatedSize can invalidate its own layout as constraints change.
-    if (MediaQuery.disableAnimationsOf(context)) return content;
+    if (MomCozyMotion.isReduced(context)) return content;
     return AnimatedSize(
       duration: BabyMotion.resize,
       alignment: Alignment.topCenter,

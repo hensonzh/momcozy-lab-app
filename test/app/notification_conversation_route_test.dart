@@ -1,8 +1,6 @@
 @Tags(['golden'])
 library;
 
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -128,29 +126,6 @@ void main() {
           findsNothing,
         );
         expect(transport.getPaths, isNot(contains('/v1/agent/threads')));
-        final inventoryOutput =
-            Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
-        if (inventoryOutput != null) {
-          final source =
-              'test/goldens/design_system/notification-conversation-${width.toInt()}-${scale.toInt()}x.png';
-          final file = File(
-            '$inventoryOutput/journeys/notification-conversation-current-${width.toInt()}.json',
-          );
-          file.parent.createSync(recursive: true);
-          file.writeAsStringSync(
-            jsonEncode({
-              'source': source,
-              'previous_source': null,
-              'route': router.state.uri.toString(),
-              'trigger':
-                  'Notification list → Momcozy AI update 1 → target transcript loads without history-management controls',
-              'root_entry': 'Authenticated notification list',
-              'evidence':
-                  'Actual default MomCozyFlutterApp/createMomCozyRouter; isolated HTTP and native channels; target transcript loads; session list and history drawer are removed',
-              'test': 'test/app/notification_conversation_route_test.dart',
-            }),
-          );
-        }
 
         final composer = find.byKey(const ValueKey('agent-composer-input'));
         String draft() => tester.widget<TextField>(composer).controller!.text;

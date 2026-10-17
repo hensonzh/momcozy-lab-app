@@ -249,6 +249,7 @@ void main() {
     });
     expect(session?.status, MomCozySessionStatus.authenticated);
     expect(session?.userId, 'invite-user-001');
+    expect(session?.babyId, isEmpty);
     expect(session?.refreshToken, 'refresh-token-001');
     expect(controller.runtime.session.userId, 'invite-user-001');
     expect(lastInviteCodeStore.value, 'mcz-abcd-2345');

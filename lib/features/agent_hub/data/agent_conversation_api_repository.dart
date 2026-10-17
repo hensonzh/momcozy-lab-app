@@ -3,13 +3,19 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_welcome.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_poop_task.dart';
 
 const agentConversationsEndpoint = '/v1/agent/threads';
 
 class AgentConversationApiRepository implements AgentConversationRepository {
-  const AgentConversationApiRepository({required this.transport});
+  const AgentConversationApiRepository({
+    required this.transport,
+    this.identifyWelcomeBoundary = false,
+  });
 
   final ApiJsonTransport transport;
+  final bool identifyWelcomeBoundary;
 
   @override
   Future<AgentConversationHistory?> loadLatestConversation() async {
@@ -60,6 +66,37 @@ class AgentConversationApiRepository implements AgentConversationRepository {
             .whereType<_ConversationWireMessage>(),
       );
     }
+    // A page can start with an assistant reply while its user trigger sits
+    // just before the cursor. The adjacent completed user message identifies
+    // the run without guessing from the model's reply text.
+    final first = messages.firstOrNull;
+    String? boundaryWelcomeRunId;
+    String? boundaryWelcomeKey;
+    if (identifyWelcomeBoundary &&
+        first?.role == AgentConversationMessageRole.assistant &&
+        first?.runId != null &&
+        (first?.sequence ?? 0) > 1) {
+      final preceding = await transport.getJson(
+        '$agentConversationsEndpoint/${Uri.encodeComponent(normalizedThreadId)}/history',
+        query: {'limit': 1, 'before_sequence': first!.sequence},
+      );
+      final precedingThread = _conversationFromValue(preceding['thread']);
+      if (precedingThread?.id != normalizedThreadId ||
+          preceding['items'] is! List) {
+        throw const FormatException(
+          'Conversation history boundary is invalid.',
+        );
+      }
+      final previousItems = preceding['items'] as List;
+      if (previousItems.length == 1) {
+        final previous = _wireMessageFromValue(previousItems.single);
+        if (previous?.runId == first.runId &&
+            previous?.isChatFirstWelcomeTrigger == true) {
+          boundaryWelcomeRunId = first.runId;
+          boundaryWelcomeKey = previous?.chatFirstWelcomeKey;
+        }
+      }
+    }
     final pageEvents = response['events'];
     if (pageEvents is List) {
       for (final rawEvent in pageEvents) {
@@ -78,6 +115,8 @@ class AgentConversationApiRepository implements AgentConversationRepository {
       messages: messages,
       events: eventsByKey.values,
       nextBeforeSequence: nextCursor,
+      boundaryWelcomeRunId: boundaryWelcomeRunId,
+      boundaryWelcomeKey: boundaryWelcomeKey,
     );
   }
 }
@@ -87,6 +126,8 @@ AgentConversationHistory _buildConversationHistory({
   required List<_ConversationWireMessage> messages,
   required Iterable<AgentStreamEvent> events,
   int? nextBeforeSequence,
+  String? boundaryWelcomeRunId,
+  String? boundaryWelcomeKey,
 }) {
   final eventsByRun = <String, List<AgentStreamEvent>>{};
   for (final event in events) {
@@ -104,6 +145,22 @@ AgentConversationHistory _buildConversationHistory({
       .map((message) => message.runId?.trim())
       .whereType<String>()
       .firstWhere((runId) => runId.isNotEmpty, orElse: () => '');
+  final welcomeRunIds =
+      messages
+          .where((message) => message.isChatFirstWelcomeTrigger)
+          .map((message) => message.runId)
+          .whereType<String>()
+          .toSet()
+        ..addAll([?boundaryWelcomeRunId]);
+  final welcomeKeysByRun = <String, String>{
+    for (final message in messages)
+      if (message.isChatFirstWelcomeTrigger &&
+          message.runId != null &&
+          message.chatFirstWelcomeKey != null)
+        message.runId!: message.chatFirstWelcomeKey!,
+    if (boundaryWelcomeRunId != null && boundaryWelcomeKey != null)
+      boundaryWelcomeRunId: boundaryWelcomeKey,
+  };
   final assistantByRun = <String, _ConversationWireMessage>{};
   for (final message in messages) {
     final runId = message.runId?.trim();
@@ -148,17 +205,23 @@ AgentConversationHistory _buildConversationHistory({
       historyMessages.add(
         AgentConversationMessage(
           id: message.id,
+          runId: message.runId,
           sequence: message.sequence,
           createdAt: message.createdAt,
           role: message.role,
-          content: message.content,
-          images: message.images,
+          content: message.isChatFirstPoopTrigger ? '' : message.content,
+          images: message.isChatFirstPoopTrigger ? const [] : message.images,
           files: message.files,
+          isChatFirstPoopTrigger: message.isChatFirstPoopTrigger,
           runState:
               message.role == AgentConversationMessageRole.assistant &&
                   message.runId != null
               ? statesByRun[message.runId]
               : null,
+          isChatFirstWelcome:
+              message.role == AgentConversationMessageRole.assistant &&
+              welcomeRunIds.contains(message.runId),
+          chatFirstWelcomeKey: welcomeKeysByRun[message.runId],
         ),
       );
     }
@@ -175,6 +238,8 @@ AgentConversationHistory _buildConversationHistory({
             id: projectedState.messageId ?? 'run:$messageRunId:assistant',
             content: projectedState.textContent,
             runState: projectedState,
+            isChatFirstWelcome: welcomeRunIds.contains(messageRunId),
+            chatFirstWelcomeKey: welcomeKeysByRun[messageRunId],
           ),
         );
       }
@@ -201,6 +266,8 @@ AgentConversationHistory _buildConversationHistory({
     currentState: currentState,
     nextBeforeSequence: nextBeforeSequence,
     latestMessageCreatedAt: messages.isEmpty ? null : messages.last.createdAt,
+    currentRunIsChatFirstWelcome: welcomeRunIds.contains(latestRunId),
+    currentWelcomeKey: welcomeKeysByRun[latestRunId],
   );
 }
 
@@ -255,7 +322,18 @@ _ConversationWireMessage? _wireMessageFromValue(Object? value) {
     hiddenAutomation:
         role == AgentConversationMessageRole.user &&
         (source == 'motion_assessment_completion' ||
-            isMotionAssessmentCompletionPrompt(text)),
+            source == 'chat_first_welcome' ||
+            isMotionAssessmentCompletionPrompt(text) ||
+            isChatFirstWelcomePrompt(text)),
+    isChatFirstPoopTrigger:
+        role == AgentConversationMessageRole.user &&
+        isChatFirstPoopPrompt(text),
+    isChatFirstWelcomeTrigger:
+        role == AgentConversationMessageRole.user &&
+        (source == 'chat_first_welcome' || isChatFirstWelcomePrompt(text)),
+    chatFirstWelcomeKey: role == AgentConversationMessageRole.user
+        ? chatFirstWelcomeKeyForPrompt(text)
+        : null,
   );
 }
 
@@ -338,6 +416,9 @@ class _ConversationWireMessage {
     required this.images,
     required this.files,
     this.hiddenAutomation = false,
+    this.isChatFirstWelcomeTrigger = false,
+    this.isChatFirstPoopTrigger = false,
+    this.chatFirstWelcomeKey,
     this.sequence,
     this.createdAt,
   });
@@ -351,4 +432,7 @@ class _ConversationWireMessage {
   final List<AgentStreamImageInput> images;
   final List<AgentStreamFileInput> files;
   final bool hiddenAutomation;
+  final bool isChatFirstWelcomeTrigger;
+  final bool isChatFirstPoopTrigger;
+  final String? chatFirstWelcomeKey;
 }

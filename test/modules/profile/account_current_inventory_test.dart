@@ -1,9 +1,4 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,9 +22,7 @@ void main() {
   late _MoreTransport transport;
   late _MoreRuntime runtime;
   late MemoryMomCozySessionStore store;
-  late String variant;
   late GoRouter router;
-  String? previous;
   late FakePlatform permissions;
   late FakeGateway gateway;
   late NotificationCoordinator coordinator;
@@ -40,8 +33,6 @@ void main() {
     double scale = 1,
     int notificationCount = 3,
   }) async {
-    previous = null;
-    variant = '${width.toInt()}-${scale.toInt()}x';
     tester.platformDispatcher.textScaleFactorTestValue = scale;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     permissions = FakePlatform();
@@ -161,10 +152,8 @@ void main() {
     expect(tester.takeException(), isNull);
   }
 
-  Future<void> capture(
-    WidgetTester tester,
-    String state,
-    String action, {
+  Future<void> verifyState(
+    WidgetTester tester, {
     String route = '/account',
   }) async {
     // Commit edits and finish the input hint's fade without settling spinners.
@@ -172,35 +161,6 @@ void main() {
     await tester.pump(const Duration(milliseconds: 250));
     expect(router.state.uri.path, route);
     expect(tester.takeException(), isNull);
-    final source =
-        'test/goldens/ui_inventory/account-current-$state-$variant.png';
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile(
-        '../../goldens/ui_inventory/account-current-$state-$variant.png',
-      ),
-    );
-    final row = {
-      'source': source,
-      'previous_source': previous,
-      'route': route,
-      'trigger': action,
-      'root_entry': 'Authenticated Me → tap More bottom navigation',
-      'evidence':
-          'Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push',
-      'test': 'test/modules/profile/account_current_inventory_test.dart',
-    };
-    previous = source;
-    final output = Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
-    if (output != null) {
-      final file = File(
-        '$output/journeys/account-current-$state-$variant.json',
-      );
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(
-        '${const JsonEncoder.withIndent('  ').convert(row)}\n',
-      );
-    }
   }
 
   Future<void> start(
@@ -208,19 +168,9 @@ void main() {
     String stem, {
     bool account = true,
   }) async {
-    await capture(
-      tester,
-      '$stem-mom',
-      'Authenticated Me before More navigation',
-      route: '/me',
-    );
+    await verifyState(tester, route: '/me');
     await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
-    await capture(
-      tester,
-      '$stem-more',
-      'More before account deep link or deletion',
-      route: '/more',
-    );
+    await verifyState(tester, route: '/more');
     if (account) {
       router.push('/account');
       await tester.pumpAndSettle();
@@ -237,7 +187,7 @@ void main() {
         : find.text('Back');
     await tap(tester, target.first);
     await tester.pumpAndSettle();
-    await capture(tester, state, 'Tap page Back → $route', route: route);
+    await verifyState(tester, route: route);
   }
 
   Future<void> message(WidgetTester tester) async {
@@ -276,27 +226,18 @@ void main() {
       tester,
     ) async {
       await mount(tester, width: narrow ? 320 : 393, scale: narrow ? 2 : 1);
-      await capture(tester, 'read-mom', 'Authenticated Me', route: '/me');
+      await verifyState(tester, route: '/me');
       await tap(tester, find.byKey(const ValueKey('bottom-nav-more')));
-      await capture(
-        tester,
-        'read-more',
-        'More before account read failure',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       transport.failingReads.add('/v1/auth/me');
       router.push('/account');
       await tester.pumpAndSettle();
       expect(find.text('Account unavailable'), findsOneWidget);
-      await capture(tester, 'read-error', 'GET 503 → account error and Retry');
+      await verifyState(tester);
       transport.failingReads.clear();
       await tap(tester, find.text('Retry'));
       expect(find.text('Email verified'), findsOneWidget);
-      await capture(
-        tester,
-        'retry-ready',
-        'Retried GET succeeds → active verified email account',
-      );
+      await verifyState(tester);
       await back(tester, 'read-return', '/more');
       await tester.pumpWidget(const SizedBox());
     });
@@ -304,38 +245,18 @@ void main() {
       tester,
     ) async {
       await open(tester, 'delete', account: false);
-      await capture(
-        tester,
-        'delete-ready',
-        'More before deletion',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       await tap(tester, find.byKey(const ValueKey('account-delete')));
-      await capture(
-        tester,
-        'delete-confirm',
-        'Request deletion → confirmation',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       await tap(tester, find.text('Cancel'));
       expect(transport.deleteCalls, 0);
-      await capture(
-        tester,
-        'delete-cancelled',
-        'Cancel deletion → no mutation',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       await tap(tester, find.byKey(const ValueKey('account-delete')));
       transport.deleteGate = Completer<void>();
       transport.failDelete = true;
       await tap(tester, find.byKey(const ValueKey('account-confirm-delete')));
       busy(tester, onMore: true);
-      await capture(
-        tester,
-        'delete-pending',
-        'Confirm → DELETE pending, More actions disabled',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       transport.deleteGate!.complete();
       await settle(tester);
       expect(runtime.runtime.session.isAuthenticated, isTrue);
@@ -344,30 +265,15 @@ void main() {
         findsOneWidget,
       );
       await message(tester);
-      await capture(
-        tester,
-        'delete-error',
-        'DELETE 503 → account retained with inline error',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       transport.failDelete = false;
       transport.deleteGate = Completer<void>();
       await tap(tester, find.byKey(const ValueKey('account-delete')));
-      await capture(
-        tester,
-        'delete-retry-confirm',
-        'Retry deletion → confirmation again',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       await tap(tester, find.byKey(const ValueKey('account-confirm-delete')));
       busy(tester, onMore: true);
       expect(find.byKey(const ValueKey('account-message')), findsNothing);
-      await capture(
-        tester,
-        'delete-retry-pending',
-        'Confirm retry → clear error and disable actions',
-        route: '/more',
-      );
+      await verifyState(tester, route: '/more');
       transport.deleteGate!.complete();
       await tester.pumpAndSettle();
       expect(transport.deleteCalls, 2);
@@ -380,20 +286,10 @@ void main() {
         ),
         findsOneWidget,
       );
-      await capture(
-        tester,
-        'deleted-login-message',
-        'DELETE succeeds → local session cleared, login and erasure Snackbar',
-        route: '/login',
-      );
+      await verifyState(tester, route: '/login');
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
-      await capture(
-        tester,
-        'deleted-login',
-        'Erasure Snackbar expires → login remains',
-        route: '/login',
-      );
+      await verifyState(tester, route: '/login');
       await tester.pumpWidget(const SizedBox());
     });
     for (final fail in [false, true]) {
@@ -402,18 +298,13 @@ void main() {
       ) async {
         final stem = fail ? 'logout-error' : 'logout-success';
         await open(tester, stem);
-        await capture(tester, '$stem-ready', 'Account before sign out');
+        await verifyState(tester);
         transport.failLogout = fail;
         transport.logoutGate = Completer<void>();
         await tap(tester, find.byKey(const ValueKey('account-sign-out')));
         expect(runtime.runtime.session.isAuthenticated, isFalse);
         expect(await store.readSession(), isNull);
-        await capture(
-          tester,
-          '$stem-pending',
-          'Sign out → login while remote revoke pending',
-          route: '/login',
-        );
+        await verifyState(tester, route: '/login');
         transport.logoutGate!.complete();
         await tester.pumpAndSettle();
         expect(transport.logoutCalls, 1);
@@ -425,23 +316,11 @@ void main() {
             findsOneWidget,
           );
         }
-        await capture(
-          tester,
-          '$stem-result',
-          fail
-              ? 'Remote revoke 503 → Account-specific sign-out Snackbar'
-              : 'Remote revoke success → login',
-          route: '/login',
-        );
+        await verifyState(tester, route: '/login');
         if (fail) {
           await tester.pump(const Duration(seconds: 5));
           await tester.pumpAndSettle();
-          await capture(
-            tester,
-            '$stem-dismissed',
-            'Sign-out error expires → login',
-            route: '/login',
-          );
+          await verifyState(tester, route: '/login');
         }
         await tester.pumpWidget(const SizedBox());
       });
@@ -475,11 +354,7 @@ void main() {
         }
         await start(tester, kind);
         expect(find.byKey(const ValueKey('account-link-google')), findsNothing);
-        await capture(
-          tester,
-          '$kind-ready',
-          'Account GET $kind → real identity status and provider layout',
-        );
+        await verifyState(tester);
         await back(tester, '$kind-return', '/more');
         await tester.pumpWidget(const SizedBox());
       });

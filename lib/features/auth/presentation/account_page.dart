@@ -18,9 +18,11 @@ class MomCozyAccountPage extends StatefulWidget {
     super.key,
     required this.runtimeController,
     required this.sessionStore,
+    this.onBack,
   });
   final MomCozyRuntimeController runtimeController;
   final MomCozySessionStore sessionStore;
+  final VoidCallback? onBack;
   @override
   State<MomCozyAccountPage> createState() => _MomCozyAccountPageState();
 }
@@ -46,10 +48,11 @@ class _MomCozyAccountPageState extends State<MomCozyAccountPage> {
         toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.3
             ? 72
             : 56,
-        leading: Navigator.canPop(context)
+        leading: widget.onBack != null || Navigator.canPop(context)
             ? IconButton(
+                key: const ValueKey('account-back'),
                 tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                onPressed: () => Navigator.maybePop(context),
+                onPressed: widget.onBack ?? () => Navigator.maybePop(context),
                 icon: SvgPicture.asset(
                   'assets/images/me_baby_overview/icons/back-button.svg',
                   width: 36,

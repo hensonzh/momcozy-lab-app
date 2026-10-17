@@ -38,6 +38,33 @@ void main() {
   });
 
   group('MomCozySessionManager', () {
+    test(
+      'a stored account without a baby never inherits the demo baby',
+      () async {
+        final manager = MomCozySessionManager(
+          store: MemoryMomCozySessionStore(
+            const MomCozySession(
+              status: MomCozySessionStatus.authenticated,
+              userId: 'new-owner',
+              babyId: '',
+              locale: 'en-US',
+              accessToken: 'issued-token',
+            ),
+          ),
+          environmentSession: const MomCozySession(
+            status: MomCozySessionStatus.anonymous,
+            userId: 'demo-user',
+            babyId: 'demo-baby',
+            locale: 'en-US',
+          ),
+        );
+        final restored = await manager.bootstrap();
+        expect(restored.userId, 'new-owner');
+        expect(restored.babyId, isEmpty);
+        expect(restored.isAuthenticated, isTrue);
+      },
+    );
+
     test('stored secure session wins over environment session', () async {
       final store = MemoryMomCozySessionStore(
         const MomCozySession(

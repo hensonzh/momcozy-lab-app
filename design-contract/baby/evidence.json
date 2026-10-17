@@ -132,8 +132,8 @@
     "previousStates": 24,
     "newDirectory": "comparisons/actual-home-states",
     "newStates": 11,
-    "newCaptureTest": "test/modules/baby/baby_home_state_capture_test.dart",
     "comparisonIndex": "comparisons/home-state-captures.json",
-    "capturedBy": "Flutter widget fixture at Figma frame dimensions; dpr=1"
+    "capturedBy": "Flutter widget fixture at Figma frame dimensions; dpr=1",
+    "captureStatus": "Historical comparison images retained; old Baby home screenshot generator retired."
   }
 }

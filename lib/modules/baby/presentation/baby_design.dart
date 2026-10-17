@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'baby_motion.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/design_system/momcozy_motion.dart';
 import '../../../shared/design_system/mom_settings_theme.dart';
 
 abstract final class BabyDesign {
@@ -94,12 +95,20 @@ abstract final class BabyDesign {
 }
 
 class BabyLabel extends StatelessWidget {
-  const BabyLabel(this.text, {super.key, this.required = false});
+  const BabyLabel(
+    this.text, {
+    super.key,
+    this.required = false,
+    this.chatFirstExperience = false,
+  });
   final String text;
   final bool required;
+  final bool chatFirstExperience;
   @override
   Widget build(BuildContext context) => Semantics(
-    label: required ? '$text, required' : text,
+    label: required
+        ? '$text, ${chatFirstExperience ? '必填' : 'required'}'
+        : text,
     excludeSemantics: true,
     child: Row(
       mainAxisSize: MainAxisSize.min,
@@ -252,7 +261,7 @@ Future<T?> showBabySheet<T>(BuildContext context, Widget child) =>
       builder: (context) => Theme(
         data: BabyDesign.theme(
           Theme.of(context),
-          reduceMotion: MediaQuery.disableAnimationsOf(context),
+          reduceMotion: MomCozyMotion.isReduced(context),
         ),
         child: TweenAnimationBuilder<double>(
           tween: Tween(end: MediaQuery.viewInsetsOf(context).bottom),
@@ -291,6 +300,7 @@ class BabySheetBody extends StatelessWidget {
     this.onClose,
     this.style = BabySheetStyle.form,
     this.bodyTop = 16,
+    this.closeTooltip = 'Close',
   });
   final String title;
   final Widget body;
@@ -298,6 +308,7 @@ class BabySheetBody extends StatelessWidget {
   final VoidCallback? onClose;
   final BabySheetStyle style;
   final double bodyTop;
+  final String closeTooltip;
   @override
   Widget build(BuildContext context) {
     final form = style == BabySheetStyle.form;
@@ -361,7 +372,7 @@ class BabySheetBody extends StatelessWidget {
                       width: 44,
                       height: style == BabySheetStyle.switcher ? 34 : 44,
                       child: IconButton(
-                        tooltip: 'Close',
+                        tooltip: closeTooltip,
                         padding: EdgeInsets.zero,
                         onPressed: onClose ?? () => Navigator.pop(context),
                         icon: knowledge

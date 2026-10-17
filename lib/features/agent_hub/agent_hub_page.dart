@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:markdown/markdown.dart' as md;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
@@ -23,6 +24,11 @@ import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_welcome.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_audio.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_task.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_poop_task.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/chat_first_cry_audio.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
@@ -30,6 +36,12 @@ import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
 import 'package:video_player/video_player.dart';
 import 'presentation/assistant_display_text.dart';
 import 'presentation/agent_text_reveal.dart';
+import 'presentation/chat_first_actions.dart';
+import 'presentation/chat_first_cry_task.dart';
+import 'presentation/chat_first_poop_task.dart';
+import 'presentation/chat_first_composer.dart';
+import 'presentation/chat_first_run_copy.dart';
+import 'presentation/chat_first_avatar.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
 typedef AgentHubApplicationEventHandler = void Function(AgentStreamEvent event);
@@ -84,6 +96,10 @@ final _agentHubInteractionStates = Expando<_AgentHubInteractionState>(
 class _AgentHubInteractionState {
   AgentStreamRunState runState = const AgentStreamRunState();
   List<AgentHubHistoryMessage>? historyMessages;
+  List<ChatFirstCryTask> cryTasks = const [];
+  List<ChatFirstPoopTask> poopTasks = const [];
+  bool currentRunIsChatFirstWelcome = false;
+  String? currentRunWelcomeKey;
   String composerText = '';
   List<AgentStreamImageInput> attachedImages = const <AgentStreamImageInput>[];
   List<AgentStreamFileInput> attachedFiles = const <AgentStreamFileInput>[];
@@ -109,6 +125,9 @@ class AgentHubAutoRunRequest {
 class AgentHubPage extends StatefulWidget {
   const AgentHubPage({
     super.key,
+    this.chatFirstExperience = false,
+    this.onChatFirstRecord,
+    this.createCryAudio,
     this.stateCacheKey,
     this.isVisible = true,
     this.now,
@@ -128,8 +147,15 @@ class AgentHubPage extends StatefulWidget {
     this.loadImageContent,
     this.onApplicationEvent,
     this.initialComposerText,
+    this.initialComposerRequestKey,
     this.initialAutoSend = false,
     this.initialAutoRunRequest,
+    this.currentWelcomeKey,
+    this.currentRunIsChatFirstWelcome = false,
+    this.currentRunWelcomeKey,
+    this.onInitialAutoRunAccepted,
+    this.onInitialAutoRunRejected,
+    this.initialAutoRunRetryToken = 0,
     this.externalConversationRefreshKey,
     this.externalConversationRefreshInterval = const Duration(
       milliseconds: 750,
@@ -139,6 +165,10 @@ class AgentHubPage extends StatefulWidget {
   });
 
   final Object? stateCacheKey;
+  final bool chatFirstExperience;
+  final Future<void> Function(BuildContext, ChatFirstRecordKind)?
+  onChatFirstRecord;
+  final ChatFirstCryAudioFactory? createCryAudio;
   final bool isVisible;
   final DateTime Function()? now;
   final AgentStreamRunState state;
@@ -159,8 +189,19 @@ class AgentHubPage extends StatefulWidget {
 
   final AgentHubApplicationEventHandler? onApplicationEvent;
   final String? initialComposerText;
+
+  /// Distinguishes separate navigation requests with the same draft text.
+  final Object? initialComposerRequestKey;
   final bool initialAutoSend;
   final AgentHubAutoRunRequest? initialAutoRunRequest;
+
+  /// Null disables welcome filtering; an empty key hides unverified welcomes.
+  final String? currentWelcomeKey;
+  final bool currentRunIsChatFirstWelcome;
+  final String? currentRunWelcomeKey;
+  final ValueChanged<String>? onInitialAutoRunAccepted;
+  final VoidCallback? onInitialAutoRunRejected;
+  final int initialAutoRunRetryToken;
   final String? externalConversationRefreshKey;
   final Duration externalConversationRefreshInterval;
   final int externalConversationRefreshAttempts;
@@ -173,6 +214,20 @@ class AgentHubPage extends StatefulWidget {
 class _AgentHubPageState extends State<AgentHubPage>
     with WidgetsBindingObserver {
   bool _appForeground = true;
+  ChatFirstAvatarController? _avatarController;
+  bool _chatFirstRecordPickerOpen = false;
+  final List<ChatFirstPoopTask> _poopTasks = [];
+  AgentStreamImageInput? _poopPhoto;
+  String? _activePoopTaskId;
+  String? _poopSendKey;
+  String? _poopFeedback;
+  bool _poopSending = false;
+  bool _poopRunAttempted = false;
+  int _poopGeneration = 0;
+  final List<ChatFirstCryTask> _cryTasks = [];
+  final GlobalKey _activeCryCardKey = GlobalKey();
+  ChatFirstCryTaskController? _cryCapture;
+  String? _activeCryTaskId;
   bool _historyRecoveryPending = false;
   Object? _historyRecoveryError;
   bool _initialRecoveryScheduled = false;
@@ -206,6 +261,126 @@ class _AgentHubPageState extends State<AgentHubPage>
   String? _olderHistoryViewportAnchorMessageId;
   AgentStreamRequest? _activeRequest;
   String? _submittedComposerText;
+  bool _currentRunIsChatFirstWelcome = false;
+  String? _currentRunWelcomeKey;
+
+  bool get _currentRunIsMatchingWelcome =>
+      widget.chatFirstExperience &&
+      widget.currentWelcomeKey?.isNotEmpty == true &&
+      _currentRunIsChatFirstWelcome &&
+      _currentRunWelcomeKey == widget.currentWelcomeKey;
+
+  bool get _hideCurrentWelcome =>
+      widget.chatFirstExperience &&
+      widget.currentWelcomeKey != null &&
+      _currentRunIsChatFirstWelcome &&
+      !_currentRunIsMatchingWelcome;
+
+  // Local markers belong to one thread. Older snapshots have no thread ID;
+  // they are bound when the first owned conversation is resolved.
+  Iterable<ChatFirstPoopTask> get _visiblePoopTasks => _poopTasks.where(
+    (task) => task.threadId == null || task.threadId == _state.threadId,
+  );
+
+  Iterable<ChatFirstCryTask> get _visibleCryTasks => _cryTasks.where(
+    (task) => task.threadId == null || task.threadId == _state.threadId,
+  );
+
+  void _bindUnassignedCryTasks(String? threadId) {
+    if (threadId == null) return;
+    for (var index = 0; index < _cryTasks.length; index++) {
+      if (_cryTasks[index].threadId == null) {
+        _cryTasks[index] = _cryTasks[index].withThread(threadId);
+      }
+    }
+  }
+
+  void _bindUnassignedPoopTasks(String? threadId) {
+    if (threadId == null) return;
+    for (var index = 0; index < _poopTasks.length; index++) {
+      if (_poopTasks[index].threadId == null) {
+        _poopTasks[index] = _poopTasks[index].withThread(threadId);
+      }
+    }
+  }
+
+  bool get _currentAssistantProjectedWithCryTask {
+    final assistant = _currentAssistantHistoryMessage();
+    return widget.chatFirstExperience &&
+        !_hideCurrentWelcome &&
+        _state.phase == AgentStreamRunPhase.finished &&
+        assistant != null &&
+        _visibleCryTasks.any(
+          (task) => task.precedingAssistantMessageId == assistant.id,
+        );
+  }
+
+  List<AgentHubHistoryMessage> get _visibleHistoryMessages {
+    final remote = _visibleAgentHubHistoryMessages(
+      _historyMessages,
+      chatFirstExperience: widget.chatFirstExperience,
+      currentWelcomeKey: widget.currentWelcomeKey,
+      currentRunHasWelcomeReply:
+          _currentRunIsMatchingWelcome &&
+          _state.phase != AgentStreamRunPhase.idle,
+    );
+    if (!widget.chatFirstExperience ||
+        (_visibleCryTasks.isEmpty &&
+            _visiblePoopTasks.isEmpty &&
+            !remote.any((message) => message.isChatFirstPoopTrigger))) {
+      return remote;
+    }
+    final assistant = _currentAssistantHistoryMessage();
+    final anchor = _currentAssistantProjectedWithCryTask
+        ? _visibleCryTasks
+              .where(
+                (task) => task.precedingAssistantMessageId == assistant!.id,
+              )
+              .firstOrNull
+        : null;
+    // Render the last completed reply before the card that followed it,
+    // without adding a fake server turn to history or duplicating the Run.
+    final projection =
+        anchor != null &&
+            assistant != null &&
+            remote.every((message) => _messageIdentity(message) != assistant.id)
+        ? AgentHubHistoryMessage(
+            id: assistant.id,
+            createdAt: anchor.createdAt,
+            role: assistant.role,
+            content: assistant.content,
+            runState: assistant.runState,
+            isChatFirstWelcome: assistant.isChatFirstWelcome,
+            chatFirstWelcomeKey: assistant.chatFirstWelcomeKey,
+          )
+        : null;
+    final remotePoopRunIds = remote
+        .where((message) => message.isChatFirstPoopTrigger)
+        .map((message) => message.runId)
+        .whereType<String>()
+        .toSet();
+    return _mergeHistoryMessages([
+      ...remote,
+      ?projection,
+      for (final task in _visiblePoopTasks)
+        if (task.runId == null || !remotePoopRunIds.contains(task.runId))
+          AgentHubHistoryMessage(
+            id: task.id,
+            createdAt: task.createdAt,
+            role: AgentHubHistoryRole.user,
+            content: '',
+            localPoopTask: task,
+          ),
+      for (final task in _visibleCryTasks)
+        AgentHubHistoryMessage(
+          id: task.id,
+          createdAt: task.createdAt,
+          role: AgentHubHistoryRole.user,
+          content: '',
+          localCryTask: task,
+        ),
+    ]);
+  }
 
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
   final List<AgentStreamFileInput> _attachedFiles = <AgentStreamFileInput>[];
@@ -267,8 +442,23 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _avatarController = widget.chatFirstExperience
+        ? ChatFirstAvatarScope.maybeOf(context)
+        : null;
+  }
+
+  @override
   void didUpdateWidget(covariant AgentHubPage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.stateCacheKey != widget.stateCacheKey) {
+      _cancelCryCaptureOnLeave();
+      _cryTasks.clear();
+      _activeCryTaskId = null;
+      _cancelPoopOnLeave();
+      _poopTasks.clear();
+    }
     if (oldWidget.isVisible != widget.isVisible) {
       if (widget.isVisible) {
         _returnToConversation();
@@ -288,12 +478,18 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (_interactionState == null &&
         oldWidget.historyMessages != widget.historyMessages &&
         !_state.isActive) {
-      _historyMessages = _visibleAgentHubHistoryMessages(
+      _historyMessages = _historyMessagesWithoutInternalTriggers(
         widget.historyMessages,
       );
       _persistInteractionState();
     }
-    if (oldWidget.initialComposerText != widget.initialComposerText) {
+    if (oldWidget.initialComposerText != widget.initialComposerText ||
+        (!widget.initialAutoSend &&
+            widget.initialComposerRequestKey != null &&
+            !identical(
+              oldWidget.initialComposerRequestKey,
+              widget.initialComposerRequestKey,
+            ))) {
       _consumedInitialAutoSend = false;
       if (_interactionRestoreResolved) {
         _applyInitialComposerText();
@@ -303,9 +499,11 @@ class _AgentHubPageState extends State<AgentHubPage>
         _interactionRestoreResolved) {
       _scheduleInitialAutoSendIfNeeded();
     }
-    if (oldWidget.initialAutoRunRequest?.idempotencyKey !=
-            widget.initialAutoRunRequest?.idempotencyKey &&
-        _interactionRestoreResolved) {
+    if (_interactionRestoreResolved &&
+        (oldWidget.initialAutoRunRequest?.idempotencyKey !=
+                widget.initialAutoRunRequest?.idempotencyKey ||
+            oldWidget.initialAutoRunRetryToken !=
+                widget.initialAutoRunRetryToken)) {
       _scheduleInitialAutoRunIfNeeded();
     }
     if (oldWidget.externalConversationRefreshKey !=
@@ -340,8 +538,37 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   void _setRunState(AgentStreamRunState nextState) {
+    final previous = _state;
     _state = _phaseOneRunState(nextState);
     _publishRunState(_state);
+    if (widget.chatFirstExperience && previous.threadId == null) {
+      _bindUnassignedCryTasks(_state.threadId);
+      _bindUnassignedPoopTasks(_state.threadId);
+    }
+    if (!widget.chatFirstExperience) return;
+    if (_state.phase == AgentStreamRunPhase.streaming) {
+      if (previous.phase != AgentStreamRunPhase.streaming) {
+        _signalAvatar('request-start');
+      } else if (_state.textContent.length > previous.textContent.length) {
+        _signalAvatar('reply-chunk');
+      }
+    } else if (_state.phase == AgentStreamRunPhase.finished &&
+        previous.phase != AgentStreamRunPhase.finished) {
+      _signalAvatar('reply-done');
+    } else if ((_state.phase == AgentStreamRunPhase.error ||
+            _state.phase == AgentStreamRunPhase.disconnected) &&
+        previous.phase != _state.phase) {
+      _signalAvatar('request-error');
+    } else if (_state.phase == AgentStreamRunPhase.cancelled) {
+      _signalAvatar('request-end');
+    }
+  }
+
+  void _signalAvatar(String event) {
+    if (_avatarController == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _avatarController?.signal(event);
+    });
   }
 
   void _publishRunState(AgentStreamRunState state) {
@@ -378,12 +605,359 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   void _handleComposerChanged() {
     _persistInteractionState();
+    if (_historyRecoveryError != null && mounted) {
+      setState(() {});
+    }
   }
 
   void _leaveConversation() {
+    _cancelCryCaptureOnLeave();
+    _cancelPoopOnLeave();
     if (!_interactionRestoreResolved) return;
     _persistInteractionState();
     _flushPersistentInteractionState();
+  }
+
+  void _openPoopTask() {
+    final existing = _visiblePoopTasks
+        .where((task) => task.status == ChatFirstPoopTaskStatus.pending)
+        .lastOrNull;
+    setState(() {
+      if (existing == null) {
+        final task = ChatFirstPoopTask(
+          id: 'local:poop:${_now.microsecondsSinceEpoch}:${++_localTurnRevision}',
+          createdAt: _now,
+          threadId: _state.threadId,
+        );
+        _poopTasks.add(task);
+        _activePoopTaskId = task.id;
+      } else {
+        _activePoopTaskId = existing.id;
+      }
+    });
+    _persistInteractionState();
+    _scheduleScrollToLatest();
+  }
+
+  void _cancelPoopOnLeave() {
+    _poopGeneration++;
+    // Once createRun has been attempted, a timeout/disconnect cannot prove
+    // rejection. Do not delete an attachment that a late accepted Run may
+    // reference; orphan reconciliation remains a separate server concern.
+    final attemptedRun = _poopRunAttempted;
+    final acceptedRun = attemptedRun && _hasServerRunSignal(_state);
+    final fileId = attemptedRun ? '' : (_poopPhoto?.fileId ?? '');
+    _poopPhoto = null;
+    _poopSendKey = null;
+    _poopFeedback = null;
+    _poopSending = false;
+    _poopRunAttempted = false;
+    final index = _poopTasks.indexWhere((task) => task.id == _activePoopTaskId);
+    if (index >= 0 &&
+        _poopTasks[index].status == ChatFirstPoopTaskStatus.pending) {
+      _poopTasks[index] = acceptedRun
+          ? _poopTasks[index].completed(_state.runId)
+          : _poopTasks[index].withStatus(ChatFirstPoopTaskStatus.cancelled);
+    }
+    _activePoopTaskId = null;
+    if (fileId.isNotEmpty) {
+      _pendingAttachmentCleanupIds.add(fileId);
+      _attachmentCleanupRetryTimer?.cancel();
+      if (mounted) unawaited(_retryAttachmentCleanup());
+    }
+  }
+
+  void _abandonPoopTask(String taskId) {
+    if (_poopSending) return;
+    final index = _poopTasks.indexWhere((task) => task.id == taskId);
+    if (index < 0 ||
+        _poopTasks[index].status != ChatFirstPoopTaskStatus.pending) {
+      return;
+    }
+    setState(_cancelPoopOnLeave);
+    _persistInteractionState();
+  }
+
+  Future<void> _pickPoopPhoto(
+    String taskId,
+    AgentImageInputSource source,
+  ) async {
+    if (widget.pickImage == null ||
+        _poopSending ||
+        !_isPageVisible ||
+        _isVisibleReplyRunning ||
+        _conversationSwitchPending ||
+        taskId != _activePoopTaskId) {
+      return;
+    }
+    final generation = ++_poopGeneration;
+    try {
+      final image = await widget.pickImage!(source);
+      if (!mounted ||
+          generation != _poopGeneration ||
+          taskId != _activePoopTaskId) {
+        return;
+      }
+      if (image == null) return;
+      final bytes =
+          image.localBytes ??
+          Uint8List.fromList(_decodeAgentImageBytes(image.dataUrl));
+      if (bytes.isEmpty ||
+          bytes.length > 10 * 1024 * 1024 ||
+          !{
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+            'image/gif',
+          }.contains(image.mimeType)) {
+        final previousFileId = _poopRunAttempted
+            ? ''
+            : (_poopPhoto?.fileId ?? '');
+        setState(() {
+          _poopRunAttempted = false;
+          _poopPhoto = null;
+          _poopSendKey = null;
+          _poopFeedback = '只支持不超过 10 MB 的 JPEG、PNG、WebP 或 GIF 照片。';
+        });
+        if (previousFileId.isNotEmpty) {
+          _queueAttachmentCleanup([previousFileId]);
+        }
+        return;
+      }
+      final previousFileId = _poopRunAttempted
+          ? ''
+          : (_poopPhoto?.fileId ?? '');
+      setState(() {
+        _poopRunAttempted = false;
+        _poopPhoto = AgentStreamImageInput(
+          dataUrl: '',
+          mimeType: image.mimeType,
+          name: image.name,
+          size: bytes.length,
+          localBytes: bytes,
+        );
+        _poopSendKey = null;
+        _poopFeedback = null;
+      });
+      if (previousFileId.isNotEmpty) _queueAttachmentCleanup([previousFileId]);
+    } catch (_) {
+      if (!mounted || generation != _poopGeneration) return;
+      setState(() => _poopFeedback = '无法读取照片，请重新选择。');
+    }
+  }
+
+  Future<void> _sendPoopPhoto(String taskId) async {
+    final image = _poopPhoto;
+    final media = widget.mediaRepository;
+    if (_poopSending ||
+        image == null ||
+        media == null ||
+        widget.runner == null ||
+        taskId != _activePoopTaskId ||
+        !_isPageVisible ||
+        _isVisibleReplyRunning ||
+        _isComposerLocked) {
+      return;
+    }
+    final generation = _poopGeneration;
+    final key = _poopSendKey ??= 'poop-${_now.microsecondsSinceEpoch}';
+    setState(() {
+      _poopSending = true;
+      _poopFeedback = null;
+    });
+    var uploadedId = image.fileId;
+    var uploading = false;
+    try {
+      if (uploadedId.trim().isEmpty) {
+        uploading = true;
+        final bytes =
+            image.localBytes ??
+            Uint8List.fromList(_decodeAgentImageBytes(image.dataUrl));
+        final uploaded = await media.uploadFile(
+          file: ApiUploadFile(
+            name: image.name,
+            mimeType: image.mimeType,
+            sizeBytes: bytes.length,
+            bytes: bytes,
+          ),
+          idempotencyKey: '$key:file',
+        );
+        uploadedId = uploaded.id.trim();
+        if (uploadedId.isEmpty) throw StateError('Missing image id');
+        uploading = false;
+        if (!mounted || generation != _poopGeneration) {
+          // The selected photo was abandoned before upload completed.
+          if (mounted) {
+            _queueAttachmentCleanup([uploadedId]);
+          } else {
+            try {
+              await media.deleteFile(fileId: uploadedId);
+            } catch (_) {
+              // No widget remains to persist a retry. This residual cleanup
+              // risk requires server-side orphan reconciliation.
+            }
+          }
+          return;
+        }
+        _poopPhoto = AgentStreamImageInput(
+          dataUrl: '',
+          fileId: uploadedId,
+          mimeType: image.mimeType,
+          name: image.name,
+          size: image.size,
+          localBytes: image.localBytes,
+        );
+      }
+      if (!mounted || generation != _poopGeneration) return;
+      final request = _requestWithIdempotencyKey(
+        _requestWithImages(widget.requestBuilder(chatFirstPoopRequestPrompt), [
+          AgentStreamImageInput(
+            dataUrl: '',
+            fileId: uploadedId,
+            mimeType: image.mimeType,
+            name: image.name,
+            size: image.size,
+          ),
+        ]),
+        key,
+      );
+      _poopRunAttempted = true;
+      final accepted = await _startRun(request, awaitServerRunSignal: true);
+      if (!mounted || generation != _poopGeneration) return;
+      if (!accepted || _state.runId?.trim().isNotEmpty != true) {
+        throw StateError('Run not confirmed');
+      }
+      final index = _poopTasks.indexWhere((task) => task.id == taskId);
+      setState(() {
+        if (index >= 0) {
+          _poopTasks[index] = _poopTasks[index].completed(_state.runId);
+        }
+        _poopPhoto = null;
+        _activePoopTaskId = null;
+        _poopSendKey = null;
+        _poopRunAttempted = false;
+      });
+      _persistInteractionState();
+    } catch (_) {
+      if (!mounted || generation != _poopGeneration) return;
+      // A queued server Run may exist even if the follow-up stream failed.
+      // Do not submit the same picture again as a new turn or delete its asset.
+      if (_activeRequest != null &&
+          isChatFirstPoopPrompt(_activeRequest!.message) &&
+          _hasServerRunSignal(_state)) {
+        final index = _poopTasks.indexWhere((task) => task.id == taskId);
+        setState(() {
+          if (index >= 0) {
+            _poopTasks[index] = _poopTasks[index].completed(_state.runId);
+          }
+          _poopPhoto = null;
+          _activePoopTaskId = null;
+          _poopSendKey = null;
+          _poopRunAttempted = false;
+        });
+        _persistInteractionState();
+        return;
+      }
+      setState(
+        () => _poopFeedback = uploading
+            ? '照片上传失败，照片仍在本机，可重试。'
+            : '发送失败，照片仍在本机，可重试。',
+      );
+    } finally {
+      if (mounted && generation == _poopGeneration) {
+        setState(() => _poopSending = false);
+      }
+    }
+  }
+
+  void _openCryTask() {
+    final existing = _visibleCryTasks
+        .where((task) => task.status == ChatFirstCryTaskStatus.pending)
+        .lastOrNull;
+    if (existing == null) {
+      final createdAt = _now;
+      final assistant = _state.phase == AgentStreamRunPhase.finished
+          ? _currentAssistantHistoryMessage()
+          : null;
+      final task = ChatFirstCryTask(
+        id: 'local:cry:${_now.microsecondsSinceEpoch}:${++_localTurnRevision}',
+        createdAt: createdAt,
+        threadId: _state.threadId,
+        precedingAssistantMessageId: assistant?.id,
+      );
+      setState(() {
+        _cryTasks.add(task);
+        _activeCryTaskId = task.id;
+      });
+      _persistInteractionState();
+    } else {
+      setState(() {
+        _activeCryTaskId = existing.id;
+      });
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final target = _activeCryCardKey.currentContext;
+      if (mounted && target != null) {
+        unawaited(
+          Scrollable.ensureVisible(
+            target,
+            duration: const Duration(milliseconds: 180),
+            alignment: .15,
+          ),
+        );
+      } else if (mounted) {
+        _scheduleScrollToLatest();
+      }
+    });
+  }
+
+  void _startCryCapture(String taskId) {
+    if (!_isPageVisible ||
+        _isVisibleReplyRunning ||
+        _conversationSwitchPending ||
+        _cryTasks.every(
+          (task) =>
+              task.id != taskId ||
+              task.status != ChatFirstCryTaskStatus.pending,
+        )) {
+      return;
+    }
+    if (_cryCapture != null && _activeCryTaskId != taskId) return;
+    _activeCryTaskId = taskId;
+    final controller = _cryCapture ??= ChatFirstCryTaskController(
+      widget.createCryAudio ?? LocalChatFirstCryAudioSession.new,
+    )..addListener(_onCryCaptureChanged);
+    unawaited(controller.start());
+  }
+
+  void _onCryCaptureChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _releaseCryCapture() {
+    final capture = _cryCapture;
+    _cryCapture = null;
+    if (capture == null) return;
+    capture.removeListener(_onCryCaptureChanged);
+    unawaited(capture.release());
+  }
+
+  void _cancelCryCaptureOnLeave() {
+    final capture = _cryCapture;
+    if (capture == null) return;
+    if (capture.voicePreviewBlocked) {
+      final index = _cryTasks.indexWhere((task) => task.id == _activeCryTaskId);
+      if (index >= 0) _cryTasks[index] = _cryTasks[index].cancelled();
+    }
+    _releaseCryCapture();
+  }
+
+  void _abandonCryTask(String taskId) {
+    final index = _cryTasks.indexWhere((task) => task.id == taskId);
+    if (index < 0) return;
+    setState(() => _cryTasks[index] = _cryTasks[index].cancelled());
+    _releaseCryCapture();
+    _persistInteractionState();
   }
 
   void _returnToConversation() {
@@ -418,13 +992,19 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   Future<void> _recoverConversation() async {
     final repository = widget.conversationRepository;
+    final interruptedRunCanReconcile =
+        _activeRequest != null &&
+        _state.phase == AgentStreamRunPhase.disconnected &&
+        _state.runId?.trim().isNotEmpty == true &&
+        _state.threadId?.trim().isNotEmpty == true;
     if (repository == null ||
         _historyRecoveryPending ||
         (widget.initialConversationId != null &&
             widget.initialConversationId != _state.threadId) ||
         _state.isActive ||
         (_activeRequest != null &&
-            _state.phase != AgentStreamRunPhase.finished)) {
+            _state.phase != AgentStreamRunPhase.finished &&
+            !interruptedRunCanReconcile)) {
       if (_isPageVisible) _scheduleScrollToLatest();
       _persistInteractionState();
       return;
@@ -432,6 +1012,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     final generation = _sessionOperationGeneration;
     final revision = _localTurnRevision;
     final threadId = _state.threadId;
+    final interruptedRunId = interruptedRunCanReconcile ? _state.runId : null;
     setState(() {
       _historyRecoveryPending = true;
       _historyRecoveryError = null;
@@ -447,11 +1028,35 @@ class _AgentHubPageState extends State<AgentHubPage>
           _state.isActive) {
         return;
       }
+      if (interruptedRunId != null &&
+          history?.currentState.runId != interruptedRunId) {
+        // History can lag a newly accepted run. Never replace its resumable
+        // request with an older or unrelated run from the same thread.
+        setState(() => _historyRecoveryPending = false);
+        _persistInteractionState();
+        return;
+      }
       if (history != null) {
         final merged = _mergeRecoveredHistory(history);
         setState(() {
+          if (_state.threadId != null && _state.threadId != history.thread.id) {
+            _cancelCryCaptureOnLeave();
+            _cryTasks.clear();
+            _activeCryTaskId = null;
+            _cancelPoopOnLeave();
+            _poopTasks.clear();
+          }
           _historyMessages = merged;
+          _bindUnassignedCryTasks(history.thread.id);
+          _bindUnassignedPoopTasks(history.thread.id);
           _setRunState(history.currentState);
+          _currentRunIsChatFirstWelcome = history.currentRunIsChatFirstWelcome;
+          _currentRunWelcomeKey = history.currentWelcomeKey;
+          if (interruptedRunId == history.currentState.runId &&
+              history.currentState.phase == AgentStreamRunPhase.finished &&
+              history.currentState.hasCompletedAssistantMessage) {
+            _activeRequest = null;
+          }
           _conversationHistoryBeforeSequence = history.nextBeforeSequence;
           _historyRecoveryPending = false;
         });
@@ -486,7 +1091,9 @@ class _AgentHubPageState extends State<AgentHubPage>
     final stateCacheKey = widget.stateCacheKey;
     if (stateCacheKey == null) {
       _state = _phaseOneRunState(widget.state);
-      _historyMessages = _visibleAgentHubHistoryMessages(
+      _currentRunIsChatFirstWelcome = widget.currentRunIsChatFirstWelcome;
+      _currentRunWelcomeKey = widget.currentRunWelcomeKey;
+      _historyMessages = _historyMessagesWithoutInternalTriggers(
         widget.historyMessages,
       );
       _composerController = TextEditingController();
@@ -503,9 +1110,35 @@ class _AgentHubPageState extends State<AgentHubPage>
       restoredRunState,
       disconnectedMessage: 'Connection lost. Try again.',
     );
-    _historyMessages = _visibleAgentHubHistoryMessages(
+    _currentRunIsChatFirstWelcome = interactionState.historyMessages == null
+        ? widget.currentRunIsChatFirstWelcome
+        : interactionState.currentRunIsChatFirstWelcome;
+    _currentRunWelcomeKey = interactionState.historyMessages == null
+        ? widget.currentRunWelcomeKey
+        : interactionState.currentRunWelcomeKey;
+    _historyMessages = _historyMessagesWithoutInternalTriggers(
       interactionState.historyMessages ?? widget.historyMessages,
     );
+    _poopTasks.addAll(
+      interactionState.poopTasks.where(
+        (task) => task.threadId == null || task.threadId == _state.threadId,
+      ),
+    );
+    _bindUnassignedPoopTasks(_state.threadId);
+    _activePoopTaskId = _visiblePoopTasks
+        .where((task) => task.status == ChatFirstPoopTaskStatus.pending)
+        .lastOrNull
+        ?.id;
+    _cryTasks.addAll(
+      interactionState.cryTasks.where(
+        (task) => task.threadId == null || task.threadId == _state.threadId,
+      ),
+    );
+    _bindUnassignedCryTasks(_state.threadId);
+    _activeCryTaskId = _cryTasks
+        .where((task) => task.status == ChatFirstCryTaskStatus.pending)
+        .lastOrNull
+        ?.id;
     _composerController = TextEditingController(
       text: interactionState.composerText,
     );
@@ -551,7 +1184,11 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (interactionState != null) {
       interactionState
         ..runState = _state
+        ..currentRunIsChatFirstWelcome = _currentRunIsChatFirstWelcome
+        ..currentRunWelcomeKey = _currentRunWelcomeKey
         ..historyMessages = [..._historyMessages]
+        ..cryTasks = [..._cryTasks]
+        ..poopTasks = [..._poopTasks]
         ..composerText = _composerController.text
         ..attachedImages = [..._attachedImages]
         ..attachedFiles = [..._attachedFiles]
@@ -566,6 +1203,8 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (interactionState == null) return;
     interactionState
       ..runState = _state
+      ..currentRunIsChatFirstWelcome = _currentRunIsChatFirstWelcome
+      ..currentRunWelcomeKey = _currentRunWelcomeKey
       ..activeRequest = _activeRequest;
   }
 
@@ -622,9 +1261,13 @@ class _AgentHubPageState extends State<AgentHubPage>
       if (!opened && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Could not open this conversation.'),
+            content: Text(
+              widget.chatFirstExperience
+                  ? chatFirstConversationOpenFailed
+                  : 'Could not open this conversation.',
+            ),
             action: SnackBarAction(
-              label: 'Retry',
+              label: widget.chatFirstExperience ? chatFirstRetry : 'Retry',
               onPressed: () {
                 _consumedInitialConversationId = null;
                 _scheduleInitialConversation();
@@ -657,6 +1300,8 @@ class _AgentHubPageState extends State<AgentHubPage>
         _state.threadId?.trim().isNotEmpty == true ||
         _state.runId?.trim().isNotEmpty == true ||
         _historyMessages.isNotEmpty ||
+        _cryTasks.isNotEmpty ||
+        _poopTasks.isNotEmpty ||
         _composerController.text.trim().isNotEmpty ||
         _attachedImages.isNotEmpty ||
         _attachedFiles.isNotEmpty ||
@@ -671,9 +1316,37 @@ class _AgentHubPageState extends State<AgentHubPage>
             'Connection interrupted. You can resume receiving.',
       ),
     );
-    _historyMessages = _visibleAgentHubHistoryMessages(
+    _currentRunIsChatFirstWelcome = snapshot.currentRunIsChatFirstWelcome;
+    _currentRunWelcomeKey = snapshot.currentWelcomeKey;
+    _historyMessages = _historyMessagesWithoutInternalTriggers(
       snapshot.historyMessages.map(_historyMessageFromSnapshot),
     );
+    _cancelCryCaptureOnLeave();
+    _cancelPoopOnLeave();
+    _poopTasks
+      ..clear()
+      ..addAll(
+        snapshot.poopTasks.where(
+          (task) => task.threadId == null || task.threadId == _state.threadId,
+        ),
+      );
+    _bindUnassignedPoopTasks(_state.threadId);
+    _activePoopTaskId = _visiblePoopTasks
+        .where((task) => task.status == ChatFirstPoopTaskStatus.pending)
+        .lastOrNull
+        ?.id;
+    _cryTasks
+      ..clear()
+      ..addAll(
+        snapshot.cryTasks.where(
+          (task) => task.threadId == null || task.threadId == _state.threadId,
+        ),
+      );
+    _bindUnassignedCryTasks(_state.threadId);
+    _activeCryTaskId = _cryTasks
+        .where((task) => task.status == ChatFirstCryTaskStatus.pending)
+        .lastOrNull
+        ?.id;
     _composerController
       ..text = snapshot.composerText
       ..selection = TextSelection.collapsed(
@@ -702,9 +1375,13 @@ class _AgentHubPageState extends State<AgentHubPage>
   AgentHubInteractionSnapshot _buildInteractionSnapshot() {
     return AgentHubInteractionSnapshot(
       runState: _state,
+      currentRunIsChatFirstWelcome: _currentRunIsChatFirstWelcome,
+      currentWelcomeKey: _currentRunWelcomeKey,
       historyMessages: _historyMessages
           .map(_historySnapshotFromMessage)
           .toList(growable: false),
+      cryTasks: [..._cryTasks],
+      poopTasks: [..._poopTasks],
       composerText: _composerController.text,
       attachedImages: [..._attachedImages],
       attachedFiles: [..._attachedFiles],
@@ -749,7 +1426,13 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   void _applyInitialComposerText() {
     final text = widget.initialComposerText?.trim();
-    if (text == null || text.isEmpty || _isVisibleReplyRunning) return;
+    if (text == null ||
+        text.isEmpty ||
+        (widget.initialAutoSend && _isVisibleReplyRunning) ||
+        (!widget.initialAutoSend &&
+            _composerController.text.trim().isNotEmpty)) {
+      return;
+    }
     _composerController
       ..text = text
       ..selection = TextSelection.collapsed(offset: text.length);
@@ -798,7 +1481,12 @@ class _AgentHubPageState extends State<AgentHubPage>
       );
       if (!mounted) return;
       _initialAutoRunInFlight = false;
-      if (accepted) _consumedInitialAutoRunKey = key;
+      if (accepted) {
+        _consumedInitialAutoRunKey = key;
+        widget.onInitialAutoRunAccepted?.call(key);
+      } else {
+        widget.onInitialAutoRunRejected?.call();
+      }
     });
   }
 
@@ -900,6 +1588,8 @@ class _AgentHubPageState extends State<AgentHubPage>
       _olderConversationHistoryLoadArmed = false;
       _olderConversationHistoryError = null;
       _setRunState(history.currentState);
+      _currentRunIsChatFirstWelcome = history.currentRunIsChatFirstWelcome;
+      _currentRunWelcomeKey = history.currentWelcomeKey;
       _activeRequest = null;
     });
 
@@ -921,10 +1611,12 @@ class _AgentHubPageState extends State<AgentHubPage>
   List<AgentHubHistoryMessage> _mergeRecoveredHistory(
     AgentConversationHistory history,
   ) {
-    final remote = history.messages
-        .map(_historyMessageFromConversation)
-        .toList();
-    if (_state.threadId != history.thread.id) return remote;
+    final remote = _historyMessagesWithoutInternalTriggers(
+      history.messages.map(_historyMessageFromConversation),
+    );
+    if (_state.threadId != history.thread.id) {
+      return remote;
+    }
     final remoteIds = remote.map(_messageIdentity).toSet();
     final previousAssistant = _state.phase == AgentStreamRunPhase.idle
         ? null
@@ -938,7 +1630,9 @@ class _AgentHubPageState extends State<AgentHubPage>
           _messageIdentity(message) != history.currentState.messageId &&
           (message.id == 'local:welcome' || !message.id!.startsWith('local:')),
     );
-    return _mergeHistoryMessages([...retained, ...remote]);
+    return _historyMessagesWithoutInternalTriggers(
+      _mergeHistoryMessages([...retained, ...remote]),
+    );
   }
 
   void _updateLatestButtonVisibility() {
@@ -991,9 +1685,10 @@ class _AgentHubPageState extends State<AgentHubPage>
     final oldPixels = _chatScrollController.hasClients
         ? _chatScrollController.position.pixels
         : 0.0;
-    final anchorMessageId = _historyMessages.firstOrNull == null
+    final visibleMessages = _visibleHistoryMessages;
+    final anchorMessageId = visibleMessages.firstOrNull == null
         ? null
-        : _messageIdentity(_historyMessages.first);
+        : _messageIdentity(visibleMessages.first);
     setState(() {
       _olderConversationHistoryLoading = true;
       _olderConversationHistoryError = null;
@@ -1025,12 +1720,14 @@ class _AgentHubPageState extends State<AgentHubPage>
       setState(() {
         final existingIds = _historyMessages.map(_messageIdentity).toSet()
           ..addAll([?_completedMessageId]);
-        _historyMessages = _mergeHistoryMessages([
-          ...olderMessages.where(
-            (message) => existingIds.add(_messageIdentity(message)),
-          ),
-          ..._historyMessages,
-        ]);
+        _historyMessages = _historyMessagesWithoutInternalTriggers(
+          _mergeHistoryMessages([
+            ...olderMessages.where(
+              (message) => existingIds.add(_messageIdentity(message)),
+            ),
+            ..._historyMessages,
+          ]),
+        );
         _conversationHistoryBeforeSequence = page.nextBeforeSequence;
         _olderConversationHistoryLoading = false;
         _olderConversationHistoryError = null;
@@ -1277,7 +1974,12 @@ class _AgentHubPageState extends State<AgentHubPage>
     }
     _composerController.clear();
     setState(() {
-      if (archivedAssistantMessage != null) {
+      if (archivedAssistantMessage != null &&
+          _historyMessages.every(
+            (message) =>
+                _messageIdentity(message) !=
+                _messageIdentity(archivedAssistantMessage),
+          )) {
         _historyMessages.add(archivedAssistantMessage);
       }
       _historyMessages.add(
@@ -1325,6 +2027,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       idempotencyKey,
     );
     final abandonedAttachmentIds = _attachedFileIds().toList(growable: false);
+    final isWelcome = metadata['source'] == 'chat_first_welcome';
     final interruptedState = _state.isActive ? _state : null;
     final interruptedRequest = _state.isActive ? _activeRequest : null;
     final archivedAssistantMessage = _currentAssistantHistoryMessage();
@@ -1332,9 +2035,14 @@ class _AgentHubPageState extends State<AgentHubPage>
       _cancelRunSubscription();
       _sendBestEffortServerCancel(interruptedState, interruptedRequest);
     }
-    _composerController.clear();
+    if (!isWelcome) _composerController.clear();
     setState(() {
-      if (archivedAssistantMessage != null) {
+      if (archivedAssistantMessage != null &&
+          _historyMessages.every(
+            (message) =>
+                _messageIdentity(message) !=
+                _messageIdentity(archivedAssistantMessage),
+          )) {
         _historyMessages.add(archivedAssistantMessage);
       }
       if (optimisticContent.trim().isNotEmpty) {
@@ -1347,16 +2055,21 @@ class _AgentHubPageState extends State<AgentHubPage>
           ),
         );
       }
-      _attachedImages.clear();
-      _attachedFiles.clear();
+      if (!isWelcome) {
+        _attachedImages.clear();
+        _attachedFiles.clear();
+      }
     });
-    _queueAttachmentCleanup(abandonedAttachmentIds);
+    if (!isWelcome) _queueAttachmentCleanup(abandonedAttachmentIds);
     _scheduleScrollToLatest();
     return _startRun(request, awaitServerRunSignal: awaitServerRunSignal);
   }
 
   AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
     final state = _state;
+    if (widget.chatFirstExperience && state.textContent.trim().isEmpty) {
+      return null;
+    }
     final text = _agentAssistantTextForState(state, greeting: _greeting).trim();
     if (text.isEmpty) return null;
     // Keep the visible welcome verbatim when the first-entry card becomes
@@ -1368,6 +2081,8 @@ class _AgentHubPageState extends State<AgentHubPage>
       role: AgentHubHistoryRole.assistant,
       content: text,
       runState: state.phase == AgentStreamRunPhase.idle ? null : state,
+      isChatFirstWelcome: _currentRunIsChatFirstWelcome,
+      chatFirstWelcomeKey: _currentRunWelcomeKey,
     );
   }
 
@@ -1388,7 +2103,9 @@ class _AgentHubPageState extends State<AgentHubPage>
       if (image != null &&
           mediaRepository != null &&
           image.fileId.trim().isEmpty) {
-        final bytes = image.localBytes ?? _decodeAgentImageBytes(image.dataUrl);
+        final bytes =
+            image.localBytes ??
+            Uint8List.fromList(_decodeAgentImageBytes(image.dataUrl));
         final uploaded = await mediaRepository.uploadFile(
           file: ApiUploadFile(
             name: image.name.trim().isEmpty ? 'image.png' : image.name.trim(),
@@ -1423,9 +2140,13 @@ class _AgentHubPageState extends State<AgentHubPage>
     });
     _publishAttachmentUploadState();
     if (failure != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(_attachmentFeedback('Image upload failed. Try again.'));
+      ScaffoldMessenger.of(context).showSnackBar(
+        _attachmentFeedback(
+          widget.chatFirstExperience
+              ? chatFirstImageUploadFailed
+              : 'Image upload failed. Try again.',
+        ),
+      );
       return;
     }
     if (image == null) return;
@@ -1489,10 +2210,17 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (failure != null) {
       final message = switch (failure) {
         AgentDocumentInputException(code: 'file_too_large') =>
-          'Files must be 10 MB or smaller.',
+          widget.chatFirstExperience
+              ? chatFirstDocumentTooLarge
+              : 'Files must be 10 MB or smaller.',
         AgentDocumentInputException(code: 'unsupported_file_type') =>
-          'Only PDF files are supported for now.',
-        _ => 'File upload failed. Try again.',
+          widget.chatFirstExperience
+              ? chatFirstDocumentUnsupported
+              : 'Only PDF files are supported for now.',
+        _ =>
+          widget.chatFirstExperience
+              ? chatFirstDocumentUploadFailed
+              : 'File upload failed. Try again.',
       };
       ScaffoldMessenger.of(context).showSnackBar(_attachmentFeedback(message));
       return;
@@ -1638,6 +2366,15 @@ class _AgentHubPageState extends State<AgentHubPage>
       return true;
     }
 
+    // A thread switch is a leave boundary for private microphone data. Save
+    // the cancelled card, never a pending capture that no longer exists.
+    if (_cryCapture != null || _activePoopTaskId != null) {
+      setState(() {
+        _cancelCryCaptureOnLeave();
+        _cancelPoopOnLeave();
+      });
+      _persistInteractionState();
+    }
     final previousThreadId = _state.threadId;
     if (previousThreadId != null) {
       _interactionState?.threads[previousThreadId] =
@@ -1664,16 +2401,23 @@ class _AgentHubPageState extends State<AgentHubPage>
 
       _cancelRunSubscription();
       _composerController.clear();
+      _cancelCryCaptureOnLeave();
+      _cancelPoopOnLeave();
 
       setState(() {
-        _historyMessages = history.messages
-            .map(_historyMessageFromConversation)
-            .toList(growable: true);
+        _poopTasks.clear();
+        _cryTasks.clear();
+        _activeCryTaskId = null;
+        _historyMessages = _historyMessagesWithoutInternalTriggers(
+          history.messages.map(_historyMessageFromConversation),
+        );
         _conversationHistoryBeforeSequence = history.nextBeforeSequence;
         _olderConversationHistoryLoading = false;
         _olderConversationHistoryLoadArmed = false;
         _olderConversationHistoryError = null;
         _setRunState(history.currentState);
+        _currentRunIsChatFirstWelcome = history.currentRunIsChatFirstWelcome;
+        _currentRunWelcomeKey = history.currentWelcomeKey;
         _attachedImages.clear();
         _attachedFiles.clear();
         _activeRequest = null;
@@ -1713,6 +2457,7 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   Future<void> _refreshGreeting() async {
+    if (widget.chatFirstExperience) return;
     final loader = widget.greetingProfileLoader;
     if (loader == null) {
       return;
@@ -1875,6 +2620,17 @@ class _AgentHubPageState extends State<AgentHubPage>
     _runSettlementCompleter = settlement;
 
     _activeRequest = requestWithThread;
+    _currentRunIsChatFirstWelcome =
+        requestWithThread.metadata['source'] == 'chat_first_welcome' ||
+        isChatFirstWelcomePrompt(requestWithThread.message);
+    _currentRunWelcomeKey = _currentRunIsChatFirstWelcome
+        ? (requestWithThread.idempotencyKey?.startsWith(
+                    'chat-first-welcome:',
+                  ) ==
+                  true
+              ? requestWithThread.idempotencyKey
+              : chatFirstWelcomeKeyForPrompt(requestWithThread.message))
+        : null;
     _localTurnRevision += 1;
     setState(() {
       _setRunState(initialState ?? const AgentStreamRunState().start());
@@ -2073,10 +2829,13 @@ class _AgentHubPageState extends State<AgentHubPage>
     builder: (context, pageConstraints) {
       final page = ColoredBox(
         key: const ValueKey('agent-hub-page'),
-        color: MomHomeTokens.background,
+        color: widget.chatFirstExperience
+            ? const Color(0xFFFFFDFA)
+            : MomHomeTokens.background,
         child: Stack(
           children: [
-            const Positioned.fill(child: _AgentPageBackground()),
+            if (!widget.chatFirstExperience)
+              const Positioned.fill(child: _AgentPageBackground()),
             ValueListenableBuilder<_AgentResponseLightRailMode>(
               valueListenable: _responseLightRailModeNotifier,
               builder: (context, mode, child) {
@@ -2131,6 +2890,7 @@ class _AgentHubPageState extends State<AgentHubPage>
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
+                      final visibleMessages = _visibleHistoryMessages;
                       const verticalTranscriptPadding = 24.0 + 28.0;
                       final transcriptMinHeight =
                           constraints.maxHeight > verticalTranscriptPadding
@@ -2152,9 +2912,11 @@ class _AgentHubPageState extends State<AgentHubPage>
                                     failed:
                                         _olderConversationHistoryError != null,
                                     onLoad: _loadOlderConversationHistory,
+                                    chatFirstExperience:
+                                        widget.chatFirstExperience,
                                   ),
                                 ),
-                              if (_historyMessages.isNotEmpty)
+                              if (visibleMessages.isNotEmpty)
                                 SliverPadding(
                                   padding: const EdgeInsets.fromLTRB(
                                     16,
@@ -2163,7 +2925,59 @@ class _AgentHubPageState extends State<AgentHubPage>
                                     0,
                                   ),
                                   sliver: AgentHubHistorySliver(
-                                    messages: _historyMessages,
+                                    messages: visibleMessages,
+                                    activeCryTaskId: _activeCryTaskId,
+                                    activeCryCardKey: _activeCryCardKey,
+                                    poopTaskBuilder: (context, task) =>
+                                        ChatFirstPoopTaskCard(
+                                          status: task.status,
+                                          photoBytes:
+                                              task.id == _activePoopTaskId
+                                              ? _poopPhoto?.localBytes
+                                              : null,
+                                          photoName:
+                                              task.id == _activePoopTaskId
+                                              ? _poopPhoto?.name
+                                              : null,
+                                          sending:
+                                              task.id == _activePoopTaskId &&
+                                              _poopSending,
+                                          feedback: task.id == _activePoopTaskId
+                                              ? _poopFeedback
+                                              : null,
+                                          canInteract:
+                                              _isPageVisible &&
+                                              !_isVisibleReplyRunning &&
+                                              !_conversationSwitchPending &&
+                                              widget.pickImage != null,
+                                          canSubmit:
+                                              widget.mediaRepository != null &&
+                                              widget.runner != null,
+                                          onPick: (source) => unawaited(
+                                            _pickPoopPhoto(task.id, source),
+                                          ),
+                                          onSubmit: () => unawaited(
+                                            _sendPoopPhoto(task.id),
+                                          ),
+                                          onAbandon: () =>
+                                              _abandonPoopTask(task.id),
+                                        ),
+                                    cryTaskBuilder: (context, task) =>
+                                        ChatFirstCryTaskCard(
+                                          status: task.status,
+                                          canStart:
+                                              _isPageVisible &&
+                                              !_isVisibleReplyRunning &&
+                                              !_conversationSwitchPending,
+                                          controller:
+                                              _activeCryTaskId == task.id
+                                              ? _cryCapture
+                                              : null,
+                                          onStart: () =>
+                                              _startCryCapture(task.id),
+                                          onAbandon: () =>
+                                              _abandonCryTask(task.id),
+                                        ),
                                     viewportAnchorMessageId:
                                         _olderHistoryViewportAnchorMessageId,
                                     viewportAnchorKey:
@@ -2173,33 +2987,43 @@ class _AgentHubPageState extends State<AgentHubPage>
                                     loadImageContent: widget.loadImageContent,
                                   ),
                                 ),
-                              if (_historyMessages.isNotEmpty)
+                              if (visibleMessages.isNotEmpty)
                                 const SliverToBoxAdapter(
                                   child: SizedBox(height: 18),
                                 ),
-                              if (!(_state.phase == AgentStreamRunPhase.idle &&
-                                      _historyMessages.isNotEmpty) &&
+                              if (!_hideCurrentWelcome &&
+                                  !_currentAssistantProjectedWithCryTask &&
+                                  !(_state.phase == AgentStreamRunPhase.idle &&
+                                      visibleMessages.isNotEmpty) &&
                                   _interactionRestoreResolved &&
                                   !(_historyRecoveryPending &&
                                       !_hasLocalInteraction()) &&
                                   !(_historyRecoveryError != null &&
-                                      !_hasLocalInteraction()))
+                                      !_hasLocalInteraction()) &&
+                                  !(widget.chatFirstExperience &&
+                                      _state.phase ==
+                                          AgentStreamRunPhase.idle &&
+                                      visibleMessages.isEmpty))
                                 SliverPadding(
                                   padding: EdgeInsets.fromLTRB(
                                     16,
-                                    _historyMessages.isEmpty ? 24 : 0,
+                                    visibleMessages.isEmpty ? 24 : 0,
                                     16,
                                     28,
                                   ),
                                   sliver: SliverToBoxAdapter(
                                     child: ConstrainedBox(
                                       constraints: BoxConstraints(
-                                        minHeight: _historyMessages.isEmpty
+                                        minHeight: visibleMessages.isEmpty
                                             ? transcriptMinHeight
                                             : 0,
                                       ),
                                       child: _AgentRunTranscriptListenable(
-                                        greeting: _greeting,
+                                        chatFirstExperience:
+                                            widget.chatFirstExperience,
+                                        greeting: widget.chatFirstExperience
+                                            ? ''
+                                            : _greeting,
                                         stateListenable: _runStateNotifier,
                                         onTextRevealed: () {
                                           if (_isPageVisible &&
@@ -2216,7 +3040,10 @@ class _AgentHubPageState extends State<AgentHubPage>
                                     ),
                                   ),
                                 )
-                              else if (_historyMessages.isEmpty)
+                              else if (visibleMessages.isEmpty &&
+                                  (!_interactionRestoreResolved ||
+                                      _historyRecoveryPending ||
+                                      _historyRecoveryError != null))
                                 SliverToBoxAdapter(
                                   child: SizedBox(
                                     height: transcriptMinHeight,
@@ -2224,14 +3051,18 @@ class _AgentHubPageState extends State<AgentHubPage>
                                         ? Center(
                                             child: TextButton(
                                               onPressed: _recoverConversation,
-                                              child: const Text(
-                                                'Could not load earlier messages. Tap to try again.',
+                                              child: Text(
+                                                widget.chatFirstExperience
+                                                    ? chatFirstHistoryLoadFailed
+                                                    : 'Could not load earlier messages. Tap to try again.',
                                               ),
                                             ),
                                           )
-                                        : const Center(
+                                        : Center(
                                             child: Text(
-                                              'Restoring conversation…',
+                                              widget.chatFirstExperience
+                                                  ? chatFirstRestoringHistory
+                                                  : 'Restoring conversation…',
                                             ),
                                           ),
                                   ),
@@ -2288,11 +3119,60 @@ class _AgentHubPageState extends State<AgentHubPage>
                             _hasLocalInteraction())
                           TextButton(
                             onPressed: _recoverConversation,
-                            child: const Text(
-                              'Could not sync history. Tap to try again.',
+                            child: Text(
+                              widget.chatFirstExperience
+                                  ? chatFirstHistorySyncFailed
+                                  : 'Could not sync history. Tap to try again.',
                             ),
                           ),
-                        if (!_hideShortcutsForAttachmentTurn)
+                        if (widget.chatFirstExperience)
+                          _chatFirstRecordPickerOpen
+                              ? ChatFirstRecordPicker(
+                                  onClose: () => setState(
+                                    () => _chatFirstRecordPickerOpen = false,
+                                  ),
+                                  onSelected: (kind) {
+                                    setState(
+                                      () => _chatFirstRecordPickerOpen = false,
+                                    );
+                                    final action = widget.onChatFirstRecord;
+                                    if (action != null) {
+                                      unawaited(action(context, kind));
+                                    } else {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            chatFirstRecordUnavailableMessage,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                )
+                              : ChatFirstQuickActions(
+                                  onRecord: () {
+                                    // The previous save notice sits over the
+                                    // horizontal picker on compact screens.
+                                    ScaffoldMessenger.maybeOf(
+                                      context,
+                                    )?.removeCurrentSnackBar();
+                                    _signalAvatar('interact');
+                                    setState(
+                                      () => _chatFirstRecordPickerOpen = true,
+                                    );
+                                  },
+                                  onCry: () {
+                                    _signalAvatar('interact');
+                                    _openCryTask();
+                                  },
+                                  onPoop: () {
+                                    _signalAvatar('interact');
+                                    _openPoopTask();
+                                  },
+                                )
+                        else if (!_hideShortcutsForAttachmentTurn)
                           _AgentHomeShortcuts(
                             onSelected:
                                 widget.runner == null ||
@@ -2306,50 +3186,55 @@ class _AgentHubPageState extends State<AgentHubPage>
                                     unawaited(_sendMessage());
                                   },
                           ),
-                        AgentComposerBar(
-                          controller: _composerController,
-                          focusNode: _composerFocusNode,
-                          canSend:
-                              widget.runner != null &&
-                              !isComposerLocked &&
-                              !isRestoring,
-                          isRunning: isVisibleReplyRunning,
-                          isInputLocked: isComposerLocked || isRestoring,
-                          images: List<AgentStreamImageInput>.unmodifiable(
-                            _attachedImages,
+                        if (!_chatFirstRecordPickerOpen ||
+                            !widget.chatFirstExperience)
+                          AgentComposerBar(
+                            chatFirstExperience: widget.chatFirstExperience,
+                            controller: _composerController,
+                            focusNode: _composerFocusNode,
+                            canSend:
+                                widget.runner != null &&
+                                !isComposerLocked &&
+                                !isRestoring,
+                            isRunning: isVisibleReplyRunning,
+                            isInputLocked: isComposerLocked || isRestoring,
+                            voicePreviewBlocked:
+                                _cryCapture?.voicePreviewBlocked ?? false,
+                            images: List<AgentStreamImageInput>.unmodifiable(
+                              _attachedImages,
+                            ),
+                            files: List<AgentStreamFileInput>.unmodifiable(
+                              _attachedFiles,
+                            ),
+                            loadImageThumbnail: widget.loadImageThumbnail,
+                            canAttachImage:
+                                widget.pickImage != null &&
+                                !_attachmentUploadPending &&
+                                _canAddAttachment &&
+                                !isComposerLocked &&
+                                !isRestoring,
+                            canAttachFile:
+                                widget.pickDocument != null &&
+                                widget.mediaRepository != null &&
+                                !_attachmentUploadPending &&
+                                _canAddAttachment &&
+                                !isComposerLocked &&
+                                !isRestoring,
+                            isAttachmentPending: _attachmentUploadPending,
+                            attachmentUploadProgress: _attachmentUploadProgress,
+                            onChanged: (_) {},
+                            onSend: _sendMessage,
+                            onCancel: _cancelRun,
+                            onTakePhoto: () => unawaited(
+                              _attachImage(AgentImageInputSource.camera),
+                            ),
+                            onPickPhoto: () => unawaited(
+                              _attachImage(AgentImageInputSource.gallery),
+                            ),
+                            onPickFile: () => unawaited(_attachDocument()),
+                            onRemoveImage: _removeAttachedImage,
+                            onRemoveFile: _removeAttachedFile,
                           ),
-                          files: List<AgentStreamFileInput>.unmodifiable(
-                            _attachedFiles,
-                          ),
-                          loadImageThumbnail: widget.loadImageThumbnail,
-                          canAttachImage:
-                              widget.pickImage != null &&
-                              !_attachmentUploadPending &&
-                              _canAddAttachment &&
-                              !isComposerLocked &&
-                              !isRestoring,
-                          canAttachFile:
-                              widget.pickDocument != null &&
-                              widget.mediaRepository != null &&
-                              !_attachmentUploadPending &&
-                              _canAddAttachment &&
-                              !isComposerLocked &&
-                              !isRestoring,
-                          isAttachmentPending: _attachmentUploadPending,
-                          attachmentUploadProgress: _attachmentUploadProgress,
-                          onChanged: (_) {},
-                          onSend: _sendMessage,
-                          onCancel: _cancelRun,
-                          onTakePhoto: () => unawaited(
-                            _attachImage(AgentImageInputSource.camera),
-                          ),
-                          onPickPhoto: () => unawaited(
-                            _attachImage(AgentImageInputSource.gallery),
-                          ),
-                          onPickFile: () => unawaited(_attachDocument()),
-                          onRemoveImage: _removeAttachedImage,
-                          onRemoveFile: _removeAttachedFile,
-                        ),
                       ],
                     );
                   },
@@ -2427,11 +3312,13 @@ class _AgentOlderConversationHistoryControl extends StatelessWidget {
     required this.loading,
     required this.failed,
     required this.onLoad,
+    this.chatFirstExperience = false,
   });
 
   final bool loading;
   final bool failed;
   final VoidCallback onLoad;
+  final bool chatFirstExperience;
 
   @override
   Widget build(BuildContext context) {
@@ -2459,7 +3346,11 @@ class _AgentOlderConversationHistoryControl extends StatelessWidget {
                 ),
                 label: Text(
                   failed
-                      ? 'Could not load. Tap to try again.'
+                      ? chatFirstExperience
+                            ? chatFirstOlderHistoryFailed
+                            : 'Could not load. Tap to try again.'
+                      : chatFirstExperience
+                      ? chatFirstLoadOlderHistory
                       : 'Load earlier messages',
                 ),
               ),
@@ -2494,7 +3385,7 @@ void _syncAgentDecoration(
   BuildContext context,
   AnimationController controller,
 ) {
-  if (MediaQuery.disableAnimationsOf(context) ||
+  if (MomCozyMotion.isReduced(context) ||
       !TickerMode.valuesOf(context).enabled) {
     controller.stop();
     controller.value = 0;
@@ -2514,12 +3405,13 @@ class _AgentResponseLightRail extends StatefulWidget {
 }
 
 class _AgentResponseLightRailState extends State<_AgentResponseLightRail>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _controller = AnimationController(
       vsync: this,
       duration: _durationForMode(widget.mode),
@@ -2533,6 +3425,11 @@ class _AgentResponseLightRailState extends State<_AgentResponseLightRail>
   }
 
   @override
+  void didChangeAccessibilityFeatures() {
+    if (mounted) _syncAgentDecoration(context, _controller);
+  }
+
+  @override
   void didUpdateWidget(covariant _AgentResponseLightRail oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.mode == oldWidget.mode) return;
@@ -2543,6 +3440,7 @@ class _AgentResponseLightRailState extends State<_AgentResponseLightRail>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     super.dispose();
   }
@@ -2916,14 +3814,21 @@ class AgentHubHistoryMessage {
     required this.role,
     required this.content,
     this.id,
+    this.runId,
     this.sequence,
     this.createdAt,
     this.runState,
     this.images = const <AgentStreamImageInput>[],
     this.files = const <AgentStreamFileInput>[],
+    this.isChatFirstWelcome = false,
+    this.isChatFirstPoopTrigger = false,
+    this.chatFirstWelcomeKey,
+    this.localCryTask,
+    this.localPoopTask,
   });
 
   final String? id;
+  final String? runId;
   final int? sequence;
   final DateTime? createdAt;
   final AgentHubHistoryRole role;
@@ -2931,6 +3836,11 @@ class AgentHubHistoryMessage {
   final AgentStreamRunState? runState;
   final List<AgentStreamImageInput> images;
   final List<AgentStreamFileInput> files;
+  final bool isChatFirstWelcome;
+  final bool isChatFirstPoopTrigger;
+  final String? chatFirstWelcomeKey;
+  final ChatFirstCryTask? localCryTask;
+  final ChatFirstPoopTask? localPoopTask;
 
   String get roleLabel {
     return switch (role) {
@@ -2948,12 +3858,16 @@ AgentHubHistoryMessage _historyMessageFromSnapshot(
         ? AgentHubHistoryRole.user
         : AgentHubHistoryRole.assistant,
     id: snapshot.id,
+    runId: snapshot.runId,
     sequence: snapshot.sequence,
     createdAt: snapshot.createdAt,
     content: snapshot.content,
     runState: snapshot.runState,
     images: snapshot.images,
     files: snapshot.files,
+    isChatFirstWelcome: snapshot.isChatFirstWelcome,
+    isChatFirstPoopTrigger: snapshot.isChatFirstPoopTrigger,
+    chatFirstWelcomeKey: snapshot.chatFirstWelcomeKey,
   );
 }
 
@@ -2965,25 +3879,57 @@ AgentHubHistoryMessage _historyMessageFromConversation(
         ? AgentHubHistoryRole.user
         : AgentHubHistoryRole.assistant,
     id: message.id,
+    runId: message.runId,
     sequence: message.sequence,
     createdAt: message.createdAt,
     content: message.content,
     runState: message.runState,
     images: message.images,
     files: message.files,
+    isChatFirstWelcome: message.isChatFirstWelcome,
+    isChatFirstPoopTrigger: message.isChatFirstPoopTrigger,
+    chatFirstWelcomeKey: message.chatFirstWelcomeKey,
   );
 }
 
 List<AgentHubHistoryMessage> _visibleAgentHubHistoryMessages(
-  Iterable<AgentHubHistoryMessage> messages,
-) {
+  Iterable<AgentHubHistoryMessage> messages, {
+  bool chatFirstExperience = false,
+  String? currentWelcomeKey,
+  bool currentRunHasWelcomeReply = false,
+}) {
+  final rows = _historyMessagesWithoutInternalTriggers(messages);
+  final latestMatchingWelcome =
+      chatFirstExperience &&
+          currentWelcomeKey?.isNotEmpty == true &&
+          !currentRunHasWelcomeReply
+      ? rows.lastIndexWhere(
+          (message) =>
+              message.role == AgentHubHistoryRole.assistant &&
+              message.isChatFirstWelcome &&
+              message.chatFirstWelcomeKey == currentWelcomeKey,
+        )
+      : -1;
   return [
-    for (final message in messages)
-      if (message.role != AgentHubHistoryRole.user ||
-          !isMotionAssessmentCompletionPrompt(message.content))
-        message,
+    for (var index = 0; index < rows.length; index++)
+      if (!(chatFirstExperience && rows[index].id == 'local:welcome') &&
+          !(chatFirstExperience &&
+              currentWelcomeKey != null &&
+              rows[index].isChatFirstWelcome &&
+              index != latestMatchingWelcome))
+        rows[index],
   ];
 }
+
+List<AgentHubHistoryMessage> _historyMessagesWithoutInternalTriggers(
+  Iterable<AgentHubHistoryMessage> messages,
+) => [
+  for (final message in messages)
+    if (message.role != AgentHubHistoryRole.user ||
+        (!isMotionAssessmentCompletionPrompt(message.content) &&
+            !isChatFirstWelcomePrompt(message.content)))
+      message,
+];
 
 List<AgentHubHistoryMessage> _historyMessagesFromOlderConversationPage(
   AgentConversationHistory page,
@@ -3001,6 +3947,8 @@ List<AgentHubHistoryMessage> _historyMessagesFromOlderConversationPage(
         createdAt: page.latestMessageCreatedAt,
         content: page.currentState.textContent,
         runState: page.currentState,
+        isChatFirstWelcome: page.currentRunIsChatFirstWelcome,
+        chatFirstWelcomeKey: page.currentWelcomeKey,
       ),
     );
   }
@@ -3013,12 +3961,16 @@ AgentHubHistorySnapshot _historySnapshotFromMessage(
   return AgentHubHistorySnapshot(
     role: message.role == AgentHubHistoryRole.user ? 'user' : 'assistant',
     id: message.id,
+    runId: message.runId,
     sequence: message.sequence,
     createdAt: message.createdAt,
     content: message.content,
     runState: _historyRunStateForPersistence(message),
     images: message.images,
     files: message.files,
+    isChatFirstWelcome: message.isChatFirstWelcome,
+    isChatFirstPoopTrigger: message.isChatFirstPoopTrigger,
+    chatFirstWelcomeKey: message.chatFirstWelcomeKey,
   );
 }
 
@@ -3077,6 +4029,10 @@ class AgentHubHistorySliver extends StatelessWidget {
     required this.messages,
     this.viewportAnchorMessageId,
     this.viewportAnchorKey,
+    this.activeCryTaskId,
+    this.activeCryCardKey,
+    this.cryTaskBuilder,
+    this.poopTaskBuilder,
     this.loadImageThumbnail,
     this.loadImageContent,
   });
@@ -3084,6 +4040,10 @@ class AgentHubHistorySliver extends StatelessWidget {
   final List<AgentHubHistoryMessage> messages;
   final String? viewportAnchorMessageId;
   final GlobalKey? viewportAnchorKey;
+  final String? activeCryTaskId;
+  final GlobalKey? activeCryCardKey;
+  final Widget Function(BuildContext, ChatFirstCryTask)? cryTaskBuilder;
+  final Widget Function(BuildContext, ChatFirstPoopTask)? poopTaskBuilder;
   final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
 
@@ -3095,6 +4055,9 @@ class AgentHubHistorySliver extends StatelessWidget {
         if (viewportAnchorKey != null &&
             _messageIdentity(message) == viewportAnchorMessageId)
           viewportAnchorKey!
+        else if (activeCryCardKey != null &&
+            _messageIdentity(message) == activeCryTaskId)
+          activeCryCardKey!
         else
           ValueKey<String>(
             'agent-history-message:${_messageIdentity(message)}',
@@ -3111,6 +4074,8 @@ class AgentHubHistorySliver extends StatelessWidget {
             child: _AgentHistoryBubble(
               key: ValueKey('agent-history-$messageIndex'),
               message: messages[messageIndex],
+              cryTaskBuilder: cryTaskBuilder,
+              poopTaskBuilder: poopTaskBuilder,
               loadImageThumbnail: loadImageThumbnail,
               loadImageContent: loadImageContent,
             ),
@@ -3130,17 +4095,41 @@ class _AgentHistoryBubble extends StatelessWidget {
   const _AgentHistoryBubble({
     super.key,
     required this.message,
+    this.cryTaskBuilder,
+    this.poopTaskBuilder,
     this.loadImageThumbnail,
     this.loadImageContent,
   });
 
   final AgentHubHistoryMessage message;
+  final Widget Function(BuildContext, ChatFirstCryTask)? cryTaskBuilder;
+  final Widget Function(BuildContext, ChatFirstPoopTask)? poopTaskBuilder;
 
   final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
 
   @override
   Widget build(BuildContext context) {
+    final poopTask =
+        message.localPoopTask ??
+        (message.isChatFirstPoopTrigger && message.id != null
+            ? ChatFirstPoopTask(
+                id: 'local:poop:remote:${message.id}',
+                createdAt:
+                    message.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0),
+                threadId: message.runState?.threadId,
+                runId: message.runId,
+                status: ChatFirstPoopTaskStatus.completed,
+              )
+            : null);
+    if (poopTask != null) {
+      return poopTaskBuilder?.call(context, poopTask) ??
+          const SizedBox.shrink();
+    }
+    final task = message.localCryTask;
+    if (task != null) {
+      return cryTaskBuilder?.call(context, task) ?? const SizedBox.shrink();
+    }
     final isUser = message.role == AgentHubHistoryRole.user;
     final textStyle = MomHomeTokens.text(
       16,
@@ -3323,6 +4312,7 @@ class AgentRunPhaseBadge extends StatelessWidget {
 
 class _AgentRunTranscriptListenable extends StatefulWidget {
   const _AgentRunTranscriptListenable({
+    this.chatFirstExperience = false,
     required this.greeting,
     required this.stateListenable,
     required this.onTextRevealed,
@@ -3332,6 +4322,7 @@ class _AgentRunTranscriptListenable extends StatefulWidget {
   });
 
   final String greeting;
+  final bool chatFirstExperience;
   final VoidCallback onTextRevealed;
   final ValueListenable<AgentStreamRunState> stateListenable;
 
@@ -3364,6 +4355,7 @@ class _AgentRunTranscriptListenableState
           replyId: state.runId,
           onReveal: widget.onTextRevealed,
           builder: (context, visibleText) => AgentRunTranscript(
+            chatFirstExperience: widget.chatFirstExperience,
             visibleText: visibleText,
             state: state,
             greeting: widget.greeting,
@@ -3381,6 +4373,7 @@ class AgentRunTranscript extends StatelessWidget {
   const AgentRunTranscript({
     super.key,
     required this.state,
+    this.chatFirstExperience = false,
     this.greeting = agentHubDefaultGreeting,
     this.visibleText,
     this.canRetry = false,
@@ -3389,6 +4382,7 @@ class AgentRunTranscript extends StatelessWidget {
   });
 
   final AgentStreamRunState state;
+  final bool chatFirstExperience;
   final String greeting;
   final String? visibleText;
 
@@ -3404,6 +4398,8 @@ class AgentRunTranscript extends StatelessWidget {
     final text = assistantDisplayText(
       state.textContent.isNotEmpty
           ? (visibleText ?? _primaryText)
+          : chatFirstExperience
+          ? chatFirstFallbackText(state, greeting: greeting)
           : _primaryText,
     );
     final allowsSupplementaryContent =
@@ -3443,10 +4439,12 @@ class AgentRunTranscript extends StatelessWidget {
           if (showFailureFallback)
             Semantics(
               liveRegion: true,
-              child: const Text(
-                'No response this time.',
-                key: ValueKey('agent-run-failure-fallback'),
-                style: TextStyle(
+              child: Text(
+                chatFirstExperience
+                    ? chatFirstNoResponse
+                    : 'No response this time.',
+                key: const ValueKey('agent-run-failure-fallback'),
+                style: const TextStyle(
                   fontSize: 14,
                   height: 1.45,
                   color: MomCozyColors.danger,
@@ -3495,7 +4493,7 @@ class AgentRunTranscript extends StatelessWidget {
               key: const ValueKey('agent-retry-button'),
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Try again'),
+              label: Text(chatFirstExperience ? chatFirstRetry : 'Try again'),
               style: FilledButton.styleFrom(
                 backgroundColor: MomHomeTokens.surface,
                 foregroundColor: MomHomeTokens.rose,
@@ -3533,6 +4531,11 @@ class AgentRunTranscript extends StatelessWidget {
   }
 
   bool get _shouldRenderPrimaryText {
+    if (chatFirstExperience &&
+        state.phase == AgentStreamRunPhase.idle &&
+        state.textContent.trim().isEmpty) {
+      return false;
+    }
     if (state.phase == AgentStreamRunPhase.streaming &&
         state.textContent.trim().isEmpty) {
       return false;
@@ -3551,11 +4554,14 @@ class AgentRunTranscript extends StatelessWidget {
     final projection = projectAgentWorkStatus(state.events);
     if (projection.isTerminal) return const _AgentLoopDecorState();
     return _AgentLoopDecorState(
-      statusTitle: projection.statusEvent?.userFacingStatus ?? 'Thinking ...',
+      statusTitle: chatFirstExperience
+          ? chatFirstWorkStatus(projection.statusEvent?.userFacingStatus)
+          : projection.statusEvent?.userFacingStatus ?? 'Thinking ...',
     );
   }
 
   String? get _supportingText {
+    if (chatFirstExperience) return chatFirstSupportingText(state);
     if (state.phase == AgentStreamRunPhase.waitingForConfirmation) {
       return _unsupportedActionMessage;
     }
@@ -3761,6 +4767,7 @@ class AgentMarkdownText extends StatelessWidget {
         ? Text(markdown, style: baseStyle)
         : MarkdownBody(
             data: markdown,
+            inlineSyntaxes: _cjkQuotedStrongSyntaxes,
             fitContent: true,
             shrinkWrap: true,
             softLineBreak: true,
@@ -3868,6 +4875,28 @@ class AgentMarkdownText extends StatelessWidget {
   }
 }
 
+final _cjkQuotedStrongSyntaxes = <md.InlineSyntax>[_CjkQuotedStrongSyntax()];
+
+/// CommonMark leaves a quoted closing delimiter literal when Han text
+/// immediately follows it. Keep the source unchanged while rendering only
+/// that quoted emphasis as semantic strong text.
+class _CjkQuotedStrongSyntax extends md.InlineSyntax {
+  _CjkQuotedStrongSyntax()
+    : super(
+        r'\*\*(?:「([^*\n]+)」|『([^*\n]+)』)\*\*(?=[\u3400-\u9fff])',
+        startCharacter: 0x2a,
+      );
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    final corner = match[1] != null;
+    parser.addNode(md.Text(corner ? '「' : '『'));
+    parser.addNode(md.Element.text('strong', match[1] ?? match[2]!));
+    parser.addNode(md.Text(corner ? '」' : '』'));
+    return true;
+  }
+}
+
 class AgentRunStatusLine extends StatefulWidget {
   const AgentRunStatusLine({super.key, required this.title});
 
@@ -3878,7 +4907,7 @@ class AgentRunStatusLine extends StatefulWidget {
 }
 
 class _AgentRunStatusLineState extends State<AgentRunStatusLine>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   static const _sweepDuration = Duration(milliseconds: 640);
 
   late final AnimationController _sweepController;
@@ -3886,6 +4915,7 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _sweepController = AnimationController(
       vsync: this,
       duration: _sweepDuration,
@@ -3899,7 +4929,13 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
   }
 
   @override
+  void didChangeAccessibilityFeatures() {
+    if (mounted) _syncAgentDecoration(context, _sweepController);
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _sweepController.dispose();
     super.dispose();
   }
@@ -3985,7 +5021,7 @@ class AgentThinkingNote extends StatefulWidget {
 }
 
 class _AgentThinkingNoteState extends State<AgentThinkingNote>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   static const _sweepDuration = Duration(milliseconds: 640);
 
   late final AnimationController _sweepController;
@@ -3993,6 +5029,7 @@ class _AgentThinkingNoteState extends State<AgentThinkingNote>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _sweepController = AnimationController(
       vsync: this,
       duration: _sweepDuration,
@@ -4006,7 +5043,13 @@ class _AgentThinkingNoteState extends State<AgentThinkingNote>
   }
 
   @override
+  void didChangeAccessibilityFeatures() {
+    if (mounted) _syncAgentDecoration(context, _sweepController);
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _sweepController.dispose();
     super.dispose();
   }
@@ -4050,7 +5093,7 @@ class _AgentAssistantAvatar extends StatefulWidget {
 }
 
 class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController _pulseController;
   final Map<_AgentAssistantAvatarMode, VideoPlayerController>
   _videoControllers = <_AgentAssistantAvatarMode, VideoPlayerController>{};
@@ -4061,6 +5104,7 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1180),
@@ -4084,7 +5128,16 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
   }
 
   @override
+  void didChangeAccessibilityFeatures() {
+    if (!mounted) return;
+    _syncPulseController();
+    _syncVideoPlayback();
+    setState(() {});
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _disposeVideoControllers();
     _pulseController.dispose();
     super.dispose();
@@ -4184,9 +5237,8 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
   }
 
   bool _shouldAnimateAvatar() {
-    final disableAnimations =
-        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    return TickerMode.valuesOf(context).enabled && !disableAnimations;
+    return TickerMode.valuesOf(context).enabled &&
+        !MomCozyMotion.isReduced(context);
   }
 
   @override
@@ -4302,11 +5354,13 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
 class AgentComposerBar extends StatefulWidget {
   const AgentComposerBar({
     super.key,
+    this.chatFirstExperience = false,
     required this.controller,
     this.focusNode,
     required this.canSend,
     required this.isRunning,
     required this.isInputLocked,
+    this.voicePreviewBlocked = false,
     required this.images,
     required this.files,
     required this.canAttachImage,
@@ -4324,11 +5378,13 @@ class AgentComposerBar extends StatefulWidget {
     required this.onRemoveFile,
   });
 
+  final bool chatFirstExperience;
   final TextEditingController controller;
   final FocusNode? focusNode;
   final bool canSend;
   final bool isRunning;
   final bool isInputLocked;
+  final bool voicePreviewBlocked;
   final List<AgentStreamImageInput> images;
   final List<AgentStreamFileInput> files;
   final AgentImageContentLoader? loadImageThumbnail;
@@ -4487,6 +5543,32 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.chatFirstExperience) {
+      return ChatFirstComposerBar(
+        menuController: _attachmentMenuController,
+        controller: widget.controller,
+        focusNode: widget.focusNode,
+        canSend: widget.canSend,
+        isRunning: widget.isRunning,
+        isInputLocked: widget.isInputLocked,
+        voicePreviewBlocked: widget.voicePreviewBlocked,
+        images: widget.images,
+        files: widget.files,
+        loadImageThumbnail: widget.loadImageThumbnail,
+        canAttachImage: widget.canAttachImage,
+        canAttachFile: widget.canAttachFile,
+        isAttachmentPending: widget.isAttachmentPending,
+        attachmentUploadProgress: widget.attachmentUploadProgress,
+        onChanged: widget.onChanged,
+        onSend: widget.onSend,
+        onCancel: widget.onCancel,
+        onTakePhoto: widget.onTakePhoto,
+        onPickPhoto: widget.onPickPhoto,
+        onPickFile: widget.onPickFile,
+        onRemoveImage: widget.onRemoveImage,
+        onRemoveFile: widget.onRemoveFile,
+      );
+    }
     final colorScheme = Theme.of(context).colorScheme;
     final controller = widget.controller;
     final isRunning = widget.isRunning;

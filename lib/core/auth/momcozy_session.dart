@@ -138,7 +138,7 @@ class MomCozySessionManager {
     }
     return stored.copyWith(
       userId: _trimmedOrDefault(stored.userId, environmentSession.userId),
-      babyId: _trimmedOrDefault(stored.babyId, environmentSession.babyId),
+      babyId: stored.babyId.trim(),
       locale: momCozyEnglishLocale,
     );
   }

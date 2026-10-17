@@ -7,6 +7,7 @@ import '../features/notifications/presentation/notification_permission_controlle
 import '../features/notifications/presentation/notification_scope.dart';
 import 'mom_module_routes.dart';
 import 'baby_module_routes.dart';
+import 'chat_first_navigation.dart';
 import 'mom_bottom_navigation.dart';
 import 'primary_tab_activity.dart';
 import '../shared/widgets/momcozy_components.dart';
@@ -39,6 +40,15 @@ import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/account_page.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_page.dart';
+import 'package:momcozy_flutter_app/features/onboarding/presentation/chat_first_onboarding_page.dart';
+import 'package:momcozy_flutter_app/features/onboarding/domain/chat_first_onboarding.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/chat_first_workspace.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/chat_first_avatar.dart';
+import 'package:momcozy_flutter_app/features/app_pages/devices_page.dart';
+import 'package:momcozy_flutter_app/features/app_pages/chat_first_mother_page.dart';
+import 'package:momcozy_flutter_app/features/records/presentation/chat_first_record_sheet.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/chat_first_welcome_coordinator.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/chat_first_welcome_gate.dart';
 import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
@@ -96,6 +106,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
           runtimeController: _runtimeController,
           onPrimaryInfantSelected: _runtimeController.selectBaby,
           releasePolicy: widget.onboardingReleasePolicy,
+          chatFirstMode: true,
         )
       : null;
   late final GoRouter _router =
@@ -103,6 +114,7 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
       createMomCozyRouter(
         runtimeController: _runtimeController,
         onboardingController: _onboardingController,
+        chatFirstExperience: true,
         sessionStore: widget.sessionStore,
         authDeviceIdStore: widget.authDeviceIdStore,
         lastInviteCodeStore: widget.lastInviteCodeStore,
@@ -259,7 +271,8 @@ Map<String, Object?> _nativeRoutePayload(PendingNativeRoute route) {
 }
 
 GoRouter createMomCozyRouter({
-  String initialLocation = '/me',
+  String? initialLocation,
+  bool chatFirstExperience = false,
   MomCozyRuntimeController? runtimeController,
   OnboardingController? onboardingController,
   MomCozySessionStore sessionStore = const FlutterSecureMomCozySessionStore(),
@@ -272,12 +285,19 @@ GoRouter createMomCozyRouter({
 }) {
   final resolvedAgentHubBuilder =
       agentHubBuilder ??
-      (context, uri, extra) => _buildDefaultAgentHubPage(context, uri, extra);
+      (context, uri, extra) => _buildDefaultAgentHubPage(
+        context,
+        uri,
+        extra,
+        chatFirstExperience: chatFirstExperience,
+        familyRole: onboardingController?.state?.role,
+      );
   final routesByPath = {for (final route in momCozyRoutes) route.path: route};
-  GoRoute routeFor(String path) {
+  GoRoute routeFor(String path, {List<RouteBase> childRoutes = const []}) {
     final route = routesByPath[path]!;
     return GoRoute(
       path: path,
+      routes: childRoutes,
       builder: (context, state) {
         if (runtimeController != null && !capabilities.isRouteEnabled(path)) {
           return _BackendCapabilityUnavailablePage(route: route);
@@ -290,36 +310,74 @@ GoRouter createMomCozyRouter({
               runtime.session.status,
               runtime.session.userId,
             )),
-            child: resolvedAgentHubBuilder(context, state.uri, state.extra),
+            child: chatFirstExperience
+                ? Column(
+                    children: [
+                      ChatFirstWorkspace(
+                        runtime: runtime,
+                        role: onboardingController?.state?.role,
+                        onOpenDrawer: () => Scaffold.of(context).openDrawer(),
+                      ),
+                      Expanded(
+                        child: resolvedAgentHubBuilder(
+                          context,
+                          state.uri,
+                          state.extra,
+                        ),
+                      ),
+                    ],
+                  )
+                : resolvedAgentHubBuilder(context, state.uri, state.extra),
           );
         }
-        return MomCozyRoutePage(
-          route: route,
-          uri: state.uri,
-          extra: state.extra,
-          extendedProductResourcesEnabled:
-              capabilities.extendedProductApiEnabled,
-          onLogout: runtimeController == null
-              ? null
-              : () => runtimeController.logout(sessionStore: sessionStore),
-          onDeleteAccount: runtimeController == null
-              ? null
-              : () async {
-                  await runtimeController.runtime.authRepository
-                      .deleteAccount();
-                  await runtimeController.logout(
-                    sessionStore: sessionStore,
-                    revokeRemote: false,
-                  );
-                },
-          onBabySelected: runtimeController?.selectBaby,
-        );
+        final role = onboardingController?.state?.role;
+        final page =
+            chatFirstExperience &&
+                path == '/me' &&
+                onboardingController?.state?.profileScope == 'chat_first' &&
+                role != null
+            ? ChatFirstMotherPage(
+                key: ValueKey(MomCozyRuntimeScope.of(context)),
+                runtime: MomCozyRuntimeScope.of(context),
+                role: role,
+              )
+            : MomCozyRoutePage(
+                route: route,
+                chatFirstExperience: chatFirstExperience,
+                uri: state.uri,
+                extra: state.extra,
+                extendedProductResourcesEnabled:
+                    capabilities.extendedProductApiEnabled,
+                onLogout: runtimeController == null
+                    ? null
+                    : () =>
+                          runtimeController.logout(sessionStore: sessionStore),
+                onDeleteAccount: runtimeController == null
+                    ? null
+                    : () async {
+                        await runtimeController.runtime.authRepository
+                            .deleteAccount();
+                        await runtimeController.logout(
+                          sessionStore: sessionStore,
+                          revokeRemote: false,
+                        );
+                      },
+                onBabySelected: runtimeController?.selectBaby,
+              );
+        return chatFirstExperience && _chatFirstSectionRoutes.contains(path)
+            ? Column(
+                children: [
+                  ChatFirstSectionHeader(location: path),
+                  Expanded(child: page),
+                ],
+              )
+            : page;
       },
     );
   }
 
   return GoRouter(
-    initialLocation: initialLocation,
+    initialLocation: initialLocation ?? (chatFirstExperience ? '/' : '/me'),
     refreshListenable: runtimeController == null
         ? onboardingController
         : onboardingController == null
@@ -327,11 +385,17 @@ GoRouter createMomCozyRouter({
         : Listenable.merge([runtimeController, onboardingController]),
     redirect: (context, state) {
       if (runtimeController == null) return null;
-      if (state.uri.path.startsWith('/avatar/')) return '/me';
-      if (onboardingController == null && state.uri.path == '/onboarding') {
-        return '/';
+      if (state.uri.path.startsWith('/avatar/')) {
+        return chatFirstExperience ? '/' : '/me';
       }
-      final authRedirect = _authRedirect(runtimeController, state);
+      if (onboardingController == null && state.uri.path == '/onboarding') {
+        return chatFirstExperience ? '/' : '/me';
+      }
+      final authRedirect = _authRedirect(
+        runtimeController,
+        state,
+        home: chatFirstExperience ? '/' : '/me',
+      );
       if (authRedirect != null) return authRedirect;
       if (onboardingController == null ||
           !runtimeController.currentSession.isAuthenticated) {
@@ -350,6 +414,9 @@ GoRouter createMomCozyRouter({
           builder: (context, state) => MomCozyAccountPage(
             runtimeController: runtimeController,
             sessionStore: sessionStore,
+            onBack: () => context.canPop()
+                ? context.pop()
+                : context.go(chatFirstExperience ? '/more' : '/me'),
           ),
         ),
       if (runtimeController != null)
@@ -365,13 +432,21 @@ GoRouter createMomCozyRouter({
       if (runtimeController != null && onboardingController != null)
         GoRoute(
           path: '/onboarding',
-          builder: (context, state) => OnboardingPage(
-            controller: onboardingController,
-            entryPath:
-                _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/me',
-          ),
+          builder: (context, state) => onboardingController.chatFirstMode
+              ? ChatFirstOnboardingPage(
+                  controller: onboardingController,
+                  entryPath:
+                      _safeAuthRedirect(state.uri.queryParameters['from']) ??
+                      '/',
+                )
+              : OnboardingPage(
+                  controller: onboardingController,
+                  entryPath:
+                      _safeAuthRedirect(state.uri.queryParameters['from']) ??
+                      '/me',
+                ),
         ),
-      ...momModuleRoutes,
+      ...createMomModuleRoutes(chatFirstExperience: chatFirstExperience),
       ...babyModuleRoutes,
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -381,6 +456,8 @@ GoRouter createMomCozyRouter({
             observability: runtime.observability,
             child: MomCozyRouteShell(
               location: state.uri.path,
+              chatFirstExperience: chatFirstExperience,
+              familyRole: onboardingController?.state?.role,
               child: navigationShell,
               onSelectTab: (index) {
                 if (index != navigationShell.currentIndex) {
@@ -391,8 +468,45 @@ GoRouter createMomCozyRouter({
           );
         },
         branches: [
-          for (final path in ['/me', '/baby', '/', '/schedule', '/more'])
-            StatefulShellBranch(routes: [routeFor(path)]),
+          for (final path in [
+            '/me',
+            '/baby',
+            '/',
+            '/schedule',
+            '/more',
+            '/devices',
+          ])
+            StatefulShellBranch(
+              routes: [
+                routeFor(
+                  path,
+                  childRoutes: path == '/baby' && chatFirstExperience
+                      ? [
+                          GoRoute(
+                            path: 'details',
+                            builder: (context, state) => Column(
+                              children: [
+                                const ChatFirstSectionHeader(
+                                  location: '/baby',
+                                  backPath: '/baby',
+                                ),
+                                Expanded(
+                                  child: buildBabyHome(
+                                    context,
+                                    chatFirstExperience: true,
+                                    fullDetails: true,
+                                    onBabySelected:
+                                        runtimeController?.selectBaby,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ]
+                      : const [],
+                ),
+              ],
+            ),
           StatefulShellBranch(
             routes: [routeFor('/notifications'), routeFor('/media-viewer')],
           ),
@@ -400,9 +514,10 @@ GoRouter createMomCozyRouter({
       ),
     ],
     errorBuilder: (context, state) {
-      return const MomCozyRouteShell(
+      return MomCozyRouteShell(
         location: '/404',
-        child: MomCozyNotFoundPage(),
+        chatFirstExperience: chatFirstExperience,
+        child: MomCozyNotFoundPage(chatFirstExperience: chatFirstExperience),
       );
     },
   );
@@ -457,6 +572,7 @@ String? _onboardingRedirect(
   OnboardingController onboardingController,
   GoRouterState state,
 ) {
+  final home = onboardingController.chatFirstMode ? '/' : '/me';
   final userId = runtimeController.currentSession.userId;
   final isOnboarding = state.uri.path == '/onboarding';
   if (!onboardingController.isResolvedFor(userId)) {
@@ -467,19 +583,20 @@ String? _onboardingRedirect(
     final from = state.uri.toString();
     return Uri(
       path: '/onboarding',
-      queryParameters: from == '/me' ? null : {'from': from},
+      queryParameters: from == home ? null : {'from': from},
     ).toString();
   }
   if (isOnboarding) {
-    return _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/me';
+    return _safeAuthRedirect(state.uri.queryParameters['from']) ?? home;
   }
   return null;
 }
 
 String? _authRedirect(
   MomCozyRuntimeController runtimeController,
-  GoRouterState state,
-) {
+  GoRouterState state, {
+  required String home,
+}) {
   final path = state.uri.path;
   final isLogin = path == '/login';
   final isAuthenticated = runtimeController.currentSession.isAuthenticated;
@@ -487,11 +604,11 @@ String? _authRedirect(
     final from = state.uri.toString();
     return Uri(
       path: '/login',
-      queryParameters: from == '/me' ? null : {'from': from},
+      queryParameters: from == home ? null : {'from': from},
     ).toString();
   }
   if (isAuthenticated && isLogin) {
-    return _safeAuthRedirect(state.uri.queryParameters['from']) ?? '/me';
+    return _safeAuthRedirect(state.uri.queryParameters['from']) ?? home;
   }
   return null;
 }
@@ -509,12 +626,16 @@ class MomCozyRouteShell extends StatefulWidget {
     super.key,
     required this.location,
     required this.child,
+    this.familyRole,
+    this.chatFirstExperience = false,
     this.onSelectTab,
     this.appBar,
   });
 
   final String location;
   final Widget child;
+  final FamilyRole? familyRole;
+  final bool chatFirstExperience;
   final ValueChanged<int>? onSelectTab;
   final PreferredSizeWidget? appBar;
 
@@ -525,6 +646,13 @@ class MomCozyRouteShell extends StatefulWidget {
 class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   int _activation = 0;
   MomCozyApiRuntime? _tabRuntime;
+  final _avatarController = ChatFirstAvatarController();
+
+  @override
+  void dispose() {
+    _avatarController.dispose();
+    super.dispose();
+  }
 
   String? get _selectedTab => switch (widget.location) {
     '/me' => 'me',
@@ -558,39 +686,43 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   @override
   Widget build(BuildContext context) {
     final location = widget.location;
-    final hideNavigation = !_primaryNavigationRoutes.contains(location);
+    final isHome = widget.chatFirstExperience && location == '/';
+    final hideLegacyNavigation = !_primaryNavigationRoutes.contains(location);
     return Scaffold(
       appBar: widget.appBar,
-      // Let Schedule scroll beneath the navigation's transparent avatar inset.
-      extendBody: location == '/schedule',
+      extendBody: !widget.chatFirstExperience && location == '/schedule',
+      drawer: isHome ? const ChatFirstDrawer() : null,
       backgroundColor: location == '/me'
           ? MomHomeTokens.background
           : MomCozyColors.background,
-      body: SafeArea(
-        bottom: hideNavigation,
-        child: Column(
-          children: [
-            Expanded(
-              child: MomCozyPageBody(
-                safeArea: false,
-                child: PrimaryTabActivity(
-                  selectedIndex: switch (location) {
-                    '/me' => 0,
-                    '/baby' => 1,
-                    '/' => 2,
-                    '/schedule' => 3,
-                    '/more' => 4,
-                    _ => -1,
-                  },
-                  activation: _activation,
-                  child: widget.child,
+      body: ChatFirstAvatarScope(
+        controller: _avatarController,
+        child: SafeArea(
+          bottom: widget.chatFirstExperience || hideLegacyNavigation,
+          child: Column(
+            children: [
+              Expanded(
+                child: MomCozyPageBody(
+                  safeArea: false,
+                  child: PrimaryTabActivity(
+                    selectedIndex: switch (location) {
+                      '/me' => 0,
+                      '/baby' => 1,
+                      '/' => 2,
+                      '/schedule' => 3,
+                      '/more' => 4,
+                      _ => -1,
+                    },
+                    activation: _activation,
+                    child: widget.child,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-      bottomNavigationBar: hideNavigation
+      bottomNavigationBar: widget.chatFirstExperience || hideLegacyNavigation
           ? null
           : _tabRuntime == null
           ? MomCozyBottomNavigation(
@@ -613,6 +745,7 @@ class MomCozyRoutePage extends StatelessWidget {
   const MomCozyRoutePage({
     super.key,
     required this.route,
+    this.chatFirstExperience = false,
     this.uri,
     this.extra,
     this.onLogout,
@@ -622,6 +755,7 @@ class MomCozyRoutePage extends StatelessWidget {
   });
 
   final MomCozyRouteConfig route;
+  final bool chatFirstExperience;
   final Uri? uri;
   final Object? extra;
   final Future<void> Function()? onLogout;
@@ -633,14 +767,23 @@ class MomCozyRoutePage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (route.path == '/me') return buildMotherHome(context);
     if (route.path == '/baby') {
-      return buildBabyHome(context, onBabySelected: onBabySelected);
+      return buildBabyHome(
+        context,
+        chatFirstExperience: chatFirstExperience,
+        onBabySelected: onBabySelected,
+      );
     }
     if (route.path == '/more') {
       return MorePage(
         key: ValueKey(MomCozyRuntimeScope.of(context)),
         onLogout: onLogout,
         onDeleteAccount: onDeleteAccount,
+        showChatFirstLinks: chatFirstExperience,
       );
+    }
+    if (route.path == '/devices') {
+      final runtime = MomCozyRuntimeScope.of(context);
+      return DevicesPage(key: ValueKey(runtime), runtime: runtime);
     }
 
     if (route.path == '/') {
@@ -676,8 +819,10 @@ Object _agentSessionInteractionKey(MomCozyApiRuntime runtime) =>
 Widget _buildDefaultAgentHubPage(
   BuildContext context,
   Uri? uri,
-  Object? extra,
-) {
+  Object? extra, {
+  bool chatFirstExperience = false,
+  FamilyRole? familyRole,
+}) {
   final runtime = MomCozyRuntimeScope.of(context);
   final tabActivity = PrimaryTabActivity.maybeOf(context);
   String? currentAccessToken() {
@@ -687,11 +832,32 @@ Widget _buildDefaultAgentHubPage(
   }
 
   final targetConversationId = uri?.queryParameters['conversationId'];
-  return AgentHubPage(
+  final isVisible = tabActivity == null
+      ? uri != null
+      : tabActivity.selectedIndex == 2;
+  Widget buildHub(
+    AgentHubAutoRunRequest? welcomeRequest,
+    String? currentWelcomeKey,
+    ValueChanged<String>? onWelcomeAccepted,
+    VoidCallback? onWelcomeRejected,
+    int retryToken,
+  ) => AgentHubPage(
+    chatFirstExperience: chatFirstExperience,
+    currentWelcomeKey: currentWelcomeKey,
+    onInitialAutoRunAccepted: onWelcomeAccepted,
+    onInitialAutoRunRejected: onWelcomeRejected,
+    initialAutoRunRetryToken: retryToken,
+    onChatFirstRecord: chatFirstExperience
+        ? (context, kind) async {
+            await showChatFirstRecordSheet(
+              context,
+              runtime: runtime,
+              kind: kind,
+            );
+          }
+        : null,
     key: ObjectKey(_agentSessionInteractionKey(runtime)),
-    isVisible: tabActivity == null
-        ? uri != null
-        : tabActivity.selectedIndex == 2,
+    isVisible: isVisible,
     now: runtime.now,
     initialConversationId: targetConversationId,
     stateCacheKey: _agentSessionInteractionKey(runtime),
@@ -708,11 +874,17 @@ Widget _buildDefaultAgentHubPage(
       accessTokenProvider: currentAccessToken,
       onUnauthorized: runtime.agentStreamUnauthorizedHandler,
     ),
-    conversationRepository: runtime.agentConversationRepository,
+    conversationRepository: runtime.createAgentConversationRepository(
+      identifyWelcomeBoundary:
+          chatFirstExperience && familyRole == FamilyRole.mother,
+    ),
     greetingProfileLoader:
         runtime.agentHubProfileRepository.fetchGreetingProfile,
-    requestBuilder: (message) =>
-        buildSessionAgentHubRequest(message, session: runtime.session),
+    requestBuilder: (message) => buildSessionAgentHubRequest(
+      message,
+      session: runtime.session,
+      locale: chatFirstExperience ? 'zh-CN' : null,
+    ),
     pickImage: runtime.agentHubImagePicker,
     pickDocument: runtime.agentHubDocumentPicker,
     mediaRepository: runtime.mediaRepository,
@@ -720,11 +892,30 @@ Widget _buildDefaultAgentHubPage(
     loadImageContent: runtime.mediaContentRepository.loadImage,
     onApplicationEvent: runtime.handleAgentApplicationEvent,
     initialComposerText: _agentPrefillFromRoute(uri, extra),
+    initialComposerRequestKey: extra,
     initialAutoSend: _agentAutoSendFromRoute(uri, extra),
-    initialAutoRunRequest: _agentAutoRunFromRoute(extra),
+    initialAutoRunRequest: _agentAutoRunFromRoute(extra) ?? welcomeRequest,
     externalConversationRefreshKey: _motionAssessmentFeedbackRefreshKey(extra),
     externalConversationRefreshUntilFound:
         _motionAssessmentFeedbackRefreshKey(extra) != null,
+  );
+  if (!chatFirstExperience || familyRole != FamilyRole.mother) {
+    return buildHub(null, null, null, null, 0);
+  }
+  return ChatFirstWelcomeGate(
+    activationKey: runtime.currentSession.userId,
+    visible: isVisible,
+    coordinator: ChatFirstWelcomeCoordinator(
+      product: runtime.jsonTransport,
+      agent: runtime.agentJsonTransport,
+      store: const SecureChatFirstWelcomeStore(),
+      ownerUserId: runtime.currentSession.userId,
+      role: familyRole,
+      now: runtime.now,
+    ),
+    builder:
+        (context, request, currentKey, onAccepted, onRejected, retryToken) =>
+            buildHub(request, currentKey, onAccepted, onRejected, retryToken),
   );
 }
 
@@ -777,7 +968,9 @@ bool _agentAutoSendFromRoute(Uri? uri, Object? extra) {
 }
 
 class MomCozyNotFoundPage extends StatelessWidget {
-  const MomCozyNotFoundPage({super.key});
+  const MomCozyNotFoundPage({super.key, this.chatFirstExperience = false});
+
+  final bool chatFirstExperience;
 
   @override
   Widget build(BuildContext context) => Theme(
@@ -810,12 +1003,16 @@ class MomCozyNotFoundPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Page not found',
+                      chatFirstExperience
+                          ? chatFirstNotFoundTitle
+                          : 'Page not found',
                       textAlign: TextAlign.center,
                       style: MomHomeTokens.text(22, weight: FontWeight.w700),
                     ),
                     Text(
-                      'This page may have moved, or the link may have expired.',
+                      chatFirstExperience
+                          ? chatFirstNotFoundSummary
+                          : 'This page may have moved, or the link may have expired.',
                       textAlign: TextAlign.center,
                       style: MomHomeTokens.text(
                         14,
@@ -823,8 +1020,13 @@ class MomCozyNotFoundPage extends StatelessWidget {
                       ),
                     ),
                     FilledButton(
-                      onPressed: () => context.go('/me'),
-                      child: const Text('Back to home'),
+                      onPressed: () =>
+                          context.go(chatFirstExperience ? '/' : '/me'),
+                      child: Text(
+                        chatFirstExperience
+                            ? chatFirstBackToConversation
+                            : 'Back to home',
+                      ),
                     ),
                   ],
                 ),
@@ -906,6 +1108,14 @@ const momCozyRoutes = [
     priority: 'P0',
   ),
   MomCozyRouteConfig(
+    path: '/devices',
+    title: 'Devices',
+    summary: 'Registered devices for this account.',
+    icon: Icons.devices_other_rounded,
+    accent: Color(0xff9f6378),
+    priority: 'P1',
+  ),
+  MomCozyRouteConfig(
     path: '/notifications',
     title: 'Notifications',
     summary: 'Conversation and account updates.',
@@ -924,3 +1134,10 @@ const momCozyRoutes = [
 ];
 
 const _primaryNavigationRoutes = {'/me', '/baby', '/', '/schedule', '/more'};
+const _chatFirstSectionRoutes = {
+  '/me',
+  '/baby',
+  '/devices',
+  '/schedule',
+  '/more',
+};

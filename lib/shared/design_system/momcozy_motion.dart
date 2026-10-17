@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 
 /// Keep state changes and navigation usable without decorative movement.
 abstract final class MomCozyMotion {
+  static bool isReduced(BuildContext context) =>
+      MediaQuery.disableAnimationsOf(context) ||
+      View.of(context).platformDispatcher.accessibilityFeatures.reduceMotion;
+
   static AnimationStyle? animationStyle(BuildContext context) =>
-      MediaQuery.disableAnimationsOf(context)
-      ? AnimationStyle.noAnimation
-      : null;
+      isReduced(context) ? AnimationStyle.noAnimation : null;
 
   static Duration duration(BuildContext context, Duration regular) =>
-      MediaQuery.disableAnimationsOf(context) ? Duration.zero : regular;
+      isReduced(context) ? Duration.zero : regular;
 
   static Future<void> scrollTo(
     BuildContext context,
@@ -18,7 +20,7 @@ abstract final class MomCozyMotion {
     required Curve curve,
   }) async {
     if (!context.mounted || !controller.hasClients) return;
-    if (MediaQuery.disableAnimationsOf(context)) {
+    if (isReduced(context)) {
       final atEnd = offset >= controller.position.maxScrollExtent;
       controller.jumpTo(
         offset.clamp(
@@ -67,7 +69,7 @@ class _MotionAwarePageTransitions extends PageTransitionsBuilder {
     final build = delegate.delegatedTransition;
     if (build == null) return null;
     return (context, animation, secondaryAnimation, allowSnapshotting, child) {
-      final reduced = MediaQuery.disableAnimationsOf(context);
+      final reduced = MomCozyMotion.isReduced(context);
       return build(
         context,
         reduced ? kAlwaysCompleteAnimation : animation,
@@ -86,7 +88,7 @@ class _MotionAwarePageTransitions extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    final reduced = MediaQuery.disableAnimationsOf(context);
+    final reduced = MomCozyMotion.isReduced(context);
     // Keep the platform delegate (including the iOS back gesture) while
     // presenting settled visual values when movement is disabled.
     return delegate.buildTransitions(

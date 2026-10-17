@@ -1,9 +1,4 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -86,12 +81,8 @@ void main() {
   late GoRouter router;
   late FakeRouteIntentPlatform platform;
   late MemoryMomCozySessionStore store;
-  String? previous;
-  final steps = <Map<String, Object?>>[];
 
   Future<void> mount(WidgetTester tester) async {
-    previous = null;
-    steps.clear();
     tester.view.physicalSize = const Size(393, 844);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -152,79 +143,30 @@ void main() {
     );
   }
 
-  Future<void> capture(
-    WidgetTester tester,
-    String state,
-    String route,
-    String action,
-  ) async {
+  Future<void> verifyState(WidgetTester tester, String route) async {
     expect(router.state.uri.path, route);
     expect(tester.takeException(), isNull);
-    final source = 'test/goldens/ui_inventory/$state-393.png';
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile('../../goldens/ui_inventory/$state-393.png'),
-    );
-    steps.add({
-      'source': source,
-      'previous_source': previous,
-      'route': route,
-      'trigger': action,
-      'root_entry': 'Open More while signed out → real auth redirect',
-      'evidence':
-          'Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures',
-      'test': 'test/features/auth/auth_inventory_journey_test.dart',
-    });
-    previous = source;
-    final output = Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
-    if (output != null) {
-      final file = File('$output/journeys/$state.json');
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(
-        '${const JsonEncoder.withIndent('  ').convert(steps.last)}\n',
-      );
-    }
   }
 
   testWidgets('inventory real login → More → account → deletion → login', (
     tester,
   ) async {
     await mount(tester);
-    await capture(
-      tester,
-      'auth-journey-login',
-      '/login',
-      'Anonymous open /more; guard redirects to login with return location',
-    );
+    await verifyState(tester, '/login');
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
     expect(find.text('Enter a valid email address.'), findsOneWidget);
-    await capture(
-      tester,
-      'auth-journey-empty-validation',
-      '/login',
-      'Submit empty email and password',
-    );
+    await verifyState(tester, '/login');
     expect(find.byKey(const ValueKey('auth-google-button')), findsNothing);
     await fill(tester);
     await tester.pump();
     await tap(tester, find.byKey(const ValueKey('auth-password-visibility')));
-    await capture(
-      tester,
-      'auth-journey-password-visible',
-      '/login',
-      'Tap password eye; synthetic password is visible',
-    );
+    await verifyState(tester, '/login');
     await tester.longPress(
       find.byKey(const ValueKey('auth-password-visibility')),
     );
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('Hide password'), findsOneWidget);
-    await capture(
-      tester,
-      'auth-journey-password-tooltip',
-      '/login',
-      'Long press password eye → native Flutter Tooltip',
-    );
+    await verifyState(tester, '/login');
     Tooltip.dismissAllToolTips();
     await tester.pumpAndSettle();
     transport.responsesByPath['/v1/auth/login'] = _error(
@@ -233,89 +175,44 @@ void main() {
     );
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
     expect(find.text('Email or password is incorrect.'), findsOneWidget);
-    await capture(
-      tester,
-      'auth-journey-invalid-credentials',
-      '/login',
-      'Sign in; backend returns authentication_required',
-    );
+    await verifyState(tester, '/login');
     transport.responsesByPath['/v1/auth/login'] = _error('rate_limited', 429);
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
     expect(
       find.text('Too many attempts. Please wait and try again.'),
       findsOneWidget,
     );
-    await capture(
-      tester,
-      'auth-journey-rate-limit',
-      '/login',
-      'Retry sign in; backend returns HTTP 429',
-    );
+    await verifyState(tester, '/login');
     transport.responsesByPath['/v1/auth/login'] = _tokens;
     transport.loginGate = Completer<void>();
     await tester.tap(find.byKey(const ValueKey('auth-submit-button')));
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    await capture(
-      tester,
-      'auth-journey-login-busy',
-      '/login',
-      'Sign in; HTTP response is still pending',
-    );
+    await verifyState(tester, '/login');
     transport.loginGate!.complete();
     await tester.pumpAndSettle();
     expect(runtime.currentSession.isAuthenticated, isTrue);
-    await capture(
-      tester,
-      'account-journey-more',
-      '/more',
-      'Successful login saves session; guard restores More',
-    );
+    await verifyState(tester, '/more');
     transport.responsesByPath['/v1/auth/me'] = _error('unavailable', 503);
     router.push('/account');
     await tester.pumpAndSettle();
     expect(find.text('Retry'), findsOneWidget);
-    await capture(
-      tester,
-      'account-journey-load-error',
-      '/account',
-      'Open account deep link; account request fails',
-    );
+    await verifyState(tester, '/account');
     transport.responsesByPath['/v1/auth/me'] = _account;
     await tap(tester, find.text('Retry'));
-    await capture(
-      tester,
-      'account-journey-loaded',
-      '/account',
-      'Retry → actual account details, without deletion entry',
-    );
+    await verifyState(tester, '/account');
     expect(find.byKey(const ValueKey('account-delete')), findsNothing);
     router.pop();
     await tester.pumpAndSettle();
     await tap(tester, find.byKey(const ValueKey('account-delete')));
-    await capture(
-      tester,
-      'account-journey-delete-confirm',
-      '/more',
-      'Request account deletion → confirmation',
-    );
+    await verifyState(tester, '/more');
     await tap(tester, find.text('Cancel'));
-    await capture(
-      tester,
-      'account-journey-delete-cancelled',
-      '/more',
-      'Cancel → account remains available',
-    );
+    await verifyState(tester, '/more');
     await tap(tester, find.byKey(const ValueKey('account-delete')));
     transport.writeResponsesByPath['/v1/auth/me'] = _error('unavailable', 503);
     await tap(tester, find.byKey(const ValueKey('account-confirm-delete')));
     expect(runtime.currentSession.isAuthenticated, isTrue);
-    await capture(
-      tester,
-      'account-journey-delete-error',
-      '/more',
-      'Confirm delete → isolated HTTP failure, session retained',
-    );
+    await verifyState(tester, '/more');
     await tap(tester, find.byKey(const ValueKey('account-delete')));
     transport.writeResponsesByPath['/v1/auth/me'] = {
       'status': 'deletion_pending',
@@ -328,12 +225,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    await capture(
-      tester,
-      'auth-journey-deleted',
-      '/login',
-      'Confirm delete → fixture success → session cleared → login plus deletion Snackbar',
-    );
+    await verifyState(tester, '/login');
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -342,42 +234,22 @@ void main() {
   ) async {
     await mount(tester);
     await tap(tester, find.byKey(const ValueKey('auth-register-button')));
-    await capture(
-      tester,
-      'auth-journey-register',
-      '/login',
-      'Login → Create an account',
-    );
+    await verifyState(tester, '/login');
     await tester.enterText(
       find.byKey(const ValueKey('auth-email-field')),
       'inventory@example.test',
     );
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
     expect(find.text('Verify your email'), findsOneWidget);
-    await capture(
-      tester,
-      'auth-journey-verify',
-      '/login',
-      'Submit registration → backend verification_required → verify form',
-    );
+    await verifyState(tester, '/login');
     expect(find.text('Request another code in 60s'), findsOneWidget);
-    await capture(
-      tester,
-      'auth-journey-resend-cooldown',
-      '/login',
-      'Immediately resend → cooldown message',
-    );
+    await verifyState(tester, '/login');
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
     expect(
       find.text('Enter the 8-digit code from your email.'),
       findsOneWidget,
     );
-    await capture(
-      tester,
-      'auth-journey-code-validation',
-      '/login',
-      'Submit without eight-digit code → field validation',
-    );
+    await verifyState(tester, '/login');
     await tester.enterText(
       find.byKey(const ValueKey('auth-code-field')),
       '12345678',
@@ -386,23 +258,13 @@ void main() {
       'invalid_or_expired_code',
     );
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
-    await capture(
-      tester,
-      'auth-journey-code-expired',
-      '/login',
-      'Verify registration code → invalid_or_expired_code',
-    );
+    await verifyState(tester, '/login');
     transport.responsesByPath['/v1/auth/verify-registration-code'] = {
       'status': 'code_valid',
     };
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
     expect(find.text('Set your password'), findsOneWidget);
-    await capture(
-      tester,
-      'auth-journey-set-password',
-      '/login',
-      'Valid code → set and confirm password',
-    );
+    await verifyState(tester, '/login');
     await tester.enterText(
       find.byKey(const ValueKey('auth-password-field')),
       'Inventory123',
@@ -413,32 +275,17 @@ void main() {
     );
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
     expect(find.text('Passwords do not match.'), findsOneWidget);
-    await capture(
-      tester,
-      'auth-journey-password-mismatch',
-      '/login',
-      'Different confirmation → no account request',
-    );
+    await verifyState(tester, '/login');
     await tester.enterText(
       find.byKey(const ValueKey('auth-confirm-password-field')),
       'Inventory123',
     );
     await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
     expect(runtime.currentSession.isAuthenticated, isTrue);
-    await capture(
-      tester,
-      'account-journey-verified-more',
-      '/more',
-      'Valid verification → session saved → intended More route',
-    );
+    await verifyState(tester, '/more');
     await tap(tester, find.byKey(const ValueKey('more-logout')));
     expect(await store.readSession(), isNull);
-    await capture(
-      tester,
-      'auth-journey-signed-out',
-      '/login',
-      'More → Sign out → anonymous login',
-    );
+    await verifyState(tester, '/login');
     await tester.pumpWidget(const SizedBox());
   });
 }

@@ -31,9 +31,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(fixture.transport.getPaths, isNot(contains(onboardingMeEndpoint)));
-    expect(find.byType(MeHomePage), findsOneWidget);
-    expect(find.byKey(const ValueKey('bottom-nav-me')), findsOneWidget);
+    expect(
+      fixture.transport.getPaths,
+      isNot(contains(chatFirstOnboardingEndpoint)),
+    );
+    expect(find.byKey(const ValueKey('test-agent-hub')), findsOneWidget);
+    expect(find.byKey(const ValueKey('bottom-nav-me')), findsNothing);
 
     await tester.pumpWidget(const SizedBox.shrink());
     fixture.dispose();
@@ -85,11 +88,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(fixture.transport.getPaths, contains(onboardingMeEndpoint));
-    expect(
-      find.byKey(const ValueKey('onboarding-display-name')),
-      findsOneWidget,
-    );
+    expect(fixture.transport.getPaths, contains(chatFirstOnboardingEndpoint));
+    expect(find.byKey(const ValueKey('role-mother')), findsOneWidget);
     expect(find.byKey(const ValueKey('bottom-nav-me')), findsNothing);
 
     await tester.pumpWidget(const SizedBox.shrink());
@@ -221,6 +221,13 @@ const _missingProductResourcePaths = <String>{
 
 _CapabilityFixture _fixture({MomCozySession session = _authenticatedSession}) {
   final transport = FixtureApiJsonTransportByPath(const {
+    chatFirstOnboardingEndpoint: {
+      'status': 'required',
+      'can_enter_app': false,
+      'role': null,
+      'profile_scope': 'none',
+      'primary_infant_id': null,
+    },
     onboardingMeEndpoint: {
       'status': 'required',
       'current_step': 'profile',

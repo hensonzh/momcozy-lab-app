@@ -782,6 +782,8 @@ void main() {
     expect(transport.lastPath, '/v1/auth/login');
     expect((await store.readSession())?.userId, 'mia');
     expect(controller.currentSession.locale, 'en-US');
+    expect(controller.currentSession.babyId, isEmpty);
+    expect((await store.readSession())?.babyId, isEmpty);
   });
   testWidgets(
     'expired code after password entry returns to verification without a session',

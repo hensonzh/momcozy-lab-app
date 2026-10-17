@@ -15,7 +15,11 @@ Widget buildMotherHome(BuildContext context) {
   return MeHomeRoute(key: ValueKey(runtime), runtime: runtime);
 }
 
-final momModuleRoutes = <GoRoute>[
+final momModuleRoutes = createMomModuleRoutes();
+
+List<GoRoute> createMomModuleRoutes({
+  bool chatFirstExperience = false,
+}) => <GoRoute>[
   GoRoute(
     path: '/me/lactation',
     builder: (context, state) {
@@ -34,6 +38,7 @@ final momModuleRoutes = <GoRoute>[
   GoRoute(
     path: '/privacy',
     builder: (context, state) => PrivacyPage(
+      chatFirstExperience: chatFirstExperience,
       onBack: () => context.canPop() ? context.pop() : context.go('/more'),
     ),
   ),
@@ -41,6 +46,8 @@ final momModuleRoutes = <GoRoute>[
     path: '/notifications/settings',
     builder: (context, state) => NotificationSettingsPage(
       coordinator: NotificationScope.maybeOf(context),
+      onBack: () =>
+          context.canPop() ? context.pop() : context.go('/notifications'),
     ),
   ),
 ];

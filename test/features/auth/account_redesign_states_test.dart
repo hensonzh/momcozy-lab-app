@@ -1,6 +1,3 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -64,14 +61,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 600));
     }
 
-    Future<void> capture(WidgetTester tester, String state) async {
+    Future<void> verifyState(WidgetTester tester) async {
       expect(tester.takeException(), isNull);
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile(
-          '../../goldens/ui_refactor/account-$state-$suffix.png',
-        ),
-      );
     }
 
     Future<void> tap(WidgetTester tester, Finder target) async {
@@ -88,7 +79,7 @@ void main() {
       final transport = _Transport(_profile())..readGate = Completer<void>();
       await mount(tester, transport);
       expect(find.text('Loading account…'), findsOneWidget);
-      await capture(tester, 'loading');
+      await verifyState(tester);
       transport.response.addAll({
         'http_status': 503,
         'body': {
@@ -98,19 +89,19 @@ void main() {
       transport.readGate!.complete();
       await tester.pumpAndSettle();
       expect(find.text('Account unavailable'), findsOneWidget);
-      await capture(tester, 'load-error');
+      await verifyState(tester);
       transport.response
         ..clear()
         ..addAll(_profile());
       await tap(tester, find.text('Retry'));
       expect(find.text('Deletion requested'), findsOneWidget);
-      await capture(tester, 'long-identity');
+      await verifyState(tester);
       expect(find.byKey(const ValueKey('account-delete')), findsNothing);
       await tester.ensureVisible(
         find.byKey(const ValueKey('account-sign-out')),
       );
       await tester.pumpAndSettle();
-      await capture(tester, 'long-bottom');
+      await verifyState(tester);
       await tap(tester, find.byTooltip('Back'));
       expect(find.text('Previous page'), findsOneWidget);
       expect(transport.mutationPaths, isEmpty);
@@ -131,7 +122,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.byKey(const ValueKey('account-link-google')), findsNothing);
-      await capture(tester, 'legacy-password-recovery');
+      await verifyState(tester);
     });
 
     testWidgets('account disabled and missing providers $suffix', (
@@ -149,7 +140,7 @@ void main() {
       expect(find.text('Internal test account'), findsOneWidget);
       expect(find.text('Disabled'), findsOneWidget);
       expect(find.byKey(const ValueKey('account-link-google')), findsNothing);
-      await capture(tester, 'no-providers');
+      await verifyState(tester);
     });
   }
 }

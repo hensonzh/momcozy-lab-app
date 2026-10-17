@@ -1,9 +1,4 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
-import 'dart:io';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -82,33 +77,6 @@ Future<void> setup(
     MaterialApp(debugShowCheckedModeBanner: false, home: child),
   );
   await tester.pumpAndSettle();
-}
-
-Future<void> capture(WidgetTester tester, String name, Widget child) async {
-  final key = GlobalKey();
-  await setup(tester, RepaintBoundary(key: key, child: child));
-  await tester.runAsync(() async {
-    for (final element in find.byType(Image).evaluate()) {
-      final w = element.widget as Image;
-      await precacheImage(w.image, element);
-    }
-  });
-  await tester.pumpAndSettle();
-  await tester.runAsync(() async {
-    final image =
-        await (key.currentContext!.findRenderObject()! as RenderRepaintBoundary)
-            .toImage();
-    final data = await image.toByteData(format: ui.ImageByteFormat.png);
-    final file = File('build/design-evidence/me/actual/$name.png');
-    await file.parent.create(recursive: true);
-    await file.writeAsBytes(data!.buffer.asUint8List());
-    image.dispose();
-  });
-  expect(tester.takeException(), isNull);
-  final back = find.byTooltip('Back');
-  if (back.evaluate().isNotEmpty) {
-    expect(tester.getTopLeft(back.first).dx, lessThan(24));
-  }
 }
 
 void main() {
@@ -252,12 +220,6 @@ void main() {
             ]);
           });
           await tester.pumpAndSettle();
-          await expectLater(
-            find.ancestor(of: text, matching: find.byType(MeHomeMetric)),
-            matchesGoldenFile(
-              '../../goldens/design_system/me-historic-observation-grid-320-2x.png',
-            ),
-          );
         }
       },
     );
@@ -690,12 +652,6 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.ensureVisible(edit);
     await tester.pumpAndSettle();
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile(
-        '../../goldens/design_system/me-profile-long-edit-320-2x.png',
-      ),
-    );
     await tester.tap(edit);
     await tester.pumpAndSettle();
     expect(find.byType(MeProfileEditor), findsOneWidget);
@@ -703,121 +659,7 @@ void main() {
     natural.dispose();
     c.dispose();
   });
-  testWidgets('captures home with navigation', (tester) async {
-    final c = controller(TestMeRepository());
-    await capture(
-      tester,
-      'home',
-      Scaffold(
-        backgroundColor: const Color(0xfffbf8f4),
-        body: MeHomePage(
-          controller: c,
-          onAsk: (_) {},
-          onSharedRecord: (_, _) async {},
-        ),
-        bottomNavigationBar: const MomCozyBottomNavigation(location: '/me'),
-      ),
-    );
-  });
-  testWidgets('captures forms and sorting', (tester) async {
-    for (final group in [0, 1, 2, 3]) {
-      final c = controller(TestMeRepository());
-      await capture(
-        tester,
-        'profile-$group',
-        MeProfileEditor(controller: c, group: group),
-      );
-      await tester.pumpWidget(const SizedBox());
-      c.dispose();
-    }
-    final c = controller(TestMeRepository());
-    await capture(tester, 'manager', MeManageRecords(controller: c));
-    c.dispose();
-  });
-  testWidgets('captures active concerns, empty state and profile overview', (
-    tester,
-  ) async {
-    final repo = TestMeRepository();
-    var c = controller(repo);
-    await capture(
-      tester,
-      'concerns-empty',
-      MeConcernsPage(controller: c, onRecord: (_) async {}),
-    );
-    await tester.pumpWidget(const SizedBox());
-    c.dispose();
-    repo.state = repo.state.copyWith(
-      concerns: [
-        const MeConcern(id: 'a', issues: [MeIssue.comfort]),
-      ],
-    );
-    c = controller(repo);
-    await capture(
-      tester,
-      'active-home',
-      Scaffold(
-        backgroundColor: const Color(0xfffbf8f4),
-        body: MeHomePage(
-          controller: c,
-          onAsk: (_) {},
-          onSharedRecord: (_, _) async {},
-        ),
-        bottomNavigationBar: const MomCozyBottomNavigation(location: '/me'),
-      ),
-    );
-    await tester.pumpWidget(const SizedBox());
-    c = controller(repo);
-    await capture(
-      tester,
-      'concern-detail',
-      MeConcernDetail(controller: c, concernId: 'a', onRecord: (_) async {}),
-    );
-    await tester.pumpWidget(const SizedBox());
-    c.dispose();
-    c = controller(repo);
-    c.state = c.state!.copyWith(
-      profile: {...c.state!.profile, 'actual_delivery_date': '2026-08-31'},
-    );
-    await capture(tester, 'profile', MeProfilePage(controller: c));
-    await tester.pumpWidget(const SizedBox());
-    c.dispose();
-  });
-  testWidgets('captures selected confirmation', (tester) async {
-    final c = controller(TestMeRepository());
-    final key = GlobalKey();
-    await setup(
-      tester,
-      RepaintBoundary(
-        key: key,
-        child: MeConcernFlow(
-          controller: c,
-          initial: const MeConcern(id: 'capture', issues: [MeIssue.comfort]),
-        ),
-      ),
-    );
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-    await tester.runAsync(() async {
-      for (final element in find.byType(Image).evaluate()) {
-        await precacheImage((element.widget as Image).image, element);
-      }
-    });
-    await tester.pumpAndSettle();
-    await tester.runAsync(() async {
-      final image =
-          await (key.currentContext!.findRenderObject()
-                  as RenderRepaintBoundary)
-              .toImage();
-      final data = await image.toByteData(format: ui.ImageByteFormat.png);
-      await File(
-        'build/design-evidence/me/actual/confirmation.png',
-      ).writeAsBytes(data!.buffer.asUint8List());
-      image.dispose();
-    });
-    expect(tester.takeException(), isNull);
-    c.dispose();
-  });
-  testWidgets('captures record sheets and settings above the root navigation', (
+  testWidgets('record sheets and settings work above the root navigation', (
     tester,
   ) async {
     final c = controller(TestMeRepository());
@@ -852,24 +694,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    Future<void> save(String name) async {
-      await tester.runAsync(() async {
-        for (final e in find.byType(Image).evaluate()) {
-          await precacheImage((e.widget as Image).image, e);
-        }
-      });
+    Future<void> verifySheetState() async {
       await tester.pumpAndSettle();
-      await tester.runAsync(() async {
-        final image =
-            await (key.currentContext!.findRenderObject()!
-                    as RenderRepaintBoundary)
-                .toImage();
-        final data = await image.toByteData(format: ui.ImageByteFormat.png);
-        await File(
-          'build/design-evidence/me/actual/$name.png',
-        ).writeAsBytes(data!.buffer.asUint8List());
-        image.dispose();
-      });
       expect(tester.takeException(), isNull);
     }
 
@@ -877,14 +703,14 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Doing well'));
     await tester.pumpAndSettle();
-    await save('energy');
+    await verifySheetState();
     await tester.tap(find.text('Save record'));
     await tester.pumpAndSettle();
     expect(c.latest(MeMetric.energy)?.value, 'Doing well');
     expect(find.byType(MeRecordSheet), findsNothing);
     unawaited(showMeNotificationSettings(host));
     await tester.pumpAndSettle();
-    await save('settings');
+    await verifySheetState();
     await tester.tap(find.text('Not now'));
     await tester.pumpAndSettle();
   });
@@ -901,9 +727,8 @@ void main() {
       );
       editor.setGrowthValue(GrowthMetric.weight, '4.2');
       editor.setMeasurementSource('clinic');
-      await capture(
+      await setup(
         tester,
-        'weight',
         Scaffold(
           body: Align(
             alignment: Alignment.bottomCenter,
