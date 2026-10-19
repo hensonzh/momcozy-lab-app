@@ -12,6 +12,7 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import 'package:momcozy_flutter_app/shared/zoned_time.dart';
 
 import 'chat_first_avatar.dart';
+import '../data/chat_first_voice.dart';
 
 const _roomAspectRatio = 1848 / 851;
 const _navControlDecoration = BoxDecoration(
@@ -209,6 +210,7 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
   @override
   Widget build(BuildContext context) {
     final runtime = widget.runtime;
+    final voice = ChatFirstVoiceScope.maybeOf(context);
     return Semantics(
       label: 'Momcozy AI 工作区',
       container: true,
@@ -405,16 +407,34 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
                           ),
                         ),
                         IconButton(
-                          tooltip: '语音播放暂不可用',
-                          onPressed: null,
-                          icon: const DecoratedBox(
-                            decoration: _disabledNavControlDecoration,
+                          key: const ValueKey('chat-first-voice-toggle'),
+                          tooltip: voice?.available == true
+                              ? voice!.enabled
+                                    ? voice.playing
+                                          ? '正在播放语音，点击关闭'
+                                          : '关闭语音播放'
+                                    : '开启语音播放'
+                              : '语音播放暂不可用',
+                          onPressed: voice?.available == true
+                              ? voice!.toggle
+                              : null,
+                          icon: DecoratedBox(
+                            decoration:
+                                voice?.available == true && voice!.enabled
+                                ? _navControlDecoration
+                                : _disabledNavControlDecoration,
                             child: SizedBox.square(
                               dimension: 24,
-                              child: Icon(Icons.volume_off_outlined, size: 18),
+                              child: Icon(
+                                voice?.available == true && voice!.enabled
+                                    ? Icons.volume_up_outlined
+                                    : Icons.volume_off_outlined,
+                                size: 18,
+                              ),
                             ),
                           ),
                           style: IconButton.styleFrom(
+                            foregroundColor: const Color(0xFFA55776),
                             disabledForegroundColor: const Color(0xFF706C6B),
                             minimumSize: const Size.square(44),
                             maximumSize: const Size.square(44),

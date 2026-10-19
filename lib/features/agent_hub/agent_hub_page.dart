@@ -42,6 +42,7 @@ import 'presentation/chat_first_poop_task.dart';
 import 'presentation/chat_first_composer.dart';
 import 'presentation/chat_first_run_copy.dart';
 import 'presentation/chat_first_avatar.dart';
+import 'data/chat_first_voice.dart';
 
 typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
 typedef AgentHubApplicationEventHandler = void Function(AgentStreamEvent event);
@@ -215,6 +216,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     with WidgetsBindingObserver {
   bool _appForeground = true;
   ChatFirstAvatarController? _avatarController;
+  ChatFirstVoiceController? _voice;
   bool _chatFirstRecordPickerOpen = false;
   final List<ChatFirstPoopTask> _poopTasks = [];
   final List<AgentStreamImageInput> _poopPhotos = [];
@@ -446,6 +448,9 @@ class _AgentHubPageState extends State<AgentHubPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _voice = widget.chatFirstExperience
+        ? ChatFirstVoiceScope.maybeOf(context)
+        : null;
     _avatarController = widget.chatFirstExperience
         ? ChatFirstAvatarScope.maybeOf(context)
         : null;
@@ -613,6 +618,7 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   void _leaveConversation() {
+    _voice?.stop();
     _cancelCryCaptureOnLeave();
     _cancelPoopOnLeave();
     if (!_interactionRestoreResolved) return;
@@ -2565,7 +2571,16 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (activeRequest != null) {
       _activeRequest = _requestWithThreadId(activeRequest, nextState.threadId);
     }
+    final wasCompleted = _state.hasCompletedAssistantMessage;
     _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
+    if (widget.chatFirstExperience &&
+        _isPageVisible &&
+        !wasCompleted &&
+        _state.hasCompletedAssistantMessage &&
+        _state.textContent.trim().isNotEmpty) {
+      final id = _state.messageId ?? _state.runId;
+      if (id != null) unawaited(_voice?.speakCompleted(id, _state.textContent));
+    }
   }
 
   void _updateComposerFocusForRun(AgentStreamRunState nextState) {
@@ -2626,6 +2641,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     _runAcceptanceCompleter = acceptance;
     _runSettlementCompleter = settlement;
 
+    _voice?.stop();
     _activeRequest = requestWithThread;
     _currentRunIsChatFirstWelcome =
         requestWithThread.metadata['source'] == 'chat_first_welcome' ||

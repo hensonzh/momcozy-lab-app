@@ -33,6 +33,7 @@ import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/chat_first_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/modules/profile/presentation/more_page.dart';
@@ -311,21 +312,25 @@ GoRouter createMomCozyRouter({
               runtime.session.userId,
             )),
             child: chatFirstExperience
-                ? Column(
-                    children: [
-                      ChatFirstWorkspace(
-                        runtime: runtime,
-                        role: onboardingController?.state?.role,
-                        onOpenDrawer: () => Scaffold.of(context).openDrawer(),
-                      ),
-                      Expanded(
-                        child: resolvedAgentHubBuilder(
-                          context,
-                          state.uri,
-                          state.extra,
+                ? ChatFirstVoiceHost(
+                    runtimeBaseUri: runtime.apiBaseUri,
+                    tokenProvider: () => runtime.currentSession.accessToken,
+                    child: Column(
+                      children: [
+                        ChatFirstWorkspace(
+                          runtime: runtime,
+                          role: onboardingController?.state?.role,
+                          onOpenDrawer: () => Scaffold.of(context).openDrawer(),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: resolvedAgentHubBuilder(
+                            context,
+                            state.uri,
+                            state.extra,
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 : resolvedAgentHubBuilder(context, state.uri, state.extra),
           );

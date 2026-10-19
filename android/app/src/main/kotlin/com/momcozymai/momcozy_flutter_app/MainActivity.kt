@@ -73,6 +73,7 @@ class MainActivity : FlutterActivity() {
         pumpAgentUploadChannel.setMethodCallHandler(pumpAgentUploadHandler::handle)
         motionPosePlugin = MotionPosePlugin(this, flutterEngine)
         notificationPermissionPlugin = NotificationPermissionPlugin(this, flutterEngine.dartExecutor.binaryMessenger)
+        ChatFirstPcmPlayer(flutterEngine.dartExecutor.binaryMessenger)
         handleLaunchNavigationIntent(intent)
     }
 

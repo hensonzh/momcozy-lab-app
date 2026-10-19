@@ -20,5 +20,8 @@ import UIKit
     ) {
       MotionPosePlugin.register(with: registrar)
     }
+    if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "MomcozyChatFirstPcmPlayer") {
+      ChatFirstPcmPlayer.register(with: registrar)
+    }
   }
 }

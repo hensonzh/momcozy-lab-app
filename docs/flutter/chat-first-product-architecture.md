@@ -130,3 +130,9 @@
 本轮对照本地干净的 `../momcozy-lab-demo` `main/27a62e51750738f4f05900ca0fd23a16dd6d1c45`，不改侧栏。Flutter 哭声任务的**可用状态**继续沿用 Demo 的浅粉外卡／白色内容层，录音试听更新为同一行的播放、时长和进度条，短录音提示与操作按钮按卡内层级排列；附件面板采用四格布局。第四格“音频”明确禁用并显示“暂不可用”，不会让用户误以为已支持上传。
 
 该 Demo 新增的哭声结果卡依赖录音资产上传、Agent 工具调用及真实结果事件；当前 App 的 `ChatFirstCryAudioSession` 只有本地录音／试听契约，没有可发送音频的持久资产和可信结果事件，因此**没有伪造结果卡或拷贝 Demo 本地服务密钥**。要让该卡在 App 中出现，须先定义并部署移动端的音频上传、授权和 Agent 结果契约，并补端到端测试。视觉 Golden 仅证明当前本地试听态，不代表分析已可用。
+
+## 流式语音播报接通（2026-10-19）
+
+Flutter chat-first 对话的顶部开关由 Product Backend 的鉴权能力接口 `/v1/realtime-voice-capability` 控制；仅当服务端配置真实豆包供应商及私有凭据时启用。默认开启，只在当前前台的新 assistant `message.completed` 后朗读前 500 个字符；历史加载、冷启动恢复与打开开关都不重播旧回复。关闭开关、发送下一轮、离开对话/切后台或更换账号时停止音频和网络流。请求使用 Bearer token 与 POST `/v1/realtime-voice-stream` JSON body，回复正文与供应商密钥均不进入 URL；App 只接收经过格式、采样率、声道检查的 PCM16 24 kHz 单声道，分片逐段送到 Android AudioTrack 或 iOS AVAudioEngine，支持跨网络分片的奇数字节拼接并限制总音频大小。无逐音素时间轴，不伪造口型同步；语音输入、哭声分析仍是独立能力。
+
+本地 Backend `env/local.env`（Git 忽略）使用 Demo 已验证的私有豆包配置；没有凭据的环境保持禁用而不显示可用按钮。验证：Backend 的鉴权能力与真实 POST 短句返回 PCM；Flutter 控制器分片/去重/禁用状态测试；Android 原生通道设备集成测试；Pixel 7 的新账号欢迎 Run 触发 POST 200，UI 在收到 PCM 时出现“正在播放语音”；iOS Simulator 构建通过。iOS 真机实际出声及供应商故障/网络抖动的端到端听感尚待单独验收。刷新给用户看的 Pixel 10 Pro 时继续用新账号并最终停在 onboarding 首屏。
