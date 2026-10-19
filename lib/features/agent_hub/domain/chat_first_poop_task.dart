@@ -1,5 +1,5 @@
 const chatFirstPoopRequestPrompt =
-    '[momcozy_internal_poop_v1] 请结合这张宝宝便便照片，描述可见的颜色和形态，说明可能需要关注的线索与日常观察建议。信息不足时请明确说明并询问必要情况，不要仅凭照片诊断。';
+    '[momcozy_internal_poop_v1] 请结合这些宝宝便便照片，描述可见的颜色和形态，说明可能需要关注的线索与日常观察建议。多张照片请综合观察，信息不足时请明确说明并询问必要情况，不要仅凭照片诊断。';
 
 bool isChatFirstPoopPrompt(String value) =>
     value.trimLeft().startsWith('[momcozy_internal_poop_v1]');

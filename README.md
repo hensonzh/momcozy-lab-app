@@ -97,11 +97,9 @@ make local-dev-start
 make local-dev-refresh
 ```
 
-该命令会启动并验证本地双服务、重新构建 `local` debug APK、创建一个**没有示例姓名、分娩日期或宝宝档案**的全新已验证本地账号，替换模拟器中旧的 local App，再自动登录。它核验角色选择，从 App 选择「爸爸」进入对话首页，冷启动后检查账号身份，并将角色页、对话首页和账号页截图保存到 `build/emulator-refresh/`。命令只打印账号邮箱和 ID，不打印生成的密码；不会发布 APK 或修改云端。
+该命令会启动并验证本地双服务、重新构建 `local` debug APK、创建一个**没有示例姓名、分娩日期或宝宝档案**的全新已验证本地账号，卸载模拟器中旧的 local App 后安装新版本，并自动登录。**默认且唯一的停留点是登录后的新手引导角色选择首屏**（“你是宝宝的哪位家人？”）；冷启动后仍停留在该页，不自动选择身份或写入引导资料。脚本在输入密码前核验并截取新账号邮箱的 UI，再从本地 Backend 核验账号归属与空引导状态；截图为 `build/emulator-refresh/login-account.png` 和 `role.png`。命令只打印账号邮箱和 ID，不打印生成的密码；不会发布 APK 或修改云端。
 
-要验收妈妈的六段引导与资料保存，可运行 `MOMCOZY_LOCAL_REFRESH_ROLE=mother make local-dev-refresh`：同样创建全新空资料账号，通过 App 填写测试资料，核对当前账号的后端资料与白板，冷启动后检查妈妈资料页。该路径额外保存引导各阶段和妈妈资料页截图；不绕过引导写入样例资料。
-
-要连同真实宝宝资料、照护知识与“带着问题去对话”只预填草稿一起验收，运行 `MOMCOZY_LOCAL_REFRESH_ROLE=mother MOMCOZY_LOCAL_REFRESH_BABY_DETAILS=1 make local-dev-refresh`；脚本每次重建 APK、创建新账号、替换安装、登录并核验账号 UI、Backend 归属、输入框草稿和 App 仍在运行。截图在 `build/emulator-refresh/`，包括 `baby-knowledge-draft.png`。
+Android Studio 同时运行多台设备时，使用 `MOMCOZY_FLUTTER_EMULATOR_DEVICE=emulator-5556 make local-dev-refresh` 指定当前设备（运行前用 `adb devices` 核对编号）。原 `MOMCOZY_LOCAL_REFRESH_ROLE`、`MOMCOZY_LOCAL_REFRESH_STATUS`、`MOMCOZY_LOCAL_REFRESH_BABY_DETAILS` 自动完成引导的标志不再属于刷新入口；用户可自行从首屏开始体验流程，其他专项端到端测试另行执行。
 
 已启动本地双服务和 iOS Simulator 时，可运行 `python3 scripts/local_ios_chat_first_smoke.py`；妈妈六段引导和记录联调可运行 `MOMCOZY_IOS_SMOKE_ROLE=mother python3 scripts/local_ios_chat_first_smoke.py`。每次均新建空资料账号，真实登录并核对后端持久化与已登录渲染；妈妈路径还会从 App 保存亲喂、配方奶、瓶喂母乳、吸奶和生长记录，再由 Backend 按账号回读验证实际字段，确认无真实宝宝时尿布、睡眠不可保存。要验证有真实宝宝时的尿布和睡眠写入，运行 `MOMCOZY_IOS_SMOKE_ROLE=mother MOMCOZY_IOS_SMOKE_BABY_RECORDS=1 python3 scripts/local_ios_chat_first_smoke.py`：App 创建并选中当前账号的宝宝，再由 Backend 回读核对宝宝归属、记录种类及字段。截图保存在忽略的 `build/ios/chat-first-smoke/`（妈妈路径在 `mother/`；有宝宝路径在 `mother-with-baby/`）。测试结束会用**正常本地签名的 Debug App**替换包含临时测试参数的集成测试 App，再冷启动并保存截图；不要改用 `--no-codesign` 安装，它无法读取已保存的 iOS Keychain 会话。临时账号密码不会写入仓库或输出日志。
 上述有宝宝路径还会核验知识页进入对话后的草稿内容，不会自动发起用户提问 Run。

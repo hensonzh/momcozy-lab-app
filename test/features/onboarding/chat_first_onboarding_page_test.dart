@@ -1,3 +1,6 @@
+@Tags(['golden'])
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -6,10 +9,13 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/onboarding_api_repository.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/chat_first_onboarding_page.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 
 import '../../support/fixture_api_transport.dart';
+import '../../support/momcozy_test_fonts.dart';
 
 void main() {
+  setUpAll(loadMomCozyTestFonts);
   testWidgets(
     'role entry has no progress and stage starts five-step navigation',
     (tester) async {
@@ -20,6 +26,12 @@ void main() {
       expect(find.text('选择你的角色，有助于我们为你量身定制产品体验。'), findsOneWidget);
       expect(find.byKey(const ValueKey('setup-back')), findsNothing);
       expect(find.byKey(const ValueKey('setup-progress')), findsNothing);
+      final intro = tester.getRect(
+        find.byKey(const ValueKey('setup-intro-card')),
+      );
+      final choices = tester.getRect(find.byKey(const ValueKey('role-mother')));
+      expect(intro.left, lessThan(choices.left));
+      expect(intro.bottom, lessThan(choices.top));
       expect(find.text('1/5'), findsNothing);
       await tester.tap(find.byKey(const ValueKey('role-mother')));
       await tester.pumpAndSettle();
@@ -42,6 +54,74 @@ void main() {
       harness.dispose();
     },
   );
+
+  testWidgets('demo-aligned role and stage surfaces at 390', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final harness = await _Harness.create(role: 'mother');
+    await tester.pumpWidget(harness.app());
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(ChatFirstOnboardingPage),
+      matchesGoldenFile('../../goldens/chat_first/onboarding-role-390.png'),
+    );
+    await tester.tap(find.byKey(const ValueKey('role-mother')));
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(ChatFirstOnboardingPage),
+      matchesGoldenFile('../../goldens/chat_first/onboarding-stage-390.png'),
+    );
+    await tester.pumpWidget(const SizedBox());
+    harness.dispose();
+  }, tags: 'golden');
+
+  testWidgets('demo-aligned profile steps at 390', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final harness = await _Harness.create(role: 'mother');
+    await tester.pumpWidget(harness.app());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('role-mother')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('stage-postpartum')));
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(ChatFirstOnboardingPage),
+      matchesGoldenFile('../../goldens/chat_first/onboarding-basics-390.png'),
+    );
+    await tester.tap(find.byKey(const ValueKey('age-30')));
+    await tester.tap(find.byKey(const ValueKey('delivery-count-1')));
+    await tester.tap(find.byKey(const ValueKey('setup-continue')));
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(ChatFirstOnboardingPage),
+      matchesGoldenFile('../../goldens/chat_first/onboarding-delivery-390.png'),
+    );
+    await tester.tap(find.byKey(const ValueKey('delivery-date')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('weeks-38')));
+    await tester.tap(find.byKey(const ValueKey('baby-count-1')));
+    await tester.tap(find.byKey(const ValueKey('setup-continue')));
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(ChatFirstOnboardingPage),
+      matchesGoldenFile('../../goldens/chat_first/onboarding-concerns-390.png'),
+    );
+    await tester.tap(find.byKey(const ValueKey('setup-continue')));
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(ChatFirstOnboardingPage),
+      matchesGoldenFile(
+        '../../goldens/chat_first/onboarding-recommend-390.png',
+      ),
+    );
+    await tester.pumpWidget(const SizedBox());
+    harness.dispose();
+  }, tags: 'golden');
 
   testWidgets('role heading and choices sit above center in the viewport', (
     tester,
@@ -155,7 +235,15 @@ void main() {
       expect(find.byKey(const ValueKey('concern-crying')), findsOneWidget);
       expect(
         tester
-            .widget<ChoiceChip>(find.byKey(const ValueKey('concern-crying')))
+            .widget<Semantics>(
+              find
+                  .ancestor(
+                    of: find.byKey(const ValueKey('concern-crying')),
+                    matching: find.byType(Semantics),
+                  )
+                  .first,
+            )
+            .properties
             .selected,
         isTrue,
       );
@@ -213,7 +301,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('setup-continue')));
     await tester.pumpAndSettle();
     expect(find.text('现在你最在意什么？'), findsOneWidget);
-    expect(find.byType(ChoiceChip), findsWidgets);
+    expect(find.byKey(const ValueKey('concern-crying')), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('setup-continue')));
     await tester.pumpAndSettle();
     expect(find.text('为你推荐'), findsOneWidget);
@@ -301,7 +389,8 @@ class _Harness {
     return _Harness(runtime, controller, router, transport);
   }
 
-  Widget app() => MaterialApp.router(routerConfig: router);
+  Widget app() =>
+      MaterialApp.router(theme: momCozyTheme(), routerConfig: router);
 
   void dispose() {
     router.dispose();

@@ -69,7 +69,19 @@ void main() {
       expect(audio.stops, 1);
       expect(find.byKey(const ValueKey('chat-first-cry-seek')), findsOneWidget);
       expect(find.textContaining('不足 10 秒'), findsOneWidget);
-      expect(find.textContaining('暂不可用'), findsWidgets);
+      expect(find.textContaining('录音仅用于本机试听'), findsNothing);
+      expect(find.text('上传并分析'), findsOneWidget);
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.ancestor(
+                of: find.text('上传并分析'),
+                matching: find.byType(FilledButton),
+              ),
+            )
+            .onPressed,
+        isNull,
+      );
       expect(client.requests, isEmpty);
 
       await tester.tap(find.byKey(const ValueKey('chat-first-cry-play')));

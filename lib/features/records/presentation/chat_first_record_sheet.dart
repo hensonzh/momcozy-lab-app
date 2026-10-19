@@ -18,10 +18,8 @@ Future<String?> showChatFirstRecordSheet(
   isScrollControlled: true,
   useSafeArea: true,
   backgroundColor: const Color(0xFFFFFDFA),
-  constraints: const BoxConstraints(maxWidth: 480),
-  shape: const RoundedRectangleBorder(
-    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-  ),
+  constraints: const BoxConstraints(maxWidth: 430),
+  shape: const RoundedRectangleBorder(),
   builder: (context) => ChatFirstRecordSheet(runtime: runtime, kind: kind),
 );
 
@@ -135,160 +133,208 @@ class _ChatFirstRecordSheetState extends State<ChatFirstRecordSheet> {
     return Padding(
       key: const ValueKey('chat-first-record-sheet'),
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.sizeOf(context).height * .88,
-        ),
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 8, 6),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '记录${widget.kind.label}',
-                      style: const TextStyle(
-                        fontSize: 19,
-                        fontWeight: FontWeight.w700,
+              padding: const EdgeInsets.fromLTRB(15, 4, 15, 4),
+              child: SizedBox(
+                height: 54,
+                child: Row(
+                  children: [
+                    IconButton(
+                      key: const ValueKey('record-close'),
+                      tooltip: '关闭表单',
+                      onPressed: _busy ? null : () => Navigator.pop(context),
+                      icon: const Icon(Icons.close_rounded, size: 21),
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.kind.label,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0xFF382F33),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    key: const ValueKey('record-close'),
-                    tooltip: '关闭表单',
-                    onPressed: _busy ? null : () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded),
-                  ),
-                ],
+                    const SizedBox(width: 48),
+                  ],
+                ),
               ),
             ),
-            Flexible(
+            Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 22),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (requiresBaby && babyCheckLoading) ...[
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Text('正在核对当前账号的宝宝档案…'),
+                padding: const EdgeInsets.fromLTRB(15, 16, 15, 24),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: const Color(0xFFEEE7E3)),
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x0649343A),
+                        blurRadius: 22,
+                        offset: Offset(0, 6),
                       ),
-                    ] else if (requiresBaby && babyCheckError) ...[
-                      const Text('暂时无法核对宝宝档案，请检查网络后重试。不会将记录误标为已同步。'),
-                      TextButton(
-                        onPressed: () => setState(_checkSelectedBaby),
-                        child: const Text('重试'),
-                      ),
-                    ] else if (requiresBaby && selectedBabyId.isEmpty) ...[
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Text('请先创建宝宝档案并选择宝宝，再保存此类记录。不会将未关联记录误标为已同步。'),
-                      ),
-                      TextButton.icon(
-                        key: const ValueKey('record-create-baby'),
-                        onPressed: () {
-                          final router = GoRouter.of(context);
-                          Navigator.of(context).pop();
-                          router.go('/baby');
-                        },
-                        icon: const Icon(Icons.child_care_outlined),
-                        label: const Text('创建宝宝档案'),
-                      ),
-                    ] else ...[
-                      _timeField(
-                        switch (widget.kind) {
-                          ChatFirstRecordKind.formula ||
-                          ChatFirstRecordKind.expressed ||
-                          ChatFirstRecordKind.pumping ||
-                          ChatFirstRecordKind.nursing ||
-                          ChatFirstRecordKind.sleep => '开始时间',
-                          ChatFirstRecordKind.diaper => '更换时间',
-                          ChatFirstRecordKind.growth => '测量时间',
-                        },
-                        'record-start',
-                        _draft.startedAt,
-                        _chooseStart,
-                      ),
-                      if (widget.kind == ChatFirstRecordKind.sleep) ...[
-                        const SizedBox(height: 14),
-                        _timeField(
-                          '结束时间',
-                          'record-end',
-                          _draft.endedAt,
-                          _chooseEnd,
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (requiresBaby && babyCheckLoading) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Text('正在核对当前账号的宝宝档案…'),
                         ),
-                      ],
-                      const SizedBox(height: 18),
-                      _kindFields(),
-                      if (widget.kind == ChatFirstRecordKind.pumping) ...[
-                        const SizedBox(height: 18),
-                        _timeField(
-                          '结束时间 · 可选',
-                          'record-end',
-                          _draft.endedAt,
-                          _chooseEnd,
+                      ] else if (requiresBaby && babyCheckError) ...[
+                        const Text('暂时无法核对宝宝档案，请检查网络后重试。不会将记录误标为已同步。'),
+                        TextButton(
+                          onPressed: () => setState(_checkSelectedBaby),
+                          child: const Text('重试'),
                         ),
-                      ],
-                      if (widget.kind != ChatFirstRecordKind.growth) ...[
-                        const SizedBox(height: 18),
-                        TextField(
-                          key: const ValueKey('record-note'),
-                          controller: _note,
-                          enabled: !_busy,
-                          maxLines: 2,
-                          maxLength: requiresBaby ? 2000 : 255,
-                          decoration: const InputDecoration(
-                            labelText: '备注 · 可选',
-                            border: OutlineInputBorder(),
+                      ] else if (requiresBaby && selectedBabyId.isEmpty) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Text('请先创建宝宝档案并选择宝宝，再保存此类记录。不会将未关联记录误标为已同步。'),
+                        ),
+                        TextButton.icon(
+                          key: const ValueKey('record-create-baby'),
+                          onPressed: () {
+                            final router = GoRouter.of(context);
+                            Navigator.of(context).pop();
+                            router.go('/baby');
+                          },
+                          icon: const Icon(Icons.child_care_outlined),
+                          label: const Text('创建宝宝档案'),
+                        ),
+                      ] else ...[
+                        _timeField(
+                          switch (widget.kind) {
+                            ChatFirstRecordKind.formula ||
+                            ChatFirstRecordKind.expressed ||
+                            ChatFirstRecordKind.pumping ||
+                            ChatFirstRecordKind.nursing ||
+                            ChatFirstRecordKind.sleep => '开始时间',
+                            ChatFirstRecordKind.diaper => '更换时间',
+                            ChatFirstRecordKind.growth => '测量时间',
+                          },
+                          'record-start',
+                          _draft.startedAt,
+                          _chooseStart,
+                        ),
+                        if (widget.kind == ChatFirstRecordKind.sleep) ...[
+                          const SizedBox(height: 14),
+                          _timeField(
+                            '结束时间',
+                            'record-end',
+                            _draft.endedAt,
+                            _chooseEnd,
                           ),
-                          onChanged: (_) => _changed(),
-                        ),
-                      ],
-                      const SizedBox(height: 12),
-                      const Text(
-                        '保存成功后同步至当前账号。失败时保留填写内容，便于重试。',
-                        style: TextStyle(
-                          color: Color(0xFF786E6B),
-                          fontSize: 12,
-                          height: 1.4,
-                        ),
-                      ),
-                      if (_error.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Semantics(
-                            liveRegion: true,
-                            child: Container(
-                              key: const ValueKey('record-error'),
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(11),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFFF0F1),
-                                borderRadius: BorderRadius.circular(11),
+                        ],
+                        const SizedBox(height: 18),
+                        _kindFields(),
+                        if (widget.kind == ChatFirstRecordKind.pumping) ...[
+                          const SizedBox(height: 18),
+                          _timeField(
+                            '结束时间 · 可选',
+                            'record-end',
+                            _draft.endedAt,
+                            _chooseEnd,
+                          ),
+                        ],
+                        if (widget.kind != ChatFirstRecordKind.growth) ...[
+                          const SizedBox(height: 18),
+                          const Text(
+                            '备注',
+                            style: TextStyle(
+                              color: Color(0xFF5F5254),
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            key: const ValueKey('record-note'),
+                            controller: _note,
+                            enabled: !_busy,
+                            maxLines: 2,
+                            maxLength: requiresBaby ? 2000 : 255,
+                            buildCounter:
+                                (
+                                  context, {
+                                  required currentLength,
+                                  required isFocused,
+                                  maxLength,
+                                }) => null,
+                            decoration: InputDecoration(
+                              hintText: '选填，记录更多细节',
+                              hintStyle: const TextStyle(fontSize: 13),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 11,
+                                vertical: 9,
                               ),
-                              child: Text(
-                                _error,
-                                style: const TextStyle(
-                                  color: Color(0xFFA1304A),
-                                  fontSize: 13,
-                                  height: 1.4,
+                              border: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFEEE7E3),
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onChanged: (_) => _changed(),
+                          ),
+                        ],
+                        const SizedBox(height: 12),
+                        const Text(
+                          '保存成功后同步至当前账号。失败时保留填写内容，便于重试。',
+                          style: TextStyle(
+                            color: Color(0xFF786E6B),
+                            fontSize: 12,
+                            height: 1.4,
+                          ),
+                        ),
+                        if (_error.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Semantics(
+                              liveRegion: true,
+                              child: Container(
+                                key: const ValueKey('record-error'),
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(11),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFF0F1),
+                                  borderRadius: BorderRadius.circular(11),
+                                ),
+                                child: Text(
+                                  _error,
+                                  style: const TextStyle(
+                                    color: Color(0xFFA1304A),
+                                    fontSize: 13,
+                                    height: 1.4,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
             if (!requiresBaby || selectedBabyId.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 18),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 48),
+                padding: const EdgeInsets.fromLTRB(15, 9, 15, 18),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 48,
                   child: FilledButton(
                     key: const ValueKey('record-save'),
                     onPressed: _busy ? null : _save,
@@ -302,7 +348,7 @@ class _ChatFirstRecordSheetState extends State<ChatFirstRecordSheet> {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: Text(_busy ? '正在保存…' : '保存记录'),
+                    child: Text(_busy ? '正在保存…' : '保存'),
                   ),
                 ),
               ),
@@ -348,7 +394,10 @@ class _ChatFirstRecordSheetState extends State<ChatFirstRecordSheet> {
             Expanded(
               child: Text(
                 value == null ? '选择日期与时间' : _format(value),
-                style: const TextStyle(fontSize: 14),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -377,9 +426,12 @@ class _ChatFirstRecordSheetState extends State<ChatFirstRecordSheet> {
             ),
           ),
           Spacer(),
-          Text(
-            '毫升 · 可直接输入',
-            style: TextStyle(fontSize: 11, color: Color(0xFF82777A)),
+          Flexible(
+            child: Text(
+              '毫升 · 可直接输入',
+              textAlign: TextAlign.end,
+              style: TextStyle(fontSize: 11, color: Color(0xFF82777A)),
+            ),
           ),
         ],
       ),

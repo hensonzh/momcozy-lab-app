@@ -1,3 +1,6 @@
+@Tags(['golden'])
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -6,10 +9,49 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/chat_first_actions.dart';
 import 'package:momcozy_flutter_app/features/records/presentation/chat_first_record_sheet.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 
 import '../../support/fixture_api_transport.dart';
+import '../../support/momcozy_test_fonts.dart';
 
 void main() {
+  setUpAll(loadMomCozyTestFonts);
+  testWidgets(
+    'record form preserves the demo full-height card layout at 390',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: momCozyTheme(),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => FilledButton(
+                onPressed: () => showChatFirstRecordSheet(
+                  context,
+                  runtime: _runtime(_FlakyRecordTransport()),
+                  kind: ChatFirstRecordKind.formula,
+                ),
+                child: const Text('打开'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('打开'));
+      await tester.pumpAndSettle();
+      final form = find.byKey(const ValueKey('chat-first-record-sheet'));
+      expect(tester.getSize(form).height, greaterThan(750));
+      await expectLater(
+        form,
+        matchesGoldenFile('../../goldens/chat_first/record-form-390.png'),
+      );
+    },
+    tags: 'golden',
+  );
+
   testWidgets('a stale selected baby is not treated as a real profile', (
     tester,
   ) async {
@@ -195,20 +237,26 @@ void main() {
     expect(find.textContaining('2026年10月15日 10:00'), findsOneWidget);
     expect(
       tester.getTopLeft(find.byKey(const ValueKey('record-start'))).dy,
-      lessThan(tester.getTopLeft(find.byKey(const ValueKey('record-volume'))).dy),
+      lessThan(
+        tester.getTopLeft(find.byKey(const ValueKey('record-volume'))).dy,
+      ),
     );
     await tester.tap(find.byKey(const ValueKey('record-volume-plus')));
     await tester.pump();
     expect(
-      tester.widget<TextField>(find.byKey(const ValueKey('record-volume')))
-          .controller!.text,
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('record-volume')))
+          .controller!
+          .text,
       '55',
     );
     await tester.tap(find.byKey(const ValueKey('record-volume-minus')));
     await tester.pump();
     expect(
-      tester.widget<TextField>(find.byKey(const ValueKey('record-volume')))
-          .controller!.text,
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('record-volume')))
+          .controller!
+          .text,
       '50',
     );
     await tester.enterText(find.byKey(const ValueKey('record-volume')), '0');
@@ -219,8 +267,10 @@ void main() {
     await tester.pump();
     expect(find.byKey(const ValueKey('record-error')), findsNothing);
     expect(
-      tester.widget<TextField>(find.byKey(const ValueKey('record-volume')))
-          .controller!.text,
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('record-volume')))
+          .controller!
+          .text,
       '5',
     );
     await tester.pumpWidget(const SizedBox());

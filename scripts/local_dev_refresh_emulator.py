@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rebuild the local Android app and sign in with a new local-only account."""
+"""Rebuild the local Android app, sign in a fresh account, and stop at onboarding."""
 from __future__ import annotations
 
 import json
@@ -119,8 +119,17 @@ def type_text(device, text):
 
 
 def ui_nodes(device):
-    adb(device, "shell", "uiautomator", "dump", "/sdcard/window.xml", capture=True)
-    return nodes_from_xml(adb(device, "exec-out", "cat", "/sdcard/window.xml", capture=True))
+    # UIAutomator can briefly leave an empty/truncated dump while an Activity
+    # launches. Retry only that transient parse failure, not ADB failures.
+    for attempt in range(3):
+        adb(device, "shell", "uiautomator", "dump", "/sdcard/window.xml", capture=True)
+        xml = adb(device, "exec-out", "cat", "/sdcard/window.xml", capture=True)
+        try:
+            return nodes_from_xml(xml)
+        except ElementTree.ParseError:
+            if attempt == 2:
+                raise RuntimeError("Could not read a valid UI hierarchy from emulator") from None
+            time.sleep(0.5)
 
 
 def wait_for(device, predicate, description, seconds=45):
@@ -434,7 +443,9 @@ def create_and_open_baby_details(device, token, delivery_date):
         raise RuntimeError("Knowledge draft did not return to the conversation home")
 
 
-def install_and_login(device, account, token, role, *, status_smoke=False, baby_details_smoke=False):
+def install_and_login(device, account, token):
+    # Replace rather than update the package so secure storage cannot restore
+    # another account's authenticated session on this emulator.
     if adb(device, "shell", "pm", "path", PACKAGE, capture=True).strip():
         adb(device, "uninstall", PACKAGE)
     adb(device, "install", str(APK))
@@ -445,60 +456,33 @@ def install_and_login(device, account, token, role, *, status_smoke=False, baby_
     time.sleep(0.8)
     type_text(device, account["email"])
     wait_for(device, lambda nodes: next((n for n in nodes if n.get("class") == "android.widget.EditText" and n.get("text") == account["email"]), None), "email entry", seconds=15)
+    # UI proof of this refresh's identity, before typing the password.
+    screenshot(device, "login-account.png")
     tap_node(device, find_node(ui_nodes(device), class_name="android.widget.EditText", hint="Password"))
     wait_for_field_focus(device, "Password")
     time.sleep(0.8)
     type_text(device, account["password"])
     adb(device, "shell", "input", "keyevent", "KEYCODE_BACK")
     tap_node(device, find_node(ui_nodes(device), class_name="android.widget.Button", description="Sign in"))
-    wait_for(
-        device,
-        lambda nodes: labeled_node(nodes, "你是宝宝的哪位家人？"),
-        "fresh-account role selection",
-    )
-    screenshot(device, "role.png")
-    delivery_date = None
-    if role == "mother":
-        delivery_date = select_mother_flow(device)
-    else:
-        tap_label(device, "爸爸", exact=True)
-    wait_for(device, is_chat_first_home, "chat-first home")
-    verify_chat_first_role(token, role)
-    if role == "mother":
-        verify_mother_facts(token, delivery_date)
-        wait_for(device, lambda nodes: labeled_node(nodes, "宝宝出生 1 天"), "real delivery-day board")
-    screenshot(device, "home.png")
-    # Completion must survive a cold start, not only the in-memory gate.
+    wait_for(device, lambda nodes: labeled_node(nodes, "你是宝宝的哪位家人？"), "fresh-account role selection")
+    verify_fresh_chat_first(token)
+    # Confirm that the authenticated onboarding gate survives a cold start;
+    # do not choose a role or complete any of the user's onboarding answers.
     adb(device, "shell", "am", "force-stop", PACKAGE)
     adb(device, "shell", "monkey", "-p", PACKAGE, "-c", "android.intent.category.LAUNCHER", "1", capture=True)
-    wait_for(device, is_chat_first_home, "restored chat-first home")
-    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "打开侧边栏"), "drawer button"))
-    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "我的"), "mother destination"))
-    if role == "mother":
-        delivery = delivery_date.isoformat()
-        wait_for(device, lambda nodes: labeled_node(nodes, "30 岁") and labeled_node(nodes, delivery),
-                 "saved mother profile")
-        screenshot(device, "mother-profile.png")
-    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "更多服务"), "section services"))
-    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "账号与设置"), "account destination"))
-    wait_for(device, lambda nodes: labeled_node(nodes, account["email"]), "new account email in UI")
-    screenshot(device, "account.png")
-    tap_node(device, wait_for(device, lambda nodes: labeled_node(nodes, "返回对话"), "chat return"))
-    wait_for(device, is_chat_first_home, "chat-first home after account")
-    if status_smoke:
-        save_mother_status_in_app(device, token)
-    if baby_details_smoke:
-        create_and_open_baby_details(device, token, delivery_date)
+    wait_for(device, lambda nodes: labeled_node(nodes, "你是宝宝的哪位家人？"), "restored fresh-account role selection")
+    verify_fresh_chat_first(token)
+    screenshot(device, "role.png")
     if not adb(device, "shell", "pidof", PACKAGE, capture=True).strip():
         raise RuntimeError("App is no longer running on emulator")
 
 
 def main():
-    role = refresh_role()
-    status_smoke = os.environ.get("MOMCOZY_LOCAL_REFRESH_STATUS") == "1"
-    baby_details_smoke = os.environ.get("MOMCOZY_LOCAL_REFRESH_BABY_DETAILS") == "1"
-    if (status_smoke or baby_details_smoke) and role != "mother":
-        raise RuntimeError("The mother-only smoke requires MOMCOZY_LOCAL_REFRESH_ROLE=mother")
+    if any(os.environ.get(key) for key in (
+        "MOMCOZY_LOCAL_REFRESH_ROLE", "MOMCOZY_LOCAL_REFRESH_STATUS",
+        "MOMCOZY_LOCAL_REFRESH_BABY_DETAILS",
+    )):
+        raise RuntimeError("Local refresh now stops at onboarding; remove old role/status/baby smoke flags")
     device = emulator()
     print(f"Emulator: {device}", flush=True)
     run(["node", "scripts/local-dev-stack.mjs", "up"])
@@ -518,11 +502,10 @@ def main():
     token = verify_account(account)
     verify_fresh_chat_first(token)
     with latin_keyboard(device):
-        install_and_login(device, account, token, role,
-                          status_smoke=status_smoke, baby_details_smoke=baby_details_smoke)
-    print(f"Emulator login verified for user {account['user_id']}.", flush=True)
+        install_and_login(device, account, token)
+    print(f"Emulator login and fresh onboarding verified for user {account['user_id']}.", flush=True)
     print(f"Email: {account['email']}", flush=True)
-    print(f"Screenshots: {SCREENSHOTS / 'role.png'}, {SCREENSHOTS / 'home.png'}, {SCREENSHOTS / 'account.png'}", flush=True)
+    print(f"Screenshots: {SCREENSHOTS / 'login-account.png'}, {SCREENSHOTS / 'role.png'}", flush=True)
 
 
 if __name__ == "__main__":

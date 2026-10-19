@@ -8,6 +8,53 @@ from scripts import local_dev_refresh_emulator as refresh
 
 
 class ChatFirstRefreshContractTest(unittest.TestCase):
+    def test_default_refresh_stops_at_fresh_onboarding(self):
+        account = {'email': 'emulator-new@example.test', 'password': 'local-secret', 'user_id': 'fresh-user'}
+        login = [Element('node', {'class': 'android.widget.EditText', 'hint': 'Email'}),
+                 Element('node', {'class': 'android.widget.EditText', 'hint': 'Password'}),
+                 Element('node', {'class': 'android.widget.Button', 'content-desc': 'Sign in'})]
+        email_entered = [Element('node', {'class': 'android.widget.EditText', 'hint': 'Email',
+                                        'text': account['email']})]
+        role = [Element('node', {'content-desc': '你是宝宝的哪位家人？'})]
+        def wait(_, predicate, description, **kwargs):
+            self.assertNotIn(description, ('chat-first home', 'mother stage'))
+            return predicate(login if description == 'login form' else
+                             email_entered if description == 'email entry' else role)
+        with patch.object(refresh, 'adb', side_effect=lambda _, *args, **kwargs: 'app-pid' if 'pidof' in args else '') as adb, \
+             patch.object(refresh, 'wait_for', side_effect=wait) as waited, \
+             patch.object(refresh, 'ui_nodes', return_value=login), \
+             patch.object(refresh, 'find_node', return_value=login[0]), \
+             patch.object(refresh, 'wait_for_field_focus'), \
+             patch.object(refresh, 'tap_node'), \
+             patch.object(refresh, 'type_text'), \
+             patch.object(refresh, 'screenshot') as screenshot, \
+             patch.object(refresh, 'verify_fresh_chat_first') as verify, \
+             patch.object(refresh.time, 'sleep'):
+            refresh.install_and_login('emulator-5556', account, 'token')
+        self.assertEqual([x.args[2] for x in waited.call_args_list],
+                         ['login form', 'email entry', 'fresh-account role selection',
+                          'restored fresh-account role selection'])
+        self.assertEqual([c.args for c in screenshot.call_args_list],
+                         [('emulator-5556', 'login-account.png'), ('emulator-5556', 'role.png')])
+        self.assertEqual(verify.call_count, 2)
+        self.assertFalse(any('role-father' in str(x) for x in adb.call_args_list))
+
+    def test_ui_nodes_retries_transient_invalid_dump(self):
+        valid = "<hierarchy><node class='android.widget.Button' content-desc='Sign in'/></hierarchy>"
+        with patch.object(refresh, 'adb', side_effect=['', 'not xml', '', valid]) as adb, \
+             patch.object(refresh.time, 'sleep') as sleep:
+            nodes = refresh.ui_nodes('emulator-5556')
+        self.assertEqual(nodes[0].get('content-desc'), 'Sign in')
+        self.assertEqual(adb.call_count, 4)
+        sleep.assert_called_once()
+
+    def test_ui_nodes_fails_cleanly_after_bounded_invalid_dumps(self):
+        with patch.object(refresh, 'adb', side_effect=['', 'not xml'] * 3), \
+             patch.object(refresh.time, 'sleep') as sleep:
+            with self.assertRaisesRegex(RuntimeError, 'valid UI hierarchy'):
+                refresh.ui_nodes('emulator-5556')
+        self.assertEqual(sleep.call_count, 2)
+
     def test_numeric_onboarding_choice_uses_unit_not_just_digit(self):
         nodes = [Element('node', {'content-desc': '2026 年'}),
                  Element('node', {'content-desc': '2次\n2'})]

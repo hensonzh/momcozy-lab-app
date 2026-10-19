@@ -217,12 +217,14 @@ class _AgentHubPageState extends State<AgentHubPage>
   ChatFirstAvatarController? _avatarController;
   bool _chatFirstRecordPickerOpen = false;
   final List<ChatFirstPoopTask> _poopTasks = [];
-  AgentStreamImageInput? _poopPhoto;
+  final List<AgentStreamImageInput> _poopPhotos = [];
+  final Map<String, List<AgentStreamImageInput>> _sentPoopPhotos = {};
   String? _activePoopTaskId;
   String? _poopSendKey;
   String? _poopFeedback;
   bool _poopSending = false;
   bool _poopRunAttempted = false;
+  final Set<String> _poopPossiblyReferencedIds = {};
   int _poopGeneration = 0;
   final List<ChatFirstCryTask> _cryTasks = [];
   final GlobalKey _activeCryCardKey = GlobalKey();
@@ -641,13 +643,19 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   void _cancelPoopOnLeave() {
     _poopGeneration++;
-    // Once createRun has been attempted, a timeout/disconnect cannot prove
-    // rejection. Do not delete an attachment that a late accepted Run may
-    // reference; orphan reconciliation remains a separate server concern.
+    // Sent thumbnails are memory-only; never carry private photo bytes across
+    // app backgrounding, navigation, account changes, or snapshot restoration.
+    _sentPoopPhotos.clear();
+    // An attempted Run may still reference any already uploaded photos.
     final attemptedRun = _poopRunAttempted;
     final acceptedRun = attemptedRun && _hasServerRunSignal(_state);
-    final fileId = attemptedRun ? '' : (_poopPhoto?.fileId ?? '');
-    _poopPhoto = null;
+    final fileIds = _poopPhotos
+        .map((image) => image.fileId)
+        .where(
+          (id) => id.isNotEmpty && !_poopPossiblyReferencedIds.contains(id),
+        )
+        .toList();
+    _poopPhotos.clear();
     _poopSendKey = null;
     _poopFeedback = null;
     _poopSending = false;
@@ -660,8 +668,9 @@ class _AgentHubPageState extends State<AgentHubPage>
           : _poopTasks[index].withStatus(ChatFirstPoopTaskStatus.cancelled);
     }
     _activePoopTaskId = null;
-    if (fileId.isNotEmpty) {
-      _pendingAttachmentCleanupIds.add(fileId);
+    _poopPossiblyReferencedIds.clear();
+    if (fileIds.isNotEmpty) {
+      _pendingAttachmentCleanupIds.addAll(fileIds);
       _attachmentCleanupRetryTimer?.cancel();
       if (mounted) unawaited(_retryAttachmentCleanup());
     }
@@ -678,12 +687,32 @@ class _AgentHubPageState extends State<AgentHubPage>
     _persistInteractionState();
   }
 
+  void _removePoopPhoto(String taskId, int index) {
+    if (_poopSending ||
+        taskId != _activePoopTaskId ||
+        index < 0 ||
+        index >= _poopPhotos.length) {
+      return;
+    }
+    final photo = _poopPhotos.removeAt(index);
+    // A timed-out createRun could still have accepted this asset.
+    if (photo.fileId.isNotEmpty &&
+        !_poopPossiblyReferencedIds.contains(photo.fileId)) {
+      _queueAttachmentCleanup([photo.fileId]);
+    }
+    _poopSendKey = null;
+    _poopRunAttempted = false;
+    _poopFeedback = null;
+    setState(() {});
+  }
+
   Future<void> _pickPoopPhoto(
     String taskId,
     AgentImageInputSource source,
   ) async {
     if (widget.pickImage == null ||
         _poopSending ||
+        _poopPhotos.length >= 3 ||
         !_isPageVisible ||
         _isVisibleReplyRunning ||
         _conversationSwitchPending ||
@@ -710,36 +739,25 @@ class _AgentHubPageState extends State<AgentHubPage>
             'image/webp',
             'image/gif',
           }.contains(image.mimeType)) {
-        final previousFileId = _poopRunAttempted
-            ? ''
-            : (_poopPhoto?.fileId ?? '');
-        setState(() {
-          _poopRunAttempted = false;
-          _poopPhoto = null;
-          _poopSendKey = null;
-          _poopFeedback = '只支持不超过 10 MB 的 JPEG、PNG、WebP 或 GIF 照片。';
-        });
-        if (previousFileId.isNotEmpty) {
-          _queueAttachmentCleanup([previousFileId]);
-        }
+        setState(
+          () => _poopFeedback = '只支持不超过 10 MB 的 JPEG、PNG、WebP 或 GIF 照片。',
+        );
         return;
       }
-      final previousFileId = _poopRunAttempted
-          ? ''
-          : (_poopPhoto?.fileId ?? '');
       setState(() {
-        _poopRunAttempted = false;
-        _poopPhoto = AgentStreamImageInput(
-          dataUrl: '',
-          mimeType: image.mimeType,
-          name: image.name,
-          size: bytes.length,
-          localBytes: bytes,
+        _poopPhotos.add(
+          AgentStreamImageInput(
+            dataUrl: '',
+            mimeType: image.mimeType,
+            name: image.name,
+            size: bytes.length,
+            localBytes: bytes,
+          ),
         );
         _poopSendKey = null;
+        _poopRunAttempted = false;
         _poopFeedback = null;
       });
-      if (previousFileId.isNotEmpty) _queueAttachmentCleanup([previousFileId]);
     } catch (_) {
       if (!mounted || generation != _poopGeneration) return;
       setState(() => _poopFeedback = '无法读取照片，请重新选择。');
@@ -747,10 +765,9 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   Future<void> _sendPoopPhoto(String taskId) async {
-    final image = _poopPhoto;
     final media = widget.mediaRepository;
     if (_poopSending ||
-        image == null ||
+        _poopPhotos.isEmpty ||
         media == null ||
         widget.runner == null ||
         taskId != _activePoopTaskId ||
@@ -765,14 +782,13 @@ class _AgentHubPageState extends State<AgentHubPage>
       _poopSending = true;
       _poopFeedback = null;
     });
-    var uploadedId = image.fileId;
     var uploading = false;
     try {
-      if (uploadedId.trim().isEmpty) {
+      for (var index = 0; index < _poopPhotos.length; index++) {
+        final image = _poopPhotos[index];
+        if (image.fileId.isNotEmpty) continue;
         uploading = true;
-        final bytes =
-            image.localBytes ??
-            Uint8List.fromList(_decodeAgentImageBytes(image.dataUrl));
+        final bytes = image.localBytes!;
         final uploaded = await media.uploadFile(
           file: ApiUploadFile(
             name: image.name,
@@ -780,82 +796,57 @@ class _AgentHubPageState extends State<AgentHubPage>
             sizeBytes: bytes.length,
             bytes: bytes,
           ),
-          idempotencyKey: '$key:file',
+          idempotencyKey: '$key:file:$index',
         );
-        uploadedId = uploaded.id.trim();
+        final uploadedId = uploaded.id.trim();
         if (uploadedId.isEmpty) throw StateError('Missing image id');
         uploading = false;
         if (!mounted || generation != _poopGeneration) {
-          // The selected photo was abandoned before upload completed.
+          // The selected photos were abandoned before Run creation.
           if (mounted) {
             _queueAttachmentCleanup([uploadedId]);
           } else {
             try {
               await media.deleteFile(fileId: uploadedId);
             } catch (_) {
-              // No widget remains to persist a retry. This residual cleanup
-              // risk requires server-side orphan reconciliation.
+              // Orphan reconciliation on the server remains necessary.
             }
           }
           return;
         }
-        _poopPhoto = AgentStreamImageInput(
-          dataUrl: '',
-          fileId: uploadedId,
-          mimeType: image.mimeType,
-          name: image.name,
-          size: image.size,
-          localBytes: image.localBytes,
-        );
+        _poopPhotos[index] = image.copyWith(fileId: uploadedId);
       }
       if (!mounted || generation != _poopGeneration) return;
       final request = _requestWithIdempotencyKey(
         _requestWithImages(widget.requestBuilder(chatFirstPoopRequestPrompt), [
-          AgentStreamImageInput(
-            dataUrl: '',
-            fileId: uploadedId,
-            mimeType: image.mimeType,
-            name: image.name,
-            size: image.size,
-          ),
+          for (final image in _poopPhotos)
+            AgentStreamImageInput(
+              dataUrl: '',
+              fileId: image.fileId,
+              mimeType: image.mimeType,
+              name: image.name,
+              size: image.size,
+            ),
         ]),
         key,
       );
       _poopRunAttempted = true;
+      _poopPossiblyReferencedIds.addAll(
+        _poopPhotos.map((image) => image.fileId),
+      );
       final accepted = await _startRun(request, awaitServerRunSignal: true);
       if (!mounted || generation != _poopGeneration) return;
       if (!accepted || _state.runId?.trim().isNotEmpty != true) {
         throw StateError('Run not confirmed');
       }
-      final index = _poopTasks.indexWhere((task) => task.id == taskId);
-      setState(() {
-        if (index >= 0) {
-          _poopTasks[index] = _poopTasks[index].completed(_state.runId);
-        }
-        _poopPhoto = null;
-        _activePoopTaskId = null;
-        _poopSendKey = null;
-        _poopRunAttempted = false;
-      });
-      _persistInteractionState();
+      _completePoopTask(taskId);
     } catch (_) {
       if (!mounted || generation != _poopGeneration) return;
       // A queued server Run may exist even if the follow-up stream failed.
-      // Do not submit the same picture again as a new turn or delete its asset.
       if (_activeRequest != null &&
           isChatFirstPoopPrompt(_activeRequest!.message) &&
           _hasServerRunSignal(_state)) {
-        final index = _poopTasks.indexWhere((task) => task.id == taskId);
-        setState(() {
-          if (index >= 0) {
-            _poopTasks[index] = _poopTasks[index].completed(_state.runId);
-          }
-          _poopPhoto = null;
-          _activePoopTaskId = null;
-          _poopSendKey = null;
-          _poopRunAttempted = false;
-        });
-        _persistInteractionState();
+        _completePoopTask(taskId);
         return;
       }
       setState(
@@ -868,6 +859,22 @@ class _AgentHubPageState extends State<AgentHubPage>
         setState(() => _poopSending = false);
       }
     }
+  }
+
+  void _completePoopTask(String taskId) {
+    final runId = _state.runId;
+    if (runId == null) return;
+    final index = _poopTasks.indexWhere((task) => task.id == taskId);
+    setState(() {
+      if (index >= 0) _poopTasks[index] = _poopTasks[index].completed(runId);
+      _sentPoopPhotos[runId] = List.of(_poopPhotos);
+      _poopPhotos.clear();
+      _activePoopTaskId = null;
+      _poopSendKey = null;
+      _poopRunAttempted = false;
+      _poopPossiblyReferencedIds.clear();
+    });
+    _persistInteractionState();
   }
 
   void _openCryTask() {
@@ -2830,7 +2837,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       final page = ColoredBox(
         key: const ValueKey('agent-hub-page'),
         color: widget.chatFirstExperience
-            ? const Color(0xFFFFFDFA)
+            ? const Color(0xFFFFFAF7)
             : MomHomeTokens.background,
         child: Stack(
           children: [
@@ -2891,10 +2898,16 @@ class _AgentHubPageState extends State<AgentHubPage>
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       final visibleMessages = _visibleHistoryMessages;
-                      const verticalTranscriptPadding = 24.0 + 28.0;
+                      final showChatFirstDate =
+                          widget.chatFirstExperience &&
+                          _interactionRestoreResolved &&
+                          (visibleMessages.isNotEmpty ||
+                              _state.phase != AgentStreamRunPhase.idle);
+                      final transcriptPadding =
+                          24.0 + 28.0 + (showChatFirstDate ? 58.0 : 0.0);
                       final transcriptMinHeight =
-                          constraints.maxHeight > verticalTranscriptPadding
-                          ? constraints.maxHeight - verticalTranscriptPadding
+                          constraints.maxHeight > transcriptPadding
+                          ? constraints.maxHeight - transcriptPadding
                           : 0.0;
 
                       return Stack(
@@ -2916,51 +2929,88 @@ class _AgentHubPageState extends State<AgentHubPage>
                                         widget.chatFirstExperience,
                                   ),
                                 ),
+                              if (showChatFirstDate)
+                                const SliverToBoxAdapter(
+                                  child: _ChatFirstDateLabel(),
+                                ),
                               if (visibleMessages.isNotEmpty)
                                 SliverPadding(
-                                  padding: const EdgeInsets.fromLTRB(
+                                  padding: EdgeInsets.fromLTRB(
                                     16,
-                                    24,
+                                    showChatFirstDate ? 0 : 24,
                                     16,
                                     0,
                                   ),
                                   sliver: AgentHubHistorySliver(
                                     messages: visibleMessages,
+                                    chatFirstExperience:
+                                        widget.chatFirstExperience,
                                     activeCryTaskId: _activeCryTaskId,
                                     activeCryCardKey: _activeCryCardKey,
                                     poopTaskBuilder: (context, task) =>
-                                        ChatFirstPoopTaskCard(
-                                          status: task.status,
-                                          photoBytes:
-                                              task.id == _activePoopTaskId
-                                              ? _poopPhoto?.localBytes
-                                              : null,
-                                          photoName:
-                                              task.id == _activePoopTaskId
-                                              ? _poopPhoto?.name
-                                              : null,
-                                          sending:
-                                              task.id == _activePoopTaskId &&
-                                              _poopSending,
-                                          feedback: task.id == _activePoopTaskId
-                                              ? _poopFeedback
-                                              : null,
-                                          canInteract:
-                                              _isPageVisible &&
-                                              !_isVisibleReplyRunning &&
-                                              !_conversationSwitchPending &&
-                                              widget.pickImage != null,
-                                          canSubmit:
-                                              widget.mediaRepository != null &&
-                                              widget.runner != null,
-                                          onPick: (source) => unawaited(
-                                            _pickPoopPhoto(task.id, source),
-                                          ),
-                                          onSubmit: () => unawaited(
-                                            _sendPoopPhoto(task.id),
-                                          ),
-                                          onAbandon: () =>
-                                              _abandonPoopTask(task.id),
+                                        ValueListenableBuilder<
+                                          AgentStreamRunState
+                                        >(
+                                          valueListenable: _runStateNotifier,
+                                          builder: (context, runState, _) =>
+                                              ChatFirstPoopTaskCard(
+                                                status: task.status,
+                                                photos:
+                                                    task.id == _activePoopTaskId
+                                                    ? _poopPhotos
+                                                    : const [],
+                                                sentPhotos:
+                                                    _sentPoopPhotos[task
+                                                        .runId] ??
+                                                    const [],
+                                                responding:
+                                                    task.runId != null &&
+                                                    task.runId ==
+                                                        runState.runId &&
+                                                    runState.isActive &&
+                                                    !runState
+                                                        .hasCompletedAssistantMessage &&
+                                                    runState.textContent
+                                                        .trim()
+                                                        .isEmpty &&
+                                                    runState
+                                                        .provisionalTextContent
+                                                        .trim()
+                                                        .isEmpty,
+                                                sending:
+                                                    task.id ==
+                                                        _activePoopTaskId &&
+                                                    _poopSending,
+                                                feedback:
+                                                    task.id == _activePoopTaskId
+                                                    ? _poopFeedback
+                                                    : null,
+                                                canInteract:
+                                                    _isPageVisible &&
+                                                    !_isVisibleReplyRunning &&
+                                                    !_conversationSwitchPending &&
+                                                    widget.pickImage != null,
+                                                canSubmit:
+                                                    widget.mediaRepository !=
+                                                        null &&
+                                                    widget.runner != null,
+                                                onPick: (source) => unawaited(
+                                                  _pickPoopPhoto(
+                                                    task.id,
+                                                    source,
+                                                  ),
+                                                ),
+                                                onRemove: (index) =>
+                                                    _removePoopPhoto(
+                                                      task.id,
+                                                      index,
+                                                    ),
+                                                onSubmit: () => unawaited(
+                                                  _sendPoopPhoto(task.id),
+                                                ),
+                                                onAbandon: () =>
+                                                    _abandonPoopTask(task.id),
+                                              ),
                                         ),
                                     cryTaskBuilder: (context, task) =>
                                         ChatFirstCryTaskCard(
@@ -3007,7 +3057,10 @@ class _AgentHubPageState extends State<AgentHubPage>
                                 SliverPadding(
                                   padding: EdgeInsets.fromLTRB(
                                     16,
-                                    visibleMessages.isEmpty ? 24 : 0,
+                                    visibleMessages.isEmpty &&
+                                            !showChatFirstDate
+                                        ? 24
+                                        : 0,
                                     16,
                                     28,
                                   ),
@@ -3112,130 +3165,164 @@ class _AgentHubPageState extends State<AgentHubPage>
                         _visibleReplyRunningNotifier.value;
                     final isComposerLocked = _composerLockedNotifier.value;
                     final isRestoring = !_interactionRestoreResolved;
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (_historyRecoveryError != null &&
-                            _hasLocalInteraction())
-                          TextButton(
-                            onPressed: _recoverConversation,
-                            child: Text(
-                              widget.chatFirstExperience
-                                  ? chatFirstHistorySyncFailed
-                                  : 'Could not sync history. Tap to try again.',
+                    return DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: widget.chatFirstExperience
+                            ? const Color(0xFFF9F0ED)
+                            : Colors.transparent,
+                        border: widget.chatFirstExperience
+                            ? const Border(
+                                top: BorderSide(color: Color(0xFFEADBD8)),
+                              )
+                            : null,
+                        boxShadow: widget.chatFirstExperience
+                            ? const [
+                                BoxShadow(
+                                  color: Color(0x0B5C3A38),
+                                  blurRadius: 22,
+                                  offset: Offset(0, -8),
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_historyRecoveryError != null &&
+                              _hasLocalInteraction())
+                            TextButton(
+                              onPressed: _recoverConversation,
+                              child: Text(
+                                widget.chatFirstExperience
+                                    ? chatFirstHistorySyncFailed
+                                    : 'Could not sync history. Tap to try again.',
+                              ),
                             ),
-                          ),
-                        if (widget.chatFirstExperience)
-                          _chatFirstRecordPickerOpen
-                              ? ChatFirstRecordPicker(
-                                  onClose: () => setState(
-                                    () => _chatFirstRecordPickerOpen = false,
-                                  ),
-                                  onSelected: (kind) {
-                                    setState(
+                          if (widget.chatFirstExperience)
+                            _chatFirstRecordPickerOpen
+                                ? ChatFirstRecordPicker(
+                                    onClose: () => setState(
                                       () => _chatFirstRecordPickerOpen = false,
-                                    );
-                                    final action = widget.onChatFirstRecord;
-                                    if (action != null) {
-                                      unawaited(action(context, kind));
-                                    } else {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            chatFirstRecordUnavailableMessage,
-                                          ),
-                                        ),
+                                    ),
+                                    onSelected: (kind) {
+                                      setState(
+                                        () =>
+                                            _chatFirstRecordPickerOpen = false,
                                       );
-                                    }
-                                  },
-                                )
-                              : ChatFirstQuickActions(
-                                  onRecord: () {
-                                    // The previous save notice sits over the
-                                    // horizontal picker on compact screens.
-                                    ScaffoldMessenger.maybeOf(
-                                      context,
-                                    )?.removeCurrentSnackBar();
-                                    _signalAvatar('interact');
-                                    setState(
-                                      () => _chatFirstRecordPickerOpen = true,
-                                    );
-                                  },
-                                  onCry: () {
-                                    _signalAvatar('interact');
-                                    _openCryTask();
-                                  },
-                                  onPoop: () {
-                                    _signalAvatar('interact');
-                                    _openPoopTask();
-                                  },
-                                )
-                        else if (!_hideShortcutsForAttachmentTurn)
-                          _AgentHomeShortcuts(
-                            onSelected:
-                                widget.runner == null ||
-                                    isComposerLocked ||
-                                    isRestoring ||
-                                    isVisibleReplyRunning ||
-                                    _attachmentUploadPending
-                                ? null
-                                : (prompt) {
-                                    _composerController.text = prompt;
-                                    unawaited(_sendMessage());
-                                  },
-                          ),
-                        if (!_chatFirstRecordPickerOpen ||
-                            !widget.chatFirstExperience)
-                          AgentComposerBar(
-                            chatFirstExperience: widget.chatFirstExperience,
-                            controller: _composerController,
-                            focusNode: _composerFocusNode,
-                            canSend:
-                                widget.runner != null &&
-                                !isComposerLocked &&
-                                !isRestoring,
-                            isRunning: isVisibleReplyRunning,
-                            isInputLocked: isComposerLocked || isRestoring,
-                            voicePreviewBlocked:
-                                _cryCapture?.voicePreviewBlocked ?? false,
-                            images: List<AgentStreamImageInput>.unmodifiable(
-                              _attachedImages,
+                                      final action = widget.onChatFirstRecord;
+                                      if (action != null) {
+                                        unawaited(action(context, kind));
+                                      } else {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              chatFirstRecordUnavailableMessage,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  )
+                                : ChatFirstQuickActions(
+                                    onRecord: () {
+                                      // The previous save notice sits over the
+                                      // horizontal picker on compact screens.
+                                      ScaffoldMessenger.maybeOf(
+                                        context,
+                                      )?.removeCurrentSnackBar();
+                                      _signalAvatar('interact');
+                                      setState(
+                                        () => _chatFirstRecordPickerOpen = true,
+                                      );
+                                    },
+                                    onCry: () {
+                                      _signalAvatar('interact');
+                                      _openCryTask();
+                                    },
+                                    onPoop: () {
+                                      _signalAvatar('interact');
+                                      _openPoopTask();
+                                    },
+                                  )
+                          else if (!_hideShortcutsForAttachmentTurn)
+                            _AgentHomeShortcuts(
+                              onSelected:
+                                  widget.runner == null ||
+                                      isComposerLocked ||
+                                      isRestoring ||
+                                      isVisibleReplyRunning ||
+                                      _attachmentUploadPending
+                                  ? null
+                                  : (prompt) {
+                                      _composerController.text = prompt;
+                                      unawaited(_sendMessage());
+                                    },
                             ),
-                            files: List<AgentStreamFileInput>.unmodifiable(
-                              _attachedFiles,
+                          if (!_chatFirstRecordPickerOpen ||
+                              !widget.chatFirstExperience)
+                            AgentComposerBar(
+                              chatFirstExperience: widget.chatFirstExperience,
+                              controller: _composerController,
+                              focusNode: _composerFocusNode,
+                              canSend:
+                                  widget.runner != null &&
+                                  !isComposerLocked &&
+                                  !isRestoring,
+                              isRunning: isVisibleReplyRunning,
+                              isInputLocked:
+                                  isComposerLocked ||
+                                  isRestoring ||
+                                  (widget.chatFirstExperience && _poopSending),
+                              isTopicResponding:
+                                  widget.chatFirstExperience &&
+                                  (_poopSending ||
+                                      (_runStateNotifier.value.isActive &&
+                                          _activeRequest != null &&
+                                          isChatFirstPoopPrompt(
+                                            _activeRequest!.message,
+                                          ))),
+                              voicePreviewBlocked:
+                                  _cryCapture?.voicePreviewBlocked ?? false,
+                              images: List<AgentStreamImageInput>.unmodifiable(
+                                _attachedImages,
+                              ),
+                              files: List<AgentStreamFileInput>.unmodifiable(
+                                _attachedFiles,
+                              ),
+                              loadImageThumbnail: widget.loadImageThumbnail,
+                              canAttachImage:
+                                  widget.pickImage != null &&
+                                  !_attachmentUploadPending &&
+                                  _canAddAttachment &&
+                                  !isComposerLocked &&
+                                  !isRestoring,
+                              canAttachFile:
+                                  widget.pickDocument != null &&
+                                  widget.mediaRepository != null &&
+                                  !_attachmentUploadPending &&
+                                  _canAddAttachment &&
+                                  !isComposerLocked &&
+                                  !isRestoring,
+                              isAttachmentPending: _attachmentUploadPending,
+                              attachmentUploadProgress:
+                                  _attachmentUploadProgress,
+                              onChanged: (_) {},
+                              onSend: _sendMessage,
+                              onCancel: _cancelRun,
+                              onTakePhoto: () => unawaited(
+                                _attachImage(AgentImageInputSource.camera),
+                              ),
+                              onPickPhoto: () => unawaited(
+                                _attachImage(AgentImageInputSource.gallery),
+                              ),
+                              onPickFile: () => unawaited(_attachDocument()),
+                              onRemoveImage: _removeAttachedImage,
+                              onRemoveFile: _removeAttachedFile,
                             ),
-                            loadImageThumbnail: widget.loadImageThumbnail,
-                            canAttachImage:
-                                widget.pickImage != null &&
-                                !_attachmentUploadPending &&
-                                _canAddAttachment &&
-                                !isComposerLocked &&
-                                !isRestoring,
-                            canAttachFile:
-                                widget.pickDocument != null &&
-                                widget.mediaRepository != null &&
-                                !_attachmentUploadPending &&
-                                _canAddAttachment &&
-                                !isComposerLocked &&
-                                !isRestoring,
-                            isAttachmentPending: _attachmentUploadPending,
-                            attachmentUploadProgress: _attachmentUploadProgress,
-                            onChanged: (_) {},
-                            onSend: _sendMessage,
-                            onCancel: _cancelRun,
-                            onTakePhoto: () => unawaited(
-                              _attachImage(AgentImageInputSource.camera),
-                            ),
-                            onPickPhoto: () => unawaited(
-                              _attachImage(AgentImageInputSource.gallery),
-                            ),
-                            onPickFile: () => unawaited(_attachDocument()),
-                            onRemoveImage: _removeAttachedImage,
-                            onRemoveFile: _removeAttachedFile,
-                          ),
-                      ],
+                        ],
+                      ),
                     );
                   },
                 ),
@@ -3663,6 +3750,48 @@ class _AgentWelcomeCard extends StatelessWidget {
   }
 }
 
+class _ChatFirstDateLabel extends StatelessWidget {
+  const _ChatFirstDateLabel();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    key: const ValueKey('chat-first-date-label'),
+    padding: const EdgeInsets.fromLTRB(16, 24, 16, 20),
+    child: Row(
+      children: [
+        const Expanded(child: Divider(color: Color(0xFFEDDFDD), height: 1)),
+        const SizedBox(width: 12),
+        Text(
+          chatFirstTodayLabel,
+          style: MomHomeTokens.text(
+            11,
+            color: const Color(0xFF6B5C60),
+          ).copyWith(letterSpacing: .55),
+        ),
+        const SizedBox(width: 12),
+        const Expanded(child: Divider(color: Color(0xFFEDDFDD), height: 1)),
+      ],
+    ),
+  );
+}
+
+class _ChatFirstAssistantAnswer extends StatelessWidget {
+  const _ChatFirstAssistantAnswer({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    key: const ValueKey('chat-first-assistant-answer'),
+    width: double.infinity,
+    padding: const EdgeInsets.only(left: 14),
+    decoration: const BoxDecoration(
+      border: Border(left: BorderSide(color: Color(0xFFD7B7C2), width: 2)),
+    ),
+    child: child,
+  );
+}
+
 class _AgentAssistantBubble extends StatelessWidget {
   const _AgentAssistantBubble({required this.child});
   final Widget child;
@@ -3995,11 +4124,13 @@ class AgentHubHistoryPanel extends StatelessWidget {
   const AgentHubHistoryPanel({
     super.key,
     required this.messages,
+    this.chatFirstExperience = false,
     this.loadImageThumbnail,
     this.loadImageContent,
   });
 
   final List<AgentHubHistoryMessage> messages;
+  final bool chatFirstExperience;
 
   final AgentImageContentLoader? loadImageThumbnail;
   final AgentImageContentLoader? loadImageContent;
@@ -4013,6 +4144,7 @@ class AgentHubHistoryPanel extends StatelessWidget {
           _AgentHistoryBubble(
             key: ValueKey('agent-history-$index'),
             message: messages[index],
+            chatFirstExperience: chatFirstExperience,
             loadImageThumbnail: loadImageThumbnail,
             loadImageContent: loadImageContent,
           ),
@@ -4027,6 +4159,7 @@ class AgentHubHistorySliver extends StatelessWidget {
   const AgentHubHistorySliver({
     super.key,
     required this.messages,
+    this.chatFirstExperience = false,
     this.viewportAnchorMessageId,
     this.viewportAnchorKey,
     this.activeCryTaskId,
@@ -4038,6 +4171,7 @@ class AgentHubHistorySliver extends StatelessWidget {
   });
 
   final List<AgentHubHistoryMessage> messages;
+  final bool chatFirstExperience;
   final String? viewportAnchorMessageId;
   final GlobalKey? viewportAnchorKey;
   final String? activeCryTaskId;
@@ -4074,6 +4208,7 @@ class AgentHubHistorySliver extends StatelessWidget {
             child: _AgentHistoryBubble(
               key: ValueKey('agent-history-$messageIndex'),
               message: messages[messageIndex],
+              chatFirstExperience: chatFirstExperience,
               cryTaskBuilder: cryTaskBuilder,
               poopTaskBuilder: poopTaskBuilder,
               loadImageThumbnail: loadImageThumbnail,
@@ -4095,6 +4230,7 @@ class _AgentHistoryBubble extends StatelessWidget {
   const _AgentHistoryBubble({
     super.key,
     required this.message,
+    this.chatFirstExperience = false,
     this.cryTaskBuilder,
     this.poopTaskBuilder,
     this.loadImageThumbnail,
@@ -4102,6 +4238,7 @@ class _AgentHistoryBubble extends StatelessWidget {
   });
 
   final AgentHubHistoryMessage message;
+  final bool chatFirstExperience;
   final Widget Function(BuildContext, ChatFirstCryTask)? cryTaskBuilder;
   final Widget Function(BuildContext, ChatFirstPoopTask)? poopTaskBuilder;
 
@@ -4134,13 +4271,28 @@ class _AgentHistoryBubble extends StatelessWidget {
     final textStyle = MomHomeTokens.text(
       16,
       height: 1.65,
-      color: isUser ? Colors.white : MomHomeTokens.ink,
-    );
+      color: chatFirstExperience
+          ? const Color(0xFF2B2826)
+          : isUser
+          ? Colors.white
+          : MomHomeTokens.ink,
+    ).copyWith(fontSize: chatFirstExperience ? 14 : 16);
 
     if (!isUser) {
       final runState = message.runState;
       if (runState != null) {
-        return AgentRunTranscript(state: runState);
+        return AgentRunTranscript(
+          state: runState,
+          chatFirstExperience: chatFirstExperience,
+        );
+      }
+      if (chatFirstExperience) {
+        return _ChatFirstAssistantAnswer(
+          child: AgentMarkdownText(
+            assistantDisplayText(message.content),
+            style: textStyle,
+          ),
+        );
       }
 
       return _AgentAssistantTurn(
@@ -4190,7 +4342,9 @@ class _AgentHistoryBubble extends StatelessWidget {
               ? attachments
               : DecoratedBox(
                   decoration: BoxDecoration(
-                    color: MomHomeTokens.rose,
+                    color: chatFirstExperience
+                        ? const Color(0xFFF2E4EA)
+                        : MomHomeTokens.rose,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(22),
                       topRight: Radius.circular(22),
@@ -4420,7 +4574,11 @@ class AgentRunTranscript extends StatelessWidget {
         state.phase == AgentStreamRunPhase.error ||
         state.phase == AgentStreamRunPhase.disconnected;
     final showFailureFallback = isFailure && state.textContent.trim().isEmpty;
-    final primaryTextStyle = MomHomeTokens.text(16, height: 1.65);
+    final primaryTextStyle = MomHomeTokens.text(
+      chatFirstExperience ? 14 : 16,
+      height: 1.65,
+      color: chatFirstExperience ? const Color(0xFF2B2826) : MomHomeTokens.ink,
+    );
     final isGreeting =
         state.phase == AgentStreamRunPhase.idle &&
         state.textContent.trim().isEmpty;
@@ -4428,7 +4586,7 @@ class AgentRunTranscript extends StatelessWidget {
     return _AgentAssistantTurn(
       key: const ValueKey('agent-run-transcript'),
       avatar: _AgentAssistantAvatar(mode: avatarMode),
-      fullWidth: isGreeting,
+      fullWidth: isGreeting || chatFirstExperience,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -4458,6 +4616,10 @@ class AgentRunTranscript extends StatelessWidget {
                   ? _AgentWelcomeCard(
                       text: text,
                       avatar: _AgentAssistantAvatar(mode: avatarMode),
+                    )
+                  : chatFirstExperience
+                  ? _ChatFirstAssistantAnswer(
+                      child: AgentMarkdownText(text, style: primaryTextStyle),
                     )
                   : _AgentAssistantBubble(
                       child: AgentMarkdownText(text, style: primaryTextStyle),
@@ -5360,6 +5522,7 @@ class AgentComposerBar extends StatefulWidget {
     required this.canSend,
     required this.isRunning,
     required this.isInputLocked,
+    this.isTopicResponding = false,
     this.voicePreviewBlocked = false,
     required this.images,
     required this.files,
@@ -5384,6 +5547,7 @@ class AgentComposerBar extends StatefulWidget {
   final bool canSend;
   final bool isRunning;
   final bool isInputLocked;
+  final bool isTopicResponding;
   final bool voicePreviewBlocked;
   final List<AgentStreamImageInput> images;
   final List<AgentStreamFileInput> files;
@@ -5551,6 +5715,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
         canSend: widget.canSend,
         isRunning: widget.isRunning,
         isInputLocked: widget.isInputLocked,
+        isTopicResponding: widget.isTopicResponding,
         voicePreviewBlocked: widget.voicePreviewBlocked,
         images: widget.images,
         files: widget.files,

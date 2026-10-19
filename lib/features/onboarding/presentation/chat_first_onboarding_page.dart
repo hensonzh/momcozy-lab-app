@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../domain/chat_first_onboarding.dart';
 import 'onboarding_controller.dart';
 
-const _canvas = Color(0xFFFCF9F8);
+const _canvas = Color(0xFFFFFAF7);
 const _paper = Color(0xFFFFFDFC);
 const _ink = Color(0xFF2B2826);
 const _muted = Color(0xFF786E6B);
@@ -39,8 +39,8 @@ class _ChatFirstOnboardingPageState extends State<ChatFirstOnboardingPage> {
     now: widget.now,
   );
   final _pageScroll = ScrollController();
-  final _ageScroll = ScrollController(initialScrollOffset: 9 * 60);
-  final _weeksScroll = ScrollController(initialScrollOffset: 13 * 60);
+  final _ageScroll = ScrollController(initialScrollOffset: 9 * 65);
+  final _weeksScroll = ScrollController(initialScrollOffset: 13 * 65);
   int _step = 0;
   String _error = '';
 
@@ -147,30 +147,57 @@ class _ChatFirstOnboardingPageState extends State<ChatFirstOnboardingPage> {
         child: SingleChildScrollView(
           controller: _pageScroll,
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: EdgeInsets.fromLTRB(22, _step == 0 ? 85 : 27, 22, 24),
+          padding: EdgeInsets.fromLTRB(16, _step == 0 ? 83 : 18, 16, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                _titles[_step],
-                style: const TextStyle(
-                  color: _ink,
-                  fontSize: 24,
-                  height: 1.35,
-                  fontWeight: FontWeight.w700,
+              Container(
+                key: const ValueKey('setup-intro-card'),
+                padding: const EdgeInsets.fromLTRB(18, 19, 18, 20),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFFF2E2E4)),
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFF7E6EA), Color(0xFFFBF1ED)],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _titles[_step],
+                      style: const TextStyle(
+                        color: Color(0xFF503441),
+                        fontSize: 23,
+                        height: 1.35,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 7),
+                    Text(
+                      _descriptions[_step],
+                      style: TextStyle(
+                        color: const Color(0xFF735F65),
+                        fontSize: _step == 0 ? 12 : 13,
+                        height: 1.6,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
-              Text(
-                _descriptions[_step],
-                style: const TextStyle(
-                  color: _muted,
-                  fontSize: 13,
-                  height: 1.6,
-                ),
+              SizedBox(
+                height: _step == 0
+                    ? 31
+                    : _step == 5
+                    ? 16
+                    : 18,
               ),
-              SizedBox(height: _step == 5 ? 22 : 31),
-              _stepContent(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                child: _stepContent(),
+              ),
               if (_error.isNotEmpty ||
                   widget.controller.errorMessage.isNotEmpty) ...[
                 const SizedBox(height: 18),
@@ -324,57 +351,109 @@ class _ChatFirstOnboardingPageState extends State<ChatFirstOnboardingPage> {
         ),
       ],
     ),
-    4 => Wrap(
-      spacing: 9,
-      runSpacing: 10,
+    4 => Column(
       children: [
-        for (final entry in chatFirstConcerns.entries)
-          ChoiceChip(
-            key: ValueKey('concern-${entry.key}'),
-            label: Text(entry.value),
-            selected: _draft.concerns.contains(entry.key),
-            onSelected: (_) => setState(() {
-              if (_draft.concerns.contains(entry.key)) {
-                _draft.concerns.remove(entry.key);
-              } else {
-                _draft.concerns.add(entry.key);
-              }
-              _error = '';
-            }),
-            selectedColor: _selected,
-            backgroundColor: _paper,
-            side: const BorderSide(color: _border),
-            labelStyle: const TextStyle(color: _ink, fontSize: 13),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        for (var index = 0; index < chatFirstConcerns.length; index += 2)
+          Padding(
+            padding: EdgeInsets.only(
+              bottom: index + 2 < chatFirstConcerns.length ? 9 : 0,
+            ),
+            child: Row(
+              children: [
+                for (var offset = 0; offset < 2; offset++) ...[
+                  if (offset > 0) const SizedBox(width: 9),
+                  Expanded(
+                    child: index + offset < chatFirstConcerns.length
+                        ? _concernChoice(
+                            chatFirstConcerns.entries.elementAt(index + offset),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ],
             ),
           ),
       ],
     ),
-    5 => Column(
-      children: const [
-        _RecommendedService(
-          'recommend-record',
-          Icons.trending_up_rounded,
-          '记录与持续管理',
-          '记录奶量与宝宝成长，依据记录持续跟进变化。',
-        ),
-        _RecommendedService(
-          'recommend-cry',
-          Icons.graphic_eq_rounded,
-          '哭声识别',
-          '从哭声中寻找线索，理解宝宝可能的需要。',
-        ),
-        _RecommendedService(
-          'recommend-poop',
-          Icons.child_care_rounded,
-          '便便识别',
-          '结合便便照片，了解相关线索和照护建议。',
-        ),
-      ],
+    5 => Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: const Color(0xFFEEE4E0)),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: const Column(
+        children: [
+          _RecommendedService(
+            'recommend-record',
+            Icons.trending_up_rounded,
+            '记录与持续管理',
+            '记录奶量与宝宝成长，依据记录持续跟进变化。',
+          ),
+          _RecommendedService(
+            'recommend-cry',
+            Icons.graphic_eq_rounded,
+            '哭声识别',
+            '从哭声中寻找线索，理解宝宝可能的需要。',
+          ),
+          _RecommendedService(
+            'recommend-poop',
+            Icons.child_care_rounded,
+            '便便识别',
+            '结合便便照片，了解相关线索和照护建议。',
+          ),
+        ],
+      ),
     ),
     _ => const SizedBox.shrink(),
   };
+
+  Widget _concernChoice(MapEntry<String, String> entry) {
+    final selected = _draft.concerns.contains(entry.key);
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: Material(
+        color: selected ? const Color(0xFFF5E5EA) : Colors.white,
+        borderRadius: BorderRadius.circular(17),
+        child: InkWell(
+          key: ValueKey('concern-${entry.key}'),
+          borderRadius: BorderRadius.circular(17),
+          onTap: () => setState(() {
+            if (selected) {
+              _draft.concerns.remove(entry.key);
+            } else {
+              _draft.concerns.add(entry.key);
+            }
+            _error = '';
+          }),
+          child: Container(
+            alignment: Alignment.centerLeft,
+            constraints: const BoxConstraints(minHeight: 64),
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: selected
+                    ? const Color(0xFFD4AAB9)
+                    : const Color(0xFFEEE4E2),
+              ),
+              borderRadius: BorderRadius.circular(17),
+            ),
+            child: Text(
+              entry.value,
+              style: TextStyle(
+                color: selected
+                    ? const Color(0xFF873856)
+                    : const Color(0xFF5E5053),
+                fontSize: 15,
+                height: 1.4,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _groupedChoices(List<(String, String, VoidCallback)> options) =>
       DecoratedBox(
@@ -445,19 +524,26 @@ class _ChatFirstOnboardingPageState extends State<ChatFirstOnboardingPage> {
     ScrollController controller,
     ValueChanged<int> onChanged,
     String unit,
-  ) => SizedBox(
-    height: 56,
-    child: ListView(
-      key: ValueKey('$name-scroll'),
-      controller: controller,
-      scrollDirection: Axis.horizontal,
-      children: [
-        for (var number = first; number <= last; number++)
-          SizedBox(
-            width: 60,
-            child: _numberButton(name, number, value, onChanged, unit),
-          ),
-      ],
+  ) => Container(
+    height: 52,
+    decoration: BoxDecoration(
+      color: const Color(0xFFF7F3F2),
+      borderRadius: BorderRadius.circular(17),
+    ),
+    child: LayoutBuilder(
+      builder: (context, constraints) => ListView(
+        key: ValueKey('$name-scroll'),
+        controller: controller,
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        children: [
+          for (var number = first; number <= last; number++)
+            SizedBox(
+              width: (constraints.maxWidth - 22) / 5,
+              child: _numberButton(name, number, value, onChanged, unit),
+            ),
+        ],
+      ),
     ),
   );
 
@@ -468,17 +554,21 @@ class _ChatFirstOnboardingPageState extends State<ChatFirstOnboardingPage> {
     int? value,
     ValueChanged<int> onChanged,
     String unit,
-  ) => Wrap(
-    spacing: 4,
-    runSpacing: 4,
-    children: [
-      for (var number = first; number <= last; number++)
-        SizedBox(
-          width: 48,
-          height: 50,
-          child: _numberButton(name, number, value, onChanged, unit),
-        ),
-    ],
+  ) => Container(
+    height: 51,
+    padding: const EdgeInsets.all(4),
+    decoration: BoxDecoration(
+      color: const Color(0xFFF7F3F2),
+      borderRadius: BorderRadius.circular(17),
+    ),
+    child: Row(
+      children: [
+        for (var number = first; number <= last; number++) ...[
+          if (number > first) const SizedBox(width: 3),
+          Expanded(child: _numberButton(name, number, value, onChanged, unit)),
+        ],
+      ],
+    ),
   );
 
   Widget _numberButton(
@@ -517,33 +607,35 @@ class _ChatFirstOnboardingPageState extends State<ChatFirstOnboardingPage> {
   Widget _footer() => Container(
     padding: const EdgeInsets.fromLTRB(22, 12, 22, 16),
     decoration: const BoxDecoration(
-      color: Colors.white,
-      border: Border(top: BorderSide(color: Color(0xFFF6F1EF))),
+      color: _canvas,
+      border: Border(top: BorderSide(color: Color(0xFFEEE2DE))),
     ),
     child: Align(
       alignment: Alignment.center,
-      child: SizedBox(
-        width: 340,
-        height: 48,
-        child: FilledButton(
-          key: ValueKey(_step == 5 ? 'enter-home' : 'setup-continue'),
-          onPressed: widget.controller.busy ? null : _continue,
-          style: FilledButton.styleFrom(
-            backgroundColor: _step == 5 ? _paper : _accent,
-            foregroundColor: _step == 5 ? _accent : Colors.white,
-            side: _step == 5
-                ? const BorderSide(color: _accent)
-                : BorderSide.none,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+      child: FractionallySizedBox(
+        widthFactor: _step == 5 ? 1 : .88,
+        child: SizedBox(
+          height: 45,
+          child: FilledButton(
+            key: ValueKey(_step == 5 ? 'enter-home' : 'setup-continue'),
+            onPressed: widget.controller.busy ? null : _continue,
+            style: FilledButton.styleFrom(
+              backgroundColor: _step == 5 ? _paper : _accent,
+              foregroundColor: _step == 5 ? _accent : Colors.white,
+              side: _step == 5
+                  ? const BorderSide(color: _accent)
+                  : BorderSide.none,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
-          ),
-          child: Text(
-            widget.controller.busy
-                ? '正在保存…'
-                : _step == 5
-                ? '进入首页'
-                : '继续',
+            child: Text(
+              widget.controller.busy
+                  ? '正在保存…'
+                  : _step == 5
+                  ? '进入首页'
+                  : '继续',
+            ),
           ),
         ),
       ),
@@ -558,6 +650,13 @@ class _ChatFirstOnboardingPageState extends State<ChatFirstOnboardingPage> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && _pageScroll.hasClients) _pageScroll.jumpTo(0);
+      if (!mounted) return;
+      final railWidth =
+          (MediaQuery.sizeOf(context).width.clamp(0, 430) - 66) / 5;
+      if (step == 2 && _ageScroll.hasClients) _ageScroll.jumpTo(9 * railWidth);
+      if (step == 3 && _weeksScroll.hasClients) {
+        _weeksScroll.jumpTo(13 * railWidth);
+      }
     });
   }
 
@@ -642,7 +741,7 @@ const _descriptions = <String>[
   '年龄和生育经历，帮助我们更好地了解你。',
   '了解分娩和宝宝情况，让后续服务更贴合你。',
   '可多选，帮助我们为你提供更贴合的服务。',
-  '根据你填写的资料，以下服务可以帮助你开始使用 Momcozy AI。',
+  '从记录到识别，陪你照顾自己和宝宝。',
 ];
 
 class _RecommendedService extends StatelessWidget {
@@ -655,14 +754,25 @@ class _RecommendedService extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     key: ValueKey(id),
-    padding: const EdgeInsets.symmetric(vertical: 18),
-    decoration: const BoxDecoration(
-      border: Border(bottom: BorderSide(color: Color(0xFFECE7E6))),
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
+    decoration: BoxDecoration(
+      border: id == 'recommend-poop'
+          ? null
+          : const Border(bottom: BorderSide(color: Color(0xFFEEE4E0))),
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(width: 35, child: Icon(icon, color: _accent, size: 20)),
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF6E9EC),
+            borderRadius: BorderRadius.circular(11),
+          ),
+          child: Icon(icon, color: const Color(0xFF94536E), size: 18),
+        ),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -49,6 +49,15 @@ void main() {
       } else {
         await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
         await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('agent-attachment-menu')),
+          findsOneWidget,
+        );
+        final audio = find.byKey(
+          const ValueKey('agent-attachment-audio-button'),
+        );
+        expect(audio, findsOneWidget);
+        expect(tester.widget<MenuItemButton>(audio).onPressed, isNull);
         await tester.tap(
           find.byKey(const ValueKey('agent-attachment-file-button')),
         );
@@ -70,6 +79,46 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
   }
+
+  testWidgets(
+    'Demo four-slot attachment sheet stays usable on compact screens',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 568);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AgentHubPage(
+              chatFirstExperience: true,
+              mediaRepository: _NoUploadMedia(),
+              pickImage: (_) async => null,
+              pickDocument: () async => null,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+      await tester.pumpAndSettle();
+      final keys = ['camera', 'photo', 'file', 'audio']
+          .map((kind) => find.byKey(ValueKey('agent-attachment-$kind-button')))
+          .toList();
+      for (final button in keys) {
+        expect(button, findsOneWidget);
+        final bounds = tester.getRect(button);
+        expect(bounds.left, greaterThanOrEqualTo(0));
+        expect(bounds.right, lessThanOrEqualTo(320));
+      }
+      expect(
+        tester.getRect(keys.first).right,
+        lessThan(tester.getRect(keys.last).left),
+      );
+      expect(tester.widget<MenuItemButton>(keys.last).onPressed, isNull);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('opening another record clears feedback covering the picker', (
     tester,
@@ -413,7 +462,8 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('chat-first-topic-cry')), findsOneWidget);
-    expect(find.textContaining('上传并分析暂不可用'), findsOneWidget);
+    expect(find.byKey(const ValueKey('chat-first-cry-start')), findsOneWidget);
+    expect(find.textContaining('上传并分析暂不可用'), findsNothing);
     expect(find.textContaining('分析结果'), findsNothing);
     await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
     await tester.pumpAndSettle();

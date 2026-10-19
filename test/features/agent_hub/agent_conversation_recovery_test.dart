@@ -363,6 +363,9 @@ void main() {
       expect(messages.any((item) => item.id == 'message-1'), isTrue);
       _scroll(tester).jumpTo(_scroll(tester).position.maxScrollExtent);
       await tester.pumpAndSettle();
+      // The sliver can gain extent when the final reply is laid out.
+      _scroll(tester).jumpTo(_scroll(tester).position.maxScrollExtent);
+      await tester.pumpAndSettle();
       expect(find.text('当前欢迎回复', findRichText: true), findsOneWidget);
       await _dispose(tester);
     },

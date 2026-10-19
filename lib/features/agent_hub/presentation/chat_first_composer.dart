@@ -17,6 +17,7 @@ class ChatFirstComposerBar extends StatelessWidget {
     required this.canSend,
     required this.isRunning,
     required this.isInputLocked,
+    this.isTopicResponding = false,
     this.voicePreviewBlocked = false,
     required this.images,
     required this.files,
@@ -41,6 +42,7 @@ class ChatFirstComposerBar extends StatelessWidget {
   final bool canSend;
   final bool isRunning;
   final bool isInputLocked;
+  final bool isTopicResponding;
   final bool voicePreviewBlocked;
   final List<AgentStreamImageInput> images;
   final List<AgentStreamFileInput> files;
@@ -61,89 +63,67 @@ class ChatFirstComposerBar extends StatelessWidget {
   Widget _attachmentMenuItem({
     required Key key,
     required String label,
-    required String description,
     required String iconAsset,
     required VoidCallback? onPressed,
-  }) {
-    return MenuItemButton(
-      key: key,
-      onPressed: onPressed == null
-          ? null
-          : () {
-              menuController.close();
-              onPressed();
-            },
-      style: MenuItemButton.styleFrom(
-        minimumSize: const Size(0, 48),
-        visualDensity: VisualDensity.standard,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        padding: const EdgeInsets.all(6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+    String? unavailableNote,
+  }) => MenuItemButton(
+    key: key,
+    onPressed: onPressed == null
+        ? null
+        : () {
+            menuController.close();
+            onPressed();
+          },
+    style: MenuItemButton.styleFrom(
+      minimumSize: const Size.fromHeight(65),
+      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
+      backgroundColor: const Color(0xFFFAF9FA),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(13),
+        side: const BorderSide(color: Color(0xFFEEE9EB)),
       ),
-      child: Row(
-        children: [
-          DecoratedBox(
-            decoration: const BoxDecoration(
-              color: Color(0xFFF5E7ED),
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            child: SizedBox.square(
-              dimension: 32,
-              child: Center(
-                child: iconAsset.endsWith('.png')
-                    ? Image.asset(
-                        iconAsset,
-                        width: 18,
-                        height: 18,
-                        color: onPressed == null ? MomHomeTokens.muted : null,
-                      )
-                    : SvgPicture.asset(
-                        iconAsset,
-                        width: 18,
-                        height: 18,
-                        colorFilter: onPressed == null
-                            ? const ColorFilter.mode(
-                                MomHomeTokens.muted,
-                                BlendMode.srcIn,
-                              )
-                            : null,
-                      ),
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        iconAsset.endsWith('.png')
+            ? Image.asset(
+                iconAsset,
+                width: 25,
+                height: 25,
+                color: onPressed == null ? MomHomeTokens.muted : null,
+              )
+            : SvgPicture.asset(
+                iconAsset,
+                width: 25,
+                height: 25,
+                colorFilter: ColorFilter.mode(
+                  onPressed == null
+                      ? MomHomeTokens.muted
+                      : const Color(0xFF83516A),
+                  BlendMode.srcIn,
+                ),
               ),
-            ),
+        const SizedBox(height: 5),
+        Text(
+          label,
+          maxLines: 1,
+          style: MomHomeTokens.text(
+            11,
+            weight: FontWeight.w500,
+            color: onPressed == null ? MomHomeTokens.muted : MomHomeTokens.ink,
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  label,
-                  style: MomHomeTokens.text(
-                    14,
-                    height: 18 / 14,
-                    weight: FontWeight.w700,
-                    color: onPressed == null
-                        ? MomHomeTokens.muted
-                        : MomHomeTokens.ink,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  description,
-                  style: MomHomeTokens.text(
-                    11,
-                    height: 14 / 11,
-                    color: MomHomeTokens.secondary,
-                  ),
-                ),
-              ],
-            ),
+        ),
+        if (unavailableNote != null)
+          Text(
+            unavailableNote,
+            maxLines: 1,
+            style: MomHomeTokens.text(9, color: MomHomeTokens.muted),
           ),
-        ],
-      ),
-    );
-  }
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -151,8 +131,11 @@ class ChatFirstComposerBar extends StatelessWidget {
         controller.text.trim().isNotEmpty ||
         images.isNotEmpty ||
         files.isNotEmpty;
-    final showStop = isRunning && !canSend;
-    final canOpenMenu = canAttachImage || canAttachFile;
+    final showStop = isRunning && !canSend && !isTopicResponding;
+    final canOpenMenu =
+        (canAttachImage || canAttachFile) &&
+        !isInputLocked &&
+        !isTopicResponding;
     const iconColor = Color(0xFF75696D);
     const accent = Color(0xFFA55776);
 
@@ -235,32 +218,56 @@ class ChatFirstComposerBar extends StatelessWidget {
             menuChildren: [
               SizedBox(
                 key: const ValueKey('agent-attachment-menu'),
-                width: 210,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _attachmentMenuItem(
-                      key: const ValueKey('agent-attachment-camera-button'),
-                      label: '相机',
-                      description: '拍摄照片',
-                      iconAsset: 'assets/images/cozymate_attachment_camera.png',
-                      onPressed: canAttachImage ? onTakePhoto : null,
-                    ),
-                    _attachmentMenuItem(
-                      key: const ValueKey('agent-attachment-photo-button'),
-                      label: '照片',
-                      description: 'JPG、PNG、WebP',
-                      iconAsset: 'assets/images/cozymate_attachment_photo.svg',
-                      onPressed: canAttachImage ? onPickPhoto : null,
-                    ),
-                    _attachmentMenuItem(
-                      key: const ValueKey('agent-attachment-file-button'),
-                      label: '文件',
-                      description: 'PDF · 不超过 10 MB',
-                      iconAsset: 'assets/images/cozymate_attachment_file.svg',
-                      onPressed: canAttachFile ? onPickFile : null,
-                    ),
-                  ],
+                width: (MediaQuery.sizeOf(context).width - 32).clamp(
+                  240.0,
+                  398.0,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _attachmentMenuItem(
+                          key: const ValueKey('agent-attachment-camera-button'),
+                          label: '相机',
+                          iconAsset:
+                              'assets/images/cozymate_attachment_camera.png',
+                          onPressed: canAttachImage ? onTakePhoto : null,
+                        ),
+                      ),
+                      const SizedBox(width: 7),
+                      Expanded(
+                        child: _attachmentMenuItem(
+                          key: const ValueKey('agent-attachment-photo-button'),
+                          label: '照片',
+                          iconAsset:
+                              'assets/images/cozymate_attachment_photo.svg',
+                          onPressed: canAttachImage ? onPickPhoto : null,
+                        ),
+                      ),
+                      const SizedBox(width: 7),
+                      Expanded(
+                        child: _attachmentMenuItem(
+                          key: const ValueKey('agent-attachment-file-button'),
+                          label: '文件',
+                          iconAsset:
+                              'assets/images/cozymate_attachment_file.svg',
+                          onPressed: canAttachFile ? onPickFile : null,
+                        ),
+                      ),
+                      const SizedBox(width: 7),
+                      Expanded(
+                        child: _attachmentMenuItem(
+                          key: const ValueKey('agent-attachment-audio-button'),
+                          label: '音频',
+                          unavailableNote: '暂不可用',
+                          iconAsset:
+                              'assets/images/chat_first/icon-sound-wave.svg',
+                          onPressed: null,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -286,7 +293,8 @@ class ChatFirstComposerBar extends StatelessWidget {
                         onPressed:
                             canAttachImage &&
                                 !isAttachmentPending &&
-                                !isInputLocked
+                                !isInputLocked &&
+                                !isTopicResponding
                             ? () {
                                 menuController.close();
                                 onTakePhoto();
@@ -306,7 +314,7 @@ class ChatFirstComposerBar extends StatelessWidget {
                           focusNode: focusNode,
                           onTap: menuController.close,
                           onChanged: onChanged,
-                          enabled: !isInputLocked,
+                          enabled: !isInputLocked && !isTopicResponding,
                           minLines: 1,
                           maxLines: 5,
                           keyboardType: TextInputType.multiline,
@@ -331,7 +339,38 @@ class ChatFirstComposerBar extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (showStop)
+                      if (isTopicResponding)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: Semantics(
+                            label: '响应中',
+                            child: Container(
+                              key: const ValueKey(
+                                'chat-first-topic-responding',
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 9,
+                                vertical: 7,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF8F0F3),
+                                border: Border.all(
+                                  color: const Color(0xFFE7D3DC),
+                                ),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: const Text(
+                                '响应中',
+                                style: TextStyle(
+                                  color: Color(0xFF87576D),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      else if (showStop)
                         IconButton(
                           key: const ValueKey('agent-stop-button'),
                           tooltip: '结束运行',
@@ -343,7 +382,10 @@ class ChatFirstComposerBar extends StatelessWidget {
                         IconButton(
                           key: const ValueKey('agent-send-button'),
                           tooltip: '发送消息',
-                          onPressed: canSend && !isInputLocked ? onSend : null,
+                          onPressed:
+                              canSend && !isInputLocked && !isTopicResponding
+                              ? onSend
+                              : null,
                           icon: const Icon(
                             Icons.arrow_upward_rounded,
                             size: 20,

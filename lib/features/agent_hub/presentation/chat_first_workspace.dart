@@ -356,10 +356,10 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
                       return Text(
                         '宝宝出生 $days 天',
                         style: TextStyle(
-                          color: Color(0xFF4B3F3D),
-                          fontSize: width < 360 ? 11 : 12,
-                          fontWeight: FontWeight.w700,
-                          height: 1.25,
+                          color: Color(0xFF776A66),
+                          fontSize: width < 360 ? 10 : 10.5,
+                          fontWeight: FontWeight.w500,
+                          height: 1.3,
                         ),
                         maxLines: 2,
                       );

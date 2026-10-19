@@ -116,3 +116,17 @@
 - 全量非 Golden：`flutter test --no-pub --exclude-tags=golden --concurrency=2`，**1043 passed**（最终改动后 `/tmp/momcozy-demo-nongolden-postreview-20261018.log`）。Golden：`flutter test --no-pub --tags=golden --concurrency=2`，**506 passed、8 skipped**（最终改动后 `/tmp/momcozy-demo-golden-postreview-20261018.log`）。定向音频、任务卡、图片历史与快照测试额外通过；详情在 `/tmp/momcozy-audio-safe-20261018.log`、`/tmp/momcozy-poop-recovery-20261018.log`、`/tmp/momcozy-poop-history-20261018.log`。旧的 `english_*` 静态门禁只为本轮对话任务卡批准中文来源与共享页面中的四条精确反馈文案；未全局放开旧英文页面。原生麦克风用途文案门禁按“本地录音不上传”更新。
 - 原生 Android Debug APK 首次 Flutter 打包在 Gradle/AGP Maven AAPT2 `9.0.1-14304508` 的 daemon 启动处失败，单独调用该二进制同样卡在 mutex；这是该环境的资源编译器故障，不是业务逻辑通过的证据（日志 `/tmp/momcozy-demo-android-build-20261018.log`、`/tmp/momcozy-demo-android-build-limited-20261018.log`）。随后**不改仓库配置**，用本地 SDK build-tools `36.0.0` 的 AAPT2 作一次性 Gradle 覆盖、`--max-workers=1` 和固定 JDK 17，`./gradlew :app:assembleLocalDebug` **BUILD SUCCESSFUL**，包含 `record_android`、`just_audio` 插件（`/tmp/momcozy-demo-android-sdk-aapt2-20261018.log`）。最终 UI 改动后同一一次性覆盖命令再次 **BUILD SUCCESSFUL**（`/tmp/momcozy-demo-android-final-postreview.log`），当前 APK 可编译，但不证明设备录音/权限/试听已实测；常规 Maven AAPT2 故障仍待工具链排查。iOS `flutter build ios --simulator --debug --no-pub` 同样已成功，产物 `build/ios/iphonesimulator/Runner.app`（最终复跑 `/tmp/momcozy-demo-ios-final-postreview.log`）；不等同真机麦克风验收。
 - 本轮**未安装/刷新 Android 模拟器**、未运行 `make local-dev-refresh`；没有复用现有认证会话冒充新账号验收。设备相机/麦克风、服务端真实图片分析、Run 创建后的断网/重连和双端视觉手测仍为待验收项；本轮无后端/Agent 写入、无推送或部署。
+
+## 本地 Demo `358017d` → Flutter App 增量（2026-10-18）
+
+以本机 `../momcozy-lab-demo` 干净的 `main/358017d025d7f092488d0708cc9e0c419db057f7` 为对照（Demo 未配置远端，未 fetch/pull）；Flutter App 起点是 `dev/9d9f469a`。这节是对上文 `f8118ab` 增量账本的追加，不改变当时测试数字。本轮只改 App，保留先前在 README、emulator 刷新脚本及其测试里的未提交变更。
+
+- **看便便**：同一任务最多选择三张照片，选择时不上传；可逐张移除，提交后依次上传并用一条 Agent Run 传 1–3 个已验证资产引用，内部提示改为多图观察措辞。中途上传失败只重试未完成的照片；Run 结果不确定时复用幂等键，不删除可能已被服务端引用的资产。已接受后本次前台会话保留可放大的本地缩略图，离页/后台/换账号清除；持久快照只保存卡片与资产引用，不保存照片字节。首片段前任务卡提示「正在整理观察…」，底部在发送及响应期间显示不可操作的「响应中」。普通聊天附件与已存在的双游标流式处理不变。
+- **听哭闹**：Flutter 已有本地录音/试听卡，但 Demo 的真实分析依赖其本地 server 内的 Zoundream 私钥与服务端验证/上传流水线，Product Backend 目前没有等价的移动端专用代理契约。本次不把私钥或未校验第三方结果放进客户端，也不把本地试听伪称真实分析；上传/分析仍不可用。Demo 的火山引擎自动播报、白板每日建议同样没有在本轮伪接本地 Demo server。若要求完整行为同版，需另行设计、部署正式服务契约并做设备联调。
+- **验收**：`flutter analyze --no-pub` 无问题；定向 Widget 测试覆盖多图上限/移除/一次 Run、上传中途失败与幂等重试、缩略图放大及离页清理、响应中/最终回复状态、旧单图回归。全量非 Golden 最终复跑 **1142 通过、2 跳过**（`/tmp/momcozy-parity-nongolden-final-20261018.log`）；Golden **379 通过、6 跳过**（`/tmp/momcozy-parity-golden-20261018.log`，其后仅追加测试与文档，没有再修改运行时 UI）。`make app-build-local-apk` 构建成功，产物 `build/app/outputs/flutter-apk/app-local-debug.apk`；`flutter build ios --simulator --debug --no-pub` 构建成功，产物 `build/ios/iphonesimulator/Runner.app`。**未刷新 emulator**（刷新必须用全新测试账号）、未推送、未发布、未重新部署后端；相机/麦克风真机与真实图片 Run 仍需设备验收。
+
+## Demo `main/27a62e5` 视觉增量（2026-10-19）
+
+本轮对照本地干净的 `../momcozy-lab-demo` `main/27a62e51750738f4f05900ca0fd23a16dd6d1c45`，不改侧栏。Flutter 哭声任务的**可用状态**继续沿用 Demo 的浅粉外卡／白色内容层，录音试听更新为同一行的播放、时长和进度条，短录音提示与操作按钮按卡内层级排列；附件面板采用四格布局。第四格“音频”明确禁用并显示“暂不可用”，不会让用户误以为已支持上传。
+
+该 Demo 新增的哭声结果卡依赖录音资产上传、Agent 工具调用及真实结果事件；当前 App 的 `ChatFirstCryAudioSession` 只有本地录音／试听契约，没有可发送音频的持久资产和可信结果事件，因此**没有伪造结果卡或拷贝 Demo 本地服务密钥**。要让该卡在 App 中出现，须先定义并部署移动端的音频上传、授权和 Agent 结果契约，并补端到端测试。视觉 Golden 仅证明当前本地试听态，不代表分析已可用。

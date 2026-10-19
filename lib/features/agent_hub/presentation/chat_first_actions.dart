@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'chat_first_demo_icon.dart';
+
 const chatFirstRecordUnavailableMessage = '记录暂不可用，请稍后重试。';
 
 enum ChatFirstRecordKind {
@@ -35,27 +37,9 @@ class ChatFirstQuickActions extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       children: [
-        _action(
-          'chat-first-action-record',
-          '记录',
-          Icons.edit_note_rounded,
-          onRecord,
-          false,
-        ),
-        _action(
-          'chat-first-action-cry',
-          '听哭闹',
-          Icons.graphic_eq_rounded,
-          onCry,
-          false,
-        ),
-        _action(
-          'chat-first-action-poop',
-          '看便便',
-          Icons.child_care_outlined,
-          onPoop,
-          false,
-        ),
+        _action('chat-first-action-record', '记录', 'baby', onRecord, false),
+        _action('chat-first-action-cry', '听哭闹', 'sound-wave', onCry, false),
+        _action('chat-first-action-poop', '看便便', 'diaper', onPoop, false),
       ],
     ),
   );
@@ -63,7 +47,7 @@ class ChatFirstQuickActions extends StatelessWidget {
   Widget _action(
     String key,
     String label,
-    IconData icon,
+    String icon,
     VoidCallback onPressed,
     bool selected,
   ) => Padding(
@@ -71,7 +55,7 @@ class ChatFirstQuickActions extends StatelessWidget {
     child: OutlinedButton.icon(
       key: ValueKey(key),
       onPressed: onPressed,
-      icon: Icon(icon, size: 16),
+      icon: ChatFirstDemoIcon(icon, size: 16, color: const Color(0xFF975771)),
       label: Text(label),
       style: OutlinedButton.styleFrom(
         backgroundColor: selected

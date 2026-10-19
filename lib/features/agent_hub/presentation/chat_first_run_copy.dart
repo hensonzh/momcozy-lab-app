@@ -1,5 +1,6 @@
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 
+const chatFirstTodayLabel = '今天';
 const chatFirstNoResponse = '这次没有收到回复。';
 const chatFirstRetry = '重试';
 const chatFirstRestoringHistory = '正在恢复对话…';
