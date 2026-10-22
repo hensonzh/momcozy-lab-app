@@ -8,6 +8,7 @@ import 'package:momcozy_flutter_app/domain/shared/product_failure.dart';
 import 'package:momcozy_flutter_app/features/app_pages/chat_first_baby_page.dart';
 import 'package:momcozy_flutter_app/modules/baby/application/baby_home_controller.dart';
 import 'package:momcozy_flutter_app/modules/baby/presentation/baby_profile_editor.dart';
+import 'package:momcozy_flutter_app/modules/baby/presentation/baby_growth_curve.dart';
 
 import '../../modules/baby/baby_test_repositories.dart';
 
@@ -40,7 +41,7 @@ void main() {
     ),
   );
 
-  testWidgets('real saved records populate the two product overview rows', (
+  testWidgets('selected baby shows recorded today, seven days and growth', (
     tester,
   ) async {
     final records = BabyTestRecords()
@@ -51,6 +52,13 @@ void main() {
           occurredAt: babyTestNow.subtract(const Duration(hours: 1)),
           method: BabyFeedingMethod.formula,
           volumeMl: 90,
+        ),
+        BabyFeedingRecord(
+          id: 'feeding-yesterday',
+          babyId: 'baby',
+          occurredAt: babyTestNow.subtract(const Duration(days: 1)),
+          method: BabyFeedingMethod.formula,
+          volumeMl: 80,
         ),
         BabySleepRecord(
           id: 'sleep-1',
@@ -66,6 +74,14 @@ void main() {
           metric: GrowthMetric.weight,
           value: 3.8,
         ),
+        BabyGrowthRecord(
+          id: 'weight-2',
+          babyId: 'baby',
+          recordedOn: LocalDate(2026, 9, 1),
+          timezone: 'UTC',
+          metric: GrowthMetric.weight,
+          value: 3.5,
+        ),
       ];
     var opens = 0;
     await tester.pumpWidget(
@@ -76,24 +92,96 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Luna'), findsOneWidget);
-    expect(find.text('女孩 · 出生 21 天'), findsOneWidget);
-    expect(find.text('1 次喂养'), findsOneWidget);
-    expect(find.text('今天喂养 1 次 · 睡眠 1 次'), findsOneWidget);
-    expect(find.text('体重 3.8 kg'), findsOneWidget);
-    expect(find.text('4 次喂养'), findsNothing);
-    final semantics = tester.ensureSemantics();
-    expect(find.bySemanticsLabel('查看喂养与睡眠，今天喂养 1 次 · 睡眠 1 次'), findsOneWidget);
-    expect(
-      tester
-          .getSemantics(find.byKey(const ValueKey('baby-feeding-sleep')))
-          .flagsCollection
-          .isButton,
-      isTrue,
-    );
-    semantics.dispose();
-    await tester.tap(find.byKey(const ValueKey('baby-feeding-sleep')));
+    expect(find.text('女孩 · 出生 21 天 · 出生日期 2026-08-18'), findsOneWidget);
+    expect(find.text('今日照护'), findsOneWidget);
+    expect(find.text('喂养记录'), findsOneWidget);
+    expect(find.text('湿尿布记录'), findsOneWidget);
+    expect(find.text('脏尿布记录'), findsOneWidget);
+    expect(find.text('睡眠记录'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('baby-record-action')));
     await tester.pumpAndSettle();
     expect(opens, 1);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('baby-care-2026-09-07')),
+      180,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('chat-first-baby-page')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    final yesterday = find.byKey(const ValueKey('baby-care-2026-09-07'));
+    expect(
+      find.descendant(of: yesterday, matching: find.text('1 次喂养')),
+      findsOneWidget,
+    );
+    expect(find.text('未记录'), findsWidgets);
+    await tester.ensureVisible(find.widgetWithText(ChoiceChip, '尿布'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ChoiceChip, '尿布'));
+    await tester.pumpAndSettle();
+    final todayRow = find.byKey(const ValueKey('baby-care-2026-09-08'));
+    expect(
+      find.descendant(of: todayRow, matching: find.text('未记录')),
+      findsOneWidget,
+    );
+    await tester.scrollUntilVisible(
+      find.text('逐笔测量'),
+      180,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('chat-first-baby-page')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    expect(find.text('3.8 kg'), findsOneWidget);
+    expect(find.text('3.5 kg'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('after six months uses latest measurement, not an old curve', (
+    tester,
+  ) async {
+    final profiles = BabyTestProfiles()
+      ..values = [
+        BabyProfile(
+          id: 'baby',
+          name: 'Luna',
+          birthDate: LocalDate(2026, 1, 1),
+          sex: BabySex.female,
+        ),
+      ];
+    final records = BabyTestRecords()
+      ..values = [
+        BabyGrowthRecord(
+          id: 'recent',
+          babyId: 'baby',
+          recordedOn: LocalDate(2026, 9, 7),
+          timezone: 'UTC',
+          metric: GrowthMetric.weight,
+          value: 8.2,
+        ),
+      ];
+    await tester.pumpWidget(
+      host(controller(profiles, records, selectedBabyId: 'baby')),
+    );
+    await tester.pumpAndSettle();
+    final scrollable = find
+        .descendant(
+          of: find.byKey(const ValueKey('chat-first-baby-page')),
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('baby-growth-latest')),
+      200,
+      scrollable: scrollable,
+    );
+    expect(find.textContaining('8.2 kg'), findsOneWidget);
+    expect(find.textContaining('前 6 个月'), findsOneWidget);
+    expect(find.byType(BabyGrowthCurve), findsNothing);
     await tester.pumpWidget(const SizedBox());
   });
 

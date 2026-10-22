@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Momcozy · 妈妈与宝宝页面设计示例</title>
+  <style>
+    :root { --bg:#fbf8f4; --surface:#fffdfc; --ink:#2b2826; --muted:#776e69; --border:#e9e1dc; --rose:#b54f78; --rose-soft:#f8e9ed; --teal:#3e7180; --mint:#e8f3ef; --neutral:#f2ebe5; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#eae2db; color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Noto Sans CJK SC","PingFang SC",sans-serif; }
+    button { font:inherit; cursor:pointer; }
+    .intro { max-width:860px; margin:25px auto 20px; padding:0 14px; display:flex; justify-content:space-between; gap:18px; align-items:end; }
+    .intro h1 { font-size:22px; letter-spacing:-.03em; margin:0 0 5px; }
+    .intro p { font-size:13px; margin:0; color:#685f5b; line-height:1.6; }
+    .legend { padding:8px 12px; background:#fff7e7; border:1px solid #e8d9bd; border-radius:10px; color:#594b33; font-size:12px; white-space:nowrap; }
+    .switch-preview { display:none; }
+    .gallery { max-width:860px; margin:0 auto 35px; display:flex; justify-content:center; gap:26px; align-items:start; }
+    .phone { width:390px; height:824px; flex:none; border:8px solid #302b2b; border-radius:39px; box-shadow:0 18px 48px rgba(45,32,31,.19); background:var(--bg); overflow:hidden; display:flex; flex-direction:column; }
+    .chrome { height:32px; flex:none; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; background:var(--bg); position:relative; }
+    .chrome::after { content:""; width:78px; height:15px; border-radius:0 0 12px 12px; background:#302b2b; position:absolute; top:-4px; left:calc(50% - 39px); }
+    .screen { overflow:auto; scrollbar-width:thin; scrollbar-color:#daccc3 transparent; flex:1; overscroll-behavior:contain; }
+    .bar { position:sticky; top:0; z-index:10; height:54px; background:rgba(251,248,244,.97); backdrop-filter:blur(8px); border-bottom:1px solid #eee7e1; display:flex; align-items:center; padding:0 16px 0 12px; gap:10px; }
+    .bar strong { font-size:16px; }
+    .bar .spacer { flex:1; }
+    .iconbtn { min-width:44px; min-height:44px; border:0; background:transparent; color:var(--ink); font-size:21px; line-height:1; border-radius:12px; }
+    .iconbtn:focus-visible, button:focus-visible { outline:3px solid #3e7180; outline-offset:2px; }
+    .page { padding:20px 18px 35px; }
+    .eyebrow { text-transform:uppercase; letter-spacing:.09em; color:var(--muted); font-size:11px; font-weight:700; }
+    .hero { border:1px solid var(--border); border-radius:22px; padding:18px 18px 17px; margin:11px 0 24px; background:linear-gradient(125deg,#fffaf7 0%,#fff1ed 52%,#f8eaf0 100%); position:relative; overflow:hidden; }
+    .hero.baby { background:linear-gradient(120deg,#fffdfc 0%,#f0f7f2 63%,#e7f2ef 100%); }
+    .hero::after { content:""; position:absolute; width:134px; height:134px; border:1px solid rgba(181,79,120,.14); border-radius:50%; right:-49px; top:-32px; box-shadow:0 0 0 19px rgba(181,79,120,.035); pointer-events:none; }
+    .hero.baby::after { border-color:rgba(62,113,128,.16); box-shadow:0 0 0 19px rgba(62,113,128,.035); }
+    .hero-head { display:flex; justify-content:space-between; align-items:start; gap:10px; position:relative; z-index:1; }
+    .hero h2 { font-size:25px; letter-spacing:-.035em; margin:8px 0 5px; line-height:1.25; }
+    .hero p { margin:0; font-size:13px; color:#5e5553; line-height:1.6; }
+    .stage { display:inline-flex; align-items:center; border-radius:999px; background:#fff9f8; padding:6px 10px; color:#8e4a62; font-size:12px; font-weight:650; margin-top:16px; }
+    .hero.baby .stage { color:#386c6d; background:#f8fdfb; }
+    .smallbtn { min-height:44px; padding:0 10px; border:1px solid #dbc9c8; color:#744255; background:#fffaf9; border-radius:12px; font-size:12px; font-weight:650; white-space:nowrap; position:relative; z-index:1; }
+    .hero.baby .smallbtn { border-color:#bfd7d4; color:#35656e; background:#fbfffd; }
+    .section { margin:0 0 24px; }
+    .section-head { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:0 1px 11px; }
+    .section-head h3 { font-size:18px; letter-spacing:-.025em; margin:0; }
+    .section-head a, .section-head button { border:0; background:transparent; color:var(--rose); font-size:13px; font-weight:650; text-decoration:none; padding:7px 0; }
+    .baby-panel .section-head a, .baby-panel .section-head button { color:var(--teal); }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:16px; }
+    .soft { background:#fffcfa; }
+    .caption { color:var(--muted); font-size:12px; line-height:1.5; }
+    .state-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+    .state { min-height:91px; border-radius:14px; background:#f9f4f0; padding:12px 10px; }
+    .state .label { color:var(--muted); font-size:11px; display:block; margin-bottom:10px; }
+    .state b { font-size:14px; line-height:1.35; display:block; }
+    .state small { display:block; color:var(--muted); margin-top:5px; font-size:10px; }
+    .note { margin:12px 0 0; color:var(--muted); font-size:12px; line-height:1.5; }
+    .primary { border:0; min-height:44px; background:var(--rose); color:#fff; font-weight:700; padding:0 16px; border-radius:12px; }
+    .primary.teal { background:var(--teal); }
+    .actions { display:flex; justify-content:space-between; align-items:center; margin-top:13px; gap:12px; }
+    .text-action { border:0; background:transparent; color:var(--rose); min-height:44px; font-size:13px; font-weight:650; padding:0; }
+    .baby-panel .text-action { color:var(--teal); }
+    .big-number { font-size:30px; line-height:1; letter-spacing:-.045em; font-weight:760; font-variant-numeric:tabular-nums; }
+    .big-number small { font-size:15px; letter-spacing:0; font-weight:600; }
+    .metric-line { display:flex; align-items:end; justify-content:space-between; gap:8px; }
+    .metric-line .aside { color:var(--muted); font-size:12px; text-align:right; line-height:1.4; }
+    .rule { height:1px; background:var(--border); margin:15px 0; }
+    .table-title { display:flex; align-items:center; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:7px; }
+    .badge { border-radius:999px; background:var(--mint); color:#306071; font-size:10px; padding:4px 7px; font-weight:700; white-space:nowrap; }
+    .badge.planned { background:#f3eee2; color:#695b46; }
+    .trend { width:100%; border-collapse:collapse; table-layout:fixed; font-size:12px; }
+    .trend th { color:var(--muted); font-weight:600; text-align:left; padding:8px 0; border-bottom:1px solid var(--border); }
+    .trend td { padding:9px 0; border-bottom:1px solid #f0eae5; vertical-align:middle; font-variant-numeric:tabular-nums; }
+    .trend tr:last-child td { border:0; }
+    .trend th:last-child,.trend td:last-child { text-align:right; }
+    .trend .quiet { color:#8a817a; }
+    .trend th:nth-child(1) { width:53px; }
+    .trend th:nth-child(3) { width:66px; }
+    .value { display:flex; gap:6px; align-items:center; white-space:nowrap; }
+    .tinybar { height:6px; background:#f3e8e8; border-radius:99px; width:50px; overflow:hidden; display:inline-block; flex:none; }
+    .tinybar i { display:block; height:100%; background:var(--rose); border-radius:99px; }
+    .baby-panel .tinybar { background:#e6f0ec; }
+    .baby-panel .tinybar i { background:var(--teal); }
+    .tag-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
+    .tag { border-radius:99px; background:#f7e9ee; color:#81465b; font-size:12px; padding:7px 10px; }
+    .meta { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0; }
+    .meta dt { font-size:11px; color:var(--muted); margin:0 0 4px; }
+    .meta dd { margin:0; font-size:14px; font-weight:650; }
+    .counts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .count { border:1px solid #e3ede9; background:#f8fcfa; border-radius:14px; padding:12px; min-height:81px; }
+    .count span { font-size:12px; color:#5b706e; display:block; }
+    .count strong { font-size:23px; display:block; margin-top:7px; font-variant-numeric:tabular-nums; }
+    .count strong small { font-size:12px; font-weight:600; }
+    .segmented { display:flex; background:#f1eee9; padding:3px; border-radius:12px; gap:2px; margin:10px 0 7px; }
+    .segmented button { flex:1; border:0; background:transparent; color:#665e5a; border-radius:9px; min-height:40px; font-size:12px; font-weight:600; }
+    .segmented button[aria-selected="true"] { background:white; color:var(--teal); box-shadow:0 1px 4px #d5d0c9; }
+    .grow-chart { border-radius:12px; background:#fafcfb; margin:14px 0 8px; padding:5px 8px; }
+    .grow-chart svg { display:block; width:100%; height:90px; overflow:visible; }
+    .grow-chart .grid { stroke:#d9e7e2; stroke-width:1; }
+    .grow-chart .line { fill:none; stroke:var(--teal); stroke-width:3; stroke-linejoin:round; stroke-linecap:round; }
+    .grow-chart circle { fill:#fff; stroke:var(--teal); stroke-width:2.5; }
+    .inline-link { display:flex; width:100%; min-height:46px; justify-content:space-between; align-items:center; background:transparent; border:0; border-top:1px solid var(--border); color:var(--ink); padding:12px 0; text-align:left; font-size:14px; }
+    .inline-link:last-child { border-bottom:1px solid var(--border); }
+    .inline-link span:last-child { color:var(--muted); }
+    .foot { text-align:center; color:var(--muted); font-size:11px; padding:6px 0 4px; line-height:1.5; }
+    @media (max-width:850px) { .gallery { gap:12px; } .phone { width:min(390px,calc((100vw - 30px)/2)); } .intro { margin:14px auto; } }
+    @media (max-width:700px) {
+      .intro { flex-direction:column; align-items:start; margin:10px auto; max-width:390px; }
+      .switch-preview { display:flex; gap:7px; max-width:390px; margin:0 auto 12px; padding:0 14px; }
+      .switch-preview button { flex:1; border:1px solid #d5c8c0; border-radius:11px; min-height:42px; background:#f6f0eb; color:#554942; font-weight:650; }
+      .switch-preview button[aria-selected="true"] { background:#fff; border-color:var(--rose); color:var(--rose); }
+      .gallery { padding:0 8px; margin-bottom:15px; }
+      .phone { width:min(390px,100%); display:none; }
+      .phone.active { display:flex; }
+    }
+    @media (max-width:420px) { .intro { padding:0 12px; } .gallery { padding:0; } .phone { height:calc(100dvh - 125px); min-height:560px; border-width:0; border-radius:0; box-shadow:none; } .state-grid { gap:5px; } .state { padding:10px 8px; } }
+  </style>
+</head>
+<body>
+  <div class="intro">
+    <div><h1>妈妈与宝宝 · 页面设计示例</h1><p>沿用现有 App 色彩与页面层级。下方只演示信息密度、趋势表和操作位置。</p></div>
+    <div class="legend">示例数据 · 非真实用户 / 非已实现功能</div>
+  </div>
+  <div class="switch-preview" role="tablist" aria-label="切换设计页面">
+    <button type="button" role="tab" data-page="mother" aria-selected="true">妈妈</button>
+    <button type="button" role="tab" data-page="baby" aria-selected="false">宝宝</button>
+  </div>
+  <main class="gallery">
+    <section class="phone active mother-panel" data-phone="mother" aria-label="妈妈页面设计">
+      <div class="chrome">9:41</div>
+      <div class="screen">
+        <div class="bar"><button class="iconbtn" type="button" aria-label="返回对话，示例未连接">‹</button><strong>妈妈</strong><span class="spacer"></span><button class="iconbtn" type="button" aria-label="更多，示例未连接">⋯</button></div>
+        <div class="page">
+          <span class="eyebrow">我的照护档案</span>
+          <div class="hero">
+            <div class="hero-head"><div><h2>妈妈的空间</h2><p>先照顾好自己。这里只显示已保存的记录。</p></div><button class="smallbtn" type="button">查看资料</button></div>
+            <span class="stage">已填写分娩日期 · 产后第 42 天</span>
+          </div>
+          <section class="section">
+            <div class="section-head"><h3>最近的我</h3><button type="button">查看记录 ›</button></div>
+            <div class="card"><div class="state-grid">
+              <div class="state"><span class="label">睡眠</span><b>5–6 小时</b><small>昨天记录</small></div>
+              <div class="state"><span class="label">精力</span><b>还撑得住</b><small>今天记录</small></div>
+              <div class="state"><span class="label">心情</span><b>一般</b><small>今天记录</small></div>
+            </div><div class="actions"><span class="caption">仅展示自己填写的状态</span><button class="primary" type="button">记录状态</button></div></div>
+          </section>
+          <section class="section">
+            <div class="section-head"><h3>吸奶记录</h3><button type="button">全部记录 ›</button></div>
+            <div class="card"><div class="metric-line"><div><span class="caption">今天已记录</span><div class="big-number" style="margin-top:9px">180 <small>ml</small></div></div><div class="aside">2 次<br>均填写奶量</div></div>
+              <div class="rule"></div><div class="table-title"><span>近 7 天 · 已记录奶量</span><span class="badge">按日期查看</span></div>
+              <table class="trend"><thead><tr><th>日期</th><th>奶量 · ml</th><th>次数/状态</th></tr></thead><tbody>
+                <tr><td>10/22</td><td><span class="value"><span class="tinybar"><i style="width:72%"></i></span>180</span></td><td>2 次</td></tr>
+                <tr><td>10/21</td><td><span class="value"><span class="tinybar"><i style="width:84%"></i></span>210</span></td><td>2 次</td></tr>
+                <tr><td>10/20</td><td><span class="value"><span class="tinybar"><i style="width:70%"></i></span>175</span></td><td>2 次</td></tr>
+                <tr><td>10/19</td><td class="quiet">未填全</td><td>2 次 · 部分</td></tr>
+                <tr><td>10/18</td><td class="quiet">—</td><td>未记录</td></tr>
+                <tr><td>10/17</td><td><span class="value"><span class="tinybar"><i style="width:38%"></i></span>95</span></td><td>1 次</td></tr>
+                <tr><td>10/16</td><td><span class="value"><span class="tinybar"><i style="width:60%"></i></span>150</span></td><td>2 次</td></tr>
+              </tbody></table><p class="note">断档不补零；部分记录不参与精确平均。这里不推断奶量是否充足。</p>
+            </div>
+          </section>
+          <section class="section"><div class="section-head"><h3>我的关注</h3><button type="button">管理 ›</button></div><div class="card"><span class="caption">你已保存的关注点</span><div class="tag-row"><span class="tag">吸奶节奏</span><span class="tag">休息与精力</span></div></div></section>
+          <section class="section"><div class="section-head"><h3>妈妈资料</h3></div><div class="card"><dl class="meta"><div><dt>年龄</dt><dd>31 岁</dd></div><div><dt>分娩日期</dt><dd>2026/9/10</dd></div><div><dt>生育次数</dt><dd>第 1 次</dd></div><div><dt>分娩时孕周</dt><dd>38 周</dd></div></dl></div><button class="inline-link" type="button"><span>旧版泌乳管理 · 独立数据</span><span>›</span></button></section>
+          <div class="foot">设计示例 · 所有数值均为虚构，按钮未接真实功能</div>
+        </div>
+      </div>
+    </section>
+    <section class="phone baby-panel" data-phone="baby" aria-label="宝宝页面设计">
+      <div class="chrome">9:41</div>
+      <div class="screen">
+        <div class="bar"><button class="iconbtn" type="button" aria-label="返回对话，示例未连接">‹</button><strong>宝宝</strong><span class="spacer"></span><button class="iconbtn" type="button" aria-label="更多，示例未连接">⋯</button></div>
+        <div class="page">
+          <span class="eyebrow">当前宝宝</span>
+          <div class="hero baby"><div class="hero-head"><div><h2>小满 <span style="font-size:14px;vertical-align:middle">⌄</span></h2><p>出生日期 2026/9/10 · 混合喂养</p></div><button class="smallbtn" type="button">编辑资料</button></div><span class="stage">出生 42 天 · 当前查看小满的记录</span></div>
+          <section class="section"><div class="section-head"><h3>今日照护</h3><span class="caption">按账号当地日期</span></div><div class="card"><div class="counts">
+            <div class="count"><span>喂养记录</span><strong>6 <small>次</small></strong></div>
+            <div class="count"><span>湿尿布记录</span><strong>5 <small>次</small></strong></div>
+            <div class="count"><span>脏尿布记录</span><strong>2 <small>次</small></strong></div>
+            <div class="count"><span>睡眠记录</span><strong>—</strong></div>
+          </div><div class="actions"><span class="caption">— 表示尚无记录，不是 0 次</span><button class="primary teal" type="button">记一笔</button></div></div></section>
+          <section class="section"><div class="section-head"><h3>照护趋势</h3><span class="badge planned">目标态 · 需完整 7 天数据</span></div><div class="card"><span class="caption">最近 7 天 · 小满的已保存记录</span><div class="segmented" role="tablist" aria-label="照护趋势指标"><button class="care-tab" type="button" role="tab" data-kind="feeding" aria-selected="true">喂养</button><button class="care-tab" type="button" role="tab" data-kind="diaper" aria-selected="false">尿布</button><button class="care-tab" type="button" role="tab" data-kind="sleep" aria-selected="false">睡眠</button></div><table class="trend" aria-live="polite"><thead><tr><th>日期</th><th>已保存记录</th><th>状态</th></tr></thead><tbody id="care-rows"></tbody></table><p class="note" id="care-note">记录次数不是喂养量；未记录日不填 0。</p></div></section>
+          <section class="section"><div class="section-head"><h3>生长趋势</h3><button type="button">全部测量 ›</button></div><div class="card"><span class="caption">最近测量 · 仅呈现个人记录</span><div class="segmented" role="tablist" aria-label="生长指标"><button class="growth-tab" type="button" role="tab" data-growth="weight" aria-selected="true">体重</button><button class="growth-tab" type="button" role="tab" data-growth="length" aria-selected="false">身长</button><button class="growth-tab" type="button" role="tab" data-growth="head" aria-selected="false">头围</button></div><div class="metric-line"><div class="big-number" id="growth-latest">4.6 <small>kg</small></div><span class="caption" id="growth-date">最近测量 10/20</span></div><div class="grow-chart" role="img" aria-label="示例体重记录的个人变化，逐笔值见下方表格"><svg viewBox="0 0 300 90" preserveAspectRatio="none" aria-hidden="true"><path class="grid" d="M8 70H292 M8 40H292 M8 10H292"/><path class="line" d="M24 72L118 57L204 39L278 20"/><circle cx="24" cy="72" r="4"/><circle cx="118" cy="57" r="4"/><circle cx="204" cy="39" r="4"/><circle cx="278" cy="20" r="4"/></svg></div><table class="trend"><thead><tr><th>日期</th><th>测量值</th><th>单位</th></tr></thead><tbody id="growth-rows"></tbody></table><p class="note">只连同一宝宝、同一指标的实测点；不据此作健康判断。</p></div></section>
+          <section class="section"><div class="section-head"><h3>宝宝资料与记录</h3></div><button class="inline-link" type="button"><span>出生日期、喂养方式等资料</span><span>›</span></button><button class="inline-link" type="button"><span>查看完整记录与管理</span><span>›</span></button></section>
+          <div class="foot">设计示例 · 所有数值均为虚构，按钮未接真实功能</div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const careData = {
+      feeding: { unit:'次喂养', values:[6,7,6,null,5,7,6], note:'记录次数不是喂养量；未记录日不填 0。' },
+      diaper: { unit:'尿布', values:[[5,2],[4,2],[6,2],null,[5,1],[5,2],[4,3]], note:'湿尿布、脏尿布分开呈现；未记录日不填 0。' },
+      sleep: { unit:'段睡眠', values:[null,4,5,null,4,5,5], note:'仅完整保存的睡眠段计数；没有记录不代表没有睡。' }
+    };
+    const dates = ['10/22','10/21','10/20','10/19','10/18','10/17','10/16'];
+    const growthData = {
+      weight:{unit:'kg',latest:'4.6',at:'10/20',rows:[['10/20','4.6'],['10/05','4.2'],['09/20','3.8'],['09/10','3.2']]},
+      length:{unit:'cm',latest:'54.2',at:'10/20',rows:[['10/20','54.2'],['10/05','52.1'],['09/20','50.2'],['09/10','49.0']]},
+      head:{unit:'cm',latest:'37.1',at:'10/20',rows:[['10/20','37.1'],['10/05','36.2'],['09/20','35.1'],['09/10','34.0']]}
+    };
+    function renderCare(kind) {
+      const data=careData[kind];
+      document.querySelectorAll('.care-tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.kind===kind)));
+      document.querySelector('#care-note').textContent=data.note;
+      document.querySelector('#care-rows').innerHTML=data.values.map((value,i)=>`<tr><td>${dates[i]}</td><td>${value===null?'<span class="quiet">— 未记录</span>':Array.isArray(value)?`湿 ${value[0]} · 脏 ${value[1]}`:`<span class="value"><span class="tinybar"><i style="width:${Math.max(12,value/9*100)}%"></i></span>${value} ${data.unit}</span>`}</td><td>${value===null?'未记录':'已记录'}</td></tr>`).join('');
+    }
+    function renderGrowth(kind) {
+      const data=growthData[kind];
+      document.querySelectorAll('.growth-tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.growth===kind)));
+      document.querySelector('#growth-latest').innerHTML=`${data.latest} <small>${data.unit}</small>`;
+      document.querySelector('#growth-date').textContent=`最近测量 ${data.at}`;
+      document.querySelector('#growth-rows').innerHTML=data.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${data.unit}</td></tr>`).join('');
+      const numeric = data.rows.slice().reverse().map(row=>Number(row[1]));
+      const lo = Math.min(...numeric), hi = Math.max(...numeric), span = Math.max(hi-lo, .1);
+      const x = [24,118,204,278];
+      const coordinates = numeric.map((value,index)=>[x[index],72-52*(value-lo)/span]);
+      document.querySelector('.grow-chart .line').setAttribute('d',coordinates.map((point,index)=>`${index?'L':'M'}${point[0]} ${point[1]}`).join(''));
+      document.querySelectorAll('.grow-chart circle').forEach((circle,index)=>{
+        circle.setAttribute('cx',coordinates[index][0]); circle.setAttribute('cy',coordinates[index][1]);
+      });
+      document.querySelector('.grow-chart').setAttribute('aria-label',`示例${{weight:'体重',length:'身长',head:'头围'}[kind]}记录的个人变化，逐笔值见下方表格`);
+    }
+    document.querySelectorAll('.care-tab').forEach(b=>b.addEventListener('click',()=>renderCare(b.dataset.kind)));
+    document.querySelectorAll('.growth-tab').forEach(b=>b.addEventListener('click',()=>renderGrowth(b.dataset.growth)));
+    document.querySelectorAll('.switch-preview button').forEach(b=>b.addEventListener('click',()=>{
+      document.querySelectorAll('.switch-preview button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));
+      document.querySelectorAll('.phone').forEach(x=>x.classList.toggle('active',x.dataset.phone===b.dataset.page));
+    }));
+    renderCare('feeding'); renderGrowth('weight');
+  </script>
+</body>
+</html>
