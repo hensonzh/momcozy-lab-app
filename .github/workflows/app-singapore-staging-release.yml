@@ -77,6 +77,7 @@ jobs:
       name: singapore-staging
       url: https://hensonzh.github.io/momcozy-lab-releases/staging/
     env:
+      TZ: Asia/Shanghai
       MOMCOZY_RELEASE_TARGET: singapore-staging
       MOMCOZY_APK_DART_DEFINES: MOMCOZY_INTERNAL_INVITE_LOGIN=true
       MOMCOZY_APK_FLAVOR: staging

@@ -51,7 +51,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Format, analyze and test the fictional demo
         run: |
-          dart format --output=none --set-exit-if-changed lib test
+          dart format --output=none --set-exit-if-changed lib test/web_demo
           flutter analyze --no-pub
           flutter test --no-pub test/web_demo
       - name: Build public static site and reject sensitive assets

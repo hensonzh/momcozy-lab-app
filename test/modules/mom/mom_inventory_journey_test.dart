@@ -115,7 +115,10 @@ void main() {
     expect(tester.takeException(), isNull);
   }
 
-  Future<void> verifyState(WidgetTester tester, {String route = '/me/lactation'}) async {
+  Future<void> verifyState(
+    WidgetTester tester, {
+    String route = '/me/lactation',
+  }) async {
     // Commit edits and finish the input hint's fade without settling spinners.
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 250));

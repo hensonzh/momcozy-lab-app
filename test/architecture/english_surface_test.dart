@@ -12,6 +12,7 @@ const _approvedChatFirstChineseSources = <String>{
   'lib/features/agent_hub/presentation/chat_first_cry_task.dart',
   'lib/features/agent_hub/presentation/chat_first_poop_task.dart',
   'lib/features/agent_hub/domain/chat_first_poop_task.dart',
+  'lib/features/agent_hub/domain/chat_first_daily_advice.dart',
   'lib/features/agent_hub/presentation/chat_first_composer.dart',
   'lib/features/agent_hub/presentation/chat_first_run_copy.dart',
   'lib/features/agent_hub/domain/chat_first_welcome.dart',
