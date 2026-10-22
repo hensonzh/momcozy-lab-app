@@ -85,6 +85,7 @@ const _approvedChatFirstChineseSources = <String>{
   'lib/features/agent_hub/presentation/chat_first_cry_task.dart',
   'lib/features/agent_hub/presentation/chat_first_poop_task.dart',
   'lib/features/agent_hub/domain/chat_first_poop_task.dart',
+  'lib/features/agent_hub/domain/chat_first_daily_advice.dart',
   'lib/features/agent_hub/presentation/chat_first_composer.dart',
   'lib/features/agent_hub/presentation/chat_first_run_copy.dart',
   'lib/features/agent_hub/domain/chat_first_welcome.dart',
@@ -110,6 +111,8 @@ const _approvedChatFirstChineseSources = <String>{
   'lib/modules/baby/presentation/baby_record_editor.dart',
   'lib/modules/baby/presentation/baby_record_fields.dart',
   'lib/modules/profile/presentation/chat_first_more_copy.dart',
+  // Language exception only; clinical review is tracked separately in the catalog.
+  'assets/content/baby_daily_advice_0_364.json',
 };
 const _textExtensions = <String>{
   '.dart',

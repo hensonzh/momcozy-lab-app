@@ -26,7 +26,7 @@ class BStoreBuildContractTests(unittest.TestCase):
         text = WORKFLOW.read_text()
         for required in (
             "tags: ['north-america-staging-v*']", "refs/tags/north-america-staging-v", "github.sha",
-            "app-north-america-ci.yml/runs", "conclusion", "success", "event", "push",
+            "for workflow in app-ci.yml app-north-america-ci.yml", "conclusion", "success", "event", "push",
             '.head_branch == "main"',
             "North America tag/version mismatch or previously used build number",
             "CODE_SIGN_STYLE = Manual", "PROVISIONING_PROFILE_SPECIFIER =",

@@ -40,18 +40,6 @@ jobs:
           python3 scripts/prepare_north_america_ci_config.py --output "${RUNNER_TEMP}/north-america-ci-defines.json"
           node scripts/build-mobile-app.mjs --platform android --environment staging --mode release --format appbundle --release-target north-america-staging --config config/release-targets/north-america-staging.ci.json --check-config
           node scripts/build-mobile-app.mjs --platform ios --environment staging --mode release --format ipa --release-target north-america-staging --config config/release-targets/north-america-staging.ci.json --check-config
-      - name: Check scripts, contracts, Android packaging and privacy
-        run: |
-          python3 -m unittest discover -s scripts/tests -p 'test_*.py'
-          python3 scripts/validate_backend_contract.py
-          node scripts/check-flutter-android-packaging.mjs
-          node scripts/check-flutter-security-privacy.mjs
-      - name: Reject Dart formatting drift
-        run: dart format --output=none --set-exit-if-changed lib test integration_test tool
-      - name: Analyze
-        run: flutter analyze --no-pub
-      - name: Test non-golden suite
-        run: flutter test --no-pub --exclude-tags=golden
       - name: Verify North America compile-time email login UI
         run: flutter test --no-pub --dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=false test/features/auth/release_lane_auth_mode_test.dart
 
@@ -111,27 +99,9 @@ jobs:
             --dart-define-from-file="${RUNNER_TEMP}/north-america-ci-defines.json" --no-pub
           test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' build/ios/iphonesimulator/Runner.app/Info.plist)" = 'com.momcozy.mai.staging'
 
-  golden:
-    runs-on: macos-15
-    timeout-minutes: 25
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
-        with:
-          flutter-version: 3.44.4
-          channel: stable
-          cache: true
-      - name: Verify canonical macOS goldens
-        env:
-          TZ: Asia/Shanghai
-          MOMCOZY_GOLDEN_PRECISION_TOLERANCE: "0.011"
-        run: |
-          flutter pub get
-          flutter test --no-pub --tags=golden
-
   north-america-ci:
     if: always()
-    needs: [quality, android-compile, ios-compile, golden]
+    needs: [quality, android-compile, ios-compile]
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
@@ -140,4 +110,3 @@ jobs:
           [[ "${{ needs.quality.result }}" == "success" ]]
           [[ "${{ needs.android-compile.result }}" == "success" ]]
           [[ "${{ needs.ios-compile.result }}" == "success" ]]
-          [[ "${{ needs.golden.result }}" == "success" ]]

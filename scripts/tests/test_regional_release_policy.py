@@ -5,6 +5,16 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class RegionalReleasePolicyTest(unittest.TestCase):
+    def test_pull_requests_validate_both_login_modes_without_building(self) -> None:
+        workflow = (ROOT / ".github/workflows/app-pr-verify.yml").read_text()
+        self.assertIn("pull_request:\n    branches: [main]", workflow)
+        self.assertIn("permissions:\n  contents: read", workflow)
+        for check in ("flutter analyze", "flutter test --no-pub --exclude-tags=golden",
+                      "MOMCOZY_INTERNAL_INVITE_LOGIN=true", "MOMCOZY_INTERNAL_INVITE_LOGIN=false"):
+            self.assertIn(check, workflow)
+        for forbidden in ("flutter build", "packages: write", "contents: write", "secrets.", "workflow_dispatch:"):
+            self.assertNotIn(forbidden, workflow)
+
     def test_build_workflows_are_main_only(self) -> None:
         for name in ("app-ci.yml", "app-north-america-ci.yml", "web-demo.yml"):
             workflow = (ROOT / ".github/workflows" / name).read_text()

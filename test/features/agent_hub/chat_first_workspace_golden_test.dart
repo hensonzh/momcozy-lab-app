@@ -73,7 +73,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(find.text('宝宝出生 4 天'), findsOneWidget);
-      expect(find.byKey(const ValueKey('chat-first-daily-advice')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('chat-first-daily-advice')),
+        findsOneWidget,
+      );
       final workspace = tester.getRect(
         find.byKey(const ValueKey('chat-first-workspace')),
       );

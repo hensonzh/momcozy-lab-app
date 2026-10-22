@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / ".github/workflows/app-north-america-ci.yml"
+SHARED = ROOT / ".github/workflows/app-ci.yml"
 TARGET = ROOT / "config/release-targets/north-america-staging.ci.json"
 
 
@@ -19,15 +20,22 @@ class BDevCIContractTests(unittest.TestCase):
         self.assertIn("push:\n    branches: [main]", text)
         self.assertNotIn("workflow_dispatch:", text)
         self.assertIn("permissions:\n  contents: read", text)
-        for name in ("quality", "android-compile", "ios-compile", "golden", "north-america-ci"):
+        for name in ("quality", "android-compile", "ios-compile", "north-america-ci"):
             self.assertIn(f"  {name}:", text)
         self.assertIn("if: always()", text)
         self.assertIn("needs.quality.result", text)
         self.assertIn("needs.android-compile.result", text)
         self.assertIn("needs.ios-compile.result", text)
-        self.assertIn("needs.golden.result", text)
+        self.assertNotIn("needs.golden.result", text)
         # Flutter needs root pubspec.yaml/lock and all referenced assets in compile jobs.
         self.assertNotIn("sparse-checkout: |", text)
+        for command in (
+            "flutter test --no-pub --dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=false test/features/auth/release_lane_auth_mode_test.dart",
+            "--flavor play", "--flavor staging", "--simulator", "--no-codesign",
+            "prepare_north_america_ci_config.py",
+        ):
+            self.assertIn(command, text)
+        shared = SHARED.read_text()
         for command in (
             "python3 -m unittest discover -s scripts/tests",
             "python3 scripts/validate_backend_contract.py",
@@ -36,12 +44,9 @@ class BDevCIContractTests(unittest.TestCase):
             "dart format --output=none --set-exit-if-changed",
             "flutter analyze --no-pub",
             "flutter test --no-pub --exclude-tags=golden",
-            "flutter test --no-pub --dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=false test/features/auth/release_lane_auth_mode_test.dart",
             "flutter test --no-pub --tags=golden",
-            "--flavor play", "--flavor staging", "--simulator", "--no-codesign",
-            "prepare_north_america_ci_config.py",
         ):
-            self.assertIn(command, text)
+            self.assertIn(command, shared)
         for forbidden in (
             "secrets.", "packages: write", "contents: write", "docker login",
             "gh release", "app-singapore-staging-release", "workflow_run:",
@@ -54,7 +59,7 @@ class BDevCIContractTests(unittest.TestCase):
     def test_ios_compile_uses_xcode_26_without_changing_golden_runner(self) -> None:
         text = WORKFLOW.read_text()
         self.assertIn("  ios-compile:\n    runs-on: macos-26", text)
-        self.assertIn("  golden:\n    runs-on: macos-15", text)
+        self.assertIn("  golden:\n    runs-on: macos-15", SHARED.read_text())
         self.assertIn("sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer", text)
         self.assertIn("xcodebuild -version | grep -Fx 'Xcode 26.6'", text)
 

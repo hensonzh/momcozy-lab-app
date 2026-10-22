@@ -24,16 +24,18 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Require successful North America CI on this exact remote main SHA
+      - name: Require successful shared and North America CI on this exact remote main SHA
         env:
           GH_TOKEN: ${{ github.token }}
           EXPECTED_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
           [[ "$(gh api "repos/${GITHUB_REPOSITORY}/branches/main" --jq '.commit.sha')" == "${EXPECTED_SHA}" ]]
-          gh api -X GET "repos/${GITHUB_REPOSITORY}/actions/workflows/app-north-america-ci.yml/runs" \
-            -f head_sha="${EXPECTED_SHA}" -f event=push -f status=success \
-            --jq '.workflow_runs[] | select(.event == "push" and .head_branch == "main" and .conclusion == "success") | .head_sha' | grep -Fx "${EXPECTED_SHA}"
+          for workflow in app-ci.yml app-north-america-ci.yml; do
+            gh api -X GET "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow}/runs" \
+              -f head_sha="${EXPECTED_SHA}" -f event=push -f status=success \
+              --jq '.workflow_runs[] | select(.event == "push" and .head_branch == "main" and .conclusion == "success") | .head_sha' | grep -Fx "${EXPECTED_SHA}"
+          done
       - name: Verify live North America OpenAPI against reviewed App contracts
         run: |
           set -euo pipefail

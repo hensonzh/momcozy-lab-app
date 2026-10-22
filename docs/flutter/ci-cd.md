@@ -18,7 +18,10 @@ explicit regional release target. Existing
 Android/iOS package identities are retained. `release` means the compiler
 build mode, not a production deployment environment.
 
-`app-ci.yml` and `app-north-america-ci.yml` validate source. The Singapore
+`app-pr-verify.yml` checks proposed changes without building an App package.
+On `main`, `app-ci.yml` owns shared quality, Golden and Singapore compilation;
+`app-north-america-ci.yml` checks regional login/configuration and compiles
+North America Android/iOS without rerunning the shared suite. The Singapore
 manual workflow is `app-singapore-staging-release.yml`. North America store
 artifact preparation is `app-north-america-store-build.yml`, gated on an exact
 remote `main` commit and successful matching CI. Store upload, compliance,

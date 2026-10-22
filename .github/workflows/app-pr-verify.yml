@@ -1,0 +1,44 @@
+name: app-pr-verify
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  pr-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: 3.44.4
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - name: Install dependencies
+        run: |
+          npm ci --ignore-scripts
+          flutter pub get
+      - name: Validate contracts and packaging policy
+        run: |
+          python3 -m unittest discover -s scripts/tests -p 'test_*.py'
+          python3 scripts/validate_backend_contract.py
+          node scripts/check-flutter-android-packaging.mjs
+          node scripts/check-flutter-security-privacy.mjs
+      - name: Format, analyze and test without building an App package
+        run: |
+          dart format --output=none --set-exit-if-changed lib test integration_test tool
+          flutter analyze --no-pub
+          flutter test --no-pub --exclude-tags=golden
+          flutter test --no-pub --dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=true test/features/auth/release_lane_auth_mode_test.dart
+          flutter test --no-pub --dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=false test/features/auth/release_lane_auth_mode_test.dart
