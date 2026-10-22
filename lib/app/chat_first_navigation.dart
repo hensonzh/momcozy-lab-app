@@ -44,7 +44,7 @@ class ChatFirstDrawer extends StatelessWidget {
                 _destination(
                   context,
                   'drawer-mother',
-                  '我的',
+                  '妈妈',
                   Icons.favorite_border_rounded,
                   '/me',
                 ),
@@ -111,7 +111,7 @@ class ChatFirstSectionHeader extends StatelessWidget {
         ),
         Text(switch (location) {
           '/baby' => '宝宝',
-          '/me' => '我的',
+          '/me' => '妈妈',
           '/devices' => '设备',
           '/schedule' => '日程',
           '/more' => '更多',

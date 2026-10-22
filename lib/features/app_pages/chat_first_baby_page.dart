@@ -3,9 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/domain/baby/baby_profile.dart';
 import 'package:momcozy_flutter_app/domain/baby/baby_record.dart';
+import 'package:momcozy_flutter_app/domain/baby/growth_reference.dart';
+import 'package:momcozy_flutter_app/domain/shared/local_date.dart';
+import 'package:momcozy_flutter_app/shared/zoned_time.dart';
 import 'package:momcozy_flutter_app/modules/baby/application/baby_home_controller.dart';
 import 'package:momcozy_flutter_app/modules/baby/presentation/baby_labels.dart';
 import 'package:momcozy_flutter_app/modules/baby/presentation/baby_profile_editor.dart';
+import 'package:momcozy_flutter_app/modules/baby/presentation/baby_growth_curve.dart';
 
 /// A conversation-first overview of saved, owner-scoped baby data. The
 /// existing full management page remains a secondary destination.
@@ -31,6 +35,8 @@ class _ChatFirstBabyPageState extends State<ChatFirstBabyPage>
     with WidgetsBindingObserver {
   Timer? _clock;
   bool _selecting = false;
+  BabyRecordKind _careMetric = BabyRecordKind.feeding;
+  GrowthMetric _growthMetric = GrowthMetric.weight;
 
   @override
   void initState() {
@@ -121,7 +127,11 @@ class _ChatFirstBabyPageState extends State<ChatFirstBabyPage>
 
   Future<void> _selectBaby(String id) async {
     if (_selecting || id == widget.controller.baby?.id) return;
-    setState(() => _selecting = true);
+    setState(() {
+      _selecting = true;
+      _careMetric = BabyRecordKind.feeding;
+      _growthMetric = GrowthMetric.weight;
+    });
     try {
       await widget.controller.select(id);
       if (mounted) await _remember(id);
@@ -146,49 +156,64 @@ class _ChatFirstBabyPageState extends State<ChatFirstBabyPage>
             padding: const EdgeInsets.fromLTRB(20, 25, 20, 40),
             children: [
               const Text(
-                '宝宝信息',
+                '当前宝宝',
                 style: TextStyle(fontSize: 12, color: Color(0xFF77717B)),
               ),
               const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      baby?.name ?? '宝宝资料',
-                      style: const TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF322C33),
-                      ),
-                    ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFFDFC), Color(0xFFE8F3EF)],
                   ),
-                  if (baby != null &&
-                      (controller.profiles.value?.length ?? 0) > 1)
-                    PopupMenuButton<String>(
-                      key: const ValueKey('baby-switch'),
-                      tooltip: '切换宝宝',
-                      enabled: !_selecting,
-                      onSelected: (id) => unawaited(_selectBaby(id)),
-                      itemBuilder: (context) => [
-                        for (final profile in controller.profiles.value!)
-                          PopupMenuItem(
-                            value: profile.id,
-                            child: Text(profile.name),
+                  border: Border.all(color: const Color(0xFFE1EBE7)),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.all(17),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            baby?.name ?? '宝宝资料',
+                            style: const TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF322C33),
+                            ),
+                          ),
+                        ),
+                        if (baby != null &&
+                            (controller.profiles.value?.length ?? 0) > 1)
+                          PopupMenuButton<String>(
+                            key: const ValueKey('baby-switch'),
+                            tooltip: '切换宝宝',
+                            enabled: !_selecting,
+                            onSelected: (id) => unawaited(_selectBaby(id)),
+                            itemBuilder: (context) => [
+                              for (final profile in controller.profiles.value!)
+                                PopupMenuItem(
+                                  value: profile.id,
+                                  child: Text(profile.name),
+                                ),
+                            ],
+                            icon: const Icon(Icons.keyboard_arrow_down_rounded),
                           ),
                       ],
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded),
                     ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                baby == null
-                    ? '这里只显示当前账号真实保存的宝宝资料。'
-                    : _babyDescription(baby, controller),
-                style: const TextStyle(
-                  fontSize: 13,
-                  height: 1.5,
-                  color: Color(0xFF77717B),
+                    const SizedBox(height: 8),
+                    Text(
+                      baby == null
+                          ? '这里只显示当前账号真实保存的宝宝资料。'
+                          : _babyDescription(baby, controller),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        height: 1.5,
+                        color: Color(0xFF77717B),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 24),
@@ -209,27 +234,17 @@ class _ChatFirstBabyPageState extends State<ChatFirstBabyPage>
               else ...[
                 if (controller.profiles.failure != null)
                   _notice('资料暂未更新', '当前显示上次读取的资料；下拉可重试。', onRetry: _load),
-                _lead(controller),
+                _todayCare(controller),
+                const SizedBox(height: 22),
+                _careTrend(controller),
+                const SizedBox(height: 22),
+                _growthTrend(controller, baby),
                 const SizedBox(height: 24),
                 const Text(
-                  '查看信息',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF77717B)),
+                  '宝宝资料与记录',
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 9),
-                _detailRow(
-                  key: const ValueKey('baby-feeding-sleep'),
-                  icon: Icons.child_care_outlined,
-                  title: '喂养与睡眠',
-                  summary: _careSummary(controller),
-                ),
-                const SizedBox(height: 10),
-                _detailRow(
-                  key: const ValueKey('baby-growth'),
-                  icon: Icons.trending_up_rounded,
-                  title: '生长发育',
-                  summary: _growthSummary(controller),
-                ),
-                const SizedBox(height: 14),
                 Wrap(
                   alignment: WrapAlignment.spaceBetween,
                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -255,6 +270,316 @@ class _ChatFirstBabyPageState extends State<ChatFirstBabyPage>
     ),
   );
 
+  Widget _todayCare(BabyHomeController c) {
+    final loaded = c.recentRecords.hasValue && c.recentRecords.failure == null;
+    final summary = loaded ? c.summary : null;
+    final labels = ['喂养记录', '湿尿布记录', '脏尿布记录', '睡眠记录'];
+    final counts = summary == null
+        ? null
+        : [
+            summary.feedingCount,
+            summary.wetCount,
+            summary.dirtyCount,
+            summary.sleepCount,
+          ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '今日照护',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(height: 10),
+        _surface(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (c.recentRecords.failure != null)
+                const Text('今日记录暂时无法读取；请下拉重试。')
+              else if (!loaded)
+                const Text('正在读取今日记录…')
+              else ...[
+                Row(
+                  children: [
+                    for (var index = 0; index < 2; index++)
+                      Expanded(
+                        child: _countCell(labels[index], counts![index]),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    for (var index = 2; index < 4; index++)
+                      Expanded(
+                        child: _countCell(labels[index], counts![index]),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 9),
+                const Text(
+                  '— 表示尚无记录，不代表没有发生。',
+                  style: TextStyle(fontSize: 12, color: Color(0xFF77717B)),
+                ),
+              ],
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  key: const ValueKey('baby-record-action'),
+                  onPressed: _openDetails,
+                  child: const Text('记一笔 / 查看记录'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _countCell(String label, int count) => Padding(
+    padding: const EdgeInsets.only(right: 8),
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF2F8F5),
+        borderRadius: BorderRadius.circular(13),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(fontSize: 12, color: Color(0xFF526D6C)),
+            ),
+            const SizedBox(height: 7),
+            Text(
+              count == 0 ? '—' : '$count 次',
+              style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _careTrend(BabyHomeController c) {
+    final day = c.date, zone = c.timezone, baby = c.baby;
+    if (day == null || zone == null || baby == null) {
+      return const SizedBox.shrink();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '照护趋势',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(height: 10),
+        _surface(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '最近 7 天 · ${baby.name}的已保存记录',
+                style: const TextStyle(color: Color(0xFF77717B), fontSize: 12),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 6,
+                children: [
+                  for (final (metric, label) in [
+                    (BabyRecordKind.feeding, '喂养'),
+                    (BabyRecordKind.diaper, '尿布'),
+                    (BabyRecordKind.sleep, '睡眠'),
+                  ])
+                    ChoiceChip(
+                      label: Text(label),
+                      selected: _careMetric == metric,
+                      onSelected: (_) => setState(() => _careMetric = metric),
+                    ),
+                ],
+              ),
+              if (c.recentRecords.failure != null)
+                const Text('近 7 天记录暂时无法读取；请下拉重试。')
+              else if (!c.recentRecords.hasValue)
+                const Text('正在读取近 7 天记录…')
+              else ...[
+                const Divider(),
+                for (var offset = 0; offset < 7; offset++)
+                  _careDayRow(
+                    c.recentRecords.value!,
+                    baby.id,
+                    day.addDays(-offset),
+                    zone,
+                  ),
+                const SizedBox(height: 7),
+                const Text(
+                  '空白日期表示未记录，不代表没有发生。',
+                  style: TextStyle(fontSize: 12, color: Color(0xFF77717B)),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _careDayRow(
+    List<BabyRecord> records,
+    String babyId,
+    LocalDate day,
+    String zone,
+  ) {
+    final window = zonedDayWindow(day, zone);
+    final summary = BabyDaySummary.fromRecords(
+      records,
+      babyId: babyId,
+      window: window,
+      calendarDate: day,
+      now: widget.controller.now(),
+    );
+    final now = widget.controller.now();
+    final hasRecords = records.any(
+      (record) =>
+          record.babyId == babyId &&
+          switch (record) {
+            BabyDailyStatusRecord(
+              :final recordedOn,
+              :final wetCount,
+              :final stoolCount,
+            ) =>
+              _careMetric == BabyRecordKind.diaper &&
+                  recordedOn == day &&
+                  (wetCount != null || stoolCount != null),
+            BabyFeedingRecord(:final occurredAt) =>
+              _careMetric == BabyRecordKind.feeding &&
+                  !occurredAt.isAfter(now) &&
+                  window.contains(occurredAt),
+            BabyDiaperRecord(:final occurredAt) =>
+              _careMetric == BabyRecordKind.diaper &&
+                  !occurredAt.isAfter(now) &&
+                  window.contains(occurredAt),
+            BabySleepRecord(:final occurredAt, :final endedAt) =>
+              _careMetric == BabyRecordKind.sleep &&
+                  !occurredAt.isAfter(now) &&
+                  occurredAt.isBefore(window.end) &&
+                  (endedAt ?? now).isAfter(window.start),
+            _ => false,
+          },
+    );
+    final value = !hasRecords
+        ? '未记录'
+        : switch (_careMetric) {
+            BabyRecordKind.feeding => '${summary.feedingCount} 次喂养',
+            BabyRecordKind.diaper =>
+              '湿 ${summary.wetCount} · 脏 ${summary.dirtyCount}',
+            BabyRecordKind.sleep => '${summary.sleepCount} 段睡眠',
+            _ => '未记录',
+          };
+    return Padding(
+      key: ValueKey('baby-care-${day.toString()}'),
+      padding: const EdgeInsets.symmetric(vertical: 7),
+      child: Row(
+        children: [
+          SizedBox(width: 65, child: Text('${day.month}/${day.day}')),
+          Expanded(child: Text(value, textAlign: TextAlign.right)),
+        ],
+      ),
+    );
+  }
+
+  Widget _growthTrend(BabyHomeController c, BabyProfile baby) {
+    final records = c.growthCurve.value;
+    final measured =
+        records == null
+              ? <BabyGrowthRecord>[]
+              : records
+                    .where(
+                      (record) =>
+                          record.babyId == baby.id &&
+                          record.metric == _growthMetric,
+                    )
+                    .toList()
+          ..sort((a, b) => b.recordedOn.compareTo(a.recordedOn));
+    final latest = c.latestGrowth.value
+        ?.where(
+          (record) =>
+              record.babyId == baby.id && record.metric == _growthMetric,
+        )
+        .firstOrNull;
+    final inCurveRange =
+        baby.birthDate != null &&
+        c.date != null &&
+        c.date!.compareTo(baby.birthDate!.addMonths(whoGrowthMaxMonths)) <= 0;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (latest != null)
+          _surface(
+            child: Text(
+              '${growthMetricLabelZh(_growthMetric)}最近测量 ${latest.recordedOn.month}/${latest.recordedOn.day} · ${babyNumber(latest.value)} ${latest.unit}',
+              key: const ValueKey('baby-growth-latest'),
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        if (!inCurveRange)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Text(
+              '目前的生长曲线只覆盖出生后前 6 个月；最近测量以已保存记录为准。',
+              style: TextStyle(color: Color(0xFF77717B)),
+            ),
+          )
+        else
+          BabyGrowthCurve(
+            baby: baby,
+            metric: _growthMetric,
+            records: c.growthCurve,
+            onMetricChanged: (metric) => setState(() => _growthMetric = metric),
+            onEditProfile: () => _editProfile(baby),
+            onRetry: c.refreshRecords,
+            chatFirstExperience: true,
+          ),
+        if (inCurveRange &&
+            c.growthCurve.failure == null &&
+            records != null &&
+            measured.isNotEmpty)
+          _surface(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '逐笔测量',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+                for (final record in measured)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 7),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${record.recordedOn.month}/${record.recordedOn.day}',
+                          ),
+                        ),
+                        Text('${babyNumber(record.value)} ${record.unit}'),
+                      ],
+                    ),
+                  ),
+                const Text(
+                  '只展示当前宝宝的实测值，不据此作健康判断。',
+                  style: TextStyle(fontSize: 12, color: Color(0xFF77717B)),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
   String _babyDescription(BabyProfile baby, BabyHomeController controller) {
     final sex = switch (baby.sex) {
       BabySex.female => '女孩',
@@ -265,137 +590,18 @@ class _ChatFirstBabyPageState extends State<ChatFirstBabyPage>
     final detail = [
       ?sex,
       if (age != null) '出生 $age 天' else if (baby.birthDate == null) '未填写出生日期',
+      if (baby.birthDate case final date?) '出生日期 $date',
+      if (baby.feedingMode != FeedingMode.unknown)
+        switch (baby.feedingMode) {
+          FeedingMode.breastfeeding => '亲喂',
+          FeedingMode.expressedMilk => '瓶喂母乳',
+          FeedingMode.mixed => '混合喂养',
+          FeedingMode.formula => '配方奶',
+          FeedingMode.unknown => '',
+        },
     ];
     return detail.isEmpty ? '当前账号已保存的宝宝资料' : detail.join(' · ');
   }
-
-  String _careSummary(BabyHomeController controller) {
-    if (controller.recentRecords.failure != null) return '今日记录暂无法更新，可下拉重试';
-    if (!controller.recentRecords.hasValue) return '正在读取今日记录…';
-    final summary = controller.summary;
-    if (summary == null) return '今日记录暂不可用';
-    if (summary.feedingCount == 0 && summary.sleepCount == 0) {
-      return '今天还没有喂养或睡眠记录';
-    }
-    return '今天喂养 ${summary.feedingCount} 次 · 睡眠 ${summary.sleepCount} 次';
-  }
-
-  String _growthSummary(BabyHomeController controller) {
-    if (controller.latestGrowth.failure != null) return '生长记录暂无法更新，可下拉重试';
-    if (!controller.latestGrowth.hasValue) return '正在读取生长记录…';
-    final values = controller.latestGrowth.value!;
-    final facts = [
-      for (final metric in [GrowthMetric.weight, GrowthMetric.length])
-        if (values.where((record) => record.metric == metric).firstOrNull
-            case final record?)
-          '${metric == GrowthMetric.weight ? '体重' : '身长'} ${babyNumber(record.value)} ${record.unit}',
-    ];
-    return facts.isEmpty ? '还没有身长或体重记录' : facts.join(' · ');
-  }
-
-  Widget _lead(BabyHomeController controller) {
-    final summary = controller.summary;
-    final loaded =
-        controller.recentRecords.hasValue &&
-        controller.recentRecords.failure == null;
-    final value = !loaded || summary == null
-        ? '暂不可用'
-        : summary.feedingCount == 0
-        ? '暂无喂养记录'
-        : '${summary.feedingCount} 次喂养';
-    final hint = !loaded || summary == null
-        ? _careSummary(controller)
-        : summary.latestFeeding == null
-        ? '仅显示当前账号保存的记录'
-        : '最近一次记录于今天';
-    return _surface(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '今日喂养',
-            style: TextStyle(fontSize: 12, color: Color(0xFF77717B)),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 23,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF322C33),
-            ),
-          ),
-          const SizedBox(height: 7),
-          Text(
-            hint,
-            style: const TextStyle(fontSize: 12, color: Color(0xFF77717B)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _detailRow({
-    required Key key,
-    required IconData icon,
-    required String title,
-    required String summary,
-  }) => Semantics(
-    key: key,
-    label: '查看$title，$summary',
-    button: true,
-    onTap: _openDetails,
-    child: ExcludeSemantics(
-      child: _surface(
-        padding: EdgeInsets.zero,
-        child: InkWell(
-          onTap: _openDetails,
-          borderRadius: BorderRadius.circular(15),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 65),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-              child: Row(
-                children: [
-                  Icon(icon, size: 21, color: const Color(0xFF977A86)),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          summary,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            height: 1.45,
-                            color: Color(0xFF77717B),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  const Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 15,
-                    color: Color(0xFF8C858D),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
 
   Widget _notice(
     String title,

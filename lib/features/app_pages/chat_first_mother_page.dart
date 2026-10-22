@@ -68,8 +68,11 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
     }
     final repository = ChatFirstMotherRepository(widget.runtime.jsonTransport);
     final now = widget.runtime.now();
-    _summary = repository.get(now);
-    _pumping = repository.getPumpingToday(now);
+    final timezone = widget.runtime.timezoneProvider();
+    _summary = timezone.then((zone) => repository.get(now, timezone: zone));
+    _pumping = timezone.then(
+      (zone) => repository.getPumpingToday(now, timezone: zone),
+    );
     _trend = _readTrend(repository, now);
     _wellbeing = _readWellbeing(repository, now);
   }
@@ -77,7 +80,9 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
   void _reloadPumping() => setState(() {
     final repository = ChatFirstMotherRepository(widget.runtime.jsonTransport);
     final now = widget.runtime.now();
-    _pumping = repository.getPumpingToday(now);
+    _pumping = widget.runtime.timezoneProvider().then(
+      (zone) => repository.getPumpingToday(now, timezone: zone),
+    );
     _trend = _readTrend(repository, now);
   });
 
@@ -126,7 +131,13 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
     DateTime now,
   ) async {
     try {
-      return (value: await repository.getWellbeing(now), failed: false);
+      return (
+        value: await repository.getWellbeing(
+          now,
+          timezone: await widget.runtime.timezoneProvider(),
+        ),
+        failed: false,
+      );
     } catch (_) {
       return (value: null, failed: true);
     }
@@ -168,7 +179,7 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                '妈妈信息',
+                '妈妈',
                 style: TextStyle(fontSize: 23, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 7),
@@ -177,13 +188,15 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
                 style: TextStyle(color: Color(0xFF786E6B)),
               ),
               const SizedBox(height: 20),
+              _profileSection(),
+              const SizedBox(height: 20),
+              _wellbeingSection(),
+              const SizedBox(height: 16),
               _pumpingSection(),
               const SizedBox(height: 16),
               _trendSection(),
-              const SizedBox(height: 16),
-              _wellbeingSection(),
-              const SizedBox(height: 24),
-              _profileSection(),
+              const SizedBox(height: 20),
+              _concernsSection(),
             ],
           ),
         ),
@@ -285,8 +298,12 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
         child: FutureBuilder<({ChatFirstMilkTrend? value, bool failed})>(
           future: _trend,
           builder: (context, snapshot) {
-            final trend = snapshot.data?.value;
-            final failed = snapshot.data?.failed == true;
+            final trend = snapshot.connectionState == ConnectionState.done
+                ? snapshot.data?.value
+                : null;
+            final failed =
+                snapshot.connectionState == ConnectionState.done &&
+                snapshot.data?.failed == true;
             final String summary;
             if (snapshot.connectionState != ConnectionState.done) {
               summary = '正在读取近 7 天记录…';
@@ -311,6 +328,10 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
                 ),
                 const SizedBox(height: 8),
                 Text(summary, style: const TextStyle(color: Color(0xFF786E6B))),
+                if (trend != null &&
+                    trend.hasCompleteWindow &&
+                    trend.hasSavedPumping)
+                  _inlineMilkTrend(trend),
                 if (snapshot.connectionState == ConnectionState.done && failed)
                   TextButton(
                     key: const ValueKey('mother-milk-trend-retry'),
@@ -332,6 +353,84 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
       ),
     ),
   );
+
+  Widget _inlineMilkTrend(ChatFirstMilkTrend trend) {
+    final values = trend.days.reversed.toList();
+    final maxVolume = values
+        .where((day) => day.pumpingCount > 0 && day.measuredVolumeMl != null)
+        .fold<double>(
+          0,
+          (max, day) =>
+              day.measuredVolumeMl! > max ? day.measuredVolumeMl! : max,
+        );
+    return Padding(
+      padding: const EdgeInsets.only(top: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '近 7 天 · 已记录奶量',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8),
+          for (final day in values)
+            Padding(
+              key: ValueKey(
+                'mother-milk-row-${day.date.month}-${day.date.day}',
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 48,
+                    child: Text('${day.date.month}/${day.date.day}'),
+                  ),
+                  Expanded(
+                    child: day.pumpingCount == 0 || day.measuredVolumeMl == null
+                        ? const SizedBox.shrink()
+                        : Align(
+                            alignment: Alignment.centerLeft,
+                            child: FractionallySizedBox(
+                              widthFactor: maxVolume == 0
+                                  ? 0
+                                  : (day.measuredVolumeMl! / maxVolume).clamp(
+                                      .06,
+                                      1.0,
+                                    ),
+                              child: Container(
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFB54F78),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 102,
+                    child: Text(
+                      day.pumpingCount == 0
+                          ? '未记录'
+                          : day.measuredVolumeMl == null
+                          ? '奶量未填全 · ${day.pumpingCount} 次'
+                          : '${_number(day.measuredVolumeMl!)} ml · ${day.pumpingCount} 次',
+                      textAlign: TextAlign.end,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          const Text(
+            '未记录不代表没有吸奶；奶量未填全不计入精确均值。',
+            style: TextStyle(fontSize: 12, color: Color(0xFF786E6B)),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _showMilkTrend(ChatFirstMilkTrend trend) {
     showModalBottomSheet<void>(
@@ -422,8 +521,12 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
         child: FutureBuilder<({ChatFirstWellbeing? value, bool failed})>(
           future: _wellbeing,
           builder: (context, snapshot) {
-            final status = snapshot.data?.value;
-            final failed = snapshot.data?.failed == true;
+            final status = snapshot.connectionState == ConnectionState.done
+                ? snapshot.data?.value
+                : null;
+            final failed =
+                snapshot.connectionState == ConnectionState.done &&
+                snapshot.data?.failed == true;
             final String summary;
             if (snapshot.connectionState != ConnectionState.done) {
               summary = '正在读取已保存的状态记录…';
@@ -443,6 +546,20 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
                 ),
                 const SizedBox(height: 8),
                 Text(summary, style: const TextStyle(color: Color(0xFF786E6B))),
+                if (status != null && status.recordCount > 0) ...[
+                  const SizedBox(height: 13),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (final kind in [
+                        MeMetric.sleep,
+                        MeMetric.energy,
+                        MeMetric.mood,
+                      ])
+                        Expanded(child: _recentStatus(status, kind)),
+                    ],
+                  ),
+                ],
                 if (snapshot.connectionState == ConnectionState.done && failed)
                   TextButton(
                     key: const ValueKey('mother-wellbeing-retry'),
@@ -469,6 +586,49 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
       ),
     ),
   );
+
+  Widget _recentStatus(ChatFirstWellbeing status, MeMetric kind) {
+    final recent = status.days.reversed
+        .expand(
+          (day) => day.records.map((record) => (day: day, record: record)),
+        )
+        .where((item) => item.record.kind == kind)
+        .firstOrNull;
+    return Padding(
+      padding: const EdgeInsets.only(right: 5),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: const Color(0xFFF9F4F0),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _wellbeingLabel(kind),
+                style: const TextStyle(fontSize: 12, color: Color(0xFF786E6B)),
+              ),
+              const SizedBox(height: 7),
+              Text(
+                recent == null ? '未记录' : _wellbeingValue(recent.record),
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+              if (recent != null)
+                Text(
+                  '${recent.day.date.month}/${recent.day.date.day} 记录',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF786E6B),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   void _showWellbeing(ChatFirstWellbeing status) {
     showModalBottomSheet<void>(
@@ -579,9 +739,11 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
           '暂时无法加载妈妈资料',
           '请检查网络后重试；已填写的资料仍保存在当前账号中。',
           onRetry: () => setState(
-            () => _summary = ChatFirstMotherRepository(
-              widget.runtime.jsonTransport,
-            ).get(widget.runtime.now()),
+            () => _summary = widget.runtime.timezoneProvider().then(
+              (zone) => ChatFirstMotherRepository(
+                widget.runtime.jsonTransport,
+              ).get(widget.runtime.now(), timezone: zone),
+            ),
           ),
         );
       }
@@ -590,35 +752,104 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '已填写的资料',
+            '妈妈资料',
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 9),
-          Card(
-            color: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
+          Container(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFFFDFC), Color(0xFFFBEAF0)],
+              ),
+              border: Border.all(color: const Color(0xFFEDE6E3)),
               borderRadius: BorderRadius.circular(18),
-              side: const BorderSide(color: Color(0xFFEDE6E3)),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _fact('年龄', '${facts.age} 岁'),
-                  _fact('生育次数', '第 ${facts.deliveryCount} 次'),
-                  _fact('分娩日期', facts.deliveryDate),
-                  _fact(
-                    '分娩时孕周',
-                    facts.gestationWeeks < 37
-                        ? '${facts.gestationWeeks} 周 + ${facts.gestationDays} 天'
-                        : '${facts.gestationWeeks} 周',
+                  const Padding(
+                    padding: EdgeInsets.only(top: 13, left: 3),
+                    child: Text(
+                      '妈妈的空间',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF322C33),
+                      ),
+                    ),
                   ),
-                  _fact('这次的宝宝数量', '${facts.babyCount}'),
+                  if (facts.postpartumDay case final day?)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        '产后第 $day 天',
+                        key: const ValueKey('mother-postpartum-day'),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFB54F78),
+                        ),
+                      ),
+                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _profileFact(
+                        '年龄',
+                        facts.age == null ? '未填写' : '${facts.age} 岁',
+                      ),
+                      _profileFact(
+                        '生育次数',
+                        facts.deliveryCount == null
+                            ? '未填写'
+                            : '第 ${facts.deliveryCount} 次',
+                      ),
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _profileFact('分娩日期', facts.deliveryDate ?? '未填写'),
+                      _profileFact(
+                        '分娩时孕周',
+                        facts.gestationWeeks == null
+                            ? '未填写'
+                            : (facts.gestationDays ?? 0) > 0
+                            ? '${facts.gestationWeeks} 周 + ${facts.gestationDays} 天'
+                            : '${facts.gestationWeeks} 周',
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _profileFact(
+                        '这次的宝宝数量',
+                        facts.babyCount?.toString() ?? '未填写',
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ],
               ),
             ),
           ),
+        ],
+      );
+    },
+  );
+
+  Widget _concernsSection() => FutureBuilder<ChatFirstMotherSummary>(
+    future: _summary,
+    builder: (context, snapshot) {
+      final facts = snapshot.connectionState == ConnectionState.done
+          ? snapshot.data
+          : null;
+      if (facts == null) return const SizedBox.shrink();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           const SizedBox(height: 20),
           const Text(
             '已保存的关注点',
@@ -715,20 +946,23 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
       ? value.toStringAsFixed(0)
       : value.toString();
 
-  Widget _fact(String label, String value) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 11),
-    child: Row(
-      children: [
-        Text(label, style: const TextStyle(color: Color(0xFF786E6B))),
-        const Spacer(),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.end,
-            style: const TextStyle(fontWeight: FontWeight.w600),
+  Widget _profileFact(String label, String value) => Expanded(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 3),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: Color(0xFF786E6B)),
           ),
-        ),
-      ],
+          const SizedBox(height: 5),
+          Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+          ),
+        ],
+      ),
     ),
   );
 

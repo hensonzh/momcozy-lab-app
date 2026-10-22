@@ -56,6 +56,16 @@ void main() {
     );
   }
 
+  test('partial saved maternal facts remain visible field by field', () {
+    final summary = ChatFirstMotherSummary.fromMap({
+      'profile': {'age': 31, 'actual_delivery_date': null},
+      'concerns': const <Object>[],
+    });
+    expect(summary.age, 31);
+    expect(summary.deliveryDate, isNull);
+    expect(summary.deliveryCount, isNull);
+  });
+
   test(
     'today pumping aggregation never reports an incomplete measured total',
     () {
@@ -190,6 +200,31 @@ void main() {
   );
 
   test(
+    'trend range follows account-local midnight rather than device day',
+    () async {
+      final transport = FixtureApiJsonTransportByPath({
+        '/v1/records/milk-trends': {
+          'items': [
+            for (var day = 10; day <= 16; day++)
+              {
+                'date': '2026-10-$day',
+                'pumped_milk_volume_ml': 0,
+                'pumping_count': 0,
+                'measured_only': true,
+                'complete': true,
+              },
+          ],
+        },
+      });
+      await ChatFirstMotherRepository(transport).getMilkTrend(
+        DateTime.utc(2026, 10, 16, 18),
+        timezone: 'Pacific/Honolulu',
+      );
+      expect(transport.lastQuery?['start_date'], '2026-10-10');
+    },
+  );
+
+  test(
     'a stale or shifted trend window cannot be shown as the current week',
     () async {
       final transport = FixtureApiJsonTransportByPath({
@@ -212,6 +247,30 @@ void main() {
         ).getMilkTrend(today, timezone: 'Asia/Shanghai'),
         throwsA(isA<FormatException>()),
       );
+    },
+  );
+
+  test(
+    'maternal status dates use account midnight across UTC boundary',
+    () async {
+      final transport = _TrackingWellbeingTransport({
+        '/v1/profile/me-experience': {
+          'records': [
+            {
+              'id': 'mood',
+              'kind': 'mood',
+              'occurred_at': '2026-10-22T16:30:00Z',
+              'value': 'Good',
+            },
+          ],
+        },
+      });
+      final result = await ChatFirstMotherRepository(
+        transport,
+      ).getWellbeing(DateTime.utc(2026, 10, 22, 17), timezone: 'Asia/Shanghai');
+      expect(result.days.last.date.day, 23);
+      expect(result.days.last.records.single.kind, MeMetric.mood);
+      expect(transport.queries.last['start'], '2026-10-22T16:00:00.000Z');
     },
   );
 
@@ -274,7 +333,15 @@ void main() {
       expect(find.text('奶量趋势'), findsOneWidget);
       expect(find.text('近 7 天有 1 天保存吸奶记录'), findsOneWidget);
       expect(find.textContaining('328'), findsNothing);
+      final row = find.byKey(const ValueKey('mother-milk-row-10-16'));
+      expect(row, findsOneWidget);
+      expect(
+        find.descendant(of: row, matching: find.text('45 ml · 1 次')),
+        findsOneWidget,
+      );
       final open = find.byKey(const ValueKey('mother-milk-trend'));
+      await tester.ensureVisible(open);
+      await tester.pumpAndSettle();
       await tester.tap(open);
       await tester.pumpAndSettle();
       expect(find.text('近 7 天记录奶量'), findsOneWidget);
@@ -286,7 +353,14 @@ void main() {
       expect(
         tester
             .getRect(find.byType(BottomSheet))
-            .contains(tester.getCenter(find.text('45 ml · 1 次'))),
+            .contains(
+              tester.getCenter(
+                find.descendant(
+                  of: find.byType(BottomSheet),
+                  matching: find.text('45 ml · 1 次'),
+                ),
+              ),
+            ),
         isTrue,
       );
       expect(find.text('按 7 天均摊已记录奶量 6.4 ml/天；未记录不代表没有吸奶。'), findsOneWidget);
@@ -298,7 +372,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('10月16日'), findsOneWidget);
-      expect(find.text('45 ml · 1 次'), findsOneWidget);
+      expect(find.text('45 ml · 1 次'), findsWidgets);
       await tester.tap(find.byKey(const ValueKey('mother-milk-trend-close')));
       await tester.pumpAndSettle();
       expect(find.text('近 7 天记录奶量'), findsNothing);
@@ -328,6 +402,8 @@ void main() {
     await tester.pumpWidget(host(transport));
     await tester.pumpAndSettle();
     expect(find.text('奶量趋势'), findsOneWidget);
+    await tester.ensureVisible(find.byKey(const ValueKey('mother-milk-trend')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('mother-milk-trend')));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
@@ -363,8 +439,13 @@ void main() {
       await tester.pumpWidget(host(transport));
       await tester.pumpAndSettle();
       expect(find.text('暂时无法加载奶量趋势'), findsOneWidget);
+      expect(find.text('产后第 4 天'), findsOneWidget);
       expect(find.text('30 岁'), findsOneWidget);
       transport.fail = false;
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('mother-milk-trend-retry')),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('mother-milk-trend-retry')));
       await tester.pumpAndSettle();
       expect(find.text('近 7 天没有保存吸奶记录'), findsOneWidget);
@@ -461,12 +542,16 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('身体与状态'), findsOneWidget);
       expect(find.text('最近 2 天有 2 条已保存状态记录'), findsOneWidget);
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('mother-wellbeing')),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('mother-wellbeing')));
       await tester.pumpAndSettle();
-      expect(find.text('精力'), findsOneWidget);
-      expect(find.text('有力气'), findsOneWidget);
-      expect(find.text('心情'), findsOneWidget);
-      expect(find.text('不太好'), findsOneWidget);
+      expect(find.text('精力'), findsWidgets);
+      expect(find.text('有力气'), findsWidgets);
+      expect(find.text('心情'), findsWidgets);
+      expect(find.text('不太好'), findsWidgets);
       expect(find.textContaining('999 ml'), findsNothing);
       expect(find.textContaining('诊断'), findsNothing);
       await tester.tap(find.byKey(const ValueKey('mother-wellbeing-close')));
@@ -487,6 +572,10 @@ void main() {
       expect(find.text('暂时无法加载状态记录'), findsOneWidget);
       expect(find.text('30 岁'), findsOneWidget);
       transport.fail = false;
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('mother-wellbeing-retry')),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('mother-wellbeing-retry')));
       await tester.pumpAndSettle();
       expect(find.text('最近 2 天没有已保存状态记录'), findsOneWidget);
@@ -513,9 +602,11 @@ void main() {
     });
     await tester.pumpWidget(host(transport));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const ValueKey('mother-wellbeing')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('mother-wellbeing')));
     await tester.pumpAndSettle();
-    expect(find.text('记录内容需核对'), findsOneWidget);
+    expect(find.text('记录内容需核对'), findsWidgets);
     expect(find.textContaining('unreviewed private note'), findsNothing);
     await tester.pumpWidget(const SizedBox());
   });
@@ -561,6 +652,7 @@ void main() {
       await tester.ensureVisible(
         find.byKey(const ValueKey('mother-milk-trend')),
       );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('mother-milk-trend')));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -576,6 +668,10 @@ void main() {
       await tester.ensureVisible(
         find.byKey(const ValueKey('mother-wellbeing')),
       );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('mother-wellbeing')),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('mother-wellbeing')));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -620,6 +716,10 @@ void main() {
       expect(find.text('75 ml · 2 次'), findsOneWidget);
       expect(transport.getPaths, contains('/v1/records/pumping'));
       expect(transport.getPaths, isNot(contains('/v1/lactation/records')));
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('mother-pumping-details')),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('mother-pumping-details')));
       await tester.pumpAndSettle();
       expect(find.text('45 ml'), findsOneWidget);
@@ -724,6 +824,10 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('mother-pumping-details')),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('mother-pumping-details')));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -752,9 +856,13 @@ void main() {
         },
       ],
     };
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('mother-pumping-refresh')),
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('mother-pumping-refresh')));
     await tester.pumpAndSettle();
-    expect(find.text('45 ml · 1 次'), findsOneWidget);
+    expect(find.text('45 ml · 1 次'), findsWidgets);
     await tester.pumpWidget(const SizedBox());
   });
 

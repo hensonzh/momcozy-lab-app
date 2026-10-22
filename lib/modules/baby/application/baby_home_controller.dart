@@ -63,6 +63,7 @@ class BabyHomeController extends ChangeNotifier {
       records,
       babyId: id,
       window: zonedDayWindow(day, zone),
+      calendarDate: day,
       now: now(),
     );
   }
@@ -209,7 +210,7 @@ class BabyHomeController extends ChangeNotifier {
         _fetch(
           () => _all(
             selected.id,
-            day.addDays(-2),
+            day.addDays(-7), // Seven account-local dates plus overnight sleep.
             day.addDays(1),
             zone,
             generation,
