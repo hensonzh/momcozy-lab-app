@@ -58,7 +58,7 @@ void main() {
       // Only the conversation-first task's scoped feedback; this file also
       // serves legacy English surfaces, so do not allow it wholesale.
       'lib/features/agent_hub/agent_hub_page.dart': RegExp(
-        r'_poopFeedback =|请选择不超过 10 MB|照片格式、大小或分辨率不符合要求|审核服务尚未开放|删除这次分析及照片|删除后无法恢复|确认删除|删除失败|照片暂不可用|提交暂不可用',
+        r'_poopFeedback =|请选择不超过 10 MB|照片格式、大小或分辨率不符合要求|审核服务尚未开放|删除这次分析及照片|删除后无法恢复|取消|确认删除|删除失败|照片暂不可用|提交暂不可用',
       ),
       'lib/features/agent_hub/data/platform_image_input.dart': RegExp(
         r'原图不能超过 10 MB|仅支持 JPG、JPEG、PNG、HEIC 原图|照片短边不能低于 720 像素|无法读取照片分辨率',
