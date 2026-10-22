@@ -26,6 +26,7 @@ void main() {
       final runtime = MomCozyApiRuntime(
         jsonTransport: FixtureApiJsonTransportByPath(const {
           '/v1/profile/me': {'preferred_name': null},
+          '/v1/babies': {'items': <Object>[]},
           '/v1/profile/lactation': {'actual_delivery_date': '2026-10-12'},
         }),
         session: const MomCozySession(
@@ -72,6 +73,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(find.text('宝宝出生 4 天'), findsOneWidget);
+      expect(find.byKey(const ValueKey('chat-first-daily-advice')), findsOneWidget);
       final workspace = tester.getRect(
         find.byKey(const ValueKey('chat-first-workspace')),
       );
