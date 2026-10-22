@@ -5,6 +5,8 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 
 import '../domain/agent_image_input.dart';
 import '../domain/chat_first_poop_task.dart';
+import '../domain/stool_photo_review.dart';
+import '../domain/stool_analysis.dart';
 
 class ChatFirstPoopTaskCard extends StatelessWidget {
   const ChatFirstPoopTaskCard({
@@ -16,21 +18,39 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
     required this.onAbandon,
     required this.canInteract,
     required this.canSubmit,
+    this.analysisAvailable = false,
     this.photos = const [],
+    this.reviewStates = const [],
     this.sentPhotos = const [],
     this.responding = false,
+    this.analysisState,
+    this.onLoadPhotos,
+    this.onDeleteAnalysis,
+    this.deleting = false,
+    this.photosLoading = false,
+    this.photoFeedback,
     this.sending = false,
     this.feedback,
+    this.availabilityMessage,
   });
 
   final ChatFirstPoopTaskStatus status;
   final List<AgentStreamImageInput> photos;
+  final List<StoolPhotoReview?> reviewStates;
   final List<AgentStreamImageInput> sentPhotos;
   final bool responding;
+  final StoolCardState? analysisState;
+  final VoidCallback? onLoadPhotos;
+  final VoidCallback? onDeleteAnalysis;
+  final bool deleting;
+  final bool photosLoading;
+  final String? photoFeedback;
   final bool sending;
   final bool canInteract;
   final bool canSubmit;
+  final bool analysisAvailable;
   final String? feedback;
+  final String? availabilityMessage;
   final ValueChanged<AgentImageInputSource> onPick;
   final ValueChanged<int> onRemove;
   final VoidCallback onSubmit;
@@ -97,6 +117,22 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
                       ? '已发送 ${sentPhotos.length} 张便便照片。'
                       : '已发送便便照片。',
                 ),
+                if (analysisState != null &&
+                    sentPhotos.isEmpty &&
+                    onLoadPhotos != null) ...[
+                  const SizedBox(height: 8),
+                  TextButton.icon(
+                    key: const ValueKey('chat-first-poop-load-photos'),
+                    onPressed: photosLoading ? null : onLoadPhotos,
+                    icon: const Icon(Icons.photo_outlined, size: 18),
+                    label: Text(photosLoading ? '正在加载照片…' : '查看当时照片'),
+                  ),
+                ],
+                if (photoFeedback != null)
+                  Text(
+                    photoFeedback!,
+                    key: const ValueKey('chat-first-poop-photo-feedback'),
+                  ),
                 if (sentPhotos.isNotEmpty) ...[
                   const SizedBox(height: 10),
                   Wrap(
@@ -115,6 +151,22 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
                     key: ValueKey('chat-first-poop-responding'),
                   ),
                 ],
+                if (analysisState case final analysis?) ...[
+                  const SizedBox(height: 10),
+                  Text(switch (analysis.status) {
+                    StoolAnalysisStatus.queued => '专项结论卡已创建，正在等待已验证的分析结果…',
+                    StoolAnalysisStatus.running => '专项服务正在处理照片，请稍候…',
+                    StoolAnalysisStatus.failed => '专项分析未完成，请稍后重试。',
+                    StoolAnalysisStatus.cancelled => '本次专项分析已取消。',
+                    StoolAnalysisStatus.completed => '专项分析已完成，结论暂不可用。',
+                  }, key: const ValueKey('chat-first-poop-analysis-card')),
+                  if (onDeleteAnalysis != null)
+                    TextButton(
+                      key: const ValueKey('chat-first-poop-delete-analysis'),
+                      onPressed: deleting ? null : onDeleteAnalysis,
+                      child: Text(deleting ? '正在删除…' : '删除这次分析及照片'),
+                    ),
+                ],
               ] else if (status == ChatFirstPoopTaskStatus.cancelled)
                 const Text('本次任务已取消。')
               else ...[
@@ -129,7 +181,7 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   const Text(
-                    '自然光下拍清颜色和形态；一张即可，最多 3 张。',
+                    '选择后立即上传审核；一张即可，最多 3 张。不会自动分析。',
                     style: TextStyle(
                       color: Color(0xFF6D6264),
                       fontSize: 12,
@@ -162,7 +214,15 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
                                 width: 78,
                                 height: 78,
                                 fit: BoxFit.cover,
-                                semanticLabel: '待发送的便便照片 ${index + 1}',
+                                semanticLabel: '待审核的便便照片 ${index + 1}',
+                                errorBuilder: (context, error, stack) =>
+                                    const SizedBox(
+                                      width: 78,
+                                      height: 78,
+                                      child: Icon(
+                                        Icons.image_not_supported_outlined,
+                                      ),
+                                    ),
                               ),
                             ),
                             Positioned(
@@ -185,6 +245,30 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
                           ],
                         ),
                     ],
+                  ),
+                ],
+                for (var index = 0; index < reviewStates.length; index++)
+                  if (reviewStates[index] case final review?)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text(
+                        _reviewCopy(index, review),
+                        key: ValueKey('chat-first-poop-review-$index'),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF786E6B),
+                        ),
+                      ),
+                    ),
+                if (availabilityMessage != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    availabilityMessage!,
+                    key: const ValueKey('chat-first-poop-unavailable'),
+                    style: const TextStyle(
+                      color: Color(0xFF786E6B),
+                      fontSize: 12,
+                    ),
                   ),
                 ],
                 if (feedback != null) ...[
@@ -251,12 +335,21 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
                         backgroundColor: const Color(0xFF925670),
                         minimumSize: const Size.fromHeight(44),
                       ),
-                      child: Text(sending ? '正在发送…' : '发送并查看'),
+                      child: Text(sending ? '正在提交…' : '分析便便'),
                     ),
                   ),
                 ],
                 if (photos.isNotEmpty && !canSubmit)
-                  const Text('照片发送暂不可用，照片尚未上传。'),
+                  Text(
+                    reviewStates.length == photos.length &&
+                            reviewStates.every(
+                              (review) => review?.isApproved ?? false,
+                            )
+                        ? analysisAvailable
+                              ? '请先进入有效对话并选择宝宝档案后再分析。'
+                              : '照片审核通过；专项分析服务尚未开放。'
+                        : '照片全部审核通过后才能分析；当前专项分析尚未开放。',
+                  ),
                 if (!sending)
                   TextButton(
                     key: const ValueKey('chat-first-poop-abandon'),
@@ -264,7 +357,7 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
                     child: const Text('放弃本次任务'),
                   ),
                 const Text(
-                  '仅整理照片中可见的观察线索，不作为诊断。确认发送前照片仅保留在本机。',
+                  '照片会上传至专用审核服务。审核只判断是否适合分析，不提供医学结论。',
                   style: TextStyle(color: Color(0xFF786E6B), fontSize: 12),
                 ),
               ],
@@ -315,4 +408,10 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
       icon: Image.memory(bytes, width: 52, height: 52, fit: BoxFit.cover),
     );
   }
+}
+
+String _reviewCopy(int index, StoolPhotoReview review) {
+  final reason = stoolPhotoReviewReason(review.reasonCodes);
+  return '第 ${index + 1} 张：${stoolPhotoReviewLabel(review.status)}'
+      '${reason == null ? '' : '（$reason）'}';
 }

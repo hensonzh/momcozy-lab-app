@@ -37,8 +37,9 @@ void main() {
                 const SizedBox(height: 16),
                 ChatFirstPoopTaskCard(
                   status: ChatFirstPoopTaskStatus.pending,
-                  canInteract: true,
+                  canInteract: false,
                   canSubmit: false,
+                  availabilityMessage: '审核服务尚未开放，请稍后再试。',
                   onPick: (_) {},
                   onSubmit: () {},
                   onRemove: (_) {},

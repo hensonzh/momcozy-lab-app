@@ -28,6 +28,8 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_welcome
 import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_audio.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_task.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_poop_task.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/stool_photo_review.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/stool_analysis.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/chat_first_cry_audio.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
@@ -142,6 +144,10 @@ class AgentHubPage extends StatefulWidget {
     this.greetingProfileLoader,
     this.requestBuilder = buildDefaultAgentHubRequest,
     this.pickImage,
+    this.pickStoolPhoto,
+    this.stoolPhotoReviewRepository,
+    this.stoolAnalysisRepository,
+    this.stoolBabyId,
     this.pickDocument,
     this.mediaRepository,
     this.loadImageThumbnail,
@@ -183,6 +189,10 @@ class AgentHubPage extends StatefulWidget {
   final AgentHubGreetingProfileLoader? greetingProfileLoader;
   final AgentHubRequestBuilder requestBuilder;
   final AgentHubImagePicker? pickImage;
+  final AgentHubImagePicker? pickStoolPhoto;
+  final StoolPhotoReviewRepository? stoolPhotoReviewRepository;
+  final StoolAnalysisRepository? stoolAnalysisRepository;
+  final String? stoolBabyId;
   final AgentHubDocumentPicker? pickDocument;
   final MediaRepository? mediaRepository;
   final AgentImageContentLoader? loadImageThumbnail;
@@ -221,12 +231,24 @@ class _AgentHubPageState extends State<AgentHubPage>
   final List<ChatFirstPoopTask> _poopTasks = [];
   final List<AgentStreamImageInput> _poopPhotos = [];
   final Map<String, List<AgentStreamImageInput>> _sentPoopPhotos = {};
+  final Set<String> _poopPhotosLoading = {};
+  final Set<String> _poopDeleting = {};
+  final Map<String, String> _poopPhotoFeedback = {};
   String? _activePoopTaskId;
-  String? _poopSendKey;
+  final Map<AgentStreamImageInput, StoolPhotoReview> _poopReviews = {};
+  final Map<AgentStreamImageInput, int> _poopPollCounts = {};
+  Timer? _poopReviewTimer;
+  Timer? _poopAnalysisTimer;
   String? _poopFeedback;
-  bool _poopSending = false;
-  bool _poopRunAttempted = false;
-  final Set<String> _poopPossiblyReferencedIds = {};
+  bool _poopPicking = false;
+  bool _poopSubmitting = false;
+  bool _poopReviewAvailable = false;
+  bool _poopAnalysisAvailable = false;
+  int? _poopPollingGeneration;
+  int? _poopAnalysisPollingGeneration;
+  String? _poopHistoryInFlightThread;
+  int _poopHistoryRevision = 0;
+  int _poopCapabilityGeneration = 0;
   int _poopGeneration = 0;
   final List<ChatFirstCryTask> _cryTasks = [];
   final GlobalKey _activeCryCardKey = GlobalKey();
@@ -443,6 +465,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     _chatScrollController.addListener(_handleChatScroll);
 
     _initializeInteractionState();
+    if (widget.chatFirstExperience) unawaited(_loadPoopReviewCapability());
   }
 
   @override
@@ -463,8 +486,15 @@ class _AgentHubPageState extends State<AgentHubPage>
       _cancelCryCaptureOnLeave();
       _cryTasks.clear();
       _activeCryTaskId = null;
-      _cancelPoopOnLeave();
+      _cancelPoopOnLeave(repository: oldWidget.stoolPhotoReviewRepository);
       _poopTasks.clear();
+      _poopReviewAvailable = false;
+      _poopAnalysisAvailable = false;
+      if (widget.chatFirstExperience) unawaited(_loadPoopReviewCapability());
+    } else if (oldWidget.stoolBabyId != widget.stoolBabyId) {
+      _cancelPoopOnLeave(repository: oldWidget.stoolPhotoReviewRepository);
+      _poopTasks.clear();
+      unawaited(_recoverPoopHistory());
     }
     if (oldWidget.isVisible != widget.isVisible) {
       if (widget.isVisible) {
@@ -551,6 +581,11 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (widget.chatFirstExperience && previous.threadId == null) {
       _bindUnassignedCryTasks(_state.threadId);
       _bindUnassignedPoopTasks(_state.threadId);
+    }
+    if (widget.chatFirstExperience &&
+        previous.threadId != _state.threadId &&
+        _state.threadId != null) {
+      unawaited(_recoverPoopHistory());
     }
     if (!widget.chatFirstExperience) return;
     if (_state.phase == AgentStreamRunPhase.streaming) {
@@ -647,43 +682,83 @@ class _AgentHubPageState extends State<AgentHubPage>
     _scheduleScrollToLatest();
   }
 
-  void _cancelPoopOnLeave() {
+  Future<void> _loadPoopReviewCapability() async {
+    final generation = ++_poopCapabilityGeneration;
+    bool available = false;
+    try {
+      available =
+          await widget.stoolPhotoReviewRepository?.isReviewAvailable() ?? false;
+    } catch (_) {
+      // No endpoint or failed request is not a review capability.
+    }
+    bool analysisAvailable = false;
+    try {
+      analysisAvailable =
+          await widget.stoolAnalysisRepository?.isAnalysisAvailable() ?? false;
+    } catch (_) {
+      // Only the server capability can enable submission.
+    }
+    if (mounted && generation == _poopCapabilityGeneration) {
+      setState(() {
+        _poopReviewAvailable = available;
+        _poopAnalysisAvailable = analysisAvailable;
+      });
+      _schedulePoopAnalysisPoll();
+      unawaited(_recoverPoopHistory());
+    }
+  }
+
+  void _cancelPoopOnLeave({StoolPhotoReviewRepository? repository}) {
     _poopGeneration++;
-    // Sent thumbnails are memory-only; never carry private photo bytes across
-    // app backgrounding, navigation, account changes, or snapshot restoration.
+    _poopReviewTimer?.cancel();
+    _poopReviewTimer = null;
+    _poopAnalysisTimer?.cancel();
+    _poopAnalysisTimer = null;
+    _poopHistoryInFlightThread = null;
+    _poopHistoryRevision++;
+    _poopDeleting.clear();
+    _poopPicking = false;
+    // An in-flight POST can have committed even if this page has not received
+    // its response. Never delete its originals on an ambiguous outcome.
+    final submissionInFlight = _poopSubmitting;
+    _poopSubmitting = false;
     _sentPoopPhotos.clear();
-    // An attempted Run may still reference any already uploaded photos.
-    final attemptedRun = _poopRunAttempted;
-    final acceptedRun = attemptedRun && _hasServerRunSignal(_state);
-    final fileIds = _poopPhotos
-        .map((image) => image.fileId)
-        .where(
-          (id) => id.isNotEmpty && !_poopPossiblyReferencedIds.contains(id),
-        )
-        .toList();
+    _poopPhotosLoading.clear();
+    _poopPhotoFeedback.clear();
+    final ownerRepository = repository ?? widget.stoolPhotoReviewRepository;
+    if (ownerRepository != null && !submissionInFlight) {
+      for (final review in _poopReviews.values) {
+        if (review.photoId.isNotEmpty) {
+          unawaited(_deletePrivatePoopPhoto(ownerRepository, review.photoId));
+        }
+      }
+    }
     _poopPhotos.clear();
-    _poopSendKey = null;
+    _poopReviews.clear();
+    _poopPollCounts.clear();
     _poopFeedback = null;
-    _poopSending = false;
-    _poopRunAttempted = false;
     final index = _poopTasks.indexWhere((task) => task.id == _activePoopTaskId);
     if (index >= 0 &&
         _poopTasks[index].status == ChatFirstPoopTaskStatus.pending) {
-      _poopTasks[index] = acceptedRun
-          ? _poopTasks[index].completed(_state.runId)
-          : _poopTasks[index].withStatus(ChatFirstPoopTaskStatus.cancelled);
+      _poopTasks[index] = _poopTasks[index].withStatus(
+        ChatFirstPoopTaskStatus.cancelled,
+      );
     }
     _activePoopTaskId = null;
-    _poopPossiblyReferencedIds.clear();
-    if (fileIds.isNotEmpty) {
-      _pendingAttachmentCleanupIds.addAll(fileIds);
-      _attachmentCleanupRetryTimer?.cancel();
-      if (mounted) unawaited(_retryAttachmentCleanup());
+  }
+
+  Future<void> _deletePrivatePoopPhoto(
+    StoolPhotoReviewRepository repository,
+    String photoId,
+  ) async {
+    try {
+      await repository.deletePhoto(photoId);
+    } catch (_) {
+      // The server must also expire abandoned originals after process death.
     }
   }
 
   void _abandonPoopTask(String taskId) {
-    if (_poopSending) return;
     final index = _poopTasks.indexWhere((task) => task.id == taskId);
     if (index < 0 ||
         _poopTasks[index].status != ChatFirstPoopTaskStatus.pending) {
@@ -694,20 +769,24 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   void _removePoopPhoto(String taskId, int index) {
-    if (_poopSending ||
-        taskId != _activePoopTaskId ||
+    if (taskId != _activePoopTaskId ||
         index < 0 ||
         index >= _poopPhotos.length) {
       return;
     }
     final photo = _poopPhotos.removeAt(index);
-    // A timed-out createRun could still have accepted this asset.
-    if (photo.fileId.isNotEmpty &&
-        !_poopPossiblyReferencedIds.contains(photo.fileId)) {
-      _queueAttachmentCleanup([photo.fileId]);
+    final review = _poopReviews.remove(photo);
+    _poopPollCounts.remove(photo);
+    if (review != null &&
+        review.photoId.isNotEmpty &&
+        widget.stoolPhotoReviewRepository != null) {
+      unawaited(
+        _deletePrivatePoopPhoto(
+          widget.stoolPhotoReviewRepository!,
+          review.photoId,
+        ),
+      );
     }
-    _poopSendKey = null;
-    _poopRunAttempted = false;
     _poopFeedback = null;
     setState(() {});
   }
@@ -716,8 +795,12 @@ class _AgentHubPageState extends State<AgentHubPage>
     String taskId,
     AgentImageInputSource source,
   ) async {
-    if (widget.pickImage == null ||
-        _poopSending ||
+    final picker = widget.pickStoolPhoto;
+    final repository = widget.stoolPhotoReviewRepository;
+    if (picker == null ||
+        repository == null ||
+        !_poopReviewAvailable ||
+        _poopPicking ||
         _poopPhotos.length >= 3 ||
         !_isPageVisible ||
         _isVisibleReplyRunning ||
@@ -725,162 +808,552 @@ class _AgentHubPageState extends State<AgentHubPage>
         taskId != _activePoopTaskId) {
       return;
     }
-    final generation = ++_poopGeneration;
+    final generation = _poopGeneration;
+    _poopPicking = true;
     try {
-      final image = await widget.pickImage!(source);
+      final image = await picker(source);
       if (!mounted ||
           generation != _poopGeneration ||
           taskId != _activePoopTaskId) {
         return;
       }
       if (image == null) return;
-      final bytes =
-          image.localBytes ??
-          Uint8List.fromList(_decodeAgentImageBytes(image.dataUrl));
-      if (bytes.isEmpty ||
+      final bytes = image.localBytes;
+      if (bytes == null ||
+          bytes.isEmpty ||
           bytes.length > 10 * 1024 * 1024 ||
-          !{
-            'image/jpeg',
-            'image/png',
-            'image/webp',
-            'image/gif',
-          }.contains(image.mimeType)) {
-        setState(
-          () => _poopFeedback = '只支持不超过 10 MB 的 JPEG、PNG、WebP 或 GIF 照片。',
-        );
+          !{'image/jpeg', 'image/png', 'image/heic'}.contains(image.mimeType)) {
+        setState(() => _poopFeedback = '请选择不超过 10 MB 的 JPG、PNG 或 HEIC 原图。');
         return;
       }
       setState(() {
-        _poopPhotos.add(
+        _poopPhotos.add(image);
+        _poopReviews[image] = const StoolPhotoReview(
+          photoId: '',
+          status: StoolPhotoReviewStatus.uploading,
+        );
+        _poopFeedback = null;
+      });
+      unawaited(_uploadPoopForReview(repository, image, taskId, generation));
+    } catch (_) {
+      if (!mounted || generation != _poopGeneration) return;
+      setState(() => _poopFeedback = '照片格式、大小或分辨率不符合要求，请重新选择。');
+    } finally {
+      _poopPicking = false;
+    }
+  }
+
+  bool _isCurrentPoopPhoto(
+    AgentStreamImageInput image,
+    String taskId,
+    int generation,
+  ) =>
+      mounted &&
+      generation == _poopGeneration &&
+      taskId == _activePoopTaskId &&
+      _poopPhotos.contains(image);
+
+  Future<void> _uploadPoopForReview(
+    StoolPhotoReviewRepository repository,
+    AgentStreamImageInput image,
+    String taskId,
+    int generation,
+  ) async {
+    try {
+      final review = await repository.uploadOriginal(
+        bytes: image.localBytes!,
+        name: image.name,
+        mimeType: image.mimeType,
+        idempotencyKey: 'stool-photo-$taskId-${identityHashCode(image)}',
+      );
+      if (!_isCurrentPoopPhoto(image, taskId, generation)) {
+        await _deletePrivatePoopPhoto(repository, review.photoId);
+        return;
+      }
+      setState(() => _poopReviews[image] = review);
+      if (review.isWaiting) {
+        _schedulePoopReviewPoll(taskId, generation);
+      }
+    } catch (_) {
+      if (!_isCurrentPoopPhoto(image, taskId, generation)) return;
+      setState(
+        () => _poopReviews[image] = const StoolPhotoReview(
+          photoId: '',
+          status: StoolPhotoReviewStatus.failed,
+        ),
+      );
+    }
+  }
+
+  void _schedulePoopReviewPoll(String taskId, int generation) {
+    if (_poopReviewTimer?.isActive ?? false) return;
+    _poopReviewTimer = Timer(const Duration(seconds: 2), () {
+      unawaited(_pollPoopReviews(taskId, generation));
+    });
+  }
+
+  Future<void> _pollPoopReviews(String taskId, int generation) async {
+    if (_poopPollingGeneration == generation ||
+        !mounted ||
+        generation != _poopGeneration ||
+        taskId != _activePoopTaskId ||
+        !_isPageVisible) {
+      return;
+    }
+    final repository = widget.stoolPhotoReviewRepository;
+    if (repository == null) return;
+    _poopPollingGeneration = generation;
+    try {
+      for (final image in List<AgentStreamImageInput>.of(_poopPhotos)) {
+        final current = _poopReviews[image];
+        if (current == null || !current.isWaiting) continue;
+        final count = (_poopPollCounts[image] ?? 0) + 1;
+        _poopPollCounts[image] = count;
+        if (count > 30) {
+          if (_isCurrentPoopPhoto(image, taskId, generation)) {
+            setState(
+              () => _poopReviews[image] = StoolPhotoReview(
+                photoId: current.photoId,
+                status: StoolPhotoReviewStatus.failed,
+                reasonCodes: const ['review_timeout'],
+              ),
+            );
+          }
+          continue;
+        }
+        try {
+          final updated = await repository.getReview(current.photoId);
+          if (!_isCurrentPoopPhoto(image, taskId, generation)) return;
+          if (updated.photoId != current.photoId) throw const FormatException();
+          setState(() => _poopReviews[image] = updated);
+        } catch (_) {
+          if (!_isCurrentPoopPhoto(image, taskId, generation)) return;
+          setState(
+            () => _poopReviews[image] = StoolPhotoReview(
+              photoId: current.photoId,
+              status: StoolPhotoReviewStatus.failed,
+              reasonCodes: const ['review_unavailable'],
+            ),
+          );
+        }
+      }
+    } finally {
+      if (_poopPollingGeneration == generation) {
+        _poopPollingGeneration = null;
+      }
+      if (mounted &&
+          generation == _poopGeneration &&
+          taskId == _activePoopTaskId &&
+          _poopReviews.values.any((review) => review.isWaiting)) {
+        _schedulePoopReviewPoll(taskId, generation);
+      }
+    }
+  }
+
+  Future<void> _recoverPoopHistory() async {
+    final repository = widget.stoolAnalysisRepository;
+    final threadId = _state.threadId;
+    final babyId = widget.stoolBabyId;
+    if (!_poopAnalysisAvailable ||
+        repository == null ||
+        !_isPageVisible ||
+        !_interactionRestoreResolved ||
+        threadId == null ||
+        threadId.isEmpty ||
+        babyId == null ||
+        babyId.isEmpty ||
+        _poopHistoryInFlightThread == threadId) {
+      return;
+    }
+    final generation = _poopGeneration;
+    final historyRevision = _poopHistoryRevision;
+    _poopHistoryInFlightThread = threadId;
+    final seenIds = <String>{};
+    final seenCursors = <String>{};
+    String? cursor;
+    try {
+      do {
+        final page = await repository.listForThread(
+          threadId: threadId,
+          cursor: cursor,
+        );
+        if (!mounted ||
+            generation != _poopGeneration ||
+            historyRevision != _poopHistoryRevision ||
+            threadId != _state.threadId ||
+            babyId != widget.stoolBabyId ||
+            !_isPageVisible) {
+          return;
+        }
+        setState(() {
+          for (final item in page.items) {
+            if (item.babyId != babyId) continue;
+            seenIds.add(item.analysisId);
+            if (_poopTasks.any(
+              (task) => task.analysisState?.analysisId == item.analysisId,
+            )) {
+              continue;
+            }
+            _poopTasks.add(
+              ChatFirstPoopTask(
+                id: 'local:poop:analysis:${item.analysisId}',
+                createdAt: item.createdAt,
+                threadId: threadId,
+              ).submitted(
+                StoolCardState(
+                  analysisId: item.analysisId,
+                  sequence: 1,
+                  visible: true,
+                ),
+              ),
+            );
+          }
+        });
+        cursor = page.nextCursor;
+        if (cursor != null && !seenCursors.add(cursor)) {
+          throw const FormatException('Repeated stool history cursor.');
+        }
+      } while (cursor != null);
+      if (!mounted ||
+          generation != _poopGeneration ||
+          historyRevision != _poopHistoryRevision ||
+          threadId != _state.threadId ||
+          babyId != widget.stoolBabyId) {
+        return;
+      }
+      setState(() {
+        final removed = [
+          for (final task in _poopTasks)
+            if (task.threadId == threadId &&
+                task.analysisState != null &&
+                !seenIds.contains(task.analysisState!.analysisId))
+              task.analysisState!.analysisId,
+        ];
+        _poopTasks.removeWhere(
+          (task) =>
+              task.threadId == threadId &&
+              task.analysisState != null &&
+              !seenIds.contains(task.analysisState!.analysisId),
+        );
+        for (final analysisId in removed) {
+          _sentPoopPhotos.remove(analysisId);
+          _poopPhotoFeedback.remove(analysisId);
+        }
+      });
+      _persistInteractionState();
+      _schedulePoopAnalysisPoll();
+    } catch (_) {
+      // Keep the last trusted local cursor; retry history on next return.
+    } finally {
+      if (generation == _poopGeneration &&
+          _poopHistoryInFlightThread == threadId) {
+        _poopHistoryInFlightThread = null;
+      }
+    }
+  }
+
+  Future<void> _confirmDeletePoopAnalysis(String taskId) async {
+    final task = _poopTasks.where((item) => item.id == taskId).firstOrNull;
+    if (task?.analysisState == null || !_isPageVisible) return;
+    final approved = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('删除这次分析及照片？'),
+        content: const Text('删除后无法恢复。如果照片也用于其他分析，相关分析也会失效。'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            key: const ValueKey('chat-first-poop-confirm-delete'),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('确认删除'),
+          ),
+        ],
+      ),
+    );
+    if (approved == true && mounted) {
+      await _deletePoopAnalysis(taskId);
+    }
+  }
+
+  Future<void> _deletePoopAnalysis(String taskId) async {
+    final repository = widget.stoolAnalysisRepository;
+    final task = _poopTasks.where((item) => item.id == taskId).firstOrNull;
+    final analysisId = task?.analysisState?.analysisId;
+    if (repository == null ||
+        analysisId == null ||
+        _poopDeleting.contains(analysisId)) {
+      return;
+    }
+    final generation = _poopGeneration;
+    final threadId = _state.threadId;
+    final babyId = widget.stoolBabyId;
+    setState(() {
+      _poopDeleting.add(analysisId);
+      _poopPhotoFeedback.remove(analysisId);
+    });
+    try {
+      await repository.deleteAnalysis(analysisId);
+      if (!mounted ||
+          generation != _poopGeneration ||
+          threadId != _state.threadId ||
+          babyId != widget.stoolBabyId) {
+        return;
+      }
+      setState(() {
+        _poopHistoryRevision++;
+        _poopHistoryInFlightThread = null;
+        final removed = [
+          for (final candidate in _poopTasks)
+            if (candidate.threadId == threadId &&
+                candidate.analysisState != null)
+              candidate.analysisState!.analysisId,
+        ];
+        _poopTasks.removeWhere(
+          (candidate) =>
+              candidate.threadId == threadId && candidate.analysisState != null,
+        );
+        for (final id in removed) {
+          _sentPoopPhotos.remove(id);
+          _poopPhotoFeedback.remove(id);
+          _poopPhotosLoading.remove(id);
+        }
+      });
+      _persistInteractionState();
+      unawaited(_recoverPoopHistory());
+    } catch (_) {
+      if (mounted &&
+          generation == _poopGeneration &&
+          threadId == _state.threadId &&
+          babyId == widget.stoolBabyId) {
+        setState(() => _poopPhotoFeedback[analysisId] = '删除失败，请稍后重试。');
+      }
+    } finally {
+      if (mounted && generation == _poopGeneration) {
+        setState(() => _poopDeleting.remove(analysisId));
+      }
+    }
+  }
+
+  Future<void> _loadPoopAnalysisPhotos(String taskId) async {
+    final repository = widget.stoolAnalysisRepository;
+    final task = _poopTasks.where((item) => item.id == taskId).firstOrNull;
+    final analysisId = task?.analysisState?.analysisId;
+    if (!_poopAnalysisAvailable ||
+        repository == null ||
+        !_isPageVisible ||
+        analysisId == null ||
+        _poopPhotosLoading.contains(analysisId) ||
+        _sentPoopPhotos.containsKey(analysisId)) {
+      return;
+    }
+    final generation = _poopGeneration;
+    final threadId = _state.threadId;
+    final babyId = widget.stoolBabyId;
+    setState(() {
+      _poopPhotosLoading.add(analysisId);
+      _poopPhotoFeedback.remove(analysisId);
+    });
+    try {
+      final refs = await repository.listPhotos(analysisId);
+      final previews = <AgentStreamImageInput>[];
+      for (final ref in refs.items) {
+        final bytes = await repository.loadThumbnail(analysisId, ref.photoId);
+        previews.add(
           AgentStreamImageInput(
             dataUrl: '',
-            mimeType: image.mimeType,
-            name: image.name,
+            mimeType: 'image/jpeg',
+            name: 'stool-preview.jpg',
             size: bytes.length,
             localBytes: bytes,
           ),
         );
-        _poopSendKey = null;
-        _poopRunAttempted = false;
-        _poopFeedback = null;
-      });
+      }
+      if (!mounted ||
+          generation != _poopGeneration ||
+          threadId != _state.threadId ||
+          babyId != widget.stoolBabyId ||
+          !_poopTasks.any(
+            (item) =>
+                item.id == taskId &&
+                item.analysisState?.analysisId == analysisId,
+          )) {
+        return;
+      }
+      setState(() => _sentPoopPhotos[analysisId] = previews);
     } catch (_) {
-      if (!mounted || generation != _poopGeneration) return;
-      setState(() => _poopFeedback = '无法读取照片，请重新选择。');
+      if (mounted &&
+          generation == _poopGeneration &&
+          threadId == _state.threadId &&
+          babyId == widget.stoolBabyId) {
+        setState(() => _poopPhotoFeedback[analysisId] = '照片暂不可用或已删除。');
+      }
+    } finally {
+      if (mounted && generation == _poopGeneration) {
+        setState(() => _poopPhotosLoading.remove(analysisId));
+      }
     }
   }
 
-  Future<void> _sendPoopPhoto(String taskId) async {
-    final media = widget.mediaRepository;
-    if (_poopSending ||
-        _poopPhotos.isEmpty ||
-        media == null ||
-        widget.runner == null ||
-        taskId != _activePoopTaskId ||
+  Future<void> _submitPoopAnalysis(String taskId) async {
+    final repository = widget.stoolAnalysisRepository;
+    final babyId = widget.stoolBabyId?.trim();
+    final threadId = _state.threadId?.trim();
+    if (repository == null ||
+        !_poopAnalysisAvailable ||
+        !_poopReviewAvailable ||
+        _poopSubmitting ||
         !_isPageVisible ||
         _isVisibleReplyRunning ||
-        _isComposerLocked) {
+        _conversationSwitchPending ||
+        taskId != _activePoopTaskId ||
+        babyId == null ||
+        babyId.isEmpty ||
+        threadId == null ||
+        threadId.isEmpty ||
+        _poopPhotos.isEmpty ||
+        _poopPhotos.length > 3) {
+      return;
+    }
+    final reviews = [for (final photo in _poopPhotos) _poopReviews[photo]];
+    if (reviews.any(
+          (review) => review?.isApproved != true || review!.photoId.isEmpty,
+        ) ||
+        reviews.map((review) => review!.photoId).toSet().length !=
+            reviews.length) {
+      return;
+    }
+    final photoIds = [for (final review in reviews) review!.photoId];
+    final generation = _poopGeneration;
+    setState(() {
+      _poopSubmitting = true;
+      _poopFeedback = null;
+    });
+    try {
+      final result = await repository.submit(
+        babyId: babyId,
+        threadId: threadId,
+        photoIds: photoIds,
+        idempotencyKey: 'stool-analysis-$taskId',
+      );
+      if (!mounted ||
+          generation != _poopGeneration ||
+          _state.threadId != threadId ||
+          taskId != _activePoopTaskId) {
+        // The committed task can be recovered from owner-scoped server history.
+        return;
+      }
+      if (result.status != StoolAnalysisStatus.queued &&
+          result.status != StoolAnalysisStatus.running) {
+        throw const FormatException(
+          'Unexpected stool analysis admission state.',
+        );
+      }
+      final index = _poopTasks.indexWhere((task) => task.id == taskId);
+      if (index < 0) return;
+      setState(() {
+        _poopTasks[index] = _poopTasks[index].submitted(
+          StoolCardState(
+            analysisId: result.analysisId,
+            sequence: 1,
+            visible: true,
+          ),
+        );
+        _sentPoopPhotos[result.analysisId] = List.of(_poopPhotos);
+        _poopPhotos.clear();
+        _poopReviews.clear();
+        _poopPollCounts.clear();
+        _poopReviewTimer?.cancel();
+        _poopReviewTimer = null;
+        _activePoopTaskId = null;
+        _poopSubmitting = false;
+      });
+      _persistInteractionState();
+      _schedulePoopAnalysisPoll();
+    } catch (_) {
+      if (mounted &&
+          generation == _poopGeneration &&
+          taskId == _activePoopTaskId) {
+        setState(() => _poopFeedback = '提交暂不可用，请稍后重试。');
+      }
+    } finally {
+      if (mounted && generation == _poopGeneration && _poopSubmitting) {
+        setState(() => _poopSubmitting = false);
+      }
+    }
+  }
+
+  void _schedulePoopAnalysisPoll() {
+    if (!_poopAnalysisAvailable ||
+        widget.stoolAnalysisRepository == null ||
+        !_isPageVisible ||
+        (_poopAnalysisTimer?.isActive ?? false) ||
+        !_visiblePoopTasks.any(
+          (task) =>
+              task.analysisState != null &&
+              (task.analysisState!.status == StoolAnalysisStatus.queued ||
+                  task.analysisState!.status == StoolAnalysisStatus.running),
+        )) {
       return;
     }
     final generation = _poopGeneration;
-    final key = _poopSendKey ??= 'poop-${_now.microsecondsSinceEpoch}';
-    setState(() {
-      _poopSending = true;
-      _poopFeedback = null;
+    _poopAnalysisTimer = Timer(const Duration(seconds: 2), () {
+      _poopAnalysisTimer = null;
+      unawaited(_pollPoopAnalyses(generation));
     });
-    var uploading = false;
-    try {
-      for (var index = 0; index < _poopPhotos.length; index++) {
-        final image = _poopPhotos[index];
-        if (image.fileId.isNotEmpty) continue;
-        uploading = true;
-        final bytes = image.localBytes!;
-        final uploaded = await media.uploadFile(
-          file: ApiUploadFile(
-            name: image.name,
-            mimeType: image.mimeType,
-            sizeBytes: bytes.length,
-            bytes: bytes,
-          ),
-          idempotencyKey: '$key:file:$index',
-        );
-        final uploadedId = uploaded.id.trim();
-        if (uploadedId.isEmpty) throw StateError('Missing image id');
-        uploading = false;
-        if (!mounted || generation != _poopGeneration) {
-          // The selected photos were abandoned before Run creation.
-          if (mounted) {
-            _queueAttachmentCleanup([uploadedId]);
-          } else {
-            try {
-              await media.deleteFile(fileId: uploadedId);
-            } catch (_) {
-              // Orphan reconciliation on the server remains necessary.
-            }
-          }
-          return;
-        }
-        _poopPhotos[index] = image.copyWith(fileId: uploadedId);
-      }
-      if (!mounted || generation != _poopGeneration) return;
-      final request = _requestWithIdempotencyKey(
-        _requestWithImages(widget.requestBuilder(chatFirstPoopRequestPrompt), [
-          for (final image in _poopPhotos)
-            AgentStreamImageInput(
-              dataUrl: '',
-              fileId: image.fileId,
-              mimeType: image.mimeType,
-              name: image.name,
-              size: image.size,
-            ),
-        ]),
-        key,
-      );
-      _poopRunAttempted = true;
-      _poopPossiblyReferencedIds.addAll(
-        _poopPhotos.map((image) => image.fileId),
-      );
-      final accepted = await _startRun(request, awaitServerRunSignal: true);
-      if (!mounted || generation != _poopGeneration) return;
-      if (!accepted || _state.runId?.trim().isNotEmpty != true) {
-        throw StateError('Run not confirmed');
-      }
-      _completePoopTask(taskId);
-    } catch (_) {
-      if (!mounted || generation != _poopGeneration) return;
-      // A queued server Run may exist even if the follow-up stream failed.
-      if (_activeRequest != null &&
-          isChatFirstPoopPrompt(_activeRequest!.message) &&
-          _hasServerRunSignal(_state)) {
-        _completePoopTask(taskId);
-        return;
-      }
-      setState(
-        () => _poopFeedback = uploading
-            ? '照片上传失败，照片仍在本机，可重试。'
-            : '发送失败，照片仍在本机，可重试。',
-      );
-    } finally {
-      if (mounted && generation == _poopGeneration) {
-        setState(() => _poopSending = false);
-      }
-    }
   }
 
-  void _completePoopTask(String taskId) {
-    final runId = _state.runId;
-    if (runId == null) return;
-    final index = _poopTasks.indexWhere((task) => task.id == taskId);
-    setState(() {
-      if (index >= 0) _poopTasks[index] = _poopTasks[index].completed(runId);
-      _sentPoopPhotos[runId] = List.of(_poopPhotos);
-      _poopPhotos.clear();
-      _activePoopTaskId = null;
-      _poopSendKey = null;
-      _poopRunAttempted = false;
-      _poopPossiblyReferencedIds.clear();
-    });
-    _persistInteractionState();
+  Future<void> _pollPoopAnalyses(int generation) async {
+    if (_poopAnalysisPollingGeneration == generation ||
+        !mounted ||
+        generation != _poopGeneration ||
+        !_isPageVisible ||
+        widget.stoolAnalysisRepository == null) {
+      return;
+    }
+    _poopAnalysisPollingGeneration = generation;
+    try {
+      for (final task in List<ChatFirstPoopTask>.of(_visiblePoopTasks)) {
+        final state = task.analysisState;
+        if (state == null ||
+            (state.status != StoolAnalysisStatus.queued &&
+                state.status != StoolAnalysisStatus.running)) {
+          continue;
+        }
+        try {
+          await for (final event in widget.stoolAnalysisRepository!.eventsAfter(
+            state.analysisId,
+            state.sequence,
+          )) {
+            if (!mounted ||
+                generation != _poopGeneration ||
+                task.threadId != _state.threadId) {
+              return;
+            }
+            final index = _poopTasks.indexWhere((item) => item.id == task.id);
+            if (index < 0 || _poopTasks[index].analysisState == null) return;
+            final updated = _poopTasks[index].analysisState!.apply(event);
+            setState(
+              () => _poopTasks[index] = _poopTasks[index].withAnalysisState(
+                updated,
+              ),
+            );
+            _persistInteractionState();
+          }
+        } catch (_) {
+          // The last committed sequence is retained; retry from it on return.
+        }
+      }
+    } finally {
+      if (_poopAnalysisPollingGeneration == generation) {
+        _poopAnalysisPollingGeneration = null;
+      }
+      if (mounted && generation == _poopGeneration) {
+        _schedulePoopAnalysisPoll();
+      }
+    }
   }
 
   void _openCryTask() {
@@ -977,6 +1450,8 @@ class _AgentHubPageState extends State<AgentHubPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_isPageVisible || !_interactionRestoreResolved) return;
       unawaited(_recoverConversation());
+      _schedulePoopAnalysisPoll();
+      unawaited(_recoverPoopHistory());
     });
   }
 
@@ -1258,6 +1733,8 @@ class _AgentHubPageState extends State<AgentHubPage>
     _scheduleInitialAutoRunIfNeeded();
     _scheduleExternalConversationRefreshIfNeeded();
     if (shouldRestore) _persistInteractionState();
+    _schedulePoopAnalysisPoll();
+    unawaited(_recoverPoopHistory());
     unawaited(_retryAttachmentCleanup());
     _scheduleInitialInteractionPostFrame();
   }
@@ -2977,7 +3454,9 @@ class _AgentHubPageState extends State<AgentHubPage>
                                                     : const [],
                                                 sentPhotos:
                                                     _sentPoopPhotos[task
-                                                        .runId] ??
+                                                            .analysisState
+                                                            ?.analysisId ??
+                                                        task.runId] ??
                                                     const [],
                                                 responding:
                                                     task.runId != null &&
@@ -2993,10 +3472,6 @@ class _AgentHubPageState extends State<AgentHubPage>
                                                         .provisionalTextContent
                                                         .trim()
                                                         .isEmpty,
-                                                sending:
-                                                    task.id ==
-                                                        _activePoopTaskId &&
-                                                    _poopSending,
                                                 feedback:
                                                     task.id == _activePoopTaskId
                                                     ? _poopFeedback
@@ -3005,11 +3480,50 @@ class _AgentHubPageState extends State<AgentHubPage>
                                                     _isPageVisible &&
                                                     !_isVisibleReplyRunning &&
                                                     !_conversationSwitchPending &&
-                                                    widget.pickImage != null,
-                                                canSubmit:
-                                                    widget.mediaRepository !=
+                                                    widget.pickStoolPhoto !=
                                                         null &&
-                                                    widget.runner != null,
+                                                    widget.stoolPhotoReviewRepository !=
+                                                        null &&
+                                                    _poopReviewAvailable,
+                                                availabilityMessage:
+                                                    _poopReviewAvailable
+                                                    ? null
+                                                    : '审核服务尚未开放，请稍后再试。',
+                                                analysisAvailable:
+                                                    _poopAnalysisAvailable,
+                                                canSubmit:
+                                                    _poopAnalysisAvailable &&
+                                                    widget
+                                                            .stoolBabyId
+                                                            ?.isNotEmpty ==
+                                                        true &&
+                                                    _state
+                                                            .threadId
+                                                            ?.isNotEmpty ==
+                                                        true &&
+                                                    task.id ==
+                                                        _activePoopTaskId &&
+                                                    _poopPhotos.isNotEmpty &&
+                                                    _poopReviews.length ==
+                                                        _poopPhotos.length &&
+                                                    _poopPhotos.every(
+                                                      (photo) =>
+                                                          _poopReviews[photo]
+                                                              ?.isApproved ??
+                                                          false,
+                                                    ),
+                                                sending:
+                                                    task.id ==
+                                                        _activePoopTaskId &&
+                                                    _poopSubmitting,
+                                                reviewStates:
+                                                    task.id == _activePoopTaskId
+                                                    ? [
+                                                        for (final image
+                                                            in _poopPhotos)
+                                                          _poopReviews[image],
+                                                      ]
+                                                    : const [],
                                                 onPick: (source) => unawaited(
                                                   _pickPoopPhoto(
                                                     task.id,
@@ -3021,8 +3535,47 @@ class _AgentHubPageState extends State<AgentHubPage>
                                                       task.id,
                                                       index,
                                                     ),
+                                                analysisState:
+                                                    task.analysisState,
+                                                deleting: _poopDeleting
+                                                    .contains(
+                                                      task
+                                                          .analysisState
+                                                          ?.analysisId,
+                                                    ),
+                                                onDeleteAnalysis:
+                                                    task.analysisState !=
+                                                            null &&
+                                                        widget.stoolAnalysisRepository !=
+                                                            null
+                                                    ? () => unawaited(
+                                                        _confirmDeletePoopAnalysis(
+                                                          task.id,
+                                                        ),
+                                                      )
+                                                    : null,
+                                                photosLoading:
+                                                    _poopPhotosLoading.contains(
+                                                      task
+                                                          .analysisState
+                                                          ?.analysisId,
+                                                    ),
+                                                photoFeedback:
+                                                    _poopPhotoFeedback[task
+                                                        .analysisState
+                                                        ?.analysisId],
+                                                onLoadPhotos:
+                                                    task.analysisState !=
+                                                            null &&
+                                                        _poopAnalysisAvailable
+                                                    ? () => unawaited(
+                                                        _loadPoopAnalysisPhotos(
+                                                          task.id,
+                                                        ),
+                                                      )
+                                                    : null,
                                                 onSubmit: () => unawaited(
-                                                  _sendPoopPhoto(task.id),
+                                                  _submitPoopAnalysis(task.id),
                                                 ),
                                                 onAbandon: () =>
                                                     _abandonPoopTask(task.id),
@@ -3287,18 +3840,14 @@ class _AgentHubPageState extends State<AgentHubPage>
                                   !isComposerLocked &&
                                   !isRestoring,
                               isRunning: isVisibleReplyRunning,
-                              isInputLocked:
-                                  isComposerLocked ||
-                                  isRestoring ||
-                                  (widget.chatFirstExperience && _poopSending),
+                              isInputLocked: isComposerLocked || isRestoring,
                               isTopicResponding:
                                   widget.chatFirstExperience &&
-                                  (_poopSending ||
-                                      (_runStateNotifier.value.isActive &&
-                                          _activeRequest != null &&
-                                          isChatFirstPoopPrompt(
-                                            _activeRequest!.message,
-                                          ))),
+                                  _runStateNotifier.value.isActive &&
+                                  _activeRequest != null &&
+                                  isChatFirstPoopPrompt(
+                                    _activeRequest!.message,
+                                  ),
                               voicePreviewBlocked:
                                   _cryCapture?.voicePreviewBlocked ?? false,
                               images: List<AgentStreamImageInput>.unmodifiable(

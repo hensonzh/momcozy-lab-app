@@ -136,3 +136,18 @@
 Flutter chat-first 对话的顶部开关由 Product Backend 的鉴权能力接口 `/v1/realtime-voice-capability` 控制；仅当服务端配置真实豆包供应商及私有凭据时启用。默认开启，只在当前前台的新 assistant `message.completed` 后朗读前 500 个字符；历史加载、冷启动恢复与打开开关都不重播旧回复。关闭开关、发送下一轮、离开对话/切后台或更换账号时停止音频和网络流。请求使用 Bearer token 与 POST `/v1/realtime-voice-stream` JSON body，回复正文与供应商密钥均不进入 URL；App 只接收经过格式、采样率、声道检查的 PCM16 24 kHz 单声道，分片逐段送到 Android AudioTrack 或 iOS AVAudioEngine，支持跨网络分片的奇数字节拼接并限制总音频大小。无逐音素时间轴，不伪造口型同步；语音输入、哭声分析仍是独立能力。
 
 本地 Backend `env/local.env`（Git 忽略）使用 Demo 已验证的私有豆包配置；没有凭据的环境保持禁用而不显示可用按钮。验证：Backend 的鉴权能力与真实 POST 短句返回 PCM；Flutter 控制器分片/去重/禁用状态测试；Android 原生通道设备集成测试；Pixel 7 的新账号欢迎 Run 触发 POST 200，UI 在收到 PCM 时出现“正在播放语音”；iOS Simulator 构建通过。iOS 真机实际出声及供应商故障/网络抖动的端到端听感尚待单独验收。刷新给用户看的 Pixel 10 Pro 时继续用新账号并最终停在 onboarding 首屏。
+
+## 看便便独立审核迁移（2026-10-20；仅第一阶段，未发布）
+
+- 旧的「看便便」卡片不再上传通用文件并创建 `[momcozy_internal_poop_v1]` Agent Run；Agent Runtime 的公开入口及 service 层同步拒绝新旧客户端以该 marker 发起的通用 Run（`409/stool_specialty_required`）。既有历史卡仍展示，普通聊天附件保持原有路径，不能将其当成看便便医学结论。
+- App 通过 `GET /v1/stool-photos/capability` 查询审核是否就绪；当前 Product Backend 永远返回 `review_available=false` 和 `analysis_available=false`，所以真实用户界面会展示不可用原因，**不能选图上传**；服务端上传入口也已按相同的 fail-closed 能力门控拒绝认证用户直接提交原图（`503/stool_photo_review_unavailable`）。供后续经审核的环境使用的 App 路径已接好：专用原图选择（不主动缩放/压缩，格式魔数与 10 MiB 检查，可解码时短边 ≥720 px）、专用私有上传、逐张轮询状态、未通过原因、移除并服务端删除。HEIC 若设备解码器不能读取像素尺寸，仍由 Product Backend 解码并执行最终尺寸/格式验证。设备 picker 对原图字节的实际行为尚需 iOS/Android 真机验证。
+- 即使测试环境的照片审核结果均为 `passed`，当前「分析便便」按钮也**始终不可点击**：独立医学专项接口及流式结论卡尚未实现，不能回退到通用 Agent Run。照片只保留当前前台卡片内存；退出时对已知服务端 ID 发起删除，未知上传结果/进程崩溃由 Backend 的暂定 24 小时原图清理机制兜底（该 worker 必须运行，不能视为医学记录保留政策）。
+- 定向测试：`test/features/agent_hub/platform_image_input_test.dart`、`stool_photo_review_api_repository_test.dart`、`chat_first_poop_task_test.dart`，覆盖尺寸/格式、逐张状态、审核不可用时禁止上传、后端过期审核、离页后异步上传清理、无通用 Run 及旧历史兼容。此处不声称真实儿童图片或设备端验收。
+- 2026-10-22 后续对话契约确认（**尚未实现**）：用户主动提交照片并由独立看便便专项服务完成分析后，App 只携带本次 `analysis_id` 受限引用及展示经确认的结论卡；Product Backend/Agent Runtime 为相关授权对话按需向模型同时提供本次分析所用去元数据图片和已校验最终结果，并说明图片是观察材料、结果来自专项服务、不能当成重新诊断指令。不可在 App 向通用 Agent 直接上传原图/拼接医学提示，不保存签名图片 URL 或模型专用内部字段。照片/结果删除或授权撤销后，后续对话不得再次读取；若其中一项不可用，不能声称模型同时看过两者。对应跨 owner/baby/对话、缺图、撤销、过期、断流、重复事件、提示注入测试见 Backend `docs/stool-photo-service-contract.md`；当前按钮仍禁用。
+
+## 看便便评审问题修复（2026-10-22；仍未发布）
+
+- 服务端 `review_available=false` 时上传入口同样拒绝原图；App 的禁用只是交互层，不是权限边界。
+- 轮询进行中的占用状态按任务代际隔离；旧任务慢请求不能阻断新任务的轮询，旧结果不能覆盖新任务。
+- Android `retrieveLostData` 无法证明此前选择器是否压缩了图片；专用便便选择器丢弃来源不明的遗留数据，并要求用户重新选择不缩放、不压缩的原图。普通聊天恢复不变。后续真机需验证 picker 原图行为。
+- 合成图片与 fake 审核测试已覆盖以上三个缺陷。当前依旧不支持分析按钮、流式医学卡片或已完成结果写入 Agent 模型；后续上下文仅实现 Backend 离线验证切片，不对外启用。

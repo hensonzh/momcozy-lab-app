@@ -149,6 +149,27 @@
         "title": "AgentActionReject",
         "type": "object"
       },
+      "AgentAudioAttachmentCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "format": "uuid",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "type": {
+            "const": "audio",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "asset_id"
+        ],
+        "title": "AgentAudioAttachmentCreate",
+        "type": "object"
+      },
       "AgentClientContext": {
         "additionalProperties": false,
         "properties": {
@@ -763,6 +784,7 @@
             "items": {
               "discriminator": {
                 "mapping": {
+                  "audio": "#/components/schemas/AgentAudioAttachmentCreate",
                   "file": "#/components/schemas/AgentFileAttachmentCreate",
                   "form_submission": "#/components/schemas/AgentFormSubmissionAttachmentCreate",
                   "image": "#/components/schemas/AgentImageAttachmentCreate"
@@ -775,6 +797,9 @@
                 },
                 {
                   "$ref": "#/components/schemas/AgentFileAttachmentCreate"
+                },
+                {
+                  "$ref": "#/components/schemas/AgentAudioAttachmentCreate"
                 },
                 {
                   "$ref": "#/components/schemas/AgentFormSubmissionAttachmentCreate"
@@ -829,6 +854,16 @@
               }
             ],
             "title": "Runtime Version"
+          },
+          "stool_followup": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StoolFollowupReference"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "thread_id": {
             "anyOf": [
@@ -1103,6 +1138,34 @@
         "type": "object"
       },
       "JsonValue": {},
+      "StoolFollowupReference": {
+        "additionalProperties": false,
+        "description": "Client selects a previous analysis; Product reauthorizes it per model call.",
+        "properties": {
+          "analysis_id": {
+            "format": "uuid",
+            "title": "Analysis Id",
+            "type": "string"
+          },
+          "baby_id": {
+            "format": "uuid",
+            "title": "Baby Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "stool.followup.ref.v1",
+            "title": "Schema Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "analysis_id",
+          "baby_id"
+        ],
+        "title": "StoolFollowupReference",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
