@@ -1,11 +1,9 @@
 name: app-ci
 
 on:
-  pull_request:
   push:
     branches:
       - main
-      - "integration/**"
 
 permissions:
   contents: read
@@ -65,7 +63,7 @@ jobs:
         run: flutter test --no-pub --exclude-tags=golden
 
   android-compile:
-    # Independent runner: compile the A staging flavor without waiting for tests
+    # Independent runner: compile the Singapore staging flavor without waiting for tests
     # or reusing their disk-heavy Flutter intermediates. This is not a release APK.
     runs-on: ubuntu-latest
     timeout-minutes: 35
@@ -131,16 +129,17 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
-      - name: Validate A staging endpoints
+      - name: Validate Singapore staging endpoints
         run: >-
           node scripts/build-mobile-app.mjs
           --platform android
           --environment staging
           --mode debug
           --format apk
+          --smoke
           --check-config
 
-      - name: Compile A staging debug APK for arm64
+      - name: Compile Singapore staging debug APK for arm64
         run: |
           df -h .
           flutter build apk --debug --flavor staging \

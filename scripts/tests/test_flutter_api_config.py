@@ -57,12 +57,10 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
             "Agent Runtime API:   http://127.0.0.1:8010", result.stdout
         )
 
-    def test_staging_and_production_require_both_urls(self) -> None:
+    def test_staging_require_both_urls(self) -> None:
         cases = (
             ("staging", "https://product.example.test", None, "MOMCOZY_AGENT_API_BASE_URL"),
             ("staging", None, "https://agent.example.test", "MOMCOZY_API_BASE_URL"),
-            ("production", None, "https://agent.example.test", "MOMCOZY_API_BASE_URL"),
-            ("production", "https://product.example.test", None, "MOMCOZY_AGENT_API_BASE_URL"),
         )
 
         for flavor, product_url, agent_url, missing_name in cases:
@@ -76,7 +74,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(missing_name, result.stderr)
 
-    def test_staging_and_production_reject_loopback_for_either_url(self) -> None:
+    def test_staging_reject_loopback_for_either_url(self) -> None:
         cases = (
             (
                 "staging",
@@ -85,7 +83,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
                 "MOMCOZY_API_BASE_URL",
             ),
             (
-                "production",
+                "staging",
                 "https://services.example.test/product",
                 "http://[::1]:8010",
                 "MOMCOZY_AGENT_API_BASE_URL",
@@ -97,7 +95,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
                 "MOMCOZY_AGENT_API_BASE_URL",
             ),
             (
-                "production",
+                "staging",
                 "http://localhost:8769",
                 "https://services.example.test/agent",
                 "MOMCOZY_API_BASE_URL",
@@ -116,7 +114,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
                 self.assertIn(rejected_name, result.stderr)
                 self.assertIn("loopback", result.stderr.lower())
 
-    def test_staging_and_production_require_https_for_both_urls(self) -> None:
+    def test_staging_require_https_for_both_urls(self) -> None:
         cases = (
             (
                 "staging",
@@ -125,7 +123,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
                 "MOMCOZY_API_BASE_URL",
             ),
             (
-                "production",
+                "staging",
                 "https://product.example.test",
                 "http://agent.example.test",
                 "MOMCOZY_AGENT_API_BASE_URL",
@@ -213,7 +211,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
         )
 
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("MOMCOZY_API_BASE_URL", result.stderr)
+        self.assertIn("Unsupported MOMCOZY_APK_FLAVOR", result.stderr)
         self.assertNotIn("Missing Node build dependencies", result.stderr)
 
     def test_release_gate_requires_explicit_staging_urls_before_steps(self) -> None:
@@ -257,7 +255,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
         download_env["MOMCOZY_AGENT_API_BASE_URL"] = (
             "https://services.example.test/agent"
         )
-        download_env["MOMCOZY_RELEASE_LANE"] = "legacy-staging"
+        download_env["MOMCOZY_RELEASE_TARGET"] = "singapore-staging"
         download_env["MOMCOZY_APK_DART_DEFINES"] = "MOMCOZY_INTERNAL_INVITE_LOGIN=true"
         download_site = subprocess.run(
             ["node", "scripts/build-flutter-apk-download-site.mjs", "--check-config"],
@@ -274,7 +272,7 @@ class FlutterApiConfigScriptTest(unittest.TestCase):
         release_env["MOMCOZY_AGENT_API_BASE_URL"] = (
             "https://services.example.test/agent"
         )
-        release_env["MOMCOZY_RELEASE_LANE"] = "legacy-staging"
+        release_env["MOMCOZY_RELEASE_TARGET"] = "singapore-staging"
         release_env["MOMCOZY_APK_DART_DEFINES"] = "MOMCOZY_INTERNAL_INVITE_LOGIN=true"
         release_gate = subprocess.run(
             ["node", "scripts/run-flutter-release-gate.mjs", "--check-config"],

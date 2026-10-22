@@ -125,11 +125,6 @@ contains(
   "<string name=\"app_name\">Momcozy AI</string>",
   "Flutter staging label matches current staging branding",
 );
-contains(
-  "android/app/src/production/res/values/strings.xml",
-  "<string name=\"app_name\">Momcozy AI</string>",
-  "Flutter production-shaped label matches current staging branding",
-);
 
 notMatches(
   "android/app/src/main/AndroidManifest.xml",

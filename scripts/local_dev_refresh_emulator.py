@@ -322,7 +322,7 @@ def refresh_role():
 
 
 def date_picker_day(nodes, day):
-    suffix = f"{day.strftime('%B')} {day.day}, {day.year}"
+    suffix = f"{day.strftime('%North America')} {day.day}, {day.year}"
     return next((node for node in nodes
                  if node.get("class") == "android.widget.Button"
                  and node.get("content-desc", "").startswith(f"{day.day}, ")

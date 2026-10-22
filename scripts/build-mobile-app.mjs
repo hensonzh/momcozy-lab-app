@@ -8,16 +8,15 @@ import { fileURLToPath } from "node:url";
 import {
   AGENT_API_DEFINE,
   PRODUCT_API_DEFINE,
-  assertLegacyPublishedUrls,
+  assertSingaporePublishedUrls,
   resolveFlutterApiConfig,
 } from "./flutter-api-config.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, "..");
-const supportedEnvironments = new Set(["local", "staging", "production"]);
+const supportedEnvironments = new Set(["local", "staging"]);
 const supportedPlatforms = new Set(["android", "ios"]);
 const supportedModes = new Set(["debug", "release"]);
-const provisionalIosBundleIds = new Set(["com.momcozymai.app.flutterpoc"]);
 const allowedConfigKeys = new Set([
   "MOMCOZY_ENV",
   PRODUCT_API_DEFINE,
@@ -28,23 +27,19 @@ function usage() {
   console.log(`Usage:
   node scripts/build-mobile-app.mjs \\
     --platform <android|ios> \\
-    --environment <local|staging|production> \\
+    --environment <local|staging> \\
     [--mode <debug|release>] \\
     [--format <apk|appbundle|ios|ipa>] \\
     [--config <path>] \\
-    [--release-lane <legacy-staging|north-america-staging>] \\
+    [--release-target <singapore-staging|north-america-staging>] \\
     [--unsigned] \\
+    [--smoke] \\
     [--check-config]
 
 Defaults:
   mode:   debug for local, release otherwise
   format: apk for Android, ios for iOS
-  config: config/environments/<environment>.json
-
-The committed production file is an example only. Copy
-config/environments/production.json.example to the ignored
-config/environments/production.json and fill the reviewed production URLs
-before building production artifacts.`);
+  config: config/environments/<environment>.json`);
 }
 
 function fail(message) {
@@ -59,8 +54,9 @@ function parseArgs(argv) {
     mode: "",
     format: "",
     config: "",
-    releaseLane: "",
+    releaseTarget: "",
     unsigned: false,
+    smoke: false,
     checkConfig: false,
   };
   for (let index = 0; index < argv.length; index += 1) {
@@ -68,6 +64,10 @@ function parseArgs(argv) {
     if (arg === "--help" || arg === "-h") {
       usage();
       process.exit(0);
+    }
+    if (arg === "--smoke") {
+      result.smoke = true;
+      continue;
     }
     if (arg === "--unsigned") {
       result.unsigned = true;
@@ -78,12 +78,12 @@ function parseArgs(argv) {
       continue;
     }
     const key = arg.startsWith("--") ? arg.slice(2) : "";
-    if (!["platform", "environment", "mode", "format", "config", "release-lane"].includes(key)) {
+    if (!["platform", "environment", "mode", "format", "config", "release-target"].includes(key)) {
       fail(`Unknown argument: ${arg}`);
     }
     const value = argv[index + 1];
     if (!value || value.startsWith("--")) fail(`${arg} requires a value.`);
-    result[key === "release-lane" ? "releaseLane" : key] = value;
+    result[key === "release-target" ? "releaseTarget" : key] = value;
     index += 1;
   }
   return result;
@@ -91,10 +91,7 @@ function parseArgs(argv) {
 
 function loadConfig(configPath, environment) {
   if (!existsSync(configPath)) {
-    const hint = environment === "production"
-      ? " Copy config/environments/production.json.example to the ignored production.json first."
-      : "";
-    fail(`Missing environment config: ${configPath}.${hint}`);
+    fail(`Missing environment config: ${configPath}.`);
   }
   let payload;
   try {
@@ -115,26 +112,6 @@ function loadConfig(configPath, environment) {
     fail(`${configPath} MOMCOZY_ENV must be ${environment}.`);
   }
   return payload;
-}
-
-function validateProductionIosIdentity() {
-  const projectFile = path.join(
-    projectRoot,
-    "ios",
-    "Runner.xcodeproj",
-    "project.pbxproj",
-  );
-  const project = readFileSync(projectFile, "utf8");
-  const identifiers = [...project.matchAll(
-    /PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);/g,
-  )]
-    .map((match) => match[1].trim())
-    .filter((value) => !value.endsWith(".RunnerTests"));
-  if (identifiers.length === 0 || identifiers.some((value) => provisionalIosBundleIds.has(value))) {
-    fail(
-      "Production iOS build is blocked until the final Bundle ID replaces com.momcozymai.app.flutterpoc.",
-    );
-  }
 }
 
 function hasAndroidReleaseSigning() {
@@ -191,7 +168,7 @@ if (!supportedPlatforms.has(options.platform)) {
   fail("--platform must be android or ios.");
 }
 if (!supportedEnvironments.has(options.environment)) {
-  fail("--environment must be local, staging, or production.");
+  fail("--environment must be local or staging.");
 }
 options.mode ||= options.environment === "local" ? "debug" : "release";
 if (!supportedModes.has(options.mode)) fail("--mode must be debug or release.");
@@ -209,52 +186,49 @@ if (options.format === "ipa" && options.mode !== "release") {
 if (options.unsigned && options.platform !== "ios") {
   fail("--unsigned is supported only for iOS compiler preflight builds.");
 }
-if (options.environment === "production" && options.unsigned) {
-  fail("Production iOS artifacts must be signed.");
+if (options.smoke && (options.environment !== "staging" || options.releaseTarget)) {
+  fail("--smoke is for staging without a regional release target only.");
 }
-if (options.platform === "ios" && options.environment === "production") {
-  validateProductionIosIdentity();
+if (options.environment === "staging" && !options.releaseTarget && !options.smoke) {
+  fail("Staging builds require a regional --release-target or explicit non-distributable --smoke.");
 }
-if (options.releaseLane && !["legacy-staging", "north-america-staging"].includes(options.releaseLane)) {
-  fail(`Unsupported release lane: ${options.releaseLane}.`);
+if (options.smoke && !(
+  (options.platform === "android" && options.mode === "debug" && options.format === "apk") ||
+  (options.platform === "ios" && options.format === "ios" && options.unsigned)
+)) {
+  fail("--smoke permits only a debug Android APK or unsigned iOS compiler build; never a distributable artifact.");
 }
-if (options.releaseLane && (options.environment !== "staging" || options.mode !== "release")) {
-  fail("Release lanes require the staging environment and release mode.");
+if (options.releaseTarget && !["singapore-staging", "north-america-staging"].includes(options.releaseTarget)) {
+  fail(`Unsupported release target: ${options.releaseTarget}.`);
 }
-if (options.releaseLane === "legacy-staging" &&
+if (options.releaseTarget && (options.environment !== "staging" || options.mode !== "release")) {
+  fail("Regional release targets require the staging environment and release mode.");
+}
+if (options.releaseTarget === "singapore-staging" &&
     (options.platform !== "android" || options.format !== "apk")) {
-  fail("legacy-staging distributes only an Android APK.");
+  fail("singapore-staging distributes only an Android APK.");
 }
-if (options.releaseLane === "north-america-staging" &&
+if (options.releaseTarget === "north-america-staging" &&
     (options.format !== (options.platform === "android" ? "appbundle" : "ipa") || options.unsigned)) {
   fail("north-america-staging requires a signed Android appbundle or iOS ipa.");
 }
-if (
-  options.platform === "android" &&
-  options.environment === "production" &&
-  options.mode === "release" &&
-  !hasAndroidReleaseSigning()
-) {
-  fail("Production Android release signing variables are incomplete.");
-}
-
-const defaultConfig = options.releaseLane === "north-america-staging"
-  ? path.join(projectRoot, "config", "release-lanes", "north-america-staging.json")
+const defaultConfig = options.releaseTarget === "north-america-staging"
+  ? path.join(projectRoot, "config", "release-targets", "north-america-staging.json")
   : path.join(projectRoot, "config", "environments", `${options.environment}.json`);
 const configPath = path.resolve(projectRoot, options.config || defaultConfig);
 let config;
-if (options.releaseLane === "north-america-staging") {
+if (options.releaseTarget === "north-america-staging") {
   const check = spawnSync("node", ["scripts/check-north-america-staging-target.mjs", "--config", configPath], {
     cwd: projectRoot, encoding: "utf8",
   });
-  if (check.status !== 0) fail((check.stderr || "B target check failed.").trim().replace(/^FAIL /, ""));
+  if (check.status !== 0) fail((check.stderr || "North America target check failed.").trim().replace(/^FAIL /, ""));
   const target = JSON.parse(readFileSync(configPath, "utf8"));
   for (const [name, value] of [
     [PRODUCT_API_DEFINE, target.productApiBaseUrl],
     [AGENT_API_DEFINE, target.agentApiBaseUrl],
   ]) {
     if (process.env[name] && process.env[name] !== value) {
-      fail(`${name} must match the B target declaration; do not override it with A.`);
+      fail(`${name} must match the North America target declaration; do not override it with A.`);
     }
   }
   config = {
@@ -265,7 +239,7 @@ if (options.releaseLane === "north-america-staging") {
   if (options.platform === "ios") {
     const project = readFileSync(path.join(projectRoot, "ios/Runner.xcodeproj/project.pbxproj"), "utf8");
     if (project.split(`PRODUCT_BUNDLE_IDENTIFIER = ${target.iosBundleId};`).length - 1 !== 3) {
-      fail("B iOS Bundle ID does not match the existing staging Xcode configurations.");
+      fail("North America iOS Bundle ID does not match the existing staging Xcode configurations.");
     }
   }
 } else {
@@ -278,9 +252,9 @@ const resolved = resolveFlutterApiConfig({
   productUrl,
   agentUrl,
 });
-if (options.releaseLane === "legacy-staging") {
+if (options.releaseTarget === "singapore-staging") {
   try {
-    assertLegacyPublishedUrls(resolved);
+    assertSingaporePublishedUrls(resolved);
   } catch (error) {
     fail(error.message);
   }
@@ -291,10 +265,11 @@ const dartDefines = Object.entries({
   [PRODUCT_API_DEFINE]: resolved.productUrl,
   [AGENT_API_DEFINE]: resolved.agentUrl,
 }).map(([name, value]) => `--dart-define=${name}=${String(value)}`);
-if (options.releaseLane) {
-  dartDefines.push(`--dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=${options.releaseLane === "legacy-staging"}`);
+if (options.releaseTarget) {
+  dartDefines.push(`--dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=${options.releaseTarget === "singapore-staging"}`);
 }
 
+if (options.smoke) console.log("NON-DISTRIBUTABLE staging smoke build; not signed for release or publication.");
 console.log(`Environment: ${options.environment}`);
 console.log(`Platform:    ${options.platform}`);
 console.log(`Mode:        ${options.mode}`);
@@ -302,26 +277,26 @@ console.log(`Format:      ${options.format}`);
 console.log(`Product API: ${resolved.productUrl}`);
 console.log(`Agent API:   ${resolved.agentUrl}`);
 console.log(`Config:      ${path.relative(projectRoot, configPath)}`);
-if (options.releaseLane) console.log(`Login define: MOMCOZY_INTERNAL_INVITE_LOGIN=${options.releaseLane === "legacy-staging"}`);
-if (options.releaseLane === "north-america-staging" && options.platform === "android") {
+if (options.releaseTarget) console.log(`Login define: MOMCOZY_INTERNAL_INVITE_LOGIN=${options.releaseTarget === "singapore-staging"}`);
+if (options.releaseTarget === "north-america-staging" && options.platform === "android") {
   console.log("Android flavor: play");
 }
 if (options.checkConfig) process.exit(0);
-if (options.releaseLane === "north-america-staging") {
+if (options.releaseTarget === "north-america-staging") {
   if (options.platform === "android" && !hasAndroidReleaseSigning()) {
-    fail("B Android upload signing is required before building an appbundle.");
+    fail("North America Android upload signing is required before building an appbundle.");
   }
   if (options.platform === "ios") {
-    if (process.env.MOMCOZY_B_IOS_SIGNING_READY !== "1") {
-      fail("B iOS signing must be verified before building an ipa.");
+    if (process.env.MOMCOZY_NORTH_AMERICA_IOS_SIGNING_READY !== "1") {
+      fail("North America iOS signing must be verified before building an ipa.");
     }
-    if (!process.env.MOMCOZY_B_EXPORT_OPTIONS_PLIST || !existsSync(process.env.MOMCOZY_B_EXPORT_OPTIONS_PLIST)) {
-      fail("B iOS export options must be prepared before building an ipa.");
+    if (!process.env.MOMCOZY_NORTH_AMERICA_EXPORT_OPTIONS_PLIST || !existsSync(process.env.MOMCOZY_NORTH_AMERICA_EXPORT_OPTIONS_PLIST)) {
+      fail("North America iOS export options must be prepared before building an ipa.");
     }
   }
 }
-if (options.releaseLane === "legacy-staging" && !hasAndroidReleaseSigning()) {
-  fail("A release signing variables are incomplete; refuse a debug-signed distribution artifact.");
+if (options.releaseTarget === "singapore-staging" && !hasAndroidReleaseSigning()) {
+  fail("Singapore release signing variables are incomplete; refuse a debug-signed distribution artifact.");
 }
 
 if (options.platform === "android") {
@@ -330,13 +305,13 @@ if (options.platform === "android") {
     "--mode",
     options.mode,
     "--flavor",
-    options.releaseLane === "north-america-staging" ? "play" : options.environment,
+    options.releaseTarget === "north-america-staging" ? "play" : options.environment,
     "--format",
     options.format,
     ...dartDefines,
   ];
-  if (options.releaseLane === "north-america-staging") {
-    process.env.MOMCOZY_B_PLAY_BUILD_APPROVED = "1";
+  if (options.releaseTarget === "north-america-staging") {
+    process.env.MOMCOZY_NORTH_AMERICA_PLAY_BUILD_APPROVED = "1";
   }
   run("node", args);
   process.exit(0);
@@ -345,8 +320,8 @@ if (options.platform === "android") {
 const args = ["build", options.format, `--${options.mode}`];
 if (options.unsigned) args.push("--no-codesign");
 if (options.environment === "staging") args.push("--flavor", "staging");
-if (options.releaseLane === "north-america-staging") {
-  args.push(`--export-options-plist=${process.env.MOMCOZY_B_EXPORT_OPTIONS_PLIST}`);
+if (options.releaseTarget === "north-america-staging") {
+  args.push(`--export-options-plist=${process.env.MOMCOZY_NORTH_AMERICA_EXPORT_OPTIONS_PLIST}`);
 }
 args.push(...dartDefines);
 run("flutter", args);

@@ -20,9 +20,9 @@ The shared Xcode scheme `staging` uses `Debug-staging`, `Profile-staging`, and
 the staging archive has a separate install identity. Use the canonical entrypoint:
 
 ```bash
-make app-build-staging-ios  # unsigned device compiler preflight
+make app-build-staging-smoke-ios  # unsigned, non-distributable compiler preflight
 # Once Apple signing and the staging App Store Connect record are ready:
-node scripts/build-mobile-app.mjs --platform ios --environment staging --mode release --format ipa
+node scripts/build-mobile-app.mjs --platform ios --environment staging --mode release --format ipa --release-target north-america-staging --config config/release-targets/north-america-staging.ci.json
 ```
 
 The unsigned Release build succeeded with the **registered**

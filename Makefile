@@ -99,7 +99,7 @@ APP_FORMAT ?= apk
 APP_CONFIG ?=
 APP_UNSIGNED ?=
 
-.PHONY: app-build app-config-check app-build-local-apk app-build-staging-apk app-build-production-aab app-build-staging-ios app-build-production-ipa
+.PHONY: app-build app-config-check app-build-local-apk app-build-staging-smoke-apk app-build-staging-smoke-ios
 
 app-config-check:
 	node scripts/build-mobile-app.mjs --platform $(APP_PLATFORM) --environment $(APP_ENVIRONMENT) --mode $(APP_MODE) --format $(APP_FORMAT) $(if $(APP_CONFIG),--config $(APP_CONFIG),) $(APP_UNSIGNED) --check-config
@@ -110,17 +110,11 @@ app-build:
 app-build-local-apk:
 	$(MAKE) app-build APP_ENVIRONMENT=local APP_PLATFORM=android APP_MODE=debug APP_FORMAT=apk
 
-app-build-staging-apk:
-	$(MAKE) app-build APP_ENVIRONMENT=staging APP_PLATFORM=android APP_MODE=release APP_FORMAT=apk
+app-build-staging-smoke-apk:
+	node scripts/build-mobile-app.mjs --platform android --environment staging --mode debug --format apk --smoke
 
-app-build-production-aab:
-	$(MAKE) app-build APP_ENVIRONMENT=production APP_PLATFORM=android APP_MODE=release APP_FORMAT=appbundle
-
-app-build-staging-ios:
-	$(MAKE) app-build APP_ENVIRONMENT=staging APP_PLATFORM=ios APP_MODE=release APP_FORMAT=ios APP_UNSIGNED=--unsigned
-
-app-build-production-ipa:
-	$(MAKE) app-build APP_ENVIRONMENT=production APP_PLATFORM=ios APP_MODE=release APP_FORMAT=ipa
+app-build-staging-smoke-ios:
+	node scripts/build-mobile-app.mjs --platform ios --environment staging --mode release --format ios --unsigned --smoke
 
 workspace-environment-check:
 	node scripts/validate-workspace-environments.mjs

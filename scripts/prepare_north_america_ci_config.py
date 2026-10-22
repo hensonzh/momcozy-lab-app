@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate public B CI identity and emit Flutter-only compile defines.
+"""Validate public North America CI identity and emit Flutter-only compile defines.
 
 The output is a disposable, unsigned build input, not a release declaration.
 """
@@ -10,7 +10,7 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TARGET = ROOT / "config/release-lanes/north-america-staging.ci.json"
+TARGET = ROOT / "config/release-targets/north-america-staging.ci.json"
 
 
 def main() -> None:

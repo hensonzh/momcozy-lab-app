@@ -7,8 +7,8 @@ void main() {
   test('StagingSmokeConfig reads env flags and session context', () {
     final config = StagingSmokeConfig.fromEnvironment({
       'MOMCOZY_STAGING_SMOKE': '1',
-      'MOMCOZY_STAGING_SMOKE_MUTATE': 'true',
-      'MOMCOZY_STAGING_SMOKE_AGENT': 'yes',
+      'MOMCOZY_SINGAPORE_SMOKE_MUTATE': 'true',
+      'MOMCOZY_SINGAPORE_SMOKE_AGENT': 'yes',
       'MOMCOZY_API_BASE_URL': 'https://api.example.test/base',
       'MOMCOZY_AGENT_API_BASE_URL': 'https://agent.example.test/runtime',
       'MOMCOZY_API_TOKEN': ' secret-token ',

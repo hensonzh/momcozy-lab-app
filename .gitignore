@@ -75,4 +75,4 @@ app.*.map.json
 /config/environments/production.json
 
 # B target declaration (approved URLs/identities are supplied per operator)
-/config/release-lanes/north-america-staging.json
+/config/release-targets/north-america-staging.json

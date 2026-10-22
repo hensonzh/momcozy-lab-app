@@ -1,4 +1,4 @@
-"""B App dev CI must compile isolated, non-distributable artifacts only."""
+"""North America App dev CI must compile isolated, non-distributable artifacts only."""
 
 import json
 import subprocess
@@ -8,18 +8,18 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-WORKFLOW = ROOT / ".github/workflows/app-b-ci.yml"
-TARGET = ROOT / "config/release-lanes/north-america-staging.ci.json"
+WORKFLOW = ROOT / ".github/workflows/app-north-america-ci.yml"
+TARGET = ROOT / "config/release-targets/north-america-staging.ci.json"
 
 
 class BDevCIContractTests(unittest.TestCase):
     def test_dev_pr_and_push_run_all_b_gates_without_release_permissions(self) -> None:
         text = WORKFLOW.read_text()
-        self.assertIn("pull_request:\n    branches: [dev]", text)
-        self.assertIn("push:\n    branches: [dev]", text)
-        self.assertIn("workflow_dispatch:", text)
+        self.assertNotIn("pull_request:", text)
+        self.assertIn("push:\n    branches: [main]", text)
+        self.assertNotIn("workflow_dispatch:", text)
         self.assertIn("permissions:\n  contents: read", text)
-        for name in ("quality", "android-compile", "ios-compile", "golden", "b-ci"):
+        for name in ("quality", "android-compile", "ios-compile", "golden", "north-america-ci"):
             self.assertIn(f"  {name}:", text)
         self.assertIn("if: always()", text)
         self.assertIn("needs.quality.result", text)
@@ -39,12 +39,12 @@ class BDevCIContractTests(unittest.TestCase):
             "flutter test --no-pub --dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=false test/features/auth/release_lane_auth_mode_test.dart",
             "flutter test --no-pub --tags=golden",
             "--flavor play", "--flavor staging", "--simulator", "--no-codesign",
-            "prepare_b_ci_config.py",
+            "prepare_north_america_ci_config.py",
         ):
             self.assertIn(command, text)
         for forbidden in (
             "secrets.", "packages: write", "contents: write", "docker login",
-            "gh release", "app-staging-release", "workflow_run:",
+            "gh release", "app-singapore-staging-release", "workflow_run:",
             "momcozy-staging-internal-ca.pem", "backend-test.lute-momcozylab",
             "agent-test.lute-momcozylab", "flutter build appbundle", "flutter build ipa",
             "actions/upload-artifact@",
@@ -64,7 +64,7 @@ class BDevCIContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "defines.json"
             result = subprocess.run(
-                [sys.executable, "scripts/prepare_b_ci_config.py", "--output", str(output)],
+                [sys.executable, "scripts/prepare_north_america_ci_config.py", "--output", str(output)],
                 cwd=ROOT, text=True, capture_output=True, check=False,
             )
             self.assertEqual(result.returncode, 0, result.stderr)

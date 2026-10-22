@@ -53,17 +53,21 @@ function requireEqual(environment, key, left, right) {
   }
 }
 
-for (const environment of ["staging", "production"]) {
+for (const target of [
+  { name: "singapore-staging", file: "staging.env.example", app: "config/environments/staging.json" },
+  { name: "north-america-staging", file: "us-east-uat.env.example", app: "config/release-targets/north-america-staging.ci.json" },
+]) {
+  const environment = "staging";
   const backend = readEnv(
-    path.join(backendRoot, "env", `${environment}.env.example`),
+    path.join(backendRoot, "env", target.file),
   );
   const agent = readEnv(
-    path.join(agentRoot, "env", `${environment}.env.example`),
+    path.join(agentRoot, "env", target.file),
   );
-  const appConfigName = environment === "production"
-    ? "production.json.example"
-    : "staging.json";
-  const app = readJson(path.join(appRoot, "config", "environments", appConfigName));
+  const app = readJson(path.join(appRoot, target.app));
+  const appEnvironment = app.MOMCOZY_ENV ?? app.runtimeEnvironment;
+  const appProductUrl = app.MOMCOZY_API_BASE_URL ?? app.productApiBaseUrl;
+  const appAgentUrl = app.MOMCOZY_AGENT_API_BASE_URL ?? app.agentApiBaseUrl;
 
   if (backend.get("APP_ENV") !== environment) {
     fail(`${environment}: Backend APP_ENV is invalid`);
@@ -71,7 +75,7 @@ for (const environment of ["staging", "production"]) {
   if (agent.get("APP_ENV") !== environment) {
     fail(`${environment}: Agent APP_ENV is invalid`);
   }
-  if (app.MOMCOZY_ENV !== environment) {
+  if (appEnvironment !== environment) {
     fail(`${environment}: App MOMCOZY_ENV is invalid`);
   }
 
@@ -93,8 +97,8 @@ for (const environment of ["staging", "production"]) {
     agentUrl,
     agent.get("MOMCOZY_AGENT_PUBLIC_URL"),
   );
-  requireEqual(environment, "App Product API URL", backendUrl, app.MOMCOZY_API_BASE_URL);
-  requireEqual(environment, "App Agent API URL", agentUrl, app.MOMCOZY_AGENT_API_BASE_URL);
+  requireEqual(environment, "App Product API URL", backendUrl, appProductUrl);
+  requireEqual(environment, "App Agent API URL", agentUrl, appAgentUrl);
 
   if (agent.get("PRODUCT_BACKEND_BASE_URL") !== backendUrl) {
     fail(`${environment}: Agent PRODUCT_BACKEND_BASE_URL must match Backend public URL`);

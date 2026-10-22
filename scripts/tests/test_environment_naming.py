@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 class EnvironmentNamingContractTest(unittest.TestCase):
     def test_staging_release_uses_canonical_environment_names(self) -> None:
         workflow = (
-            ROOT / ".github" / "workflows" / "app-staging-release.yml"
+            ROOT / ".github" / "workflows" / "app-singapore-staging-release.yml"
         ).read_text()
         packager = (
             ROOT / "scripts" / "build-flutter-apk-download-site.mjs"

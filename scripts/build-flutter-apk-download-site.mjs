@@ -7,8 +7,8 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  assertLegacyInviteDartDefines,
-  assertLegacyReleaseLane,
+  assertSingaporeInviteDartDefines,
+  assertSingaporeReleaseTarget,
   assertNoReservedApiDartDefines,
   withFlutterApiDartDefines,
 } from "./flutter-api-config.mjs";
@@ -31,7 +31,7 @@ Environment:
                                 Default: ${defaultBaseUrl}
   MOMCOZY_GITHUB_RELEASE_REPO   Public GitHub repository used for APK release assets,
                                 e.g. hensonzh/momcozy-lab-releases.
-  MOMCOZY_APK_FLAVOR            local | staging | production. Default: staging
+  MOMCOZY_APK_FLAVOR            local | staging. Default: staging
   MOMCOZY_APK_MODE              debug | release. Default: release
   MOMCOZY_API_BASE_URL          Product Backend API URL. Required outside local.
   MOMCOZY_AGENT_API_BASE_URL    Agent Runtime API URL. Required outside local.
@@ -67,9 +67,9 @@ try {
     ],
   });
   if (flavor === "staging") {
-    assertLegacyReleaseLane(process.env.MOMCOZY_RELEASE_LANE);
-    if (mode !== "release") throw new Error("legacy-staging APK requires release mode.");
-    assertLegacyInviteDartDefines(dartDefines);
+    assertSingaporeReleaseTarget(process.env.MOMCOZY_RELEASE_TARGET);
+    if (mode !== "release") throw new Error("singapore-staging APK requires release mode.");
+    assertSingaporeInviteDartDefines(dartDefines);
   }
 } catch (error) {
   console.error(`FAIL ${error.message}`);
@@ -141,7 +141,7 @@ if (flavor === "staging" && (apkInput || skipBuild)) {
     .update(await readFile(buildApkPath)).digest("hex");
   if (attestation.schemaVersion !== 1 ||
       attestation.sha256 !== actualSha256 ||
-      attestation.releaseLane !== "legacy-staging" ||
+      attestation.releaseTarget !== "singapore-staging" ||
       attestation.flavor !== flavor || attestation.mode !== mode ||
       JSON.stringify(attestation.dartDefines) !== JSON.stringify(dartDefines)) {
     console.error("FAIL A prebuilt APK hash/build configuration does not match its release gate record.");
@@ -170,7 +170,7 @@ const qrCodeUrl = `${baseUrl}/${qrCodePath}`;
 const manifest = {
   app: qrLabel,
   platform: "android",
-  releaseLane: flavor === "staging" ? "legacy-staging" : null,
+  releaseTarget: flavor === "staging" ? "singapore-staging" : null,
   inviteLoginOnly: flavor === "staging" ? true : null,
   flavor,
   runtimeEnvironment,
@@ -492,7 +492,7 @@ function assertMode(value) {
 }
 
 function assertFlavor(value) {
-  if (!["local", "staging", "production"].includes(value)) {
+  if (!["local", "staging"].includes(value)) {
     throw new Error(`Unsupported MOMCOZY_APK_FLAVOR: ${value}`);
   }
 }

@@ -125,5 +125,5 @@ node scripts/build-flutter-android-apk.mjs \
 
 ```text
 [x] local debug APK `build/app/outputs/flutter-apk/app-local-debug.apk` 可生成
-[x] staging release APK `build/app/outputs/flutter-apk/app-staging-release.apk` 由受保护发布 gate 生成
+[x] staging release APK `build/app/outputs/flutter-apk/app-singapore-staging-release.apk` 由受保护发布 gate 生成
 ```

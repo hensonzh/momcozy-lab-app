@@ -169,9 +169,6 @@ android {
             dimension = "environment"
             applicationId = "momcozy.com.mai"
         }
-        create("production") {
-            dimension = "environment"
-        }
     }
 
     buildTypes {

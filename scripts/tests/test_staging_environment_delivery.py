@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 APP_CI = ROOT / ".github" / "workflows" / "app-ci.yml"
-STAGING_RELEASE = ROOT / ".github" / "workflows" / "app-staging-release.yml"
+STAGING_RELEASE = ROOT / ".github" / "workflows" / "app-singapore-staging-release.yml"
 
 
 def _literal_run_blocks(workflow: str) -> list[str]:
@@ -32,7 +32,7 @@ def _literal_run_blocks(workflow: str) -> list[str]:
 class StagingDeliveryContractTest(unittest.TestCase):
     def test_manual_release_operator_gate(self) -> None:
         workflow = STAGING_RELEASE.read_text()
-        self.assertIn("secrets.STAGING_SSH_PRIVATE_KEY", workflow)
+        self.assertIn("secrets.SINGAPORE_SSH_PRIVATE_KEY", workflow)
         script = _literal_run_blocks(workflow)[0]
         cases = [
             ("Operator, Second", "operator", "SECOND", True),
@@ -46,7 +46,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
             with self.subTest(allowlist=allowlist, actor=actor, rerun=rerun_actor):
                 result = subprocess.run(
                     ["bash", "-c", script],
-                    env={**os.environ, "STAGING_APPROVERS": allowlist,
+                    env={**os.environ, "SINGAPORE_APPROVERS": allowlist,
                          "GITHUB_ACTOR": actor, "GITHUB_TRIGGERING_ACTOR": rerun_actor},
                     capture_output=True, text=True, check=False,
                 )
@@ -122,7 +122,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
             (temporary_path / "verified.apk.build-config.json").write_text(json.dumps({
                 "schemaVersion": 1,
                 "sha256": hashlib.sha256(apk_input.read_bytes()).hexdigest(),
-                "releaseLane": "legacy-staging",
+                "releaseTarget": "singapore-staging",
                 "flavor": "staging",
                 "mode": "release",
                 "dartDefines": [
@@ -137,7 +137,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
                 {
                     "MOMCOZY_APK_FLAVOR": "staging",
                     "MOMCOZY_APK_MODE": "release",
-                    "MOMCOZY_RELEASE_LANE": "legacy-staging",
+                    "MOMCOZY_RELEASE_TARGET": "singapore-staging",
                     "MOMCOZY_APK_DART_DEFINES": "MOMCOZY_INTERNAL_INVITE_LOGIN=true",
                     "MOMCOZY_APK_INPUT": str(apk_input),
                     "MOMCOZY_DOWNLOAD_DIST": str(dist),
@@ -169,7 +169,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
             manifest = json.loads((dist / "manifest.json").read_text())
             self.assertEqual(manifest["flavor"], "staging")
             self.assertEqual(manifest["runtimeEnvironment"], "staging")
-            self.assertEqual(manifest["releaseLane"], "legacy-staging")
+            self.assertEqual(manifest["releaseTarget"], "singapore-staging")
             self.assertIs(manifest["inviteLoginOnly"], True)
             version = re.search(
                 r"^version:\s*([^+\s]+)\+(\d+)$",
@@ -381,27 +381,27 @@ class StagingDeliveryContractTest(unittest.TestCase):
 
         for required in (
             "workflow_dispatch:",
-            "name: staging",
-            "group: momcozy-lab-app-staging",
+            "name: singapore-staging",
+            "group: momcozy-lab-app-singapore-staging",
             "MOMCOZY_REQUIRE_RELEASE_SIGNING: \"1\"",
             "MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER: \"1\"",
             "MOMCOZY_STAGING_SMOKE: \"1\"",
-            "MOMCOZY_STAGING_SMOKE_MUTATE: \"1\"",
-            "MOMCOZY_STAGING_SMOKE_AGENT: \"1\"",
+            "MOMCOZY_SINGAPORE_SMOKE_MUTATE: \"1\"",
+            "MOMCOZY_SINGAPORE_SMOKE_AGENT: \"1\"",
             "MOMCOZY_APK_FLAVOR: staging",
             "MOMCOZY_APK_INPUT",
             "backend_openapi_sha256",
             "agent_openapi_sha256",
             "sha256sum",
             "provenanceFile",
-            "STAGING_SMOKE_INVITE_CODE",
-            "STAGING_SMOKE_DEVICE_ID",
+            "SINGAPORE_SMOKE_INVITE_CODE",
+            "SINGAPORE_SMOKE_DEVICE_ID",
             "/v1/auth/invite-login",
             "/usr/bin/flock",
             "RELEASE_LOCK_PATH",
             "Fetch the currently deployed service manifests again under the lock",
             "Validate the manual release operator",
-            "STAGING_APPROVERS",
+            "SINGAPORE_APPROVERS",
             "needs: authorize",
             "ref: ${{ github.sha }}",
             "mkfifo -m 0600",
@@ -460,7 +460,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
             }
         )
         env.pop("MOMCOZY_STAGING_SMOKE", None)
-        env.pop("MOMCOZY_STAGING_SMOKE_AGENT", None)
+        env.pop("MOMCOZY_SINGAPORE_SMOKE_AGENT", None)
 
         result = subprocess.run(
             ["node", "scripts/run-flutter-release-gate.mjs", "--check-config"],

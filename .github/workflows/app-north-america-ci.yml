@@ -1,16 +1,13 @@
-name: app-b-ci
+name: app-north-america-ci
 
 on:
-  pull_request:
-    branches: [dev]
   push:
-    branches: [dev]
-  workflow_dispatch:
+    branches: [main]
 
 permissions:
   contents: read
 
-# This workflow compiles non-distributable B smoke artifacts only.
+# This workflow compiles non-distributable North America smoke artifacts only.
 # Android is debug-signed; iOS is unsigned. No release signing, deployment or store upload.
 jobs:
   quality:
@@ -38,11 +35,11 @@ jobs:
         run: |
           npm ci --ignore-scripts
           flutter pub get
-      - name: Validate B target and compile-time email login
+      - name: Validate North America target and compile-time email login
         run: |
-          python3 scripts/prepare_b_ci_config.py --output "${RUNNER_TEMP}/b-ci-defines.json"
-          node scripts/build-mobile-app.mjs --platform android --environment staging --mode release --format appbundle --release-lane north-america-staging --config config/release-lanes/north-america-staging.ci.json --check-config
-          node scripts/build-mobile-app.mjs --platform ios --environment staging --mode release --format ipa --release-lane north-america-staging --config config/release-lanes/north-america-staging.ci.json --check-config
+          python3 scripts/prepare_north_america_ci_config.py --output "${RUNNER_TEMP}/north-america-ci-defines.json"
+          node scripts/build-mobile-app.mjs --platform android --environment staging --mode release --format appbundle --release-target north-america-staging --config config/release-targets/north-america-staging.ci.json --check-config
+          node scripts/build-mobile-app.mjs --platform ios --environment staging --mode release --format ipa --release-target north-america-staging --config config/release-targets/north-america-staging.ci.json --check-config
       - name: Check scripts, contracts, Android packaging and privacy
         run: |
           python3 -m unittest discover -s scripts/tests -p 'test_*.py'
@@ -55,7 +52,7 @@ jobs:
         run: flutter analyze --no-pub
       - name: Test non-golden suite
         run: flutter test --no-pub --exclude-tags=golden
-      - name: Verify B compile-time email login UI
+      - name: Verify North America compile-time email login UI
         run: flutter test --no-pub --dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=false test/features/auth/release_lane_auth_mode_test.dart
 
   android-compile:
@@ -78,12 +75,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Compile B Play flavor debug APK (not a store artifact)
+      - name: Compile North America Play flavor debug APK (not a store artifact)
         run: |
           flutter pub get
-          python3 scripts/prepare_b_ci_config.py --output "${RUNNER_TEMP}/b-ci-defines.json"
+          python3 scripts/prepare_north_america_ci_config.py --output "${RUNNER_TEMP}/north-america-ci-defines.json"
           flutter build apk --debug --flavor play --target-platform android-arm64 \
-            --dart-define-from-file="${RUNNER_TEMP}/b-ci-defines.json" --no-pub
+            --dart-define-from-file="${RUNNER_TEMP}/north-america-ci-defines.json" --no-pub
           unzip -Z1 build/app/outputs/flutter-apk/app-play-debug.apk | grep -Fx lib/arm64-v8a/libpdfium.so
           aapt="$(find "${ANDROID_HOME}/build-tools" -maxdepth 2 -name aapt -type f | sort -V | tail -1)"
           test -n "${aapt}"
@@ -106,12 +103,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Compile B iOS staging scheme for simulator without signing
+      - name: Compile North America iOS staging scheme for simulator without signing
         run: |
           flutter pub get
-          python3 scripts/prepare_b_ci_config.py --output "${RUNNER_TEMP}/b-ci-defines.json"
+          python3 scripts/prepare_north_america_ci_config.py --output "${RUNNER_TEMP}/north-america-ci-defines.json"
           flutter build ios --simulator --debug --no-codesign --flavor staging \
-            --dart-define-from-file="${RUNNER_TEMP}/b-ci-defines.json" --no-pub
+            --dart-define-from-file="${RUNNER_TEMP}/north-america-ci-defines.json" --no-pub
           test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' build/ios/iphonesimulator/Runner.app/Info.plist)" = 'com.momcozy.mai.staging'
 
   golden:
@@ -132,13 +129,13 @@ jobs:
           flutter pub get
           flutter test --no-pub --tags=golden
 
-  b-ci:
+  north-america-ci:
     if: always()
     needs: [quality, android-compile, ios-compile, golden]
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
-      - name: Require all B App gates
+      - name: Require all North America App gates
         run: |
           [[ "${{ needs.quality.result }}" == "success" ]]
           [[ "${{ needs.android-compile.result }}" == "success" ]]

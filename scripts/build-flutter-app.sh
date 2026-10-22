@@ -25,11 +25,11 @@ Environment overrides:
   MOMCOZY_AGENT_API_BASE_URL     Agent Runtime API compiled into the Flutter App.
   MOMCOZY_DOWNLOAD_BASE_URL      Public GitHub Pages URL for the download page.
   MOMCOZY_GITHUB_RELEASE_REPO    Public owner/repository for Releases and Pages.
-  MOMCOZY_APK_FLAVOR             local | staging | production (default: staging).
+  MOMCOZY_APK_FLAVOR             local | staging (default: staging).
   MOMCOZY_APK_MODE               debug | release (default: release).
   MOMCOZY_EXTRA_DART_DEFINES     Extra comma-separated KEY=VALUE definitions;
                                   the two API URL keys and A invite flag are reserved.
-  MOMCOZY_RELEASE_LANE           Must be legacy-staging for staging APK publication.
+  MOMCOZY_RELEASE_TARGET           Must be singapore-staging for staging APK publication.
   MOMCOZY_SKIP_NPM_CI            Set to 1 to skip npm ci.
   MOMCOZY_SKIP_UPLOAD            Set to 1 to build without publishing to GitHub.
   MOMCOZY_REQUIRE_RELEASE_SIGNING
@@ -67,7 +67,7 @@ github_release_repo="${MOMCOZY_GITHUB_RELEASE_REPO:-${DEFAULT_GITHUB_RELEASE_REP
 apk_flavor="${MOMCOZY_APK_FLAVOR:-staging}"
 apk_mode="${MOMCOZY_APK_MODE:-release}"
 if [[ "${apk_flavor}" == "staging" ]]; then
-  export MOMCOZY_RELEASE_LANE="${MOMCOZY_RELEASE_LANE:-legacy-staging}"
+  export MOMCOZY_RELEASE_TARGET="${MOMCOZY_RELEASE_TARGET:-singapore-staging}"
   if [[ -n "${MOMCOZY_APK_DART_DEFINES:-}" && "${MOMCOZY_APK_DART_DEFINES}" != "MOMCOZY_INTERNAL_INVITE_LOGIN=true" ]]; then
     printf 'MOMCOZY_APK_DART_DEFINES must be MOMCOZY_INTERNAL_INVITE_LOGIN=true; put other defines in MOMCOZY_EXTRA_DART_DEFINES.\n' >&2
     exit 2
@@ -102,7 +102,7 @@ if [[ "${apk_flavor}" == "staging" && "${download_base_url%/}" != */"${pages_nam
 fi
 
 if [[ "${apk_flavor}" == "staging" && "${check_config}" != "1" && "${skip_upload}" == "0" ]]; then
-  export MOMCOZY_ENFORCE_LEGACY_TARGET=1
+  export MOMCOZY_ENFORCE_SINGAPORE_TARGET=1
   export MOMCOZY_REQUIRE_RELEASE_SIGNING=1
 fi
 
@@ -124,7 +124,7 @@ fi
 if [[ "${skip_upload}" == "0" && "${apk_flavor}" == "staging" ]]; then
   for signing_name in MOMCOZY_FLUTTER_RELEASE_STORE_FILE MOMCOZY_FLUTTER_RELEASE_STORE_PASSWORD MOMCOZY_FLUTTER_RELEASE_KEY_ALIAS MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD; do
     if [[ -z "${!signing_name:-}" ]]; then
-      printf 'A publication requires complete release signing; missing %s.\n' "${signing_name}" >&2
+      printf 'Singapore publication requires complete release signing; missing %s.\n' "${signing_name}" >&2
       exit 2
     fi
   done

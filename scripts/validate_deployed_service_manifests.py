@@ -116,7 +116,7 @@ def main() -> None:
     parser.add_argument("--backend", type=Path, required=True)
     parser.add_argument("--agent", type=Path, required=True)
     parser.add_argument(
-        "--environment", choices=("staging", "production"), required=True
+        "--environment", choices=("staging",), required=True
     )
     args = parser.parse_args()
     validate_deployed_service_manifests(

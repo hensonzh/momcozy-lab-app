@@ -6,9 +6,9 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  assertLegacyInviteDartDefines,
-  assertLegacyPublishedUrls,
-  assertLegacyReleaseLane,
+  assertSingaporeInviteDartDefines,
+  assertSingaporePublishedUrls,
+  assertSingaporeReleaseTarget,
   withFlutterApiDartDefines,
 } from "./flutter-api-config.mjs";
 
@@ -77,8 +77,8 @@ const runtimeEnvironment = releaseFlavor;
 if (requiresStagingJoinBarrier) {
   const missingSmokeFlags = [
     "MOMCOZY_STAGING_SMOKE",
-    "MOMCOZY_STAGING_SMOKE_MUTATE",
-    "MOMCOZY_STAGING_SMOKE_AGENT",
+    "MOMCOZY_SINGAPORE_SMOKE_MUTATE",
+    "MOMCOZY_SINGAPORE_SMOKE_AGENT",
   ].filter((key) => String(env[key] || "").trim() !== "1");
   if (missingSmokeFlags.length > 0) {
     console.error(
@@ -98,11 +98,11 @@ try {
       ...String(env.MOMCOZY_APK_DART_DEFINES || "").split(",").filter(Boolean),
     ],
   });
-  assertLegacyReleaseLane(env.MOMCOZY_RELEASE_LANE);
+  assertSingaporeReleaseTarget(env.MOMCOZY_RELEASE_TARGET);
   if (releaseFlavor !== "staging") {
-    throw new Error("legacy-staging release gate requires the staging flavor.");
+    throw new Error("singapore-staging release gate requires the staging flavor.");
   }
-  assertLegacyInviteDartDefines(stagingApiDartDefines);
+  assertSingaporeInviteDartDefines(stagingApiDartDefines);
 } catch (error) {
   console.error(`FAIL ${error.message}`);
   process.exit(1);
@@ -116,7 +116,7 @@ if (process.argv.includes("--check-config")) {
 }
 
 try {
-  assertLegacyPublishedUrls({
+  assertSingaporePublishedUrls({
     productUrl: env.MOMCOZY_API_BASE_URL,
     agentUrl: env.MOMCOZY_AGENT_API_BASE_URL,
   });
@@ -201,7 +201,7 @@ for await (const chunk of createReadStream(apkPath)) hash.update(chunk);
 writeFileSync(`${apkPath}.build-config.json`, JSON.stringify({
   schemaVersion: 1,
   sha256: hash.digest("hex"),
-  releaseLane: "legacy-staging",
+  releaseTarget: "singapore-staging",
   flavor: releaseFlavor,
   mode: "release",
   dartDefines: stagingApiDartDefines,

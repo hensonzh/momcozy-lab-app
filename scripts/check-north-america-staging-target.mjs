@@ -6,8 +6,8 @@ import { fileURLToPath } from "node:url";
 import { resolveFlutterApiConfig } from "./flutter-api-config.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const examplePath = "config/release-lanes/north-america-staging.json.example";
-const targetPath = "config/release-lanes/north-america-staging.json";
+const examplePath = "config/release-targets/north-america-staging.json.example";
+const targetPath = "config/release-targets/north-america-staging.json";
 const approvedApiOrigins = {
   productApiBaseUrl: "https://backend-us-dev.lute-momcozylab.luteos.cloud",
   agentApiBaseUrl: "https://agent-us-dev.lute-momcozylab.luteos.cloud",
@@ -33,14 +33,14 @@ function load(file) {
 
 try {
   const target = load(configPath);
-  const legacy = load(path.join(root, "config/environments/staging.json"));
+  const singapore = load(path.join(root, "config/environments/staging.json"));
   if (!target || Array.isArray(target) || typeof target !== "object" ||
       keys.some((key) => typeof target[key] !== "string" || !target[key].trim() || target[key].trim() === "TBD") ||
       Object.keys(target).some((key) => !keys.includes(key))) {
-    throw new Error("B target declaration must fill exactly the approved fields; TBD is not release-ready.");
+    throw new Error("North America target declaration must fill exactly the approved fields; TBD is not release-ready.");
   }
   if (target.deploymentTarget !== "north-america-staging" || target.runtimeEnvironment !== "staging") {
-    throw new Error("B must use deploymentTarget=north-america-staging and runtimeEnvironment=staging.");
+    throw new Error("North America must use deploymentTarget=north-america-staging and runtimeEnvironment=staging.");
   }
   const config = resolveFlutterApiConfig({
     flavor: "staging",
@@ -48,29 +48,29 @@ try {
     agentUrl: target.agentApiBaseUrl,
   });
   for (const [name, url, oldUrl] of [
-    ["productApiBaseUrl", config.productUrl, legacy.MOMCOZY_API_BASE_URL],
-    ["agentApiBaseUrl", config.agentUrl, legacy.MOMCOZY_AGENT_API_BASE_URL],
+    ["productApiBaseUrl", config.productUrl, singapore.MOMCOZY_API_BASE_URL],
+    ["agentApiBaseUrl", config.agentUrl, singapore.MOMCOZY_AGENT_API_BASE_URL],
   ]) {
     const host = new URL(url).hostname.toLowerCase();
     if (/\.(?:test|example|invalid|localhost)$/.test(host) ||
         host === new URL(oldUrl).hostname.toLowerCase() ||
-        host === new URL(legacy.MOMCOZY_API_BASE_URL).hostname.toLowerCase() ||
-        host === new URL(legacy.MOMCOZY_AGENT_API_BASE_URL).hostname.toLowerCase()) {
-      throw new Error(`${name} must use a real B hostname distinct from both A endpoints.`);
+        host === new URL(singapore.MOMCOZY_API_BASE_URL).hostname.toLowerCase() ||
+        host === new URL(singapore.MOMCOZY_AGENT_API_BASE_URL).hostname.toLowerCase()) {
+      throw new Error(`${name} must use a real North America hostname distinct from Singapore endpoints.`);
     }
     if (url !== approvedApiOrigins[name]) {
-      throw new Error(`${name} must match the approved B HTTPS origin.`);
+      throw new Error(`${name} must match the approved North America HTTPS origin.`);
     }
   }
   const gradle = readFileSync(path.join(root, "android/app/build.gradle.kts"), "utf8");
   const aBaseId = gradle.match(/applicationId\s*=\s*"([^"]+)"/)?.[1];
   const aSuffix = gradle.match(/create\("staging"\)\s*\{[\s\S]*?applicationIdSuffix\s*=\s*"([^"]+)"/)?.[1];
-  if (!aBaseId || !aSuffix) throw new Error("Cannot determine the A Android application ID from Gradle.");
+  if (!aBaseId || !aSuffix) throw new Error("Cannot determine the Singapore Android application ID from Gradle.");
   const androidId = target.androidApplicationId;
   const iosId = target.iosBundleId;
   if (!/^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)+$/.test(androidId) ||
       androidId === `${aBaseId}${aSuffix}`) {
-    throw new Error("androidApplicationId must be a reviewed B Play package distinct from the A APK.");
+    throw new Error("androidApplicationId must be a reviewed North America Play package distinct from the Singapore APK.");
   }
   const playId = gradle.match(/create\("play"\)\s*\{[^}]*applicationId\s*=\s*"([^"]+)"/)?.[1];
   if (androidId !== playId) {
@@ -78,9 +78,9 @@ try {
   }
   if (!/^[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(iosId) ||
       iosId === "com.momcozymai.app.flutterpoc") {
-    throw new Error("iosBundleId must be an approved, non-provisional B App ID.");
+    throw new Error("iosBundleId must be an approved, non-provisional North America App ID.");
   }
-  console.log(`B target declaration passes static checks for ${androidId}; cloud isolation, signing, contracts and stores remain unverified. No build or release was performed.`);
+  console.log(`North America target declaration passes static checks for ${androidId}; cloud isolation, signing, contracts and stores remain unverified. No build or release was performed.`);
 } catch (error) {
   console.error(`FAIL ${error.message}${error.code === "ENOENT" ? ` Copy ${examplePath} to ${targetPath} after approval.` : ""}`);
   process.exit(1);

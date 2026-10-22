@@ -1,4 +1,4 @@
-"""B target is a distinct, fail-closed declaration, not an A staging alias."""
+"""North America target is a distinct, fail-closed declaration, not an Singapore staging alias."""
 
 import json
 from pathlib import Path
@@ -8,8 +8,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = "scripts/check-north-america-staging-target.mjs"
-EXAMPLE = ROOT / "config/release-lanes/north-america-staging.json.example"
-A_CONFIG = json.loads((ROOT / "config/environments/staging.json").read_text())
+EXAMPLE = ROOT / "config/release-targets/north-america-staging.json.example"
+SINGAPORE_CONFIG = json.loads((ROOT / "config/environments/staging.json").read_text())
 
 
 class NorthAmericaStagingTargetTests(unittest.TestCase):
@@ -30,7 +30,7 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("TBD", result.stderr)
 
-    def test_b_cannot_reuse_a_product_or_agent_host(self) -> None:
+    def test_north_america_cannot_reuse_singapore_product_or_agent_host(self) -> None:
         data = {
             "deploymentTarget": "north-america-staging",
             "runtimeEnvironment": "staging",
@@ -39,12 +39,12 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
             "androidApplicationId": "momcozy.com.mai",
             "iosBundleId": "com.momcozy.mai.staging",
         }
-        for field, a_field in (
+        for field, singapore_field in (
             ("productApiBaseUrl", "MOMCOZY_API_BASE_URL"),
             ("agentApiBaseUrl", "MOMCOZY_AGENT_API_BASE_URL"),
         ):
             with self.subTest(field=field):
-                swapped = data | {field: A_CONFIG[a_field]}
+                swapped = data | {field: SINGAPORE_CONFIG[singapore_field]}
                 result = self.check(swapped)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(field, result.stderr)
@@ -61,9 +61,9 @@ class NorthAmericaStagingTargetTests(unittest.TestCase):
         for name in ("productApiBaseUrl", "agentApiBaseUrl"):
             with self.subTest(name=name):
                 wrong_origin = data | {name: "https://unapproved.na-reviewed.org"}
-                self.assertIn("approved B HTTPS origin", self.check(wrong_origin).stderr)
+                self.assertIn("approved North America HTTPS origin", self.check(wrong_origin).stderr)
 
-    def test_b_cannot_reuse_a_android_identity_or_placeholder_domains(self) -> None:
+    def test_north_america_cannot_reuse_singapore_android_identity_or_placeholder_domains(self) -> None:
         data = {
             "deploymentTarget": "north-america-staging",
             "runtimeEnvironment": "staging",

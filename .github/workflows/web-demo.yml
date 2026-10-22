@@ -1,10 +1,8 @@
 name: web-demo
 
 on:
-  pull_request:
-    branches: [dev]
   push:
-    branches: [dev]
+    branches: [main]
     paths:
       - '.github/workflows/web-demo.yml'
       - 'lib/**'
@@ -19,7 +17,6 @@ on:
       - 'scripts/tests/web_demo_browser.test.mjs'
       - 'package.json'
       - 'package-lock.json'
-  workflow_dispatch:
 
 permissions:
   contents: read

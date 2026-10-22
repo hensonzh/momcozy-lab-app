@@ -37,8 +37,8 @@ class StagingSmokeConfig {
     );
     return StagingSmokeConfig(
       enabled: _flag(env, 'MOMCOZY_STAGING_SMOKE'),
-      includeMutating: _flag(env, 'MOMCOZY_STAGING_SMOKE_MUTATE'),
-      includeAgentStream: _flag(env, 'MOMCOZY_STAGING_SMOKE_AGENT'),
+      includeMutating: _flag(env, 'MOMCOZY_SINGAPORE_SMOKE_MUTATE'),
+      includeAgentStream: _flag(env, 'MOMCOZY_SINGAPORE_SMOKE_AGENT'),
       apiBaseUri: apiBase,
       agentRunsUri: _appendPath(agentBase, '/v1/agent/runs'),
       session: MomCozySession.fromEnvironment(
@@ -140,7 +140,7 @@ class StagingSmokeRunner {
             name: probe.name,
             status: StagingSmokeStatus.skipped,
             elapsed: Duration.zero,
-            message: 'Set MOMCOZY_STAGING_SMOKE_MUTATE=1 to run this probe.',
+            message: 'Set MOMCOZY_SINGAPORE_SMOKE_MUTATE=1 to run this probe.',
           ),
         );
         continue;
@@ -151,7 +151,7 @@ class StagingSmokeRunner {
             name: probe.name,
             status: StagingSmokeStatus.skipped,
             elapsed: Duration.zero,
-            message: 'Set MOMCOZY_STAGING_SMOKE_AGENT=1 to run this probe.',
+            message: 'Set MOMCOZY_SINGAPORE_SMOKE_AGENT=1 to run this probe.',
           ),
         );
         continue;

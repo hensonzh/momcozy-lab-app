@@ -13,7 +13,7 @@ if (process.argv.includes("--help")) {
   console.log(`Usage:
   node scripts/build-flutter-android-apk.mjs [--check-config] \\
     --mode <debug|release> \\
-    --flavor <local|staging|play|production> \\
+    --flavor <local|staging|play> \\
     [--format <apk|appbundle>] \\
     [--dart-define=KEY=VALUE]
 `);
@@ -38,16 +38,16 @@ if (options.checkConfig) {
 }
 
 if (options.flavor === "play") {
-  if (process.env.MOMCOZY_B_PLAY_BUILD_APPROVED !== "1") {
-    fail("B play builder must be invoked by the approved B entrypoint.");
+  if (process.env.MOMCOZY_NORTH_AMERICA_PLAY_BUILD_APPROVED !== "1") {
+    fail("North America play builder must be invoked by the approved North America entrypoint.");
   }
   if (options.mode !== "release" || options.format !== "appbundle" ||
       !options.dartDefines.includes("MOMCOZY_ENV=staging") ||
       !options.dartDefines.includes("MOMCOZY_INTERNAL_INVITE_LOGIN=false")) {
-    fail("B play requires a release appbundle with staging runtime and email login.");
+    fail("North America play requires a release appbundle with staging runtime and email login.");
   }
   for (const key of ["MOMCOZY_FLUTTER_RELEASE_STORE_FILE", "MOMCOZY_FLUTTER_RELEASE_STORE_PASSWORD", "MOMCOZY_FLUTTER_RELEASE_KEY_ALIAS", "MOMCOZY_FLUTTER_RELEASE_KEY_PASSWORD"]) {
-    if (!process.env[key]) fail("B Android upload signing is required before building an appbundle.");
+    if (!process.env[key]) fail("North America Android upload signing is required before building an appbundle.");
   }
 }
 
@@ -162,7 +162,7 @@ function parseArgs(args) {
   if (!["debug", "release"].includes(mode)) {
     fail(`Unsupported or missing --mode: ${mode || "(empty)"}`);
   }
-  if (!["local", "staging", "play", "production"].includes(flavor)) {
+  if (!["local", "staging", "play"].includes(flavor)) {
     fail(`Unsupported or missing --flavor: ${flavor || "(empty)"}`);
   }
   if (!["apk", "appbundle"].includes(format)) {

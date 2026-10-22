@@ -13,7 +13,6 @@ export const DEFAULT_LOCAL_AGENT_API_URL = "http://127.0.0.1:8010";
 const supportedFlavors = new Set([
   "local",
   "staging",
-  "production",
 ]);
 const reservedApiDefines = new Set([PRODUCT_API_DEFINE, AGENT_API_DEFINE]);
 
@@ -21,7 +20,7 @@ export function resolveFlutterApiConfig({ flavor, productUrl, agentUrl }) {
   const normalizedFlavor = String(flavor || "").trim();
   if (!supportedFlavors.has(normalizedFlavor)) {
     throw new Error(
-      `Unsupported flavor: ${normalizedFlavor || "(empty)"}. Expected local, staging, or production.`,
+      `Unsupported flavor: ${normalizedFlavor || "(empty)"}. Expected local or staging.`,
     );
   }
 
@@ -100,32 +99,32 @@ export function assertNoReservedApiDartDefines(
   }
 }
 
-export function assertLegacyInviteDartDefines(dartDefines) {
+export function assertSingaporeInviteDartDefines(dartDefines) {
   const parsedDefines = parseDartDefines(dartDefines);
   if (parsedDefines.some((define) => define.name === "MOMCOZY_ENV")) {
-    throw new Error("MOMCOZY_ENV is fixed to staging in A release builds.");
+    throw new Error("MOMCOZY_ENV is fixed to staging in Singapore release builds.");
   }
   const values = parsedDefines
     .filter((define) => define.name === INVITE_LOGIN_DEFINE);
   if (values.length !== 1 || values[0].value !== "true") {
-    throw new Error(`legacy-staging requires exactly one ${INVITE_LOGIN_DEFINE}=true.`);
+    throw new Error(`singapore-staging requires exactly one ${INVITE_LOGIN_DEFINE}=true.`);
   }
 }
 
-export function assertLegacyReleaseLane(lane) {
-  if (String(lane || "").trim() !== "legacy-staging") {
-    throw new Error("A staging APK requires MOMCOZY_RELEASE_LANE=legacy-staging.");
+export function assertSingaporeReleaseTarget(lane) {
+  if (String(lane || "").trim() !== "singapore-staging") {
+    throw new Error("Singapore staging APK requires MOMCOZY_RELEASE_TARGET=singapore-staging.");
   }
 }
 
-export function assertLegacyPublishedUrls({ productUrl, agentUrl }) {
+export function assertSingaporePublishedUrls({ productUrl, agentUrl }) {
   const config = JSON.parse(readFileSync(
     path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../config/environments/staging.json"),
     "utf8",
   ));
   if (productUrl !== config.MOMCOZY_API_BASE_URL ||
       agentUrl !== config.MOMCOZY_AGENT_API_BASE_URL) {
-    throw new Error("A publication must use both URLs from config/environments/staging.json, not a B target.");
+    throw new Error("Singapore publication must use both URLs from config/environments/staging.json, not a North America target.");
   }
 }
 
@@ -155,12 +154,12 @@ function resolveUrl({ name, value, fallback, flavor, allowLoopback }) {
   }
   const hostname = parsed.hostname.toLowerCase().replace(/\.$/, "");
   if (
-    flavor === "production" &&
+    !allowLoopback &&
     ["example.com", "example.org", "example.net"].some(
       (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
     )
   ) {
-    throw new Error(`${name} must not use a placeholder domain for production builds.`);
+    throw new Error(`${name} must not use a placeholder domain for deployed builds.`);
   }
   return resolved;
 }
@@ -238,11 +237,11 @@ function parseCliArgs(args) {
 function printHelp() {
   console.log(`Usage:
   node scripts/flutter-api-config.mjs validate \\
-    --flavor <local|staging|production> \\
+    --flavor <local|staging> \\
     --product-url <url> --agent-url <url> \\
     [--extra-dart-defines <KEY=VALUE,...>]
 
-local accepts omitted URLs and uses loopback defaults. staging and production
+local accepts omitted URLs and uses loopback defaults. staging
 require both HTTPS URLs and reject loopback or unspecified hosts.`);
 }
 
@@ -258,17 +257,17 @@ if (isMain) {
   try {
     const options = parseCliArgs(process.argv.slice(2));
     const resolved = resolveFlutterApiConfig(options);
-    if (process.env.MOMCOZY_ENFORCE_LEGACY_TARGET === "1") {
-      assertLegacyPublishedUrls(resolved);
+    if (process.env.MOMCOZY_ENFORCE_SINGAPORE_TARGET === "1") {
+      assertSingaporePublishedUrls(resolved);
     }
     assertNoReservedApiDartDefines(options.extraDartDefines, {
       sourceName: "MOMCOZY_EXTRA_DART_DEFINES",
     });
-    if (process.env.MOMCOZY_RELEASE_LANE === "legacy-staging") {
+    if (process.env.MOMCOZY_RELEASE_TARGET === "singapore-staging") {
       const extras = parseDartDefines(options.extraDartDefines);
       for (const name of [INVITE_LOGIN_DEFINE, "MOMCOZY_ENV"]) {
         if (extras.some((define) => define.name === name)) {
-          throw new Error(`MOMCOZY_EXTRA_DART_DEFINES must not include ${name}; the A release wrapper sets it.`);
+          throw new Error(`MOMCOZY_EXTRA_DART_DEFINES must not include ${name}; the Singapore release wrapper sets it.`);
         }
       }
     }

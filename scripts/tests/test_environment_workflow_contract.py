@@ -12,22 +12,20 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class EnvironmentWorkflowContractTest(unittest.TestCase):
-    def test_mobile_environments_are_local_staging_production(self) -> None:
+    def test_mobile_environments_are_local_and_regional_staging(self) -> None:
         for environment in ("local", "staging"):
             path = ROOT / "config" / "environments" / f"{environment}.json"
             self.assertTrue(path.is_file(), path)
             payload = json.loads(path.read_text())
             self.assertEqual(payload["MOMCOZY_ENV"], environment)
-        self.assertTrue(
-            (ROOT / "config" / "environments" / "production.json.example").is_file()
-        )
+        self.assertFalse((ROOT / "config/environments/production.json.example").exists())
 
     def test_android_flavors_use_canonical_environment_names(self) -> None:
         gradle = (ROOT / "android" / "app" / "build.gradle.kts").read_text()
         self.assertIn('create("local")', gradle)
         self.assertIn('create("staging")', gradle)
         self.assertIn('applicationIdSuffix = ".staging"', gradle)
-        self.assertIn('create("production")', gradle)
+        self.assertNotIn('create("production")', gradle)
         self.assertNotIn('create("unified")', gradle)
         self.assertFalse((ROOT / "android" / "app" / "src" / "unified").exists())
 
@@ -40,7 +38,7 @@ class EnvironmentWorkflowContractTest(unittest.TestCase):
             (ROOT / "scripts" / "validate_deployed_service_manifests.py").is_file()
         )
         self.assertTrue(
-            (ROOT / ".github" / "workflows" / "app-staging-release.yml").is_file()
+            (ROOT / ".github" / "workflows" / "app-singapore-staging-release.yml").is_file()
         )
         self.assertFalse(
             (ROOT / ".github" / "workflows" / "app-test-release.yml").exists()
@@ -87,7 +85,7 @@ class EnvironmentWorkflowContractTest(unittest.TestCase):
             }
             result = subprocess.run(
                 ["node", "scripts/build-mobile-app.mjs", "--platform", "ios",
-                 "--environment", "staging", "--mode", "release", "--format", "ios", "--unsigned"],
+                 "--environment", "staging", "--mode", "release", "--format", "ios", "--unsigned", "--smoke"],
                 cwd=ROOT, env=env, capture_output=True, text=True, check=False,
             )
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -95,64 +93,25 @@ class EnvironmentWorkflowContractTest(unittest.TestCase):
             self.assertEqual(args[:6], ["build", "ios", "--release", "--no-codesign", "--flavor", "staging"])
             self.assertIn("--dart-define=MOMCOZY_ENV=staging", args)
 
-    def test_standard_build_entrypoint_covers_store_artifacts_and_blocks_provisional_ios_id(self) -> None:
+    def test_standard_build_entrypoint_covers_store_artifacts_without_production_target(self) -> None:
         script = (ROOT / "scripts" / "build-mobile-app.mjs").read_text()
         makefile = (ROOT / "Makefile").read_text()
 
         self.assertIn('new Set(["apk", "appbundle"])', script)
         self.assertNotIn("App Bundle output is not yet implemented", script)
-        self.assertIn("Production iOS build is blocked until the final Bundle ID", script)
-        self.assertIn("app-build-production-aab", makefile)
-        self.assertIn("app-build-production-ipa", makefile)
+        self.assertIn("north-america-staging", script)
+        self.assertNotIn("app-build-production-aab", makefile)
+        self.assertNotIn("app-build-production-ipa", makefile)
 
-    def test_production_ios_stays_blocked_until_bundle_id_is_final(self) -> None:
+    def test_production_environment_is_rejected_before_build(self) -> None:
         import subprocess
-
         result = subprocess.run(
-            [
-                "node",
-                "scripts/build-mobile-app.mjs",
-                "--platform",
-                "ios",
-                "--environment",
-                "production",
-                "--mode",
-                "release",
-                "--format",
-                "ipa",
-                "--config",
-                "config/environments/production.json.example",
-                "--check-config",
-            ],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("final Bundle ID", result.stderr)
-
-    def test_production_example_urls_cannot_be_built(self) -> None:
-        import subprocess
-
-        result = subprocess.run(
-            [
-                "node", "scripts/build-mobile-app.mjs",
-                "--platform", "android",
-                "--environment", "production",
-                "--mode", "debug",
-                "--format", "apk",
-                "--config", "config/environments/production.json.example",
-                "--check-config",
-            ],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
+            ["node", "scripts/build-mobile-app.mjs", "--platform", "android",
+             "--environment", "production", "--check-config"],
+            cwd=ROOT, capture_output=True, text=True, check=False,
         )
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("placeholder", result.stderr)
+        self.assertIn("local or staging", result.stderr)
         self.assertNotIn("$ flutter", result.stdout)
 
     @unittest.skipUnless(sys.platform == "darwin", "AAPT2 override is macOS-specific")

@@ -10,8 +10,8 @@ import json
 ROOT = Path(__file__).resolve().parents[2]
 
 
-class LegacyInviteReleaseLaneTests(unittest.TestCase):
-    def _check(self, script: str, *, defines: str, lane: str = "legacy-staging") -> subprocess.CompletedProcess[str]:
+class SingaporeInviteReleaseTargetTests(unittest.TestCase):
+    def _check(self, script: str, *, defines: str, lane: str = "singapore-staging") -> subprocess.CompletedProcess[str]:
         env = os.environ.copy()
         env.update({
             "MOMCOZY_APK_FLAVOR": "staging",
@@ -19,7 +19,7 @@ class LegacyInviteReleaseLaneTests(unittest.TestCase):
             "MOMCOZY_API_BASE_URL": "https://product.example.test",
             "MOMCOZY_AGENT_API_BASE_URL": "https://agent.example.test",
             "MOMCOZY_APK_DART_DEFINES": defines,
-            "MOMCOZY_RELEASE_LANE": lane,
+            "MOMCOZY_RELEASE_TARGET": lane,
         })
         return subprocess.run(["node", script, "--check-config"], cwd=ROOT, env=env, text=True, capture_output=True, check=False)
 
@@ -33,7 +33,7 @@ class LegacyInviteReleaseLaneTests(unittest.TestCase):
                 result = self._check(script, defines="MOMCOZY_INTERNAL_INVITE_LOGIN=true")
                 self.assertEqual(result.returncode, 0, result.stderr)
 
-    def test_manual_legacy_wrapper_forces_invite_mode(self) -> None:
+    def test_manual_singapore_wrapper_forces_invite_mode(self) -> None:
         env = os.environ.copy()
         env.update({
             "MOMCOZY_APK_FLAVOR": "staging",
@@ -49,8 +49,8 @@ class LegacyInviteReleaseLaneTests(unittest.TestCase):
                     self.assertIn("MOMCOZY_INTERNAL_INVITE_LOGIN", result.stderr)
 
     def test_staging_release_workflow_declares_invite_lane(self) -> None:
-        workflow = (ROOT / ".github/workflows/app-staging-release.yml").read_text()
-        self.assertIn("MOMCOZY_RELEASE_LANE: legacy-staging", workflow)
+        workflow = (ROOT / ".github/workflows/app-singapore-staging-release.yml").read_text()
+        self.assertIn("MOMCOZY_RELEASE_TARGET: singapore-staging", workflow)
         self.assertIn("MOMCOZY_APK_DART_DEFINES: MOMCOZY_INTERNAL_INVITE_LOGIN=true", workflow)
 
     def test_prebuilt_a_apk_without_release_gate_record_is_rejected(self) -> None:
@@ -64,7 +64,7 @@ class LegacyInviteReleaseLaneTests(unittest.TestCase):
                 "MOMCOZY_API_BASE_URL": "https://product.example.test",
                 "MOMCOZY_AGENT_API_BASE_URL": "https://agent.example.test",
                 "MOMCOZY_APK_DART_DEFINES": "MOMCOZY_INTERNAL_INVITE_LOGIN=true",
-                "MOMCOZY_RELEASE_LANE": "legacy-staging",
+                "MOMCOZY_RELEASE_TARGET": "singapore-staging",
                 "MOMCOZY_APK_INPUT": str(apk),
                 "MOMCOZY_DOWNLOAD_DIST": str(Path(temporary) / "dist"),
             })
@@ -79,7 +79,7 @@ class LegacyInviteReleaseLaneTests(unittest.TestCase):
     def test_a_publication_cannot_point_at_a_different_target(self) -> None:
         config = json.loads((ROOT / "config/environments/staging.json").read_text())
         env = os.environ.copy()
-        env["MOMCOZY_ENFORCE_LEGACY_TARGET"] = "1"
+        env["MOMCOZY_ENFORCE_SINGAPORE_TARGET"] = "1"
         args = [
             "node", "scripts/flutter-api-config.mjs", "validate",
             "--flavor", "staging",

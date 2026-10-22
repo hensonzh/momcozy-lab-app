@@ -2,7 +2,7 @@
 
 IBCLC 使用独立 Flutter 入口 `lib/main_ibclc.dart`；本地运行与当前实现范围见 [工作台说明](docs/ibclc-workbench.md)。完整重构状态见 [产品基线清单](docs/product-baseline-refactor.md)。
 
-Production Flutter client for MomCozyApp.
+Flutter client for local development and regional staging.
 
 对话优先 App 端基础版已按 [`docs/flutter/chat-first-product-architecture.md`](docs/flutter/chat-first-product-architecture.md) 收口：登录与角色引导、对话单首页、侧栏、真实资料和记录、宝宝知识到草稿的链路走当前本地服务契约。白板每日建议、供应商语音／哭声分析、旧 UI/API 破坏性清退不包含在本阶段；当前新引导需配套的 Product Backend 合同，不能直接视为兼容尚未升级的线上服务。未推送或发布。
 
@@ -159,7 +159,8 @@ Current Android package IDs:
 
 - `local` applicationId: `com.momcozymai.app.flutterpoc.local`
 - `staging` applicationId: `com.momcozymai.app.flutterpoc.staging`（测试环境分发）
-- `production` applicationId: `com.momcozymai.app.flutterpoc`
+- North America Play applicationId: `momcozy.com.mai`
+- North America iOS Bundle ID: `com.momcozy.mai.staging`
 - Packaging policy: [docs/flutter/android-packaging.md](docs/flutter/android-packaging.md)
 - Release gate: [docs/flutter/release-gate.md](docs/flutter/release-gate.md)
 - CI/CD: [docs/flutter/ci-cd.md](docs/flutter/ci-cd.md)

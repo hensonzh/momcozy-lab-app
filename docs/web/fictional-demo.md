@@ -58,7 +58,7 @@ credentials and does not deploy a B service or change TestFlight/Play.
 After the workflow succeeds for the intended source SHA, release the artifact
 to a **separate** public static hosting repository (for example a dedicated
 GitHub Pages repository) with its own base path. Do not enable Pages for the
-App source repository by accident, do not reuse the A/B APK download pages,
+App source repository by accident, do not reuse the regional APK download pages,
 and do not expose any mobile signing keys, Product or Agent secrets. Deploying
 or updating the public site is a separate, controlled operation. Verify the
 public page, `/404.html` navigation fallback, CSP, the script response and

@@ -26,7 +26,7 @@ node scripts/build-flutter-android-apk.mjs --mode release --flavor staging \
   --dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
-发布 gate 只构建待分发的 staging release APK；local debug 构建保留在独立开发命令中。Golden 测试由 App CI 的 macOS lane 执行。手动发布检查 `STAGING_APPROVERS` 中的发起者和重跑者，不再等待第二次 issue 评论确认。
+发布 gate 只构建待分发的 staging release APK；local debug 构建保留在独立开发命令中。Golden 测试由 App CI 的 macOS lane 执行。手动发布检查 `SINGAPORE_APPROVERS` 中的发起者和重跑者，不再等待第二次 issue 评论确认。
 
 所有受支持的打包封装都会执行同一套 API 配置校验。`local` 缺省注入 Product
 Backend `http://127.0.0.1:8769` 与 Agent Runtime `http://127.0.0.1:8010`；`staging`
@@ -41,7 +41,7 @@ node scripts/run-flutter-release-gate.mjs --check-config
 
 `tool/staging_environment_smoke_test.dart` 默认安全 skip；只有设置 `MOMCOZY_STAGING_SMOKE=1` 才会直连后端。
 受保护的 staging 发布还设置 `MOMCOZY_REQUIRE_STAGING_JOIN_BARRIER=1`，此时
-`MOMCOZY_STAGING_SMOKE` 和 `MOMCOZY_STAGING_SMOKE_AGENT` 必须同时为 `1`，否则
+`MOMCOZY_STAGING_SMOKE` 和 `MOMCOZY_SINGAPORE_SMOKE_AGENT` 必须同时为 `1`，否则
 即使使用 `--check-config` 也会 fail closed。
 
 `scripts/build-flutter-android-apk.mjs` 在构建 release APK 前会执行 `flutter clean` 和 `flutter pub get`，避免分发包复用上一源码版本的 AOT 快照。debug 构建仍保留增量构建以缩短本地开发反馈时间。

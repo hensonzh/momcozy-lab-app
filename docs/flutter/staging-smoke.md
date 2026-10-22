@@ -35,13 +35,13 @@ flutter test --no-pub tool/staging_environment_smoke_test.dart
 包含写入探针：
 
 ```bash
-MOMCOZY_STAGING_SMOKE_MUTATE=1
+MOMCOZY_SINGAPORE_SMOKE_MUTATE=1
 ```
 
 包含 Agent SSE 文本流：
 
 ```bash
-MOMCOZY_STAGING_SMOKE_AGENT=1
+MOMCOZY_SINGAPORE_SMOKE_AGENT=1
 MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 ```
 
@@ -54,8 +54,8 @@ MOMCOZY_AGENT_API_BASE_URL=https://agent-test.lute-momcozylab.luteos.cloud:8443
 
 - token 通过 `Authorization: Bearer ...` 注入，不写入日志。
 - smoke 失败信息会脱敏 Bearer token 和 `token=` query 参数。
-- 写入类探针必须显式设置 `MOMCOZY_STAGING_SMOKE_MUTATE=1`。
-- Agent 文本流必须显式设置 `MOMCOZY_STAGING_SMOKE_AGENT=1`。
+- 写入类探针必须显式设置 `MOMCOZY_SINGAPORE_SMOKE_MUTATE=1`。
+- Agent 文本流必须显式设置 `MOMCOZY_SINGAPORE_SMOKE_AGENT=1`。
 - Agent 探针只接受带非空 assistant response 的 `run.completed`；`run.failed`、
   `run.cancelled`、`run.expired` 等终态均失败。
 - Product Backend 和 Agent Runtime 探针分别使用 `MOMCOZY_API_BASE_URL` 与

@@ -1,4 +1,4 @@
-"""B preflight must not reuse A artifacts or silently compile invite login."""
+"""North America preflight must not reuse A artifacts or silently compile invite login."""
 
 import json
 import os
@@ -8,7 +8,7 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
-B_TEMPLATE = ROOT / "config/release-lanes/north-america-staging.json.example"
+NORTH_AMERICA_TEMPLATE = ROOT / "config/release-targets/north-america-staging.json.example"
 
 
 class StoreReleaseLaneTests(unittest.TestCase):
@@ -19,16 +19,16 @@ class StoreReleaseLaneTests(unittest.TestCase):
         return subprocess.run([
             "node", "scripts/build-mobile-app.mjs", "--platform", platform,
             "--environment", "staging", "--mode", "release", "--format", fmt,
-            "--release-lane", "north-america-staging", "--config", str(config),
+            "--release-target", "north-america-staging", "--config", str(config),
             "--check-config",
         ], cwd=ROOT, env=env, text=True, capture_output=True, check=False)
 
-    def test_b_template_is_not_buildable(self) -> None:
-        result = self.check("ios", "ipa", B_TEMPLATE)
+    def test_north_america_template_is_not_buildable(self) -> None:
+        result = self.check("ios", "ipa", NORTH_AMERICA_TEMPLATE)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("TBD", result.stderr)
 
-    def test_b_android_requires_aab_and_separate_native_identity(self) -> None:
+    def test_north_america_android_requires_aab_and_separate_native_identity(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "target.json"
             path.write_text(json.dumps({
@@ -54,23 +54,23 @@ class StoreReleaseLaneTests(unittest.TestCase):
             result = subprocess.run([
                 "node", "scripts/build-mobile-app.mjs", "--platform", "ios",
                 "--environment", "staging", "--mode", "release", "--format", "ipa",
-                "--release-lane", "north-america-staging", "--config", str(path),
+                "--release-target", "north-america-staging", "--config", str(path),
             ], cwd=ROOT, env=env, text=True, capture_output=True, check=False)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("B iOS signing", result.stderr)
+            self.assertIn("North America iOS signing", result.stderr)
             self.assertNotIn("$ flutter", result.stdout)
 
             env["MOMCOZY_API_BASE_URL"] = "https://backend-test.lute-momcozylab.luteos.cloud:8443"
             result = subprocess.run([
                 "node", "scripts/build-mobile-app.mjs", "--platform", "ios",
                 "--environment", "staging", "--mode", "release", "--format", "ipa",
-                "--release-lane", "north-america-staging", "--config", str(path),
+                "--release-target", "north-america-staging", "--config", str(path),
                 "--check-config",
             ], cwd=ROOT, env=env, text=True, capture_output=True, check=False)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("must match the B target", result.stderr)
+            self.assertIn("must match the North America target", result.stderr)
 
-    def test_b_play_builder_accepts_staging_runtime_only_with_explicit_apis(self) -> None:
+    def test_north_america_play_builder_accepts_staging_runtime_only_with_explicit_apis(self) -> None:
         base = ["node", "scripts/build-flutter-android-apk.mjs", "--mode", "release", "--flavor", "play", "--format", "appbundle", "--check-config"]
         for has_apis, args in (
             (False, base),
@@ -88,7 +88,7 @@ class StoreReleaseLaneTests(unittest.TestCase):
                     self.assertNotEqual(result.returncode, 0)
                     self.assertIn("MOMCOZY_API_BASE_URL", result.stderr)
 
-    def test_b_android_build_requires_upload_signing(self) -> None:
+    def test_north_america_android_build_requires_upload_signing(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "target.json"
             path.write_text(json.dumps({
@@ -102,10 +102,10 @@ class StoreReleaseLaneTests(unittest.TestCase):
             result = subprocess.run([
                 "node", "scripts/build-mobile-app.mjs", "--platform", "android",
                 "--environment", "staging", "--mode", "release", "--format", "appbundle",
-                "--release-lane", "north-america-staging", "--config", str(path),
+                "--release-target", "north-america-staging", "--config", str(path),
             ], cwd=ROOT, text=True, capture_output=True, check=False)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("B Android upload signing", result.stderr)
+            self.assertIn("North America Android upload signing", result.stderr)
             self.assertNotIn("$ node", result.stdout)
 
     def test_direct_play_builder_cannot_bypass_b_release_gate(self) -> None:
@@ -116,7 +116,7 @@ class StoreReleaseLaneTests(unittest.TestCase):
             "--dart-define=MOMCOZY_AGENT_API_BASE_URL=https://agent-us-dev.lute-momcozylab.luteos.cloud",
         ], cwd=ROOT, text=True, capture_output=True, check=False)
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("B play builder must be invoked by the approved B entrypoint", result.stderr)
+        self.assertIn("North America play builder must be invoked by the approved North America entrypoint", result.stderr)
         self.assertNotIn("$ flutter", result.stdout)
 
     def test_explicit_a_lane_checks_urls_and_invite_mode(self) -> None:
@@ -127,7 +127,7 @@ class StoreReleaseLaneTests(unittest.TestCase):
         args = [
             "node", "scripts/build-mobile-app.mjs", "--platform", "android",
             "--environment", "staging", "--mode", "release", "--format", "apk",
-            "--release-lane", "legacy-staging", "--check-config",
+            "--release-target", "singapore-staging", "--check-config",
         ]
         result = subprocess.run(args, cwd=ROOT, env=env, text=True, capture_output=True, check=False)
         self.assertEqual(result.returncode, 0, result.stderr)
