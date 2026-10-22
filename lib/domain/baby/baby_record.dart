@@ -266,6 +266,7 @@ final class BabyDaySummary {
     required String babyId,
     required DayWindow window,
     required DateTime now,
+    LocalDate? calendarDate,
   }) {
     var feedings = 0;
     double? intake;
@@ -281,7 +282,8 @@ final class BabyDaySummary {
     for (final record in records) {
       if (record is BabyDailyStatusRecord &&
           record.babyId == babyId &&
-          record.recordedOn == LocalDate.fromDateTime(window.start)) {
+          record.recordedOn ==
+              (calendarDate ?? LocalDate.fromDateTime(window.start))) {
         if (record.mentalState != null &&
             (mentalAt == null || record.savedAt.isAfter(mentalAt))) {
           mental = record.mentalState;

@@ -39,7 +39,7 @@ void main() {
       expect(find.byKey(const ValueKey('drawer-baby')), findsOneWidget);
       expect(find.byKey(const ValueKey('drawer-mother')), findsOneWidget);
       expect(find.byKey(const ValueKey('drawer-devices')), findsOneWidget);
-      expect(find.text('我的'), findsOneWidget);
+      expect(find.text('妈妈'), findsOneWidget);
       expect(
         tester.getTopLeft(find.byKey(const ValueKey('drawer-mother'))).dy,
         lessThan(
@@ -65,7 +65,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('drawer-mother')));
       await tester.pumpAndSettle();
       expect(harness.router.state.uri.path, '/me');
-      expect(find.text('我的'), findsOneWidget);
+      expect(find.text('妈妈'), findsOneWidget);
       expect(find.textContaining('未填写妈妈资料'), findsOneWidget);
       expect(find.text('Could not load. Please try again.'), findsNothing);
       expect(

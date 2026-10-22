@@ -3,6 +3,8 @@ import 'package:momcozy_flutter_app/features/records/data/records_api_repository
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/modules/mom/domain/me_experience.dart';
 import 'package:uuid/uuid.dart';
+import 'package:momcozy_flutter_app/shared/zoned_time.dart';
+import 'package:momcozy_flutter_app/domain/shared/local_date.dart';
 
 /// Choices accepted by the existing owner-scoped Me observation contract.
 /// There is no free-form health assessment in this entry point.
@@ -22,20 +24,25 @@ class ChatFirstMotherSummary {
     required this.gestationDays,
     required this.babyCount,
     required this.concerns,
+    this.postpartumDay,
   });
 
-  final int age;
-  final int deliveryCount;
-  final String deliveryDate;
-  final int gestationWeeks;
-  final int gestationDays;
-  final int babyCount;
+  final int? age;
+  final int? deliveryCount;
+  final String? deliveryDate;
+  final int? gestationWeeks;
+  final int? gestationDays;
+  final int? babyCount;
   final List<String> concerns;
+  final int? postpartumDay;
 
-  factory ChatFirstMotherSummary.fromMap(Map<String, Object?> response) {
+  factory ChatFirstMotherSummary.fromMap(
+    Map<String, Object?> response, {
+    LocalDate? today,
+  }) {
     final rawProfile = response['profile'];
     final rawConcerns = response['concerns'];
-    if (rawProfile is! Map || rawConcerns is! List) {
+    if (rawProfile is! Map || (rawConcerns != null && rawConcerns is! List)) {
       throw const FormatException('Incomplete maternal profile.');
     }
     final profile = Map<String, Object?>.from(rawProfile);
@@ -45,25 +52,32 @@ class ChatFirstMotherSummary {
     final gestationWeeks = profile['gestation_weeks'];
     final gestationDays = profile['gestation_days'];
     final babyCount = profile['baby_count'];
-    if (age is! int ||
-        deliveryCount is! int ||
-        deliveryDate is! String ||
-        !RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(deliveryDate) ||
-        DateTime.tryParse(deliveryDate) == null ||
-        gestationWeeks is! int ||
-        gestationDays is! int ||
-        babyCount is! int) {
-      throw const FormatException('Incomplete maternal profile.');
+    if ((age != null && age is! int) ||
+        (deliveryCount != null && deliveryCount is! int) ||
+        (deliveryDate != null &&
+            (deliveryDate is! String ||
+                !RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(deliveryDate) ||
+                DateTime.tryParse(deliveryDate) == null)) ||
+        (gestationWeeks != null && gestationWeeks is! int) ||
+        (gestationDays != null && gestationDays is! int) ||
+        (babyCount != null && babyCount is! int)) {
+      throw const FormatException('Invalid maternal profile.');
     }
     return ChatFirstMotherSummary(
-      age: age,
-      deliveryCount: deliveryCount,
-      deliveryDate: deliveryDate,
-      gestationWeeks: gestationWeeks,
-      gestationDays: gestationDays,
-      babyCount: babyCount,
+      age: age as int?,
+      deliveryCount: deliveryCount as int?,
+      deliveryDate: deliveryDate as String?,
+      gestationWeeks: gestationWeeks as int?,
+      gestationDays: gestationDays as int?,
+      babyCount: babyCount as int?,
+      postpartumDay:
+          deliveryDate is String &&
+              today != null &&
+              LocalDate.parse(deliveryDate).compareTo(today) <= 0
+          ? today.daysSince(LocalDate.parse(deliveryDate))
+          : null,
       concerns: [
-        for (final raw in rawConcerns)
+        for (final raw in rawConcerns as List? ?? const [])
           if (raw is Map &&
               raw['ended'] != true &&
               raw['note'] is String &&
@@ -79,10 +93,13 @@ class ChatFirstMotherRepository {
 
   final ApiJsonTransport transport;
 
-  Future<ChatFirstMotherSummary> get(DateTime now) async {
-    final local = now.toLocal();
-    final start = DateTime(local.year, local.month, local.day);
-    final end = DateTime(local.year, local.month, local.day + 1);
+  Future<ChatFirstMotherSummary> get(DateTime now, {String? timezone}) async {
+    final local = timezone == null ? now.toLocal() : inTimezone(now, timezone);
+    final date = LocalDate(local.year, local.month, local.day);
+    final window = timezone == null
+        ? date.localWindow
+        : zonedDayWindow(date, timezone);
+    final start = window.start, end = window.end;
     final response = await transport.getJson(
       '/v1/profile/me-experience',
       query: {
@@ -90,26 +107,44 @@ class ChatFirstMotherRepository {
         'end': end.toUtc().toIso8601String(),
       },
     );
-    return ChatFirstMotherSummary.fromMap(response);
+    return ChatFirstMotherSummary.fromMap(response, today: date);
   }
 
-  Future<ChatFirstPumpingToday> getPumpingToday(DateTime now) async =>
-      ChatFirstPumpingToday(
-        await RecordsApiRepository(
-          transport: transport,
-        ).fetchPumpMilkRecords(date: now),
+  Future<ChatFirstPumpingToday> getPumpingToday(
+    DateTime now, {
+    String? timezone,
+  }) async {
+    final records = RecordsApiRepository(transport: transport);
+    if (timezone == null) {
+      return ChatFirstPumpingToday(
+        await records.fetchPumpMilkRecords(date: now),
       );
+    }
+    final window = zonedDayWindow(dateInTimezone(now, timezone), timezone);
+    return ChatFirstPumpingToday(
+      await records.fetchPumpMilkRecordsRange(
+        start: window.start,
+        end: window.end,
+      ),
+    );
+  }
 
-  Future<ChatFirstWellbeing> getWellbeing(DateTime now) async {
-    final local = now.toLocal();
+  Future<ChatFirstWellbeing> getWellbeing(
+    DateTime now, {
+    String? timezone,
+  }) async {
+    final local = timezone == null ? now.toLocal() : inTimezone(now, timezone);
+    final today = LocalDate(local.year, local.month, local.day);
     Future<ChatFirstWellbeingDay> readDay(int offset) async {
-      final date = DateTime(local.year, local.month, local.day + offset);
-      final end = DateTime(local.year, local.month, local.day + offset + 1);
+      final date = today.addDays(offset);
+      final window = timezone == null
+          ? date.localWindow
+          : zonedDayWindow(date, timezone);
       final response = await transport.getJson(
         '/v1/profile/me-experience',
         query: {
-          'start': date.toUtc().toIso8601String(),
-          'end': end.toUtc().toIso8601String(),
+          'start': window.start.toUtc().toIso8601String(),
+          'end': window.end.toUtc().toIso8601String(),
         },
       );
       final rawRecords = response['records'];
@@ -125,15 +160,15 @@ class ChatFirstMotherRepository {
           continue;
         }
         final record = MeObservation.fromJson(Map<String, Object?>.from(raw));
-        final at = record.occurredAt.toLocal();
-        if (at.year == date.year &&
-            at.month == date.month &&
-            at.day == date.day) {
+        if (window.contains(record.occurredAt)) {
           records.add(record);
         }
       }
       records.sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
-      return ChatFirstWellbeingDay(date: date, records: records);
+      return ChatFirstWellbeingDay(
+        date: DateTime(date.year, date.month, date.day),
+        records: records,
+      );
     }
 
     return ChatFirstWellbeing(await Future.wait([readDay(-1), readDay(0)]));
@@ -176,7 +211,7 @@ class ChatFirstMotherRepository {
     DateTime now, {
     required String timezone,
   }) async {
-    final local = now.toLocal();
+    final local = dateInTimezone(now, timezone);
     final start = DateTime(local.year, local.month, local.day - 6);
     final days = await RecordsApiRepository(
       transport: transport,

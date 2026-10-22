@@ -207,6 +207,32 @@ void main() {
     },
   );
 
+  test('daily diaper totals follow the account calendar, not UTC day', () {
+    final date = LocalDate(2026, 9, 8);
+    final summary = BabyDaySummary.fromRecords(
+      [
+        BabyDailyStatusRecord(
+          id: 'status',
+          babyId: 'luna',
+          recordedOn: date,
+          timezone: 'Asia/Shanghai',
+          savedAt: DateTime.utc(2026, 9, 8, 3),
+          wetCount: 5,
+          stoolCount: 2,
+        ),
+      ],
+      babyId: 'luna',
+      window: DayWindow(
+        DateTime.utc(2026, 9, 7, 16),
+        DateTime.utc(2026, 9, 8, 16),
+      ),
+      calendarDate: date,
+      now: DateTime.utc(2026, 9, 8, 12),
+    );
+    expect(summary.wetCount, 5);
+    expect(summary.dirtyCount, 2);
+  });
+
   test('sleep overlaps are counted once and bounded by the selected day', () {
     final records = [
       BabySleepRecord(

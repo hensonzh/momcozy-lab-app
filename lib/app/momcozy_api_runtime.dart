@@ -13,6 +13,8 @@ import 'package:momcozy_flutter_app/core/preferences/volume_unit_preference.dart
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_conversation_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_hub_profile_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_document_input.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/stool_photo_review_api_repository.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/stool_analysis_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
@@ -528,6 +530,32 @@ class MomCozyApiRuntime {
   CryAnalysisRepository get cryAnalysisRepository =>
       CryAnalysisRepository(multipart: multipartTransport, json: jsonTransport);
 
+  StoolAnalysisApiRepository? get stoolAnalysisRepository {
+    final transport = jsonTransport;
+    if (transport is! ApiJsonMutationTransport) return null;
+    return StoolAnalysisApiRepository(
+      jsonTransport: transport,
+      deleteTransport: transport as ApiJsonMutationTransport,
+      streamConnector: IoAgentStreamSseGetConnector(),
+      apiBaseUri: apiBaseUri,
+      accessTokenProvider: () => currentSession.accessToken ?? '',
+      languageProvider: () => currentSession.locale,
+      onUnauthorized: agentStreamUnauthorizedHandler,
+    );
+  }
+
+  StoolPhotoReviewApiRepository? get stoolPhotoReviewRepository {
+    final transport = jsonTransport;
+    if (transport is! ApiJsonMutationTransport) {
+      return null; // No complete photo lifecycle transport: fail closed.
+    }
+    return StoolPhotoReviewApiRepository(
+      uploadTransport: multipartTransport,
+      readTransport: transport,
+      deleteTransport: transport as ApiJsonMutationTransport,
+    );
+  }
+
   MediaApiRepository get mediaRepository {
     final transport = jsonTransport;
     return MediaApiRepository(
@@ -558,6 +586,11 @@ class MomCozyApiRuntime {
   AgentHubImagePicker get agentHubImagePicker {
     return (_agentHubPlatformImagePicker ??= AgentHubPlatformImagePicker())
         .pick;
+  }
+
+  AgentHubImagePicker get stoolPhotoOriginalPicker {
+    return (_agentHubPlatformImagePicker ??= AgentHubPlatformImagePicker())
+        .pickStoolOriginal;
   }
 
   AgentHubDocumentPicker get agentHubDocumentPicker {

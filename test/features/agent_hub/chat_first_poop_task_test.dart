@@ -8,406 +8,590 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
-import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_poop_task.dart';
-import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/stool_photo_review.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/stool_analysis.dart';
 
 void main() {
-  testWidgets('one task sends up to three photos together and allows removal', (
-    tester,
-  ) async {
-    _smallViewport(tester);
-    final media = _Media();
-    final client = _Client();
-    final store = _Store();
-    var picks = 0;
-    await tester.pumpWidget(
-      _page(
-        media,
-        client,
-        store: store,
-        pickImage: (_) async {
-          picks++;
-          return AgentStreamImageInput(
-            dataUrl: '',
-            mimeType: 'image/png',
-            name: 'diaper-$picks.png',
-            size: _photo.length,
-            localBytes: _photo,
+  test(
+    'accepted specialty task keeps resumable cursor without photo bytes',
+    () {
+      final task =
+          ChatFirstPoopTask(
+            id: 'local:poop:synthetic',
+            createdAt: DateTime.utc(2026, 10, 22),
+            threadId: 'thread',
+          ).submitted(
+            const StoolCardState(
+              analysisId: 'analysis',
+              sequence: 1,
+              visible: true,
+            ),
           );
-        },
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-    await tester.pumpAndSettle();
-    for (var i = 0; i < 3; i++) {
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-      await tester.pumpAndSettle();
-    }
-    expect(find.text('已选 3/3 张'), findsOneWidget);
-    expect(find.byKey(const ValueKey('chat-first-poop-photo')), findsNothing);
-    await tester.tap(find.byKey(const ValueKey('chat-first-poop-remove-1')));
-    await tester.pumpAndSettle();
-    expect(find.text('已选 2/3 张'), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
-    await tester.pump();
-    expect(media.uploads, 2);
-    expect(client.requests, hasLength(1));
-    expect(client.requests.single.images.map((image) => image.fileId), [
-      'owned-photo',
-      'owned-photo-2',
-    ]);
-    expect(
-      client.requests.single.images.every((image) => image.localBytes == null),
-      isTrue,
-    );
-    client.accept();
-    await tester.pumpAndSettle();
-    expect(find.text('已发送 2 张便便照片。'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('chat-first-poop-sent-0')),
-      findsOneWidget,
-    );
-    await tester.tap(find.byKey(const ValueKey('chat-first-poop-sent-0')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('chat-first-poop-zoom')), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('chat-first-poop-zoom-close')));
-    await tester.pumpAndSettle();
-    // Persistent state may keep an owner-scoped asset reference and filename,
-    // but not the local photo bytes or a data URL.
-    final saved = store.value!.toMap(includeImageData: false).toString();
-    expect(saved, isNot(contains('localBytes')));
-    expect(saved, isNot(contains('dataUrl')));
-    expect(saved, isNot(contains(base64Encode(_photo))));
-    await tester.pumpWidget(_page(media, client, store: store, visible: false));
-    await tester.pumpAndSettle();
-    await tester.pumpWidget(_page(media, client, store: store));
-    await tester.pumpAndSettle();
-    expect(find.text('已发送便便照片。'), findsOneWidget);
-    expect(find.byKey(const ValueKey('chat-first-poop-sent-0')), findsNothing);
-    await tester.pumpWidget(const SizedBox());
-  });
+      final persisted = task.toMap();
+      expect(persisted.toString(), isNot(contains('dataUrl')));
+      final restored = ChatFirstPoopTask.fromMap(persisted);
+      expect(restored?.analysisState?.analysisId, 'analysis');
+      expect(restored?.analysisState?.sequence, 1);
+      expect(() => restored?.withThread('new-thread'), throwsStateError);
+      expect(
+        ChatFirstPoopTask.fromMap({...persisted}..remove('threadId')),
+        isNull,
+      );
+      expect(
+        ChatFirstPoopTask.fromMap({
+          ...persisted,
+          'analysis': {
+            'analysisId': 'analysis',
+            'sequence': 1,
+            'visible': true,
+            'status': 'completed',
+          },
+        }),
+        isNull,
+      );
+    },
+  );
 
   testWidgets(
-    'partial multi-photo upload retries without duplicating earlier assets',
+    'uploads originals on selection; no legacy Agent Run or medical submit',
     (tester) async {
       _smallViewport(tester);
-      final media = _Media()..failOnUpload = 2;
+      final reviews = _Reviews();
       final client = _Client();
-      await tester.pumpWidget(_page(media, client));
+      await tester.pumpWidget(_page(reviews, client));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
       await tester.pumpAndSettle();
-      for (var i = 0; i < 2; i++) {
+      for (var i = 0; i < 3; i++) {
         await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-        await tester.pumpAndSettle();
+        await tester.pump();
       }
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('照片上传失败'), findsOneWidget);
-      expect(media.uploads, 2);
+      expect(reviews.uploaded.length, 3);
+      expect(
+        reviews.uploaded.every((bytes) => identical(bytes, _photo)),
+        isTrue,
+      );
+      expect(reviews.keys.toSet().length, 3);
+      expect(find.text('已选 3/3 张'), findsOneWidget);
+      expect(find.byKey(const ValueKey('chat-first-poop-photo')), findsNothing);
+      expect(find.textContaining('正在审核照片'), findsNWidgets(3));
+      expect(_submit(tester).onPressed, isNull);
       expect(client.requests, isEmpty);
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
-      await tester.pump();
-      expect(media.uploads, 3);
-      expect(client.requests, hasLength(1));
-      expect(client.requests.single.images.map((image) => image.fileId), [
-        'owned-photo',
-        'owned-photo-3',
-      ]);
-      expect(media.uploadKeys[1], media.uploadKeys[2]);
-      client.accept();
-      await tester.pumpAndSettle();
-      expect(find.text('已发送 2 张便便照片。'), findsOneWidget);
       await tester.pumpWidget(const SizedBox());
     },
   );
 
-  testWidgets('accepted photo run shows responding state before reply', (
+  testWidgets(
+    'approved photo submits only to specialty; card shell precedes replayed terminal',
+    (tester) async {
+      _largeViewport(tester);
+      final reviews = _Reviews();
+      final client = _Client();
+      final specialty = _Analysis();
+      await tester.pumpWidget(
+        _page(
+          reviews,
+          client,
+          analysis: specialty,
+          threadId: '123e4567-e89b-12d3-a456-426614174002',
+          babyId: '123e4567-e89b-12d3-a456-426614174001',
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
+      await tester.pump();
+      reviews.results['photo-1'] = const StoolPhotoReview(
+        photoId: 'photo-1',
+        status: StoolPhotoReviewStatus.passed,
+      );
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pump();
+      expect(_submit(tester).onPressed, isNotNull);
+      await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
+      await tester.pump();
+      expect(specialty.submissions, 1);
+      expect(specialty.photoIds, ['photo-1']);
+      expect(specialty.threadId, '123e4567-e89b-12d3-a456-426614174002');
+      expect(find.textContaining('正在等待已验证的分析结果'), findsOneWidget);
+      expect(client.requests, isEmpty);
+      expect(reviews.deleted, isEmpty);
+      await tester.pump(const Duration(seconds: 2));
+      specialty.release.complete();
+      await tester.pump();
+      await tester.pumpAndSettle();
+      expect(specialty.lastCursor, 1);
+      expect(find.text('专项分析未完成，请稍后重试。'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+      expect(reviews.deleted, isEmpty);
+    },
+  );
+
+  testWidgets(
+    'nonmedical progress continues polling from its committed cursor',
+    (tester) async {
+      _largeViewport(tester);
+      final specialty = _Analysis()
+        ..streamProgress = true
+        ..historyItems = [
+          StoolAnalysisHistoryItem(
+            analysisId: 'analysis-synthetic',
+            status: StoolAnalysisStatus.running,
+            babyId: '123e4567-e89b-12d3-a456-426614174001',
+            createdAt: DateTime.utc(2026, 10, 22),
+          ),
+        ];
+      specialty.release.complete();
+      await tester.pumpWidget(
+        _page(
+          _Reviews(),
+          _Client(),
+          analysis: specialty,
+          threadId: '123e4567-e89b-12d3-a456-426614174002',
+          babyId: '123e4567-e89b-12d3-a456-426614174001',
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pump();
+      expect(find.text('专项服务正在处理照片，请稍候…'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pump();
+      expect(specialty.lastCursor, 2);
+      specialty.terminalRelease.complete();
+      await tester.pump();
+      await tester.pumpAndSettle();
+      expect(find.text('专项分析未完成，请稍后重试。'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'new page recovers accepted card from owner-scoped thread history and replay',
+    (tester) async {
+      _largeViewport(tester);
+      final specialty = _Analysis()
+        ..historyItems = [
+          StoolAnalysisHistoryItem(
+            analysisId: 'analysis-synthetic',
+            status: StoolAnalysisStatus.failed,
+            babyId: '123e4567-e89b-12d3-a456-426614174001',
+            createdAt: DateTime.utc(2026, 10, 22),
+          ),
+        ];
+      specialty.release.complete();
+      await tester.pumpWidget(
+        _page(
+          _Reviews(),
+          _Client(),
+          analysis: specialty,
+          threadId: '123e4567-e89b-12d3-a456-426614174002',
+          babyId: '123e4567-e89b-12d3-a456-426614174001',
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(specialty.historyCalls, greaterThan(0));
+      expect(find.textContaining('正在等待已验证的分析结果'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+      expect(find.text('专项分析未完成，请稍后重试。'), findsOneWidget);
+      expect(specialty.lastCursor, 1);
+      await tester.tap(
+        find.byKey(const ValueKey('chat-first-poop-load-photos')),
+      );
+      await tester.pumpAndSettle();
+      expect(specialty.photoLoads, 1);
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-sent-0')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('chat-first-poop-delete-analysis')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.textContaining('如果照片也用于其他分析'), findsOneWidget);
+      await tester.tap(find.text('取消'));
+      await tester.pumpAndSettle();
+      expect(specialty.deletions, 0);
+      await tester.tap(
+        find.byKey(const ValueKey('chat-first-poop-delete-analysis')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('chat-first-poop-confirm-delete')),
+      );
+      await tester.pumpAndSettle();
+      expect(specialty.deletions, 1);
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-analysis-card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-sent-0')),
+        findsNothing,
+      );
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'late thumbnail after switching baby never appears on the new card',
+    (tester) async {
+      _largeViewport(tester);
+      final firstBaby = '123e4567-e89b-12d3-a456-426614174001';
+      final secondBaby = '123e4567-e89b-12d3-a456-426614174004';
+      final thread = '123e4567-e89b-12d3-a456-426614174002';
+      final specialty = _Analysis()
+        ..historyItems = [
+          StoolAnalysisHistoryItem(
+            analysisId: 'analysis-synthetic',
+            status: StoolAnalysisStatus.failed,
+            babyId: firstBaby,
+            createdAt: DateTime.utc(2026, 10, 22),
+          ),
+        ]
+        ..photoPending = Completer<Uint8List>();
+      specialty.release.complete();
+      final key = Object();
+      await tester.pumpWidget(
+        _page(
+          _Reviews(),
+          _Client(),
+          analysis: specialty,
+          cacheKey: key,
+          threadId: thread,
+          babyId: firstBaby,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('chat-first-poop-load-photos')),
+      );
+      await tester.pump();
+      expect(specialty.photoLoads, 1);
+      await tester.pumpWidget(
+        _page(
+          _Reviews(),
+          _Client(),
+          analysis: specialty,
+          cacheKey: key,
+          threadId: thread,
+          babyId: secondBaby,
+        ),
+      );
+      specialty.photoPending!.complete(_photo);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-sent-0')),
+        findsNothing,
+      );
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'explicit deletion stays available when new analysis is disabled',
+    (tester) async {
+      _largeViewport(tester);
+      final thread = '123e4567-e89b-12d3-a456-426614174002';
+      final store = _Store()
+        ..value = AgentHubInteractionSnapshot(
+          runState: AgentStreamRunState(threadId: thread),
+          poopTasks: [
+            ChatFirstPoopTask(
+              id: 'local:poop:prior',
+              threadId: thread,
+              createdAt: DateTime.utc(2026, 10, 22),
+            ).submitted(
+              const StoolCardState(
+                analysisId: 'analysis-synthetic',
+                sequence: 1,
+                visible: true,
+              ),
+            ),
+          ],
+        );
+      final specialty = _Analysis()..available = false;
+      await tester.pumpWidget(
+        _page(
+          _Reviews(),
+          _Client(),
+          store: store,
+          cacheKey: Object(),
+          analysis: specialty,
+          babyId: '123e4567-e89b-12d3-a456-426614174001',
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(specialty.historyCalls, 0);
+      await tester.tap(
+        find.byKey(const ValueKey('chat-first-poop-delete-analysis')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('chat-first-poop-confirm-delete')),
+      );
+      await tester.pumpAndSettle();
+      expect(specialty.deletions, 1);
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-analysis-card')),
+        findsNothing,
+      );
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets('revoked server analysis is removed from persisted local card', (
+    tester,
+  ) async {
+    _largeViewport(tester);
+    final thread = '123e4567-e89b-12d3-a456-426614174002';
+    final store = _Store()
+      ..value = AgentHubInteractionSnapshot(
+        runState: AgentStreamRunState(threadId: thread),
+        poopTasks: [
+          ChatFirstPoopTask(
+            id: 'local:poop:old',
+            createdAt: DateTime.utc(2026, 10, 22),
+            threadId: thread,
+          ).submitted(
+            const StoolCardState(
+              analysisId: 'revoked-analysis',
+              sequence: 1,
+              visible: true,
+            ),
+          ),
+        ],
+      );
+    final specialty = _Analysis(); // Authoritative history is empty.
+    await tester.pumpWidget(
+      _page(
+        _Reviews(),
+        _Client(),
+        store: store,
+        cacheKey: Object(),
+        analysis: specialty,
+        babyId: '123e4567-e89b-12d3-a456-426614174001',
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(specialty.historyCalls, greaterThan(0));
+    expect(
+      find.byKey(const ValueKey('chat-first-poop-analysis-card')),
+      findsNothing,
+    );
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('late previous-baby history cannot appear after baby switch', (
+    tester,
+  ) async {
+    _largeViewport(tester);
+    final specialty = _Analysis()
+      ..historyPending = Completer<StoolAnalysisHistoryPage>();
+    final cacheKey = Object();
+    final thread = '123e4567-e89b-12d3-a456-426614174002';
+    final firstBaby = '123e4567-e89b-12d3-a456-426614174001';
+    final secondBaby = '123e4567-e89b-12d3-a456-426614174004';
+    await tester.pumpWidget(
+      _page(
+        _Reviews(),
+        _Client(),
+        analysis: specialty,
+        threadId: thread,
+        babyId: firstBaby,
+        cacheKey: cacheKey,
+      ),
+    );
+    await tester.pump();
+    expect(specialty.historyCalls, 1);
+    await tester.pumpWidget(
+      _page(
+        _Reviews(),
+        _Client(),
+        analysis: specialty,
+        threadId: thread,
+        babyId: secondBaby,
+        cacheKey: cacheKey,
+      ),
+    );
+    await tester.pump();
+    specialty.historyPending!.complete(
+      StoolAnalysisHistoryPage(
+        items: [
+          StoolAnalysisHistoryItem(
+            analysisId: 'old-baby-analysis',
+            status: StoolAnalysisStatus.queued,
+            babyId: firstBaby,
+            createdAt: DateTime.utc(2026, 10, 22),
+          ),
+        ],
+        nextCursor: null,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('chat-first-poop-analysis-card')),
+      findsNothing,
+    );
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets(
+    'in-flight submit on leaving never deletes possibly committed originals',
+    (tester) async {
+      _largeViewport(tester);
+      final previous = _Reviews();
+      final specialty = _Analysis()
+        ..admissionPending = Completer<StoolAnalysisSnapshot>();
+      final thread = '123e4567-e89b-12d3-a456-426614174002';
+      await tester.pumpWidget(
+        _page(
+          previous,
+          _Client(),
+          analysis: specialty,
+          threadId: thread,
+          babyId: '123e4567-e89b-12d3-a456-426614174001',
+          cacheKey: Object(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
+      await tester.pump();
+      previous.results['photo-1'] = const StoolPhotoReview(
+        photoId: 'photo-1',
+        status: StoolPhotoReviewStatus.passed,
+      );
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
+      await tester.pump();
+      expect(specialty.submissions, 1);
+      await tester.pumpWidget(const SizedBox());
+      expect(previous.deleted, isEmpty);
+      specialty.admissionPending!.complete(
+        const StoolAnalysisSnapshot(
+          analysisId: 'analysis-synthetic',
+          status: StoolAnalysisStatus.queued,
+        ),
+      );
+      await tester.pump();
+      expect(previous.deleted, isEmpty);
+    },
+  );
+
+  testWidgets('server review controls each photo; failed one can be removed', (
+    tester,
+  ) async {
+    _largeViewport(tester);
+    final reviews = _Reviews();
+    final client = _Client();
+    await tester.pumpWidget(_page(reviews, client));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+    await tester.pumpAndSettle();
+    for (var i = 0; i < 2; i++) {
+      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
+      await tester.pump();
+    }
+    reviews.results['photo-1'] = const StoolPhotoReview(
+      photoId: 'photo-1',
+      status: StoolPhotoReviewStatus.passed,
+    );
+    reviews.results['photo-2'] = const StoolPhotoReview(
+      photoId: 'photo-2',
+      status: StoolPhotoReviewStatus.rejected,
+      reasonCodes: ['face_visible'],
+    );
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+    expect(find.textContaining('照片审核通过'), findsOneWidget);
+    expect(find.textContaining('照片含不必要的敏感内容'), findsOneWidget);
+    expect(_submit(tester).onPressed, isNull);
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('chat-first-poop-remove-1')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('chat-first-poop-remove-1')));
+    await tester.pump();
+    expect(reviews.deleted, ['photo-2']);
+    expect(find.text('已选 1/3 张'), findsOneWidget);
+    expect(find.textContaining('专项分析服务尚未开放'), findsOneWidget);
+    expect(client.requests, isEmpty);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets(
+    'an old blocked review does not prevent a new task from polling',
+    (tester) async {
+      _largeViewport(tester);
+      final reviews = _Reviews();
+      final firstReview = Completer<StoolPhotoReview>();
+      reviews.pendingReviews['photo-1'] = firstReview;
+      await tester.pumpWidget(_page(reviews, _Client()));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pump();
+      expect(reviews.reviewCalls, contains('photo-1'));
+
+      await tester.tap(find.byKey(const ValueKey('chat-first-poop-abandon')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
+      await tester.pump();
+      reviews.results['photo-2'] = const StoolPhotoReview(
+        photoId: 'photo-2',
+        status: StoolPhotoReviewStatus.passed,
+      );
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pump();
+      expect(reviews.reviewCalls, contains('photo-2'));
+      expect(find.textContaining('照片审核通过'), findsNWidgets(2));
+      firstReview.complete(
+        const StoolPhotoReview(
+          photoId: 'photo-1',
+          status: StoolPhotoReviewStatus.rejected,
+        ),
+      );
+      await tester.pump();
+      expect(find.textContaining('照片审核通过'), findsNWidgets(2));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets('unknown or failed review never enables analysis', (
     tester,
   ) async {
     _smallViewport(tester);
-    final media = _Media();
+    final reviews = _Reviews();
     final client = _Client();
-    final store = _Store();
-    await tester.pumpWidget(_page(media, client, store: store));
+    await tester.pumpWidget(_page(reviews, client));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
     await tester.pump();
-    expect(find.text('响应中'), findsOneWidget);
-    expect(
-      tester
-          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
-          .enabled,
-      isFalse,
+    reviews.results['photo-1'] = const StoolPhotoReview(
+      photoId: 'photo-1',
+      status: StoolPhotoReviewStatus.inconclusive,
+      reasonCodes: ['policy_not_calibrated'],
     );
-    client.queued();
+    await tester.pump(const Duration(seconds: 2));
     await tester.pump();
-    expect(find.text('正在整理观察…'), findsOneWidget);
-    expect(find.text('响应中'), findsOneWidget);
-    client.complete();
-    await tester.pumpAndSettle();
-    expect(find.text('正在整理观察…'), findsNothing);
-    expect(find.text('响应中'), findsNothing);
-    await tester.pumpWidget(const SizedBox());
-  });
-
-  testWidgets(
-    'poop card reuses one draft and submits a typed image reference',
-    (tester) async {
-      _smallViewport(tester);
-      final media = _Media();
-      final client = _Client();
-      final store = _Store();
-      await tester.pumpWidget(_page(media, client, store: store));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('chat-first-topic-poop')),
-        findsOneWidget,
-      );
-      expect(store.value?.poopTasks, hasLength(1));
-      expect(store.value?.historyMessages, isEmpty);
-      expect(media.uploads, 0);
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('chat-first-poop-preview')),
-        findsOneWidget,
-      );
-      expect(media.uploads, 0);
-      expect(store.value?.attachedImages, isEmpty);
-      expect(store.value!.toMap().toString(), isNot(contains('diaper.png')));
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
-      await tester.pump();
-      expect(media.uploads, 1);
-      expect(client.requests, hasLength(1));
-      final request = client.requests.single;
-      expect(isChatFirstPoopPrompt(request.message), isTrue);
-      expect(request.images.single.fileId, 'owned-photo');
-      expect(request.images.single.localBytes, isNull);
-      expect(request.images.single.dataUrl, isEmpty);
-      expect(request.images.single.toProductionAttachment(), {
-        'type': 'image',
-        'asset_id': 'owned-photo',
-        'detail': 'auto',
-      });
-      expect(
-        store.value!.toMap(includeImageData: false).toString(),
-        isNot(contains('diaper.png')),
-      );
-      expect(
-        store.value!.toMap(includeImageData: false).toString(),
-        isNot(contains('base64')),
-      );
-      client.accept();
-      await tester.pumpAndSettle();
-      await tester.pump(const Duration(milliseconds: 300));
-      expect(find.text('已发送便便照片。'), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('chat-first-poop-preview')),
-        findsNothing,
-      );
-      expect(
-        store.value?.poopTasks.single.status,
-        ChatFirstPoopTaskStatus.completed,
-      );
-      expect(store.value?.poopTasks.single.runId, 'run-poop');
-      expect(media.deleted, isEmpty);
-      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('chat-first-topic-poop')),
-        findsNWidgets(2),
-      );
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
-
-  testWidgets(
-    'upload failure keeps preview and retry; run failure reuses upload and request key',
-    (tester) async {
-      _smallViewport(tester);
-      final media = _Media()..failOnce = true;
-      final client = _Client();
-      await tester.pumpWidget(_page(media, client));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('照片上传失败'), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('chat-first-poop-preview')),
-        findsOneWidget,
-      );
-      expect(client.requests, isEmpty);
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
-      await tester.pump();
-      expect(media.uploads, 2);
-      expect(client.requests, hasLength(1));
-      client.reject();
-      await tester.pumpAndSettle();
-      expect(find.textContaining('发送失败'), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
-      await tester.pump();
-      expect(media.uploads, 2);
-      expect(client.requests, hasLength(2));
-      expect(
-        client.requests[0].idempotencyKey,
-        client.requests[1].idempotencyKey,
-      );
-      client.accept(1);
-      await tester.pumpAndSettle();
-      expect(find.text('已发送便便照片。'), findsOneWidget);
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
-
-  testWidgets(
-    'abandon or navigate away drops local preview without uploading',
-    (tester) async {
-      _smallViewport(tester);
-      final media = _Media();
-      final client = _Client();
-      final store = _Store();
-      await tester.pumpWidget(_page(media, client, store: store));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-abandon')));
-      await tester.pumpAndSettle();
-      expect(find.text('本次任务已取消。'), findsOneWidget);
-      expect(client.requests, isEmpty);
-      expect(media.uploads, 0);
-      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-      await tester.pumpAndSettle();
-      await tester.pumpWidget(
-        _page(media, client, store: store, visible: false),
-      );
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('chat-first-poop-preview')),
-        findsNothing,
-      );
-      expect(
-        store.value?.poopTasks.last.status,
-        ChatFirstPoopTaskStatus.cancelled,
-      );
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
-
-  testWidgets(
-    'replacing or abandoning after an unconfirmed Run never deletes its possible attachment',
-    (tester) async {
-      _smallViewport(tester);
-      final media = _Media();
-      final client = _Client();
-      await tester.pumpWidget(_page(media, client));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
-      await tester.pump();
-      client
-          .reject(); // No server signal: createRun outcome is not authoritative.
-      await tester.pumpAndSettle();
-      expect(find.textContaining('发送失败'), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-      await tester.pumpAndSettle();
-      expect(media.deleted, isEmpty);
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-abandon')));
-      await tester.pumpAndSettle();
-      expect(media.deleted, isEmpty);
-      expect(client.requests, hasLength(1));
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
-
-  testWidgets('server history replaces the completed local card once', (
-    tester,
-  ) async {
-    _smallViewport(tester);
-    final store = _Store()
-      ..value = AgentHubInteractionSnapshot(
-        runState: const AgentStreamRunState(threadId: 'thread-poop'),
-        poopTasks: [
-          ChatFirstPoopTask(
-            id: 'local:poop:done',
-            createdAt: DateTime.utc(2026, 10, 17, 12),
-            threadId: 'thread-poop',
-            runId: 'run-poop',
-            status: ChatFirstPoopTaskStatus.completed,
-          ),
-        ],
-        historyMessages: [
-          AgentHubHistorySnapshot(
-            id: 'server-user',
-            runId: 'run-poop',
-            role: 'user',
-            content: '',
-            createdAt: DateTime.utc(2026, 10, 17, 12),
-            isChatFirstPoopTrigger: true,
-          ),
-          AgentHubHistorySnapshot(
-            id: 'server-answer',
-            role: 'assistant',
-            content: '依据照片只能描述可见线索。',
-            createdAt: DateTime.utc(2026, 10, 17, 12, 1),
-          ),
-        ],
-      );
-    await tester.pumpWidget(_page(_Media(), _Client(), store: store));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('chat-first-topic-poop')), findsOneWidget);
-    expect(find.text('已发送便便照片。'), findsOneWidget);
-    expect(find.text('依据照片只能描述可见线索。'), findsOneWidget);
-    expect(find.textContaining('momcozy_internal_poop_v1'), findsNothing);
-    await tester.pumpWidget(const SizedBox());
-  });
-
-  testWidgets('another thread cannot display or reuse its pending card', (
-    tester,
-  ) async {
-    _smallViewport(tester);
-    final store = _Store()
-      ..value = AgentHubInteractionSnapshot(
-        runState: const AgentStreamRunState(threadId: 'thread-a'),
-        poopTasks: [
-          ChatFirstPoopTask(
-            id: 'local:poop:thread-b',
-            createdAt: DateTime.utc(2026, 10, 17),
-            threadId: 'thread-b',
-          ),
-        ],
-      );
-    await tester.pumpWidget(_page(_Media(), _Client(), store: store));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('chat-first-topic-poop')), findsNothing);
-    await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('chat-first-topic-poop')), findsOneWidget);
-    expect(store.value?.poopTasks.last.threadId, 'thread-a');
+    expect(find.textContaining('审核暂不可用'), findsOneWidget);
+    expect(_submit(tester).onPressed, isNull);
+    expect(client.requests, isEmpty);
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -415,55 +599,96 @@ void main() {
     tester,
   ) async {
     _smallViewport(tester);
-    final media = _Media()..pending = Completer<void>();
+    final reviews = _Reviews()..pending = Completer<void>();
     final client = _Client();
-    await tester.pumpWidget(_page(media, client));
+    await tester.pumpWidget(_page(reviews, client));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('chat-first-poop-submit')));
     await tester.pump();
-    expect(media.uploads, 1);
+    expect(reviews.uploaded, hasLength(1));
     await tester.pumpWidget(const SizedBox());
-    media.pending!.complete();
+    reviews.pending!.complete();
     await tester.pump();
-    expect(media.deleted, ['owned-photo']);
+    expect(reviews.deleted, ['photo-1']);
     expect(client.requests, isEmpty);
   });
 
-  testWidgets('missing media contract never offers a false send action', (
+  testWidgets(
+    'server unavailable capability blocks capture before private upload',
+    (tester) async {
+      _smallViewport(tester);
+      final reviews = _Reviews()..available = false;
+      final client = _Client();
+      await tester.pumpWidget(_page(reviews, client));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-unavailable')),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<OutlinedButton>(
+              find.byKey(const ValueKey('chat-first-poop-camera')),
+            )
+            .onPressed,
+        isNull,
+      );
+      expect(reviews.uploaded, isEmpty);
+      expect(client.requests, isEmpty);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets('stale previous-account capability cannot enable capture', (
+    tester,
+  ) async {
+    _smallViewport(tester);
+    final previous = _Reviews()..capabilityPending = Completer<bool>();
+    final current = _Reviews()..available = false;
+    final client = _Client();
+    final oldKey = Object();
+    final newKey = Object();
+    await tester.pumpWidget(_page(previous, client, cacheKey: oldKey));
+    await tester.pump();
+    await tester.pumpWidget(_page(current, client, cacheKey: newKey));
+    await tester.pumpAndSettle();
+    previous.capabilityPending!.complete(true);
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('chat-first-poop-unavailable')),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<OutlinedButton>(
+            find.byKey(const ValueKey('chat-first-poop-camera')),
+          )
+          .onPressed,
+      isNull,
+    );
+    expect(current.uploaded, isEmpty);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('missing review contract disables capture and analysis', (
     tester,
   ) async {
     _smallViewport(tester);
     final client = _Client();
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: AgentHubPage(
-            chatFirstExperience: true,
-            runner: AgentStreamRunner(client),
-            pickImage: (_) async => AgentStreamImageInput(
-              dataUrl: '',
-              mimeType: 'image/png',
-              name: 'local.png',
-              localBytes: _photo,
-            ),
-          ),
-        ),
-      ),
-    );
+    await tester.pumpWidget(_page(null, client));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-    await tester.pumpAndSettle();
-    expect(find.text('照片发送暂不可用，照片尚未上传。'), findsOneWidget);
     expect(
       tester
-          .widget<FilledButton>(
-            find.byKey(const ValueKey('chat-first-poop-submit')),
+          .widget<OutlinedButton>(
+            find.byKey(const ValueKey('chat-first-poop-camera')),
           )
           .onPressed,
       isNull,
@@ -472,23 +697,58 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('small screen large type keeps actions available', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(320, 568);
-    tester.view.devicePixelRatio = 1;
-    tester.platformDispatcher.textScaleFactorTestValue = 2;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    await tester.pumpWidget(_page(_Media(), _Client()));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('chat-first-poop-photo')), findsOneWidget);
-    expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox());
-  });
+  testWidgets(
+    'legacy server history remains readable without displaying prompt',
+    (tester) async {
+      _smallViewport(tester);
+      final store = _Store()
+        ..value = AgentHubInteractionSnapshot(
+          runState: const AgentStreamRunState(threadId: 'thread-poop'),
+          poopTasks: [
+            ChatFirstPoopTask(
+              id: 'local:poop:historical',
+              createdAt: DateTime.utc(2026, 10, 17),
+              threadId: 'thread-poop',
+              runId: 'run-poop',
+              status: ChatFirstPoopTaskStatus.completed,
+            ),
+          ],
+          historyMessages: [
+            AgentHubHistorySnapshot(
+              id: 'server-user',
+              runId: 'run-poop',
+              role: 'user',
+              content: '[momcozy_internal_poop_v1] old request',
+              createdAt: DateTime.utc(2026, 10, 17, 12),
+              isChatFirstPoopTrigger: true,
+            ),
+            AgentHubHistorySnapshot(
+              id: 'server-answer',
+              role: 'assistant',
+              content: '这是旧版观察回复。',
+              createdAt: DateTime.utc(2026, 10, 17, 12, 1),
+            ),
+          ],
+        );
+      await tester.pumpWidget(_page(_Reviews(), _Client(), store: store));
+      await tester.pumpAndSettle();
+      expect(find.text('已发送便便照片。'), findsOneWidget);
+      expect(find.text('这是旧版观察回复。'), findsOneWidget);
+      expect(find.textContaining('momcozy_internal_poop_v1'), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+}
+
+FilledButton _submit(WidgetTester tester) => tester.widget<FilledButton>(
+  find.byKey(const ValueKey('chat-first-poop-submit')),
+);
+
+void _largeViewport(WidgetTester tester) {
+  tester.view.physicalSize = const Size(390, 1600);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
 }
 
 void _smallViewport(WidgetTester tester) {
@@ -498,7 +758,6 @@ void _smallViewport(WidgetTester tester) {
   addTearDown(tester.view.resetDevicePixelRatio);
 }
 
-// One-pixel PNG; selection is private until the user confirms sending.
 final _photo = Uint8List.fromList(
   base64Decode(
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL/nwAAAABJRU5ErkJggg==',
@@ -506,124 +765,206 @@ final _photo = Uint8List.fromList(
 );
 
 Widget _page(
-  _Media media,
+  _Reviews? reviews,
   _Client client, {
   _Store? store,
-  bool visible = true,
-  AgentHubImagePicker? pickImage,
+  Object? cacheKey,
+  _Analysis? analysis,
+  String? threadId,
+  String? babyId,
 }) => MaterialApp(
   home: Scaffold(
     body: AgentHubPage(
       key: const ValueKey('poop-page'),
+      stateCacheKey: cacheKey,
       chatFirstExperience: true,
-      isVisible: visible,
       interactionStateStore: store,
-      mediaRepository: media,
       runner: AgentStreamRunner(client),
-      pickImage:
-          pickImage ??
-          (source) async => AgentStreamImageInput(
-            dataUrl: '',
-            mimeType: 'image/png',
-            name: 'diaper.png',
-            size: _photo.length,
-            localBytes: _photo,
-          ),
+      state: AgentStreamRunState(threadId: threadId),
+      stoolPhotoReviewRepository: reviews,
+      stoolAnalysisRepository: analysis,
+      stoolBabyId: babyId,
+      pickStoolPhoto: (_) async => AgentStreamImageInput(
+        dataUrl: '',
+        mimeType: 'image/png',
+        name: 'diaper.png',
+        size: _photo.length,
+        localBytes: _photo,
+      ),
     ),
   ),
 );
 
-class _Media implements MediaRepository {
-  int uploads = 0;
-  bool failOnce = false;
-  int? failOnUpload;
-  final List<String?> uploadKeys = [];
-  Completer<void>? pending;
-  final deleted = <String>[];
+class _Analysis implements StoolAnalysisRepository {
+  final release = Completer<void>();
+  final terminalRelease = Completer<void>();
+  bool streamProgress = false;
+  Completer<StoolAnalysisSnapshot>? admissionPending;
+  Completer<StoolAnalysisHistoryPage>? historyPending;
+  int submissions = 0;
+  bool available = true;
+  List<String>? photoIds;
+  String? threadId;
+  int? lastCursor;
+  int historyCalls = 0;
+  List<StoolAnalysisHistoryItem> historyItems = [];
+  int photoLoads = 0;
+  int deletions = 0;
+  Completer<Uint8List>? photoPending;
+
   @override
-  Future<UploadedMediaFile> uploadFile({
-    required ApiUploadFile file,
-    String? idempotencyKey,
+  Future<bool> isAnalysisAvailable() async => available;
+
+  @override
+  Future<StoolAnalysisSnapshot> submit({
+    required String babyId,
+    required String threadId,
+    required List<String> photoIds,
+    required String idempotencyKey,
   }) async {
-    uploads++;
-    uploadKeys.add(idempotencyKey);
-    await pending?.future;
-    if (failOnUpload == uploads) {
-      failOnUpload = null;
-      throw StateError('upload unavailable');
-    }
-    if (failOnce) {
-      failOnce = false;
-      throw StateError('upload unavailable');
-    }
-    return UploadedMediaFile(
-      id: uploads == 1 ? 'owned-photo' : 'owned-photo-$uploads',
-      name: 'diaper.png',
-      sizeBytes: 68,
-      extension: 'png',
-      mimeType: 'image/png',
+    submissions++;
+    this.threadId = threadId;
+    this.photoIds = photoIds;
+    if (admissionPending != null) return admissionPending!.future;
+    historyItems.add(
+      StoolAnalysisHistoryItem(
+        analysisId: 'analysis-synthetic',
+        status: StoolAnalysisStatus.queued,
+        babyId: babyId,
+        createdAt: DateTime.utc(2026, 10, 22),
+      ),
+    );
+    return const StoolAnalysisSnapshot(
+      analysisId: 'analysis-synthetic',
+      status: StoolAnalysisStatus.queued,
     );
   }
 
   @override
-  Future<void> deleteFile({
-    required String fileId,
-    String? idempotencyKey,
+  Future<StoolAnalysisSnapshot> getStatus(String analysisId) async =>
+      const StoolAnalysisSnapshot(
+        analysisId: 'analysis-synthetic',
+        status: StoolAnalysisStatus.queued,
+      );
+
+  @override
+  Future<StoolAnalysisHistoryPage> listForThread({
+    required String threadId,
+    String? cursor,
+    int limit = 50,
   }) async {
-    deleted.add(fileId);
+    historyCalls++;
+    if (historyPending != null) return historyPending!.future;
+    return StoolAnalysisHistoryPage(items: historyItems, nextCursor: null);
+  }
+
+  @override
+  Future<void> deleteAnalysis(String analysisId) async {
+    deletions++;
+    historyItems.removeWhere((item) => item.analysisId == analysisId);
+  }
+
+  @override
+  Future<StoolAnalysisPhotos> listPhotos(String analysisId) async =>
+      const StoolAnalysisPhotos(
+        items: [StoolAnalysisPhotoRef(photoId: 'photo-1', position: 0)],
+      );
+
+  @override
+  Future<Uint8List> loadThumbnail(String analysisId, String photoId) async {
+    photoLoads++;
+    return photoPending?.future ?? _photo;
+  }
+
+  @override
+  Stream<StoolAnalysisEvent> eventsAfter(
+    String analysisId,
+    int afterSequence,
+  ) async* {
+    lastCursor = afterSequence;
+    await release.future;
+    if (streamProgress) {
+      if (afterSequence == 1) {
+        yield const StoolAnalysisEvent(
+          analysisId: 'analysis-synthetic',
+          sequence: 2,
+          type: StoolAnalysisEventType.started,
+        );
+      } else if (afterSequence == 2) {
+        await terminalRelease.future;
+        yield const StoolAnalysisEvent(
+          analysisId: 'analysis-synthetic',
+          sequence: 3,
+          type: StoolAnalysisEventType.failed,
+        );
+      }
+      return;
+    }
+    yield const StoolAnalysisEvent(
+      analysisId: 'analysis-synthetic',
+      sequence: 2,
+      type: StoolAnalysisEventType.failed,
+    );
+  }
+}
+
+class _Reviews implements StoolPhotoReviewRepository {
+  @override
+  Future<bool> isReviewAvailable() async =>
+      capabilityPending?.future ?? available;
+  Completer<bool>? capabilityPending;
+  bool available = true;
+
+  final uploaded = <Uint8List>[];
+  final keys = <String>[];
+  final deleted = <String>[];
+  final results = <String, StoolPhotoReview>{};
+  final pendingReviews = <String, Completer<StoolPhotoReview>>{};
+  final reviewCalls = <String>[];
+  Completer<void>? pending;
+
+  @override
+  Future<StoolPhotoReview> uploadOriginal({
+    required Uint8List bytes,
+    required String name,
+    required String mimeType,
+    required String idempotencyKey,
+  }) async {
+    uploaded.add(bytes);
+    keys.add(idempotencyKey);
+    await pending?.future;
+    final id = 'photo-${uploaded.length}';
+    return StoolPhotoReview(
+      photoId: id,
+      status: StoolPhotoReviewStatus.pending,
+    );
+  }
+
+  @override
+  Future<StoolPhotoReview> getReview(String photoId) async {
+    reviewCalls.add(photoId);
+    final blocked = pendingReviews[photoId];
+    if (blocked != null) return blocked.future;
+    return results[photoId] ??
+        StoolPhotoReview(
+          photoId: photoId,
+          status: StoolPhotoReviewStatus.pending,
+        );
+  }
+
+  @override
+  Future<void> deletePhoto(String photoId) async {
+    deleted.add(photoId);
   }
 }
 
 class _Client implements AgentStreamClient {
   final requests = <AgentStreamRequest>[];
-  final controllers = <StreamController<AgentStreamEvent>>[];
   @override
   Stream<AgentStreamEvent> stream(AgentStreamRequest request) {
     requests.add(request);
-    final controller = StreamController<AgentStreamEvent>();
-    controllers.add(controller);
-    return controller.stream;
+    return const Stream<AgentStreamEvent>.empty();
   }
-
-  void accept([int index = 0]) {
-    queued(index);
-    complete(index);
-  }
-
-  void queued([int index = 0]) {
-    controllers[index].add(
-      AgentStreamEvent({
-        'type': 'run.queued',
-        'run_id': 'run-poop',
-        'thread_id': 'thread-poop',
-        'sequence': 1,
-      }),
-    );
-  }
-
-  void complete([int index = 0]) {
-    controllers[index].add(
-      AgentStreamEvent({
-        'type': 'message.completed',
-        'run_id': 'run-poop',
-        'thread_id': 'thread-poop',
-        'message_id': 'reply-poop',
-        'sequence': 2,
-        'payload': {'role': 'assistant', 'text': '只能根据照片描述观察线索。'},
-      }),
-    );
-    controllers[index].add(
-      AgentStreamEvent({
-        'type': 'run.completed',
-        'run_id': 'run-poop',
-        'thread_id': 'thread-poop',
-        'sequence': 3,
-      }),
-    );
-    unawaited(controllers[index].close());
-  }
-
-  void reject([int index = 0]) => unawaited(controllers[index].close());
 }
 
 class _Store implements AgentHubInteractionStateStore {

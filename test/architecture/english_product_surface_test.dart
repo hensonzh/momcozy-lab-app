@@ -41,10 +41,23 @@ const _legacyHanLiterals = <String, List<String>>{
 // Exact conversation-first photo feedback embedded in the shared hub page.
 // Keep the legacy English-only gate for every other line of that file.
 const _chatFirstPoopFeedbackLiterals = <String>[
-  '只支持不超过 10 MB 的 JPEG、PNG、WebP 或 GIF 照片。',
-  '无法读取照片，请重新选择。',
-  '照片上传失败，照片仍在本机，可重试。',
-  '发送失败，照片仍在本机，可重试。',
+  '请选择不超过 10 MB 的 JPG、PNG 或 HEIC 原图。',
+  '照片格式、大小或分辨率不符合要求，请重新选择。',
+  '审核服务尚未开放，请稍后再试。',
+  '删除这次分析及照片？',
+  '删除后无法恢复。如果照片也用于其他分析，相关分析也会失效。',
+  '取消',
+  '确认删除',
+  '删除失败，请稍后重试。',
+  '照片暂不可用或已删除。',
+  '提交暂不可用，请稍后重试。',
+];
+
+const _stoolPhotoPickerLiterals = <String>[
+  '原图不能超过 10 MB。',
+  '仅支持 JPG、JPEG、PNG、HEIC 原图。',
+  '照片短边不能低于 720 像素。',
+  '无法读取照片分辨率，请重新选择。',
 ];
 
 const _legacyAssetIdentifiers = <String, List<String>>{
@@ -86,6 +99,7 @@ const _approvedChatFirstChineseSources = <String>{
   'lib/features/agent_hub/presentation/chat_first_poop_task.dart',
   'lib/features/agent_hub/domain/chat_first_poop_task.dart',
   'lib/features/agent_hub/domain/chat_first_daily_advice.dart',
+  'lib/features/agent_hub/domain/stool_photo_review.dart',
   'lib/features/agent_hub/presentation/chat_first_composer.dart',
   'lib/features/agent_hub/presentation/chat_first_run_copy.dart',
   'lib/features/agent_hub/domain/chat_first_welcome.dart',
@@ -156,6 +170,12 @@ void main() {
             }
             if (relative == 'lib/features/agent_hub/agent_hub_page.dart') {
               for (final approved in _chatFirstPoopFeedbackLiterals) {
+                line = line.replaceAll(approved, '');
+              }
+            }
+            if (relative ==
+                'lib/features/agent_hub/data/platform_image_input.dart') {
+              for (final approved in _stoolPhotoPickerLiterals) {
                 line = line.replaceAll(approved, '');
               }
             }
