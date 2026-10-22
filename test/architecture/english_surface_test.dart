@@ -13,6 +13,7 @@ const _approvedChatFirstChineseSources = <String>{
   'lib/features/agent_hub/presentation/chat_first_poop_task.dart',
   'lib/features/agent_hub/domain/chat_first_poop_task.dart',
   'lib/features/agent_hub/domain/chat_first_daily_advice.dart',
+  'lib/features/agent_hub/domain/stool_photo_review.dart',
   'lib/features/agent_hub/presentation/chat_first_composer.dart',
   'lib/features/agent_hub/presentation/chat_first_run_copy.dart',
   'lib/features/agent_hub/domain/chat_first_welcome.dart',
@@ -57,7 +58,10 @@ void main() {
       // Only the conversation-first task's scoped feedback; this file also
       // serves legacy English surfaces, so do not allow it wholesale.
       'lib/features/agent_hub/agent_hub_page.dart': RegExp(
-        r'_poopFeedback =|照片上传失败，照片仍在本机|发送失败，照片仍在本机',
+        r'_poopFeedback =|请选择不超过 10 MB|照片格式、大小或分辨率不符合要求|审核服务尚未开放|删除这次分析及照片|删除后无法恢复|确认删除|删除失败|照片暂不可用|提交暂不可用',
+      ),
+      'lib/features/agent_hub/data/platform_image_input.dart': RegExp(
+        r'原图不能超过 10 MB|仅支持 JPG、JPEG、PNG、HEIC 原图|照片短边不能低于 720 像素|无法读取照片分辨率',
       ),
     };
     final han = RegExp(r'[\u3400-\u9fff]');

@@ -1,5 +1,4 @@
-const chatFirstPoopRequestPrompt =
-    '[momcozy_internal_poop_v1] 请结合这些宝宝便便照片，描述可见的颜色和形态，说明可能需要关注的线索与日常观察建议。多张照片请综合观察，信息不足时请明确说明并询问必要情况，不要仅凭照片诊断。';
+import 'stool_analysis.dart';
 
 bool isChatFirstPoopPrompt(String value) =>
     value.trimLeft().startsWith('[momcozy_internal_poop_v1]');
@@ -14,6 +13,7 @@ class ChatFirstPoopTask {
     required this.createdAt,
     this.threadId,
     this.runId,
+    this.analysisState,
     this.status = ChatFirstPoopTaskStatus.pending,
   });
 
@@ -21,15 +21,22 @@ class ChatFirstPoopTask {
   final DateTime createdAt;
   final String? threadId;
   final String? runId;
+  final StoolCardState? analysisState;
   final ChatFirstPoopTaskStatus status;
 
-  ChatFirstPoopTask withThread(String? threadId) => ChatFirstPoopTask(
-    id: id,
-    createdAt: createdAt,
-    threadId: threadId,
-    runId: runId,
-    status: status,
-  );
+  ChatFirstPoopTask withThread(String? threadId) {
+    if (analysisState != null && threadId != this.threadId) {
+      throw StateError('A submitted analysis cannot change conversations.');
+    }
+    return ChatFirstPoopTask(
+      id: id,
+      createdAt: createdAt,
+      threadId: threadId,
+      runId: runId,
+      analysisState: analysisState,
+      status: status,
+    );
+  }
 
   ChatFirstPoopTask withStatus(ChatFirstPoopTaskStatus status) =>
       ChatFirstPoopTask(
@@ -37,6 +44,7 @@ class ChatFirstPoopTask {
         createdAt: createdAt,
         threadId: threadId,
         runId: runId,
+        analysisState: analysisState,
         status: status,
       );
 
@@ -45,14 +53,44 @@ class ChatFirstPoopTask {
     createdAt: createdAt,
     threadId: threadId,
     runId: runId,
+    analysisState: analysisState,
     status: ChatFirstPoopTaskStatus.completed,
   );
+
+  ChatFirstPoopTask submitted(StoolCardState state) {
+    if (threadId == null ||
+        threadId!.isEmpty ||
+        (analysisState != null &&
+            analysisState!.analysisId != state.analysisId)) {
+      throw const FormatException(
+        'Submitted analysis requires its original thread.',
+      );
+    }
+    return ChatFirstPoopTask(
+      id: id,
+      createdAt: createdAt,
+      threadId: threadId,
+      runId: runId,
+      analysisState: state,
+      status: ChatFirstPoopTaskStatus.completed,
+    );
+  }
+
+  ChatFirstPoopTask withAnalysisState(StoolCardState state) {
+    if (analysisState == null ||
+        analysisState!.analysisId != state.analysisId ||
+        status != ChatFirstPoopTaskStatus.completed) {
+      throw const FormatException('Analysis card does not belong to task.');
+    }
+    return submitted(state);
+  }
 
   Map<String, Object?> toMap() => {
     'id': id,
     'createdAt': createdAt.toIso8601String(),
     if (threadId != null) 'threadId': threadId,
     if (runId != null) 'runId': runId,
+    if (analysisState != null) 'analysis': analysisState!.toMap(),
     'status': status.name,
   };
 
@@ -67,6 +105,21 @@ class ChatFirstPoopTask {
     }
     final parsed = DateTime.tryParse(createdAt);
     if (parsed == null) return null;
+    final status = ChatFirstPoopTaskStatus.values.firstWhere(
+      (candidate) => candidate.name == value['status'],
+      orElse: () => ChatFirstPoopTaskStatus.pending,
+    );
+    final rawAnalysis = value['analysis'];
+    final analysis = rawAnalysis == null
+        ? null
+        : StoolCardState.fromMap(rawAnalysis);
+    if (rawAnalysis != null &&
+        (analysis == null ||
+            status != ChatFirstPoopTaskStatus.completed ||
+            value['threadId'] is! String ||
+            (value['threadId'] as String).isEmpty)) {
+      return null;
+    }
     return ChatFirstPoopTask(
       id: id,
       createdAt: parsed,
@@ -74,10 +127,8 @@ class ChatFirstPoopTask {
           ? value['threadId'] as String
           : null,
       runId: value['runId'] is String ? value['runId'] as String : null,
-      status: ChatFirstPoopTaskStatus.values.firstWhere(
-        (status) => status.name == value['status'],
-        orElse: () => ChatFirstPoopTaskStatus.pending,
-      ),
+      status: status,
+      analysisState: analysis,
     );
   }
 }
