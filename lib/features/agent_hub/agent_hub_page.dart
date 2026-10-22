@@ -240,6 +240,9 @@ class _AgentHubPageState extends State<AgentHubPage>
   bool _crySubmitting = false;
   String? _cryFeedback;
   int _crySubmissionGeneration = 0;
+  int _cryHistoryGeneration = 0;
+  String? _cryHistoryRequestThread;
+  String? _cryHistorySyncedThread;
   Timer? _cryPollTimer;
   bool _cryRefreshInFlight = false;
   bool _cryRefreshRequested = false;
@@ -475,6 +478,9 @@ class _AgentHubPageState extends State<AgentHubPage>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.stateCacheKey != widget.stateCacheKey) {
       _cancelCryCaptureOnLeave();
+      ++_cryHistoryGeneration;
+      _cryHistoryRequestThread = null;
+      _cryHistorySyncedThread = null;
       _cryMissingKeyRetries.clear();
       _cryTasks.clear();
       _activeCryTaskId = null;
@@ -567,6 +573,12 @@ class _AgentHubPageState extends State<AgentHubPage>
       _bindUnassignedCryTasks(_state.threadId);
       _bindUnassignedPoopTasks(_state.threadId);
     }
+    if (previous.threadId != _state.threadId) {
+      ++_cryHistoryGeneration;
+      _cryHistoryRequestThread = null;
+      _cryHistorySyncedThread = null;
+      if (_interactionRestoreResolved) _scheduleCryHistorySync();
+    }
     if (!widget.chatFirstExperience) return;
     if (_state.phase == AgentStreamRunPhase.streaming) {
       if (previous.phase != AgentStreamRunPhase.streaming) {
@@ -634,6 +646,9 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   void _leaveConversation() {
     _voice?.stop();
+    ++_cryHistoryGeneration;
+    _cryHistoryRequestThread = null;
+    _cryHistorySyncedThread = null;
     _cryPollTimer?.cancel();
     _cancelCryCaptureOnLeave();
     _cancelPoopOnLeave();
@@ -985,7 +1000,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     try {
       final bytes = await capture.readRecording();
       if (!mounted || generation != _crySubmissionGeneration) return;
-      await _ensureCryTaskThread(taskId, widget.stateCacheKey);
+      final threadId = await _ensureCryTaskThread(taskId, widget.stateCacheKey);
       if (!mounted || generation != _crySubmissionGeneration) return;
       final taskIndex = _cryTasks.indexWhere((task) => task.id == taskId);
       if (taskIndex < 0) return;
@@ -997,18 +1012,23 @@ class _AgentHubPageState extends State<AgentHubPage>
           ),
         );
         _persistInteractionState();
-        // The recovery handle must reach secure storage before audio leaves
-        // the device; a lost response can then be queried without the WAV.
-        final store = widget.interactionStateStore;
-        if (store != null) {
-          _persistentWriteTimer?.cancel();
-          _persistentWriteTimer = null;
-          _pendingPersistentSnapshot = null;
-          await _writePersistentSnapshot(store, _buildInteractionSnapshot());
-        }
+      }
+      // Verify durability on *every* attempt, including a retry after an
+      // earlier secure-storage error. Merely having the key in memory is not
+      // enough to recover an upload after process death.
+      final store = widget.interactionStateStore;
+      if (store != null) {
+        _persistentWriteTimer?.cancel();
+        _persistentWriteTimer = null;
+        _pendingPersistentSnapshot = null;
+        await _writePersistentSnapshot(store, _buildInteractionSnapshot());
       }
       if (!mounted || generation != _crySubmissionGeneration) return;
-      final result = await repository.analyze(bytes, key: key);
+      final result = await repository.analyze(
+        bytes,
+        key: key,
+        threadId: threadId,
+      );
       if (!mounted ||
           generation != _crySubmissionGeneration ||
           _activeCryTaskId != taskId) {
@@ -1047,6 +1067,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     } finally {
       if (mounted && generation == _crySubmissionGeneration) {
         setState(() => _crySubmitting = false);
+        _scheduleCryHistorySync();
       }
     }
   }
@@ -1100,6 +1121,7 @@ class _AgentHubPageState extends State<AgentHubPage>
             ),
           );
           _persistInteractionState();
+          if (task.analysisId == null) _scheduleCryHistorySync();
           if (result.status == 'pending') {
             _scheduleCryPoll();
           } else if ((result.status == 'done' ||
@@ -1156,6 +1178,82 @@ class _AgentHubPageState extends State<AgentHubPage>
       const Duration(seconds: 2),
       () => unawaited(_refreshPersistedCryResults()),
     );
+  }
+
+  void _scheduleCryHistorySync() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(_syncCryHistory());
+    });
+  }
+
+  Future<void> _syncCryHistory() async {
+    final repository = widget.cryAnalysisRepository;
+    final threadId = _state.threadId;
+    if (!widget.chatFirstExperience ||
+        repository == null ||
+        !_isPageVisible ||
+        !_interactionRestoreResolved ||
+        threadId == null ||
+        _cryHistorySyncedThread == threadId ||
+        _cryHistoryRequestThread == threadId ||
+        _crySubmitting ||
+        _cryTasks.any(
+          (task) =>
+              task.threadId == threadId &&
+              task.requestKey != null &&
+              task.analysisId == null,
+        )) {
+      return;
+    }
+    final generation = ++_cryHistoryGeneration;
+    final cacheKey = widget.stateCacheKey;
+    _cryHistoryRequestThread = threadId;
+    try {
+      final results = await repository.listForThread(threadId);
+      if (!mounted ||
+          !_isPageVisible ||
+          widget.stateCacheKey != cacheKey ||
+          _state.threadId != threadId ||
+          generation != _cryHistoryGeneration ||
+          _crySubmitting ||
+          _cryTasks.any(
+            (task) =>
+                task.threadId == threadId &&
+                task.requestKey != null &&
+                task.analysisId == null,
+          )) {
+        return;
+      }
+      var hasPending = false;
+      final knownIds = _cryTasks.map((task) => task.analysisId).toSet();
+      final newTasks = <ChatFirstCryTask>[];
+      for (final result in results) {
+        if (!knownIds.add(result.id)) continue;
+        final task =
+            ChatFirstCryTask(
+              id: 'local:cry:server:${result.id}',
+              createdAt: result.createdAt,
+              threadId: threadId,
+            ).withResult(
+              id: result.id,
+              resultStatus: result.status,
+              resultAnswer: result.answer,
+              resultAt: result.createdAt,
+            );
+        newTasks.add(task);
+        hasPending |= task.status == ChatFirstCryTaskStatus.verifying;
+      }
+      _cryHistorySyncedThread = threadId;
+      if (newTasks.isNotEmpty) {
+        setState(() => _cryTasks.addAll(newTasks));
+        _persistInteractionState();
+      }
+      if (hasPending) _scheduleCryPoll();
+    } catch (_) {
+      // Existing local results remain visible; retry on the next visit.
+    } finally {
+      if (generation == _cryHistoryGeneration) _cryHistoryRequestThread = null;
+    }
   }
 
   Future<String> _ensureCryTaskThread(String taskId, Object? cacheKey) async {
@@ -1312,6 +1410,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_isPageVisible || !_interactionRestoreResolved) return;
       unawaited(_recoverConversation());
+      unawaited(_syncCryHistory());
       unawaited(_refreshPersistedCryResults());
     });
   }
@@ -1565,6 +1664,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       _scheduleInitialAutoRunIfNeeded();
       _scheduleExternalConversationRefreshIfNeeded();
       _scheduleInitialInteractionPostFrame();
+      _scheduleCryHistorySync();
       unawaited(_retryAttachmentCleanup());
       return;
     }
@@ -1597,6 +1697,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       _persistInteractionState();
       unawaited(_refreshPersistedCryResults());
     }
+    _scheduleCryHistorySync();
     unawaited(_retryAttachmentCleanup());
     _scheduleInitialInteractionPostFrame();
   }

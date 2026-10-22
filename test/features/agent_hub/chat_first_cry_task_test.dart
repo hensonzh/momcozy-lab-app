@@ -264,6 +264,127 @@ void main() {
     },
   );
 
+  testWidgets(
+    'another device reconstructs the result card from Product Backend',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final product = _CryServiceTransport()
+        ..listedResults.add({
+          'id': 'a0a10a10-aaaa-4aaa-aaaa-aaaaaaaaaaaa',
+          'status': 'done',
+          'answer': 'hungry',
+          'created_at': '2026-10-22T00:00:00Z',
+        });
+      await tester.pumpWidget(
+        _page(
+          audio: _FakeCryAudio(),
+          client: _CaptureClient(),
+          repository: _CryRepository(),
+          cry: CryAnalysisRepository(multipart: product, json: product),
+          state: const AgentStreamRunState(threadId: 'thread-cry'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(product.lists, greaterThan(0));
+      expect(find.text('可能和饥饿有关'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets('history sync racing an upload does not duplicate its card', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final product = _CryServiceTransport()
+      ..uploadGate = Completer<void>()
+      ..listGate = Completer<void>()
+      ..listedResults.add({
+        'id': 'a0a10a10-aaaa-4aaa-aaaa-aaaaaaaaaaaa',
+        'status': 'done',
+        'answer': 'hungry',
+        'created_at': '2026-10-22T00:00:00Z',
+      });
+    final agent = _CaptureClient();
+    await tester.pumpWidget(
+      _page(
+        audio: _FakeCryAudio(),
+        client: agent,
+        repository: _CryRepository(),
+        cry: CryAnalysisRepository(multipart: product, json: product),
+        state: const AgentStreamRunState(threadId: 'thread-cry'),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+    await tester.pump();
+    await tester.tap(find.text('上传并分析'));
+    await tester.pump();
+    expect(product.recordings, hasLength(1));
+    product.listGate!.complete();
+    await tester.pump();
+    product.uploadGate!.complete();
+    await tester.pumpAndSettle();
+    expect(find.text('可能和饥饿有关'), findsOneWidget);
+    expect(find.byKey(const ValueKey('chat-first-topic-cry')), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets(
+    'retry cannot upload unless its recovery key reaches secure storage',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final product = _CryServiceTransport();
+      final store = _CryStore()..failCryKeyWrites = 100;
+      final audio = _FakeCryAudio();
+      final agent = _CaptureClient();
+      await tester.pumpWidget(
+        _page(
+          audio: audio,
+          client: agent,
+          store: store,
+          repository: _CryRepository(),
+          cry: CryAnalysisRepository(multipart: product, json: product),
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pump();
+      await tester.tap(find.text('上传并分析'));
+      await tester.pumpAndSettle();
+      expect(product.recordings, isEmpty);
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-submit-error')),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('上传并分析'));
+      await tester.pumpAndSettle();
+      expect(product.recordings, isEmpty);
+      store.failCryKeyWrites = 0;
+      await tester.tap(find.text('上传并分析'));
+      await tester.pumpAndSettle();
+      expect(product.recordings, hasLength(1));
+      expect(store.value?.cryTasks.single.requestKey, startsWith('cry:'));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
   test(
     'advice state survives result verification and terminal failure advances key',
     () {
@@ -777,10 +898,16 @@ class _FakeCryAudio implements ChatFirstCryAudioSession {
 
 class _CryStore implements AgentHubInteractionStateStore {
   AgentHubInteractionSnapshot? value;
+  int failCryKeyWrites = 0;
   @override
   Future<AgentHubInteractionSnapshot?> read() async => value;
   @override
   Future<void> write(AgentHubInteractionSnapshot snapshot) async {
+    if (failCryKeyWrites > 0 &&
+        snapshot.cryTasks.any((task) => task.requestKey != null)) {
+      failCryKeyWrites--;
+      throw StateError('Secure storage unavailable');
+    }
     value = snapshot;
   }
 
@@ -823,9 +950,12 @@ class _CryServiceTransport implements ApiMultipartTransport, ApiJsonTransport {
   final recordings = <List<int>>[];
   int reads = 0;
   Completer<void>? uploadGate;
+  Completer<void>? listGate;
   String? lastReadPath;
   String uploadStatus = 'done';
   int missingReads = 0;
+  int lists = 0;
+  final listedResults = <Map<String, Object?>>[];
 
   @override
   Future<Map<String, Object?>> uploadMultipart(
@@ -838,6 +968,7 @@ class _CryServiceTransport implements ApiMultipartTransport, ApiJsonTransport {
     expect(path, '/v1/cry-analyses');
     expect(file.mimeType, 'audio/wav');
     expect(headers['Idempotency-Key'], isNotEmpty);
+    expect(fields['thread_id'], 'thread-cry');
     recordings.add(file.bytes);
     await uploadGate?.future;
     return {
@@ -853,6 +984,12 @@ class _CryServiceTransport implements ApiMultipartTransport, ApiJsonTransport {
     String path, {
     Map<String, Object?> query = const {},
   }) async {
+    if (path == '/v1/cry-analyses') {
+      expect(query['thread_id'], 'thread-cry');
+      await listGate?.future;
+      lists++;
+      return {'items': listedResults};
+    }
     reads++;
     lastReadPath = path;
     if (missingReads > 0) {

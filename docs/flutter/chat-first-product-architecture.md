@@ -32,7 +32,7 @@
 | 吸奶 | `POST /v1/records/pumping`；账号 owner 与 `Idempotency-Key` | 奶量必填、结束时间可选；失败保留表单与同一幂等键。 |
 | 生长 | `POST /v1/records/growth`；账号 owner 与 `Idempotency-Key` | 体重或身长至少一项；无真实宝宝档案时不声称记录已关联到宝宝。 |
 | 换尿布、睡眠 | `POST /v1/babies/{baby_id}/records`；选中宝宝 ID 与 `Idempotency-Key` | 只有已创建且选中的真实宝宝才能保存；否则禁用保存并提供创建宝宝档案入口。成功响应须回显同一宝宝与记录 ID。 |
-| 听哭闹 | 本地录音、试听，Product Backend 独立识别服务与结果卡已接入代码；真实服务需配置私有凭据与设备验收 | 上传前将随机操作键和已提交会话 ID 写入账号级安全快照；Product Backend 先返回 `pending`，App 按键查询 `done`/`incomplete`/`failed`，离页后可恢复已完成的结果。音频只上传 Product Backend，不作为 Agent 附件；Agent 只按 `analysis_id` 读取用户/会话绑定结果。处理中任务为服务进程内短期任务，重启后最多五分钟标记失败、需重新录制；真实供应商与双区域环境尚未验收。 |
+| 听哭闹 | 本地录音、试听，Product Backend 独立识别服务与结果卡已接入代码；真实哭声样本与设备验收仍待完成 | 上传前将随机操作键和已提交会话 ID 写入账号级安全快照；Product Backend 先返回 `pending`，App 按键查询 `done`/`incomplete`/`failed`，离页后可恢复已完成的结果。Backend 保存所属会话，换机可按用户和会话取回最近 100 条结果卡。音频只上传 Product Backend，不作为 Agent 附件；Agent 只按 `analysis_id` 读取用户/会话绑定结果。处理中任务为服务进程内短期任务，重启后最多五分钟标记失败、需重新录制；真实哭声分类与双区域环境尚未验收。 |
 | 看便便 | 现有照片/PDF 上传及 Agent 会话契约 | 可附照片或文字；仅展示真实 Agent 回复，不把它伪称为确定性图片识别或医学诊断。 |
 | 语音输入/朗读与口型 | Backend 已有认证的 `POST /v1/speech/transcribe-chunk`；新增 `POST /v1/realtime-voice-stream` 将朗读文本放入 JSON body，响应 `audio/pcm`、`no-store`，保留旧 `GET ...?text=...` 供旧客户端（已标过时）。本地 `VOICE_PROVIDER=disabled`，正式 App 仍无已验收的 PCM 播放/取消、只播新回复或音频时间轴。Demo `3ea2f53` 默认自动播报新回复并以圆形扬声器/斜杠图标切换，本机火山 TTS 未做真实凭据联调 | 新 App 不得调用旧 GET 把私密对话文本放在 URL；供应商密钥只在服务端。POST 安全传输仅是必要条件，**不等于**自动播报可用：仍须验证真实 provider、授权、双端音频播放/中止、只播新生成回复、历史不重读、失败降级与时间轴边界。无可验证能力时继续明确禁用，不嵌 Demo 代理/假音频，不伪造口型同步；减弱动态时显示静态插画。 |
 

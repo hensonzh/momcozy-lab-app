@@ -10,10 +10,12 @@ class CryAnalysisRepository {
   Future<CryAnalysisResult> analyze(
     List<int> wav, {
     required String key,
+    required String threadId,
   }) async {
     final response = await multipart.uploadMultipart(
       '/v1/cry-analyses',
       headers: {'Idempotency-Key': key},
+      fields: {'thread_id': threadId},
       file: ApiUploadFile(
         name: 'cry.wav',
         mimeType: 'audio/wav',
@@ -34,6 +36,25 @@ class CryAnalysisRepository {
   Future<CryAnalysisResult> read(String id) async => CryAnalysisResult.fromMap(
     await json.getJson('/v1/cry-analyses/${Uri.encodeComponent(id)}'),
   );
+
+  Future<List<CryAnalysisResult>> listForThread(String threadId) async {
+    final response = await json.getJson(
+      '/v1/cry-analyses',
+      query: {'thread_id': threadId},
+    );
+    final items = response['items'];
+    if (items is! List || items.length > 100) {
+      throw const FormatException('Invalid cry analysis list');
+    }
+    return items
+        .map((item) {
+          if (item is! Map) {
+            throw const FormatException('Invalid cry analysis item');
+          }
+          return CryAnalysisResult.fromMap(Map<String, Object?>.from(item));
+        })
+        .toList(growable: false);
+  }
 }
 
 class CryAnalysisResult {
