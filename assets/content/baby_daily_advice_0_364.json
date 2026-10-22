@@ -1,0 +1,2930 @@
+{
+  "version": 1,
+  "age_range": [
+    0,
+    364
+  ],
+  "editorial_status": "draft-requires-clinical-review",
+  "entries": [
+    {
+      "day": 0,
+      "topic": "feeding",
+      "text": "喂奶前看看宝宝有没有张嘴找奶、转头找乳房或奶瓶；别只等到哭得厉害才喂，遇到困难就记下情况找专业人员帮忙。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 1,
+      "topic": "diaper",
+      "text": "换尿布时分别看看有没有尿和便便，顺手记下颜色；别只凭一片尿布猜喂养够不够，有疑问可以带记录问医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 2,
+      "topic": "sleep",
+      "text": "宝宝睡着时让他仰卧，睡在坚实、平坦的床垫上；睡处只留合适的床单，不放枕头、玩具或松软被褥。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 3,
+      "topic": "development",
+      "text": "宝宝清醒时，凑近些轻声说句话，再停下来看看他怎么反应；没对视也不用反复测试，想起来时自然试试就好。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 4,
+      "topic": "play",
+      "text": "想陪宝宝趴一会儿，可以等他清醒时让他趴在你胸前并全程看着；有点累就停下，睡觉仍放回自己的安全睡处。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 5,
+      "topic": "safety",
+      "text": "照护宝宝前先洗手，抱起来之前看看身旁有无松散被褥；自己困得厉害时，先把宝宝放回安全睡处再休息。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 6,
+      "topic": "feeding",
+      "text": "今天喂奶时留意宝宝何时主动找奶、何时停下来；把吃奶与尿布情况一起记下，不用拿某一顿的量给全天下结论。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 7,
+      "topic": "feeding",
+      "text": "宝宝转头找奶或张嘴时，可以准备喂养；如果哭得很急，先抱稳、安抚一下，再看看是不是愿意吃奶。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 8,
+      "topic": "diaper",
+      "text": "换尿布后记下今天看到了几片湿尿布；若担心宝宝吃得够不够，把喂养和尿布记录一起带去问医生，比猜测更有用。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 9,
+      "topic": "sleep",
+      "text": "即使只睡一小会儿，也让宝宝仰卧在平坦、坚实的睡处；睡醒后再抱起来互动，别把沙发当成小睡的地方。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 10,
+      "topic": "development",
+      "text": "清醒时和宝宝面对面说两句，停一会儿看看表情或动作；不必为了等回应一直逗他，累了就让他休息。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 11,
+      "topic": "play",
+      "text": "宝宝清醒、有人看护时，可以试试短时间趴在大人胸前；困了就停，睡觉还是仰卧放回自己的安全睡处。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 12,
+      "topic": "safety",
+      "text": "抱着宝宝觉得困了，就先把他放回安全的睡处；沙发和扶手椅不是宝宝睡觉的地方，也别抱着宝宝在那里打盹。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 13,
+      "topic": "feeding",
+      "text": "喂奶后记下大致时间，也留意换下来的湿尿布；想了解这几天的喂养情况，可以一起回看，不用单看一次奶量。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 14,
+      "topic": "feeding",
+      "text": "喂奶时看看宝宝有没有继续找奶、放慢吞咽或转开脸；每顿表现可能不同，别只凭一次吃得少就判断原因。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 15,
+      "topic": "diaper",
+      "text": "换尿布时留意便便真实的颜色，不用按日龄猜它该变成什么样；若看到明显红色或灰白色，请及时联系医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 16,
+      "topic": "sleep",
+      "text": "准备睡觉前看一眼床上有没有枕头、毛绒玩具或松散被褥；让宝宝仰卧睡在坚实平坦的床面上，不靠厚被保暖。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 17,
+      "topic": "development",
+      "text": "今天和宝宝说话时，可以留心他自然发出的声音或动作；如果一直有具体担心，记下出现的情境，咨询医生更清楚。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 18,
+      "topic": "play",
+      "text": "宝宝清醒时轻声唱一小段，停一停看看他是否还愿意互动；不需要一次玩很久，困了就休息。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 19,
+      "topic": "safety",
+      "text": "照护人很累时，先检查宝宝睡处是否平坦、没有松软物；把宝宝放回安全睡处后再歇一会儿，不必抱着硬撑。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 20,
+      "topic": "feeding",
+      "text": "宝宝找奶时再准备喂养，吃到一半想停也留意他的表现；不用要求每一顿都吃相同的量，遇到困难可求助。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 21,
+      "topic": "feeding",
+      "text": "这几天可以留意宝宝有没有在哭之前就张嘴找奶；把当时看到的动作记下来，下次准备喂养会更有把握。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 22,
+      "topic": "diaper",
+      "text": "换尿布时先分清是湿了还是有便便，再记下颜色；只看到一片和平时不同的尿布，先如实记录，不急着猜原因。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 23,
+      "topic": "sleep",
+      "text": "白天夜里睡觉都让宝宝仰卧，睡在平坦、坚实的地方；玩过趴趴后也一样，别把清醒时的姿势带进睡觉。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 24,
+      "topic": "development",
+      "text": "抱着宝宝说话时，可以停下来看看他的目光或表情；别为了等一次对视反复测试，平时自然互动就够了。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 25,
+      "topic": "play",
+      "text": "清醒时让宝宝短时趴在你胸前，边看着他边说说话；如果转开头或累了就停，睡着前放回安全睡处。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 26,
+      "topic": "safety",
+      "text": "今天抱起宝宝之前看一眼四周有没有松软的被褥；自己困倦时别在沙发上抱着宝宝睡，先放回安全睡处。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 27,
+      "topic": "feeding",
+      "text": "想看看喂养情况，可以把今天的吃奶时间和换尿布情况放在一起回顾；单看某一次吃奶，不足以解释全天变化。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 28,
+      "topic": "feeding",
+      "text": "宝宝哭了先看看有没有找奶的动作，也可以先抱稳安抚；哭声不能单独说明吃不饱，持续喂养困难要及时求助。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 29,
+      "topic": "diaper",
+      "text": "今天换尿布可以把湿尿布和便便分开记；回看一天的实际记录，比盯住某一次的颜色更容易说清楚情况。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 30,
+      "topic": "sleep",
+      "text": "练趴玩要等宝宝醒着并有人看护；只要睡着，不论白天小睡还是夜里，都让他仰卧回到平坦、坚实的睡处。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 31,
+      "topic": "development",
+      "text": "面对面和宝宝说几句话，停一停，看看有没有声音、表情或动作回应；不必每次都期待一样的反应。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 32,
+      "topic": "play",
+      "text": "今天可以找宝宝清醒、愿意玩的时候陪他趴一小会儿；全程看着，想休息就停，别为了凑时间勉强继续。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 33,
+      "topic": "safety",
+      "text": "喂奶或安抚时如果自己快睡着了，先把宝宝放回安全睡处；别抱着他在沙发或扶手椅上打盹。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 34,
+      "topic": "feeding",
+      "text": "今天喂养后，除了记吃奶，也可以留意有没有湿尿布；若持续担心宝宝摄入情况，带着真实记录请教医生。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 35,
+      "topic": "feeding",
+      "text": "喂奶时看看宝宝什么时候开始主动找奶、什么时候不想继续；顺着实际反应喂，不用靠固定间隔猜他饿不饿。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 36,
+      "topic": "diaper",
+      "text": "换尿布看到便便颜色和平时不一样时，记下时间和样子；若是明显的红色或灰白色，及时联系医生咨询。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 37,
+      "topic": "sleep",
+      "text": "宝宝睡着前检查床面是否平坦、坚实、没有枕头玩具；醒着玩过的物品也别留在睡眠区，睡时仍仰卧。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 38,
+      "topic": "development",
+      "text": "和宝宝说话时可以停一停，留意他自然发出的声音；一次没有回应不说明什么，持续担心时可以记下情况问医生。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 39,
+      "topic": "play",
+      "text": "试着在宝宝清醒、愿意玩的时候趴在你胸前说说话；大人一直看护，累了就停，别把趴玩变成睡觉的姿势。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 40,
+      "topic": "safety",
+      "text": "晚上困倦时，抱起宝宝前先想好怎么安全地放回睡处；不要抱着他在沙发或扶手椅上睡着。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 41,
+      "topic": "feeding",
+      "text": "如果这几天喂奶感觉不顺，先记下具体是哪一环节遇到困难；联系喂养专业人员时，比只说“吃得少”更好沟通。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 42,
+      "topic": "feeding",
+      "text": "宝宝准备吃奶时看看有没有转头找奶或张嘴的动作；喂到一半不想吃，也留意他的反应，不强求每顿一样多。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 43,
+      "topic": "diaper",
+      "text": "今天换尿布可以分别记湿尿布和便便；回头想核对喂养时，带上这几天的记录，不要靠单次印象判断。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 44,
+      "topic": "sleep",
+      "text": "每次睡觉前都看一眼床面是否坚实、平坦；让宝宝仰卧，枕头和毛绒玩具先收走，醒着趴玩不能代替睡姿。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 45,
+      "topic": "development",
+      "text": "和宝宝面对面说话时，停下来看看他有没有目光或声音回应；别因某一次没看到就急着下结论。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 46,
+      "topic": "play",
+      "text": "宝宝精神好、清醒时，可以让他短时趴在大人胸前；始终陪着，想睡了就放回自己的安全睡处。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 47,
+      "topic": "safety",
+      "text": "困得厉害时，先把宝宝放在平坦、坚实的安全睡处；别在沙发上抱着宝宝睡，休息后再继续照护。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 48,
+      "topic": "feeding",
+      "text": "今天如果想了解宝宝的进食节奏，先记下每次喂奶的实际情况；回看几天变化，别凭某一顿猜原因。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 49,
+      "topic": "feeding",
+      "text": "宝宝准备吃奶时留意张嘴、转头找奶等动作；如果他不想继续，停下来看看，不用追着凑固定奶量。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 50,
+      "topic": "diaper",
+      "text": "换尿布时记下自己看到的颜色和次数；单次与平时不同不一定能说明原因，拿不准时带记录问医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 51,
+      "topic": "sleep",
+      "text": "白天打盹和晚上睡觉一样，都让宝宝仰卧在坚实平坦的睡处；趴玩只安排在清醒、有人看护的时候。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 52,
+      "topic": "development",
+      "text": "今天试着对宝宝说句话，停一下观察表情或声音；不必要求他马上回应，平时的自然互动更轻松。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 53,
+      "topic": "play",
+      "text": "清醒时陪宝宝短时趴一趴，边和他说说话；如果他累了就停，困了放回平坦、坚实的安全睡处。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 54,
+      "topic": "safety",
+      "text": "睡前把宝宝身旁的松散被褥、枕头和玩具收起来，留出简洁的睡眠区；照护人困倦时也别在沙发抱睡。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 55,
+      "topic": "feeding",
+      "text": "喂奶前后记下宝宝主动找奶或停下的表现；如果连续遇到喂养困难，把具体情形带去请教专业人员。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 56,
+      "topic": "feeding",
+      "text": "宝宝每顿吃奶可能有快有慢，今天记下开始和结束的大致时间；回看一整天比盯着一顿更容易发现自己的节奏。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 57,
+      "topic": "diaper",
+      "text": "换尿布时记下是湿了还是有便便，也留意颜色；如果发现明显红色或灰白色，别只留照片，及时找医生问问。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 58,
+      "topic": "sleep",
+      "text": "留意宝宝准备睡觉的时刻，记下大致入睡和醒来时间；无论睡多久，都把他仰卧放在平坦、坚实的安全睡处。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 59,
+      "topic": "development",
+      "text": "宝宝咿呀出声时，试着模仿一句、停下来等一等；这是陪他互动，不用把每次回应当成语言能力测试。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 60,
+      "topic": "play",
+      "text": "清醒趴玩时，把安全的大玩具放在宝宝能看见的位置；你在旁边看着，累了就停，不用非得完成一段时长。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 61,
+      "topic": "safety",
+      "text": "准备让宝宝在地垫上玩前，先把小物件和长绳带移开；趴玩时大人要一直在旁边，别让玩具代替看护。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 62,
+      "topic": "feeding",
+      "text": "亲喂时可以留意宝宝有没有吞咽、喂完后是什么状态；单看一次吃奶花了几分钟，无法说明实际吃进多少。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 63,
+      "topic": "feeding",
+      "text": "宝宝有找奶的动作时可以准备喂养，记录实际发生的时间；别拿某一次比平时快或慢，就认定节奏变了。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 64,
+      "topic": "diaper",
+      "text": "今天换尿布可以把湿尿布、便便的次数分开记，颜色也写真实所见；只有一次和平时不同，先别急着猜原因。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 65,
+      "topic": "sleep",
+      "text": "睡觉时仍让宝宝仰卧，床面要坚实平坦；练趴趴只安排在清醒、有人看护的时候，别拿趴玩替代睡姿。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 66,
+      "topic": "development",
+      "text": "和宝宝说话时停一停，看看他是否转头、发声或用表情回应；如果持续有顾虑，记下具体情境和医生聊聊。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 67,
+      "topic": "play",
+      "text": "想让宝宝试着伸手，可以把安全的大玩具放在眼前稍近处；他只看不抓也没关系，不用规定今天必须抓住。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 68,
+      "topic": "safety",
+      "text": "宝宝手可能碰到身边物品，今天检查一下地垫周围的绳带和小零件；移开后再玩，别只盯着玩具本身。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 69,
+      "topic": "feeding",
+      "text": "吃奶快慢不是全部，想回看喂养情况，可以把几顿进食和当时的精神状态一起记；别只凭一顿速度下结论。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 70,
+      "topic": "feeding",
+      "text": "喂养时如果宝宝放慢、转开脸或不想继续，可以先停下来观察；记下真实表现，比硬按固定份量喂更有用。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 71,
+      "topic": "diaper",
+      "text": "便便次数有时会变化，今天可记下颜色、样子和次数；回看几天的实际变化，别拿某一片尿布代表全部。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 72,
+      "topic": "sleep",
+      "text": "晚上睡前看一眼床面和床上的东西；让宝宝仰卧，枕头玩具先拿走，睡着后不用为了练抬头改成趴睡。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 73,
+      "topic": "development",
+      "text": "叫宝宝时看看他有没有望过来，记录你真正看到的动作；如果一直担心听声反应，带具体例子咨询医生。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 74,
+      "topic": "play",
+      "text": "把安全玩具慢慢移到宝宝眼前，让他看一看、试着伸手；没抓到也不用反复测试，换个时间再玩就好。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 75,
+      "topic": "safety",
+      "text": "如果宝宝开始伸手，今天摸摸玩具是否有能脱落的小零件或长绳；拿不准的先收起来，改用完整的大玩具。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 76,
+      "topic": "feeding",
+      "text": "宝宝吃奶时若转头不愿继续，先停下来看看是否需要休息；不用要求这顿与上一顿一样，具体困难可记下来。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 77,
+      "topic": "feeding",
+      "text": "今天试试在喂奶前看宝宝的找奶动作、喂完看是否主动停下；顺手记时间，比用一张固定时刻表猜更贴近他。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 78,
+      "topic": "diaper",
+      "text": "换尿布时除了记次数，也看看便便有没有和平时明显不同；如颜色发红或灰白，及时联系医生，不只靠照片猜。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 79,
+      "topic": "sleep",
+      "text": "如果这几天觉得小睡零碎，可以记下入睡和醒来的时间；先看真实节奏，每次仍让宝宝仰卧在安全睡处。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 80,
+      "topic": "development",
+      "text": "宝宝发出声音时，你可以回应一句再等一会儿；一天里自然聊几次就好，不需要每天检查他会不会发某个音。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 81,
+      "topic": "play",
+      "text": "清醒趴玩时把玩具放在视线内，观察宝宝是否还想继续；如果累了就抱起来休息，别为了计时把他留在趴姿。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 82,
+      "topic": "safety",
+      "text": "今天在地垫上陪宝宝玩前，看看地上是否有纸片、小零件或绳带；收好再让他活动，成人要始终看着。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 83,
+      "topic": "feeding",
+      "text": "亲喂时留心宝宝的吞咽和停顿，遇到喂养困难时记下具体过程；单凭吸了多久，没法判断他吃进多少。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 84,
+      "topic": "feeding",
+      "text": "想知道宝宝这几天吃奶有没有变化，可以记录每顿时间和当时状态；不要把一次吃得慢当成趋势，持续担心再求助。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 85,
+      "topic": "diaper",
+      "text": "今天把湿尿布和便便分开记，颜色用看到的词描述；如果不确定是否异常，带上记录去咨询，不用自行诊断。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 86,
+      "topic": "sleep",
+      "text": "睡觉时给宝宝留一块平坦、坚实、没有松软物的地方；清醒时可以在看护下趴一会儿，两种场景别混在一起。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 87,
+      "topic": "development",
+      "text": "今天试着在宝宝清醒时轻声和他说话，看看是否转头或露出表情；没看到不用反复试，有持续担心可以咨询。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 88,
+      "topic": "play",
+      "text": "玩的时候递给宝宝一个安全、完整的大玩具，看看他是注视还是伸手；不急着教会抓握，跟着他的兴趣停下来。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 89,
+      "topic": "safety",
+      "text": "宝宝更爱摸东西了，检查床边和地垫附近有没有长绳、易掉的小零件；能入口的东西先移出活动范围。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 90,
+      "topic": "feeding",
+      "text": "想看喂养情况，不妨回顾今天几次进食和宝宝当时的精神状态；吃奶速度只是一个线索，别用它单独评价。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 91,
+      "topic": "feeding",
+      "text": "宝宝清醒时吃奶和困倦时可能不同，先看看实际的找奶和吃饱表现；记下这顿情况，不按自己预设的量催他。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 92,
+      "topic": "diaper",
+      "text": "今天若发现便便次数有变化，记下颜色和样子，再看接下来几次；如果明显红色或灰白色，及时联系医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 93,
+      "topic": "sleep",
+      "text": "每次小睡也让宝宝仰卧在安全睡处；练抬头要选清醒、有人看护的时间，不要等睡着再替他改变姿势。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 94,
+      "topic": "development",
+      "text": "和宝宝面对面说话时，可以停一下看看他是否看过来；有持续的听声或互动顾虑，就记下例子向医生说明。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 95,
+      "topic": "play",
+      "text": "玩具从宝宝眼前慢慢移动，让他有时间用眼睛跟着看；如果他转开头，就歇一会儿，不用追着训练。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 96,
+      "topic": "safety",
+      "text": "宝宝伸手的地方要特别留意：今天检查玩具有没有可拆的小件、绳带是否够不到；不安全的先收起来。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 97,
+      "topic": "feeding",
+      "text": "喂奶时看看宝宝会不会主动停下或转开脸；先尊重这个信号，记下实际情况，不用把每顿喂成一样的量。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 98,
+      "topic": "feeding",
+      "text": "喂养记录不用写得很复杂，记下时间和你看到的找奶、停奶表现即可；看几天的事实，比凭印象猜更清楚。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 99,
+      "topic": "diaper",
+      "text": "换尿布时可以先记有没有尿、再记便便的颜色；想问医生时，写下发生的时间和真实所见比只说“异常”清楚。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 100,
+      "topic": "sleep",
+      "text": "宝宝想翻动时，睡前仍先让他仰卧放在坚实、平坦的睡处；床上不添枕头玩具，有疑问可问医生。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 101,
+      "topic": "development",
+      "text": "宝宝咿呀说话时可以学着回应，再等一等他的声音；不需要数今天发声几次，持续担忧时可以和医生讨论。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 102,
+      "topic": "play",
+      "text": "清醒时把安全玩具放在宝宝眼前稍远处，看看他愿不愿意伸手；全程陪着，累了就停，不以抓到为目标。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 103,
+      "topic": "safety",
+      "text": "整理活动区时顺便看看地上有没有会被抓进嘴的小东西；宝宝摸索的地方也要收拾，不只是睡觉的地方。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 104,
+      "topic": "feeding",
+      "text": "喂奶时观察宝宝的吞咽、停顿和饱足表现；遇到持续困难可记录具体情形，不用只凭喂了多久估算奶量。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 105,
+      "topic": "feeding",
+      "text": "把喂养时间记下来后，可以连同宝宝当时清醒还是困倦一起看；不必让每次喂养都按钟点整齐发生。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 106,
+      "topic": "diaper",
+      "text": "今天记尿布时，把湿尿布与便便分开；如果便便颜色引起担心，直接描述真实颜色，不要根据照片自行下结论。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 107,
+      "topic": "sleep",
+      "text": "宝宝小睡前看一眼床垫是否坚实平坦、周围有没有松软东西；无论睡多久，都从仰卧姿势开始。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 108,
+      "topic": "development",
+      "text": "和宝宝说话后稍等一下，看看是否用声音或表情回应；一次安静不代表什么，持续担心可向医生说清情境。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 109,
+      "topic": "play",
+      "text": "选宝宝精神好的时候陪他趴一会儿，放个安全的大玩具让他看；如果他困了，停下来回安全睡处。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 110,
+      "topic": "safety",
+      "text": "今天检查宝宝手边有没有绳带、碎纸或松动的零件；能拿到的东西先移开，玩时仍要有人看护。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 111,
+      "topic": "feeding",
+      "text": "如果觉得宝宝这顿吃得比平时少，先把具体时间和表现记下；别急着推断原因，持续喂养困难再请教专业人员。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 112,
+      "topic": "feeding",
+      "text": "喂奶时看看宝宝是否主动找奶、吃到一半是否转头；记下实际表现，不用为喝完瓶上的刻度勉强继续。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 113,
+      "topic": "diaper",
+      "text": "换尿布时记下便便的颜色和样子；若尚未添加辅食，别把一次变化直接归因于食物，拿不准可问医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 114,
+      "topic": "sleep",
+      "text": "晚上睡觉前收走床上的枕头和玩具，让宝宝仰卧睡在坚实平坦的地方；清醒时的趴玩和睡觉要分开。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 115,
+      "topic": "development",
+      "text": "宝宝伸手摸玩具时，你可以在旁边看看他怎么尝试；一次没抓牢不代表能力有问题，别催着反复练。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 116,
+      "topic": "play",
+      "text": "递一个安全、完整的大玩具给宝宝摸摸，等他自己伸手；没兴趣就换个时间玩，不用把抓握当成今天的任务。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 117,
+      "topic": "safety",
+      "text": "换尿布前把纸巾、干净尿布先拿到手边；宝宝随时可能翻动，即使片刻也不要单独留他在高处。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 118,
+      "topic": "feeding",
+      "text": "这阶段先照常留意宝宝喝奶的情况；考虑辅食不靠“四个月到了”作决定，可先和医生聊聊准备信号。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 119,
+      "topic": "feeding",
+      "text": "如果正想着什么时候开始辅食，先记下宝宝是否能稳住头颈等表现；通常约六个月再结合准备情况讨论，不急着按日历开始。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 120,
+      "topic": "diaper",
+      "text": "今天记便便时写下颜色和样子就好；如果还没吃辅食，不要把变化说成“新食物造成的”，带记录咨询更清楚。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 121,
+      "topic": "sleep",
+      "text": "如果某次小睡比平时短，可以先记时间，看看后续几天的节奏；不因此换成枕头或软被，睡处仍保持平坦。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 122,
+      "topic": "development",
+      "text": "给清醒的宝宝看一个安全的大玩具，看看是否转头或伸手；别拿今天有没有翻身来验收发育进度。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 123,
+      "topic": "play",
+      "text": "宝宝活动时先清出一小块地垫，在旁边看他怎样转身；别把他单独放在沙发或床边等着自己翻。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 124,
+      "topic": "safety",
+      "text": "地垫上如果有纽扣、电池或掉落的小零件，今天就收起来；玩之前扫一眼地面，比等宝宝伸手后再拿更稳妥。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 125,
+      "topic": "feeding",
+      "text": "宝宝吃奶时如果转开脸或不想继续，先停下看看；不用为了凑够一顿的量硬喂，持续困难可记录下来咨询。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 126,
+      "topic": "feeding",
+      "text": "目前可以继续观察宝宝喝奶和头颈控制的实际表现；谈辅食时先问“是否准备好了”，不用照着某天日龄开吃。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 127,
+      "topic": "diaper",
+      "text": "想弄清便便有没有变化，就把颜色、样子和时间记下来；只凭某一片尿布，通常没法说清缘由。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 128,
+      "topic": "sleep",
+      "text": "入睡和醒来可以顺手记个时间，先看几天的节奏；每次睡觉仍要仰卧、睡在坚实平坦的地方。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 129,
+      "topic": "development",
+      "text": "宝宝伸手时可以给他留一点自己尝试的时间；转头、发声也值得留意，不必规定哪天必须抓稳或翻身。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 130,
+      "topic": "play",
+      "text": "在地垫上留出安全空间，把一个大玩具放在宝宝能碰到的位置；成人在旁边，准备好应对他突然转身。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 131,
+      "topic": "safety",
+      "text": "今天检查宝宝常摸的玩具：有没有能拽下的小件、松动的眼睛或纽扣；有的话先收起，不冒险继续玩。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 132,
+      "topic": "feeding",
+      "text": "喂奶时留意宝宝什么时候想吃、什么时候把脸转开；不愿继续就先停，别为了让瓶子见底强求。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 133,
+      "topic": "feeding",
+      "text": "今天喂奶前先看宝宝有没有主动找奶，喂到转开脸时停一下；用他的表现调整，不只盯着刻度。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 134,
+      "topic": "diaper",
+      "text": "换尿布时如实记下颜色与样子；没添加辅食时也可能有变化，别自己推断与哪种食物有关。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 135,
+      "topic": "sleep",
+      "text": "宝宝清醒时可以在看护下趴玩，想睡就转到安全睡处；睡着仍从仰卧开始，床上不留软物。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 136,
+      "topic": "development",
+      "text": "把一个完整的大玩具递到宝宝眼前，让他自由摸一摸；没抓住就先玩别的，不需要反复检查能力。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 137,
+      "topic": "play",
+      "text": "今天可以边和宝宝说话边让他摸安全玩具；跟着他有没有兴趣来停下，不把一次没伸手看成问题。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 138,
+      "topic": "safety",
+      "text": "准备换尿布时先把用品备齐、手一直护着宝宝；会不会翻身不必猜，也别让他独自在换尿布台上。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 139,
+      "topic": "feeding",
+      "text": "喝奶的实际情况可以继续记录；是否开始辅食，要结合月龄和准备信号，而不是因为见别人开始就跟着试。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 140,
+      "topic": "feeding",
+      "text": "想讨论辅食，可以先看看宝宝坐姿支持和头颈是否稳当；通常约六个月再考虑，疑问带去问儿科医生。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 141,
+      "topic": "diaper",
+      "text": "这次便便若和平时不一样，记下颜色和时间，再留意后面的变化；不急着归因于食物或自行判断好坏。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 142,
+      "topic": "sleep",
+      "text": "如果最近入睡时间变来变去，可以记几天再看；不靠加枕头或垫软东西“帮睡”，睡处安全先保持不变。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 143,
+      "topic": "development",
+      "text": "宝宝清醒时，拿着安全玩具和他说几句，看看有没有看、摸或转身的尝试；不用按这周验收翻身。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 144,
+      "topic": "play",
+      "text": "宝宝想翻动时，先把地垫周围的障碍清开，在旁边陪他尝试；不要在床边等高处留他一个人练习。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 145,
+      "topic": "safety",
+      "text": "活动区里纽扣、电池之类的小物件要先捡起来；宝宝可能突然够到新的地方，玩前扫一遍地面。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 146,
+      "topic": "feeding",
+      "text": "宝宝吃着吃着不愿继续，可以停一停观察；喂养看的是实际反应，不是每顿必须喝完同一份。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 147,
+      "topic": "feeding",
+      "text": "仍以观察宝宝喝奶和实际准备情况为主；辅食通常约六个月考虑，别因为日龄临近就急着加。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 148,
+      "topic": "diaper",
+      "text": "今天的便便如果颜色或样子不同，先记下真实情况；拿不准时带着记录问医生，不用凭一张尿布猜。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 149,
+      "topic": "sleep",
+      "text": "宝宝今天睡了多久可以记下来，但别用时长代替安全检查；每次入睡前还是看仰卧、平坦床面和空睡处。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 150,
+      "topic": "development",
+      "text": "玩时留意宝宝怎么尝试伸手、转头或发声；和他回应一下即可，不限定某天必须出现一个新动作。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 151,
+      "topic": "play",
+      "text": "在地垫上放一个安全的大玩具，给宝宝空间自己碰一碰、转一转；有人在旁看着，高处不要独留。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 152,
+      "topic": "safety",
+      "text": "宝宝伸手能碰到的东西可能越来越多；今天把活动区的小件、容易脱落的玩具零件先收好。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 153,
+      "topic": "feeding",
+      "text": "喂奶时宝宝主动找奶就回应，转头不愿吃也停一下看看；不用为了追上别人的量强求把这顿喝完。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 154,
+      "topic": "feeding",
+      "text": "如果担心这一顿没喝够，先记下宝宝怎么表现、后来是否又找奶；别只看瓶身刻度就硬追着喂。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 155,
+      "topic": "diaper",
+      "text": "换尿布时写下颜色和样子，别先猜是哪种食物引起；明显红色或灰白色便便要及时联系医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 156,
+      "topic": "sleep",
+      "text": "宝宝玩累了想睡，就把身边玩具收起、让他仰卧回到安全睡处；别让醒着练的趴姿延续到小睡。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 157,
+      "topic": "development",
+      "text": "今天可以递个好握的大玩具，看看宝宝是否愿意碰一碰；不抓也不必反复塞进手里，顺着兴趣玩。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 158,
+      "topic": "play",
+      "text": "宝宝清醒时陪他摸摸不同的安全大玩具；看他愿意继续还是转头休息，互动不按时长打卡。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 159,
+      "topic": "safety",
+      "text": "尿布台上用品先备好，一只手始终看护宝宝；无论你有没有见过他翻身，都不要暂时离开。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 160,
+      "topic": "feeding",
+      "text": "奶仍是这个阶段的重要营养来源；想谈辅食先看月龄与准备信号，不因某一次看起来馋就仓促开始。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 161,
+      "topic": "feeding",
+      "text": "临近半岁时可和医生聊聊辅食时机，记下宝宝头颈控制和坐姿情况；别只凭“到了这一天”决定。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 162,
+      "topic": "diaper",
+      "text": "今天尿布记录把颜色、样子写清楚就好；单次变化别直接说是某种食物造成的，持续担心可咨询。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 163,
+      "topic": "sleep",
+      "text": "回看小睡记录时可以多看几天，不为一次短睡改变睡处；平坦、坚实、没有软物的环境仍要坚持。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 164,
+      "topic": "development",
+      "text": "陪宝宝玩时留意他是否尝试转身或伸手；你可以给出安全空间，不必按某周的日期催他翻过去。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 165,
+      "topic": "play",
+      "text": "清出一块地垫让宝宝活动，东西别堆在身旁；自己留在旁边，看到他尝试翻动就守住周围安全。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 166,
+      "topic": "safety",
+      "text": "想让宝宝在地垫上多活动，先检查有没有纽扣、电池和玩具碎片；把他能摸到的小东西及时捡走。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 167,
+      "topic": "feeding",
+      "text": "喂奶时宝宝停下或转开脸，可以先看看是不是不想继续；记录真实表现，不为了统一每顿份量追着喂。",
+      "source_ids": [
+        "aap_feeding"
+      ]
+    },
+    {
+      "day": 168,
+      "topic": "feeding",
+      "text": "接近半岁，如果考虑辅食，先观察坐姿支持和头颈是否稳当；通常约六个月再结合准备情况讨论，奶仍重要。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 169,
+      "topic": "diaper",
+      "text": "便便的颜色和样子若与平时不同，先记录再留意变化；不要只看一片尿布就判断与辅食有关。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 170,
+      "topic": "sleep",
+      "text": "今天如果想看看作息，记下大致睡醒时间即可；睡前仍要检查仰卧、坚实平坦和床上没有松软物。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 171,
+      "topic": "development",
+      "text": "宝宝伸手或发声时，停一停回应他，看看会不会继续；不要把哪天会翻身当成必须过关的项目。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 172,
+      "topic": "play",
+      "text": "把地垫上的杂物清开，让宝宝清醒时自己摸玩具、试着转身；成人在旁边，不在高处独留。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 173,
+      "topic": "safety",
+      "text": "今天挑玩具时看看有没有易掉的小部件；拿不准就先收起，选完整、不能轻易吞下的大玩具。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 174,
+      "topic": "feeding",
+      "text": "宝宝吃奶时仍可以看主动找奶和转头停下的信号；记下真实情况，不因临近辅食阶段就强求这顿喝完。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 175,
+      "topic": "feeding",
+      "text": "想了解宝宝这顿吃得怎样，可以记下开始找奶、后来停下的表现；不靠瓶子剩多少就判断原因。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 176,
+      "topic": "diaper",
+      "text": "便便如果变了颜色或样子，先记下看到的事实；如明显发红或灰白及时找医生，别自己归因于新食物。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 177,
+      "topic": "sleep",
+      "text": "宝宝白天小睡时也要仰卧、睡在平坦坚实的睡处；玩具和枕头拿走，趴玩等清醒、有看护时再做。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 178,
+      "topic": "development",
+      "text": "拿安全的大玩具让宝宝自己尝试伸手，看看他感兴趣多久；没有抓住就停下休息，不做连续测试。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 179,
+      "topic": "play",
+      "text": "今天互动时试试把玩具放到宝宝看得见的位置，等他想不想摸；不用追着练习，跟着状态走。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 180,
+      "topic": "safety",
+      "text": "换尿布台上即使只离开几秒也可能不安全；先把用品备齐，手始终护着宝宝，整理地垫也要看护。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 181,
+      "topic": "feeding",
+      "text": "如果还在考虑什么时候加辅食，记下宝宝能否稳住头颈等情况，和医生商量；不要靠日龄一天作决定。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 182,
+      "topic": "feeding",
+      "text": "如果宝宝已经开始尝试辅食，今天把喝奶和辅食分别记下来；别用一次吃得少给全天的进食情况下结论。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 183,
+      "topic": "diaper",
+      "text": "今天换尿布时留意便便的颜色和样子；如果明显发红、灰白或发黑（初生胎便除外），及时联系医生，不用自己诊断。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 184,
+      "topic": "sleep",
+      "text": "即使宝宝开始坐、翻之后也别往床上添枕头玩具；睡前收走松软物，仍让他从仰卧开始睡在平坦的地方。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 185,
+      "topic": "development",
+      "text": "拿起一个熟悉的物品，慢慢说出名字，停一停等宝宝看向它；不急着让他复述，平时这样聊天就好。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 186,
+      "topic": "play",
+      "text": "和宝宝玩躲猫猫时，先露出脸、再等他看过来；他不想玩就停下来，游戏是轮流互动，不是能力考试。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 187,
+      "topic": "safety",
+      "text": "宝宝能碰到的范围可能变大，今天看看地上有没有小件、绳带和电线；收好后再让他在地垫上玩。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 188,
+      "topic": "feeding",
+      "text": "如果今天尝试不同的食物质地，让宝宝坐稳、全程在旁边看着；不要一边逗玩一边塞食物。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 189,
+      "topic": "feeding",
+      "text": "已经开始辅食的话，今天选适合宝宝吞咽的质地，让他坐稳再吃；大人一直在旁边，别边爬边吃。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 190,
+      "topic": "diaper",
+      "text": "新食物吃过后，尿布里有变化可以记下时间和样子；不确定原因时拿记录咨询医生，别仅凭颜色猜过敏。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 191,
+      "topic": "sleep",
+      "text": "如果在记睡眠，写下大致入睡和醒来时间就够了；每次睡觉还是先仰卧、床面平坦、周围没有松软物。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 192,
+      "topic": "development",
+      "text": "叫宝宝名字或做个手势，看看他有没有朝你望过来；一次没反应不用反复测试，持续担心可以咨询医生。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 193,
+      "topic": "play",
+      "text": "玩躲猫猫时留一小会儿等宝宝找你，也可以轮流拿玩具；他转开头了就休息，互动不必按次数完成。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 194,
+      "topic": "safety",
+      "text": "今天看一眼宝宝可能摸到的新角落，把小零件、绳带和电线整理好；不要只顾收拾地垫正中间。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 195,
+      "topic": "feeding",
+      "text": "如果有喝奶也有辅食，分别记下这两种进食；回看自家宝宝的情况，不必拿一顿和别家宝宝比较。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 196,
+      "topic": "feeding",
+      "text": "准备辅食时先选适合宝宝目前吞咽能力的质地，让他坐稳再吃；成人全程在旁看着，不边走边喂。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 197,
+      "topic": "diaper",
+      "text": "宝宝尝了新食物后，若便便样子和平时不同，可以记下食物和时间；先记录事实，不马上断定原因。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 198,
+      "topic": "sleep",
+      "text": "今天回看小睡记录时，别忘了先看看实际睡处；让宝宝仰卧在坚实平坦的地方，枕头玩具先收起来。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 199,
+      "topic": "development",
+      "text": "叫宝宝或发出熟悉的声音时，看看他是否转头；如果一直有听声方面的担心，记下具体例子问医生。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 200,
+      "topic": "play",
+      "text": "把安全的大玩具放在地垫上、宝宝能够到的位置；陪他试着拿，没伸手也不必反复塞到手里。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 201,
+      "topic": "safety",
+      "text": "进食前看看食物有没有硬块或容易噎住的小块，玩具也检查是否掉零件；坐稳吃饭，成人在旁边看着。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 202,
+      "topic": "feeding",
+      "text": "进餐时宝宝转头、闭嘴或推开食物，可以先放下勺子停一停；别为了吃完预定份量继续追着喂。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 203,
+      "topic": "feeding",
+      "text": "如果今天喝奶和辅食都有记录，回看时分开看；一次辅食吃得少，不足以说明全天情况，困惑可问医生。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 204,
+      "topic": "diaper",
+      "text": "换尿布时注意便便颜色；若看到明显红色、灰白或黑色（初生胎便除外），直接联系医生，不用等攒几天照片再判断。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 205,
+      "topic": "sleep",
+      "text": "宝宝活动能力变强了，睡前也不用往床上放玩具；收走枕头和松软物，留一块坚实平坦的睡处。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 206,
+      "topic": "development",
+      "text": "今天指着杯子或书，慢慢说出名字，等宝宝看看你或物品；他没跟着说也没关系，不需要训练答题。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 207,
+      "topic": "play",
+      "text": "玩躲猫猫时可以让宝宝先看到你躲起来，再等他找；他想换游戏就跟着换，不把反应速度当成绩。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 208,
+      "topic": "safety",
+      "text": "把宝宝放到地垫前扫一眼：小零件、长绳和电线有没有留在手边；收好再玩，活动时仍要看着他。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 209,
+      "topic": "feeding",
+      "text": "宝宝若在尝试不同质地的辅食，先坐稳再给，吃时全程看护；别用玩具分散注意力把食物塞进去。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 210,
+      "topic": "feeding",
+      "text": "已经开始辅食的话，今天留意宝宝能否坐稳吃、食物质地是否合适；不边移动边进食，成人始终在旁。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 211,
+      "topic": "diaper",
+      "text": "新增食物后想看便便是否变化，可以记下进食与换尿布时间；不确定颜色的意义时咨询医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 212,
+      "topic": "sleep",
+      "text": "如果宝宝夜里醒来，先记下时间和当时情况；再次入睡仍放回平坦、坚实的睡处，不靠软枕帮睡。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 213,
+      "topic": "development",
+      "text": "宝宝看向你时试着叫叫名字、挥挥手，等一等自然回应；不是每次都要回头，持续担忧可和医生讨论。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 214,
+      "topic": "play",
+      "text": "轮流给宝宝看一个安全玩具，等他伸手或看过来；玩得累了就停，不需要让他完成固定次数。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 215,
+      "topic": "safety",
+      "text": "今天检查宝宝能爬到的角落是否有小物件或电线；在他够到之前收起来，不用等会爬才开始准备。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 216,
+      "topic": "feeding",
+      "text": "喝奶和辅食别混成一个数记，今天分别写下实际吃了什么；只看一顿，没法替宝宝判断整天的需要。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 217,
+      "topic": "feeding",
+      "text": "辅食如果已经开始，今天上桌前看看质地是否合适，宝宝是否坐稳；进食全程有人陪，别留他独自抓食物。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 218,
+      "topic": "diaper",
+      "text": "如果换尿布时发现便便与平时不同，记下此前吃过的新食物和时间；别凭一次变化自行认定过敏。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 219,
+      "topic": "sleep",
+      "text": "白天小睡不论长短，都从仰卧开始、睡在坚实平坦的地方；记睡了多久也别忘记看睡处是否有软物。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 220,
+      "topic": "development",
+      "text": "说话时用宝宝熟悉的声音叫叫他，看看有没有看向你；没马上回头就停一停，不反复追着测试。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 221,
+      "topic": "play",
+      "text": "宝宝在地垫上玩时，把完整的大玩具放到够得到的地方；让他自己试着移动，旁边不要堆小件。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 222,
+      "topic": "safety",
+      "text": "今天留意宝宝餐盘里和地垫上的小块、硬块；吃饭坐稳、大人全程看护，别边玩边把食物塞进嘴。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 223,
+      "topic": "feeding",
+      "text": "宝宝闭嘴或推开勺子时，先放下勺子看看；继续吃不吃由实际反应决定，不追求这顿吃完预设份量。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 224,
+      "topic": "feeding",
+      "text": "记录吃奶和辅食时把两类分开；有疑问先回看几天真实情况，别拿这顿和其他宝宝的食量作比较。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 225,
+      "topic": "diaper",
+      "text": "今天看到便便明显发红或灰白，及时联系医生；记录时间和样子即可，不在家里仅凭照片自行诊断。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 226,
+      "topic": "sleep",
+      "text": "宝宝即使会自己坐起来，睡觉的地方也别加枕头玩具；睡前检查坚实平坦的床面和周围的松软物。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 227,
+      "topic": "development",
+      "text": "今天指着熟悉的玩具，说说它叫什么，再等宝宝看一眼；自然聊几次即可，不催着他学会说名字。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 228,
+      "topic": "play",
+      "text": "躲猫猫时让宝宝看到你从遮挡后出现，等他笑或看过来；不想玩就换一件事，别反复考反应。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 229,
+      "topic": "safety",
+      "text": "宝宝能活动到床边或桌角时，看看周围有没有电线和小零件；先移开危险物，再在旁边陪他探索。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 230,
+      "topic": "feeding",
+      "text": "准备让宝宝尝试辅食时，先把他安稳地坐好、检查食物质地；吃的时候别离开，不用玩具哄着塞。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 231,
+      "topic": "feeding",
+      "text": "如果宝宝愿意自己碰食物，选适合他吞咽的质地、让他坐稳；成人在旁边看着，不边走边吃。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 232,
+      "topic": "diaper",
+      "text": "吃过新食物后，如果尿布里的便便变化，记下颜色和时间；不凭一片尿布判断到底是什么原因。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 233,
+      "topic": "sleep",
+      "text": "夜里醒来可以记下大致时间，先看看几天的节奏；安抚后回安全睡处，别为了让他睡久改用软被。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 234,
+      "topic": "development",
+      "text": "宝宝发声或看向你时，回一句、等一会儿；有持续的互动顾虑就把看到的具体情况带去问医生。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 235,
+      "topic": "play",
+      "text": "用一个安全的大玩具和宝宝玩轮流拿取，看看他愿不愿意参与；转开头就休息，不按次数练习。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 236,
+      "topic": "safety",
+      "text": "家里活动区不只看地面中央，也检查家具边和墙角；能碰到的小零件、绳带、电线先收起来。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 237,
+      "topic": "feeding",
+      "text": "如果一天里既有喝奶又有辅食，今天分别记时间和种类；不需要拿某一餐的份量和同龄宝宝比。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 238,
+      "topic": "feeding",
+      "text": "辅食已经开始的话，今天先检查是不是适合的质地、宝宝是否坐稳；成人始终在旁，不边移动边喂。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 239,
+      "topic": "diaper",
+      "text": "添加过新食物后，便便有变化可以记下颜色、样子和时间；不知道是否有关联时，带着记录咨询。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 240,
+      "topic": "sleep",
+      "text": "睡了多久可以记下来，但睡前也要看床面是否平坦、坚实；宝宝从仰卧开始，周围不放枕头玩具。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 241,
+      "topic": "development",
+      "text": "宝宝听到熟悉声音是否转过头，可以在自然聊天时留意；别只凭一瞬间没反应就担心，持续顾虑去咨询。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 242,
+      "topic": "play",
+      "text": "在地垫上放个完整、安全的大玩具，陪宝宝伸手、拿起来再放下；他没兴趣就换时间，不必催。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 243,
+      "topic": "safety",
+      "text": "宝宝抓食物前检查有没有容易噎住的硬块，坐稳再吃；玩具的小零件也一并收走，成人一直看着。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 244,
+      "topic": "feeding",
+      "text": "吃饭时宝宝如果闭嘴不接勺子，先停一下，看看是否想休息；别追着他把预定份量都吃完。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 245,
+      "topic": "feeding",
+      "text": "今天分开记录奶和辅食，注明大致时间；想了解这几天怎么吃，先回看记录，不由一次少吃猜原因。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 246,
+      "topic": "diaper",
+      "text": "便便次数变化先如实记下；若颜色明显发红、灰白或发黑（初生胎便除外），及时联系医生，不靠自己排查食物。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 247,
+      "topic": "sleep",
+      "text": "即使宝宝开始会爬也不用换软床垫或加枕头；睡前把玩具拿走，让睡处继续保持坚实、平坦、简洁。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 248,
+      "topic": "development",
+      "text": "指着书里的一个东西，用平常的名字叫给宝宝听，再停下来等他看；没跟着出声也可以继续聊天。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 249,
+      "topic": "play",
+      "text": "今天玩躲猫猫时给宝宝一点时间找你；如果他转开头，就先歇一歇，互动不用每次都玩出相同反应。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 250,
+      "topic": "safety",
+      "text": "活动范围可能比昨天大，今天检查地垫外的墙角、家具旁是否有小件或绳带；先收好再让宝宝探索。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 251,
+      "topic": "feeding",
+      "text": "宝宝吃辅食时先让他坐稳，给适合吞咽的质地；餐桌旁有人看着，别一边玩玩具一边塞食物。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 252,
+      "topic": "feeding",
+      "text": "宝宝如果开始抓着食物吃，今天先检查质地和大小是否合适；坐稳再吃，成人全程看护，不催份量。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 253,
+      "topic": "diaper",
+      "text": "吃了新食物后想观察便便，记下食物和换尿布的时间即可；不要靠单次颜色自行判断原因。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 254,
+      "topic": "sleep",
+      "text": "如果想看夜醒是否有规律，先记几天实际时间；再次睡着时仍要回安全睡处，不用枕头帮他睡。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 255,
+      "topic": "development",
+      "text": "叫宝宝时可以同时做个手势，等一等他是否看向你；单次没回头不说明问题，持续担忧可咨询医生。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 256,
+      "topic": "play",
+      "text": "玩躲猫猫时让宝宝看看你藏在哪儿，等他自己找一找；如果他想停，换成一起看书也很好。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 257,
+      "topic": "safety",
+      "text": "今天从宝宝可能爬到的地方看一遍，小零件、绳带、电源附近的物品先收起；别只检查地垫。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 258,
+      "topic": "feeding",
+      "text": "今天把喝奶和辅食分开记下，注明实际吃了什么；比拿一顿和别人比较，更能帮你回看自家情况。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 259,
+      "topic": "feeding",
+      "text": "已经开始辅食的话，给食物前先看大小和质地，确认坐稳；吃的时候始终有人在旁边，不边玩边吃。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 260,
+      "topic": "diaper",
+      "text": "新食物吃完后如果便便有变化，把颜色、样子和时间写下来；不只凭一次尿布就认定是食物造成。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 261,
+      "topic": "sleep",
+      "text": "宝宝睡前把枕头玩具收走，确认床面坚实平坦；记录睡眠时长是另一回事，不能替代这一步安全检查。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 262,
+      "topic": "development",
+      "text": "轻声叫宝宝或翻开熟悉的书，看看是否看向你；如果反复担心互动情况，记录具体场景去问医生。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 263,
+      "topic": "play",
+      "text": "把安全的大玩具放在宝宝够得到的位置，等他想拿再陪他玩；他转去摸别的，也不需要拉回练习。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 264,
+      "topic": "safety",
+      "text": "辅食上桌前看一眼有没有容易噎住的小块，宝宝坐稳再吃；餐后还要看看地上有没有掉落食物。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 265,
+      "topic": "feeding",
+      "text": "宝宝吃着吃着转头或闭嘴时先停下，给他时间看看还想不想吃；不用硬把预设的份量喂完。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 266,
+      "topic": "feeding",
+      "text": "奶和辅食可以分别记录，今天若吃得和往常不同，先写下实际情况；别仅凭一餐判断全天营养。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 267,
+      "topic": "diaper",
+      "text": "今天换尿布若见便便明显发红、灰白或发黑（初生胎便除外），尽快联系医生；把时间和看到的颜色说清楚。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 268,
+      "topic": "sleep",
+      "text": "即使宝宝移动得更远，睡处却不需要因此变软；仍从仰卧开始睡，坚实平坦的床面上不添枕头玩具。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 269,
+      "topic": "development",
+      "text": "用家里熟悉物品的名字和宝宝聊一聊，等他看向物品或你；不催他马上指认，也不用按天验收。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 270,
+      "topic": "play",
+      "text": "宝宝想玩时和他轮流藏、找一个大玩具；没兴致就停，躲猫猫的重点是一起互动，不是考速度。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 271,
+      "topic": "safety",
+      "text": "检查一下宝宝常去的地垫边缘和家具角落，把小件、电线和绳带收好；有人陪着他继续探索。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 272,
+      "topic": "feeding",
+      "text": "如果尝试新的辅食质地，先确认适合宝宝吞咽、让他坐稳；大人全程在旁，别用玩具哄着多吃。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 273,
+      "topic": "feeding",
+      "text": "宝宝想自己拿食物时，可以给适合吞咽的质地、让他坐稳再试；成人全程在旁，不用追求吃完一份。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 274,
+      "topic": "diaper",
+      "text": "换尿布时记下湿尿布和便便的真实变化；若只有一次颜色不同，先把看到的样子写清楚，别自行猜原因。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 275,
+      "topic": "sleep",
+      "text": "宝宝即使更会移动，睡前也要收走枕头、玩具和松软被褥；让他从仰卧开始睡，床面保持坚实平坦。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 276,
+      "topic": "development",
+      "text": "宝宝用声音或手势表达时，停下来回应一句，看看他还想做什么；不用把哪天会指物当成考核。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 277,
+      "topic": "play",
+      "text": "翻图画书时你可以指一个熟悉的东西，等宝宝看看或摸摸；不用催他指出正确答案，跟着兴趣翻。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 278,
+      "topic": "safety",
+      "text": "活动区扩大了，今天从宝宝的视线检查家具边角和地上的小件；收起可能够到的危险物再玩。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 279,
+      "topic": "feeding",
+      "text": "吃饭时宝宝闭嘴、转头或推开食物，就先停一下；不拿一顿吃得少推断原因，持续担心可咨询。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 280,
+      "topic": "feeding",
+      "text": "如果宝宝想自己抓食物，先选适合的质地和大小，让他坐稳；大人一直看着，不为了吃完定量追着喂。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 281,
+      "topic": "diaper",
+      "text": "便便有变化时把颜色、样子和时间记下来，看看接下来几次是否也不同；拿不准时带着记录咨询医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 282,
+      "topic": "sleep",
+      "text": "即使宝宝会爬或扶站，也不需要软枕帮睡；睡前收走玩具和松软物，让床面继续保持坚实平坦。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 283,
+      "topic": "development",
+      "text": "宝宝指一指或发声时，试着说出他可能在看的物品，再等回应；不要急着要求他照样说出词。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 284,
+      "topic": "play",
+      "text": "一起翻书时轮流指一指图上的物品，让宝宝有时间看或摸；看完就停，不必照着书一页页讲完。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 285,
+      "topic": "safety",
+      "text": "今天从地面看一看家具角落有没有小件和松动零件；宝宝可能去到新位置，先收起再陪他探索。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 286,
+      "topic": "feeding",
+      "text": "宝宝参与进食时，留意他是否还想吃或已经闭嘴；把这顿真实情况记下，不用和同龄人比份量。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 287,
+      "topic": "feeding",
+      "text": "想了解这几天怎么吃，可以把奶和辅食分别记下；一顿吃得和平时不同，先别直接推断原因。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 288,
+      "topic": "diaper",
+      "text": "换尿布见便便明显发红或灰白时，记下时间并及时联系医生；不要只拍照放着等自己看明白。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 289,
+      "topic": "sleep",
+      "text": "如果宝宝夜里醒来，记下大概时间和当时情况；再入睡仍回到安全睡处，不凭一次夜醒判断原因。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 290,
+      "topic": "development",
+      "text": "拿熟悉的杯子或书给宝宝看，说出名称后等一会儿；他看过来就聊两句，不用催着跟你说词。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 291,
+      "topic": "play",
+      "text": "宝宝想移动时，给他一块清理过杂物的安全地面空间；成人在旁陪着，不拉着手催他练走路。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 292,
+      "topic": "safety",
+      "text": "宝宝如果会扶家具，今天摸摸柜子是否稳、附近有没有易翻倒的轻物；先整理好再让他在旁活动。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 293,
+      "topic": "feeding",
+      "text": "进食时先让宝宝在餐椅上坐稳，大人在旁边看着；别边走边吃，遇到易噎的小硬块先处理再入口。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 294,
+      "topic": "feeding",
+      "text": "宝宝今天想自己拿食物的话，给适合他吞咽的质地，坐稳再尝试；不用强求吃完，成人要全程看护。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 295,
+      "topic": "diaper",
+      "text": "换尿布时可以分别记下湿尿布和便便的情况；单次颜色变化先如实记录，不用马上给它找原因。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 296,
+      "topic": "sleep",
+      "text": "宝宝睡觉前检查床面是否平坦、坚实，玩具枕头先收起；会翻动也不等于可以放松睡眠安全。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 297,
+      "topic": "development",
+      "text": "宝宝指着什么时，你可以跟着看看、说出物品的名字；别急着教他一定会指或说，先享受互动。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 298,
+      "topic": "play",
+      "text": "和宝宝翻图画书时，选一张他感兴趣的图片聊一聊；等他看或摸，不要求今天学会认出它。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 299,
+      "topic": "safety",
+      "text": "宝宝可能扶着家具探索，今天检查柜子是否稳、边角和附近有没有小物件；把容易碰倒的东西先移开。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 300,
+      "topic": "feeding",
+      "text": "吃饭时看宝宝有没有转头或闭嘴，想停就停一下；别用一次少吃判断他“挑食”或不舒服。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 301,
+      "topic": "feeding",
+      "text": "宝宝想抓食物时，先看看质地和大小是否合适；坐稳、看护到吃完，不把吃完一份当目标。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 302,
+      "topic": "diaper",
+      "text": "便便颜色或次数变化时，记录真实所见，再看后面几次；如果明显红色或灰白，及时联系医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 303,
+      "topic": "sleep",
+      "text": "宝宝即使能扶站，睡觉仍需安全环境；睡前拿走枕头和松软被褥，保持坚实平坦、没有杂物的床面。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 304,
+      "topic": "development",
+      "text": "宝宝用声音、手势或模仿表达时，停下来回应他；记录感兴趣的方式，不用按出生日期打分。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 305,
+      "topic": "play",
+      "text": "翻书时指指家里也有的东西，等宝宝看看或摸摸；顺着他想翻的页走，不需要教会一个新词。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 306,
+      "topic": "safety",
+      "text": "今天留意地上小件和家具边角，尤其是宝宝最近爱去的位置；先收拾好，再陪他在安全范围探索。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 307,
+      "topic": "feeding",
+      "text": "宝宝想自己吃时，给合适质地的食物并留在旁边；看看他还想不想继续，不拿这顿与别人比。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 308,
+      "topic": "feeding",
+      "text": "把几顿实际吃的奶和辅食分别写下来，回看变化更清楚；别只凭某一次份量猜整天是否足够。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 309,
+      "topic": "diaper",
+      "text": "如果便便明显发红或灰白，及时联系医生，描述你看到的颜色和时间；不要在家只靠照片诊断。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 310,
+      "topic": "sleep",
+      "text": "宝宝夜里醒来时，可以记下发生时间与情境；下次入睡仍回安全睡处，别把单次夜醒归因于某件事。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 311,
+      "topic": "development",
+      "text": "和宝宝一起指指家里的日常物品，说出简单的名字，再等他看过来；不催着跟你念，聊几句就好。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 312,
+      "topic": "play",
+      "text": "宝宝想挪动时在安全地面上陪着他，适当留出空间；不用牵手催着走，探索也可以慢慢来。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 313,
+      "topic": "safety",
+      "text": "如果宝宝开始扶家具，今天先晃一晃看看稳不稳；移开可能翻倒的轻物，再让他在旁边玩。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 314,
+      "topic": "feeding",
+      "text": "吃饭前让宝宝坐稳，看看手边有没有小硬块或易噎食物；大人在旁看着，别边走边吃或边玩边塞。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 315,
+      "topic": "feeding",
+      "text": "宝宝想自己拿食物，先选好大小和质地，让他坐稳；跟着停下的信号，不用非得吃完一份。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 316,
+      "topic": "diaper",
+      "text": "换尿布时记下颜色与次数，如果不确定是否异常就保留真实记录；不要靠单次变化猜原因。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 317,
+      "topic": "sleep",
+      "text": "宝宝睡前把玩具从床上拿走，让睡处坚实平坦；无论会爬还是会站，仰卧开始睡的习惯不变。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 318,
+      "topic": "development",
+      "text": "宝宝用手势告诉你想要什么时，试着说出物品名字、停一停等他回应；不需要催他说出那个词。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 319,
+      "topic": "play",
+      "text": "翻书时让宝宝帮忙摸摸书页，你指着一幅图说出名称；他想换页就换，不用按顺序讲完一本。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 320,
+      "topic": "safety",
+      "text": "检查宝宝可能扶着走的家具边和角落，把小件、易翻倒的轻物先收好；活动时仍有人在旁陪着。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 321,
+      "topic": "feeding",
+      "text": "宝宝闭嘴不再接食物时，先停下来看他的反应；记下真实吃了什么，不按固定份量继续追喂。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 322,
+      "topic": "feeding",
+      "text": "今天把喝奶、吃辅食的情况分别记下；想了解这几天的进食节奏就回看记录，别只靠某一顿判断。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 323,
+      "topic": "diaper",
+      "text": "换尿布看到便便和平时不同，写下时间和样子；如果明显红色或灰白，联系医生，不自行诊断。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 324,
+      "topic": "sleep",
+      "text": "晚上检查睡处有没有软枕、玩具，床垫是否坚实平坦；即使宝宝会扶站，也不意味着睡处能变软。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 325,
+      "topic": "development",
+      "text": "和宝宝说话时指一指窗边或书里的熟悉东西，等他看一看再回应；这次不指也无需反复要求。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 326,
+      "topic": "play",
+      "text": "宝宝愿意时陪他翻几页书，让他轮流选图片、听你说名字；转开头就停，不必非得读完一本。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 327,
+      "topic": "safety",
+      "text": "宝宝探索得更远，今天看看墙角和家具下面有没有小零件；收拾后让他在安全范围继续玩。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 328,
+      "topic": "feeding",
+      "text": "想自己吃就给宝宝一个机会：坐稳、提供合适质地，大人在旁；看他何时停，不用与别家比。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 329,
+      "topic": "feeding",
+      "text": "如果担心最近进食变化，先分别记下奶和辅食的实际情况；一次吃少无法解释原因，困惑可咨询。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 330,
+      "topic": "diaper",
+      "text": "便便如果明显发红或灰白，把发现的时间告诉医生并及时咨询；拍照可留记录，但别自己诊断。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 331,
+      "topic": "sleep",
+      "text": "宝宝夜醒时先记下时间与当时的情境，再看几天是否有规律；安抚后仍把他放回平坦的安全睡处。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 332,
+      "topic": "development",
+      "text": "拿宝宝熟悉的物品叫名字，停一停让他看看或指指；不用马上让他模仿发音，跟着兴趣说就好。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 333,
+      "topic": "play",
+      "text": "宝宝想移动时，把地面清出一小块安全空间，你在旁边陪他慢慢尝试；别牵着手催促走路。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 334,
+      "topic": "safety",
+      "text": "扶着家具活动前先检查桌柜是否稳固，移开会翻倒的小物件；活动时也别让宝宝独自在旁边玩。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 335,
+      "topic": "feeding",
+      "text": "吃饭时让宝宝坐稳，选大小、质地都适合吞咽的食物；成人全程看着，别边走边吃，以免噎住。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 336,
+      "topic": "feeding",
+      "text": "宝宝想自己拿食物时，先挑适合大小和质地的，坐稳再尝试；看护到吃完，不催着完成份量。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 337,
+      "topic": "diaper",
+      "text": "换尿布时看到和平时不同的颜色，可以记下时间和样子，再留意后面几次；单次变化先别自己下结论。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 338,
+      "topic": "sleep",
+      "text": "宝宝越会活动，越要在睡前扫一眼床上；枕头玩具都收走，床面继续保持坚实平坦、不放松软物。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 339,
+      "topic": "development",
+      "text": "宝宝发声、模仿或指物时，用平常的话接一句；不要拿快到生日当成必须完成这些动作的期限。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 340,
+      "topic": "play",
+      "text": "翻图画书时和宝宝轮流指指熟悉的东西，等他看看；他不想继续就换个游戏，不按页数打卡。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 341,
+      "topic": "safety",
+      "text": "宝宝活动范围大了，今天低头看看家具边角和地上的小物件；移走后再陪他在安全的地面玩一会儿。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 342,
+      "topic": "feeding",
+      "text": "进食时宝宝闭嘴或推开食物，可以先放下勺子停一停；别因这顿吃得少就猜身体出了什么问题。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 343,
+      "topic": "feeding",
+      "text": "宝宝想自己抓着吃，先选适合他的大小和质地，坐稳后再给；成人全程在旁看着，不催他吃完。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 344,
+      "topic": "diaper",
+      "text": "便便次数或颜色有变化，记下看到的情况再观察；如明显红色或灰白色，请及时联系医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 345,
+      "topic": "sleep",
+      "text": "即使宝宝学会爬或扶站，睡前仍要收走枕头、玩具和软被；睡处坚实平坦，不因活动多就变软。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 346,
+      "topic": "development",
+      "text": "宝宝用手势或声音表达时，试试回应并说出他看着的物品名字；不急着教他按生日说出某个词。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 347,
+      "topic": "play",
+      "text": "今天翻书时让宝宝先选喜欢的图片，你说说图上有什么；停一下看看他的反应，不要求马上答对。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 348,
+      "topic": "safety",
+      "text": "宝宝若开始探索新位置，今天检查家具边、地垫外是否有小件或绳带；先收起来再陪他安全地玩。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 349,
+      "topic": "feeding",
+      "text": "让宝宝参与进食，留意什么时候想继续、什么时候闭嘴；把实际情况记下，不拿一顿和同龄人比。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 350,
+      "topic": "feeding",
+      "text": "奶和辅食分别记下来，回看这几天实际怎么吃；不要拿某一次少吃就给全天的进食情况下结论。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 351,
+      "topic": "diaper",
+      "text": "换尿布时看到明显红色或灰白色的便便，及时找医生咨询；描述颜色和时间，不只靠照片判断。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 352,
+      "topic": "sleep",
+      "text": "今天如果有夜醒，就记大致时间和情境；再次睡着仍回安全睡处，单次夜醒不用马上找原因。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 353,
+      "topic": "development",
+      "text": "拿起家里的常见物品，慢慢说出名字，停一下等宝宝看；没跟着说也不要催，平时这样聊天就好。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 354,
+      "topic": "play",
+      "text": "宝宝想扶着移动时，在安全地面上留出空间，成人在旁边看着；不用牵着手追求今天走几步。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 355,
+      "topic": "safety",
+      "text": "宝宝扶家具时先摸摸家具是否稳固，把附近轻巧易翻倒的东西移开；别在高处单独留宝宝。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 356,
+      "topic": "feeding",
+      "text": "宝宝进食前先坐稳，成人全程在旁看护；检查食物大小和质地，不边走边吃或靠玩具哄着吃。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 357,
+      "topic": "feeding",
+      "text": "宝宝想拿食物自己吃，先准备适合吞咽的大小和质地、让他坐稳；给他时间尝试，不催份量。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 358,
+      "topic": "diaper",
+      "text": "今天尿布若与平时不同，写下颜色、样子和时间；不凭一次变化自己诊断，拿不准就咨询医生。",
+      "source_ids": [
+        "aap_stool"
+      ]
+    },
+    {
+      "day": 359,
+      "topic": "sleep",
+      "text": "睡前看看床垫是否平坦坚实、床上有没有松软物；即使宝宝会移动，也要让他从仰卧开始睡。",
+      "source_ids": [
+        "cdc_sleep"
+      ]
+    },
+    {
+      "day": 360,
+      "topic": "development",
+      "text": "宝宝指物或发出声音时，你可以用平常话接一句、等他再回应；不用把周岁生日当成发育考试。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 361,
+      "topic": "play",
+      "text": "一起翻图画书时让宝宝挑喜欢的图，你指着说名字，停一停等他看；不用为了完成任务讲完一本。",
+      "source_ids": [
+        "cdc_milestones"
+      ]
+    },
+    {
+      "day": 362,
+      "topic": "safety",
+      "text": "宝宝可能够到更远的家具角落，今天捡走地上的小件和绳带；玩时也要留意他手边的东西有没有变化。",
+      "source_ids": [
+        "cdc_choking"
+      ]
+    },
+    {
+      "day": 363,
+      "topic": "feeding",
+      "text": "宝宝这一顿不想继续吃时，先放下勺子看看他是否还愿意；把实际情况记下，别用一次少吃推断原因。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    },
+    {
+      "day": 364,
+      "topic": "feeding",
+      "text": "快满一岁，宝宝想自己拿食物，可以让他坐稳、给合适质地；成人一直看护，不为吃完份量催促。",
+      "source_ids": [
+        "cdc_solids"
+      ]
+    }
+  ]
+}

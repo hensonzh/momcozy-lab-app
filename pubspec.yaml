@@ -88,6 +88,7 @@ flutter:
 
   assets:
     - assets/images/chat_first/
+    - assets/content/baby_daily_advice_0_364.json
     - assets/images/me_figma/
     - assets/images/baby_figma/
     - assets/images/navigation_figma/

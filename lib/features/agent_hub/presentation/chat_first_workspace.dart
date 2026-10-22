@@ -1,18 +1,23 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/app/primary_tab_activity.dart';
-import 'package:momcozy_flutter_app/domain/mother/mother_profile.dart';
+import 'package:momcozy_flutter_app/domain/baby/baby_record.dart';
+import 'package:momcozy_flutter_app/domain/shared/local_date.dart';
 import 'package:momcozy_flutter_app/features/onboarding/domain/chat_first_onboarding.dart';
+import 'package:momcozy_flutter_app/services/baby/baby_profiles_api_repository.dart';
+import 'package:momcozy_flutter_app/services/baby/baby_records_api_repository.dart';
 import 'package:momcozy_flutter_app/services/mother/mother_profile_api_repository.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import 'package:momcozy_flutter_app/shared/zoned_time.dart';
 
-import 'chat_first_avatar.dart';
 import '../data/chat_first_voice.dart';
+import '../domain/chat_first_daily_advice.dart';
+import 'chat_first_avatar.dart';
 
 const _roomAspectRatio = 1848 / 851;
 const _navControlDecoration = BoxDecoration(
@@ -29,8 +34,8 @@ const _disabledNavControlDecoration = BoxDecoration(
   border: Border.fromBorderSide(BorderSide(color: Color(0xFFD2CECB))),
 );
 
-/// The board uses only current-account maternal facts. Missing, future and
-/// failed reads deliberately leave it blank instead of displaying demo data.
+/// The board uses current-account baby facts, falling back to a confirmed
+/// maternal delivery date only if no baby profile exists.
 class ChatFirstWorkspace extends StatefulWidget {
   const ChatFirstWorkspace({
     super.key,
@@ -49,7 +54,8 @@ class ChatFirstWorkspace extends StatefulWidget {
 
 class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
     with WidgetsBindingObserver {
-  Future<MotherProfile?>? _profile;
+  Future<_DailyBoardData?>? _board;
+  Future<DailyAdviceCatalog>? _catalog;
   final _clock = Stopwatch()..start();
   final _localAvatar = ChatFirstAvatarController();
   ChatFirstAvatarController? _avatar;
@@ -155,7 +161,9 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
     if (oldWidget.runtime != widget.runtime ||
         oldWidget.role != widget.role ||
         oldWidget.runtime?.currentSession.userId !=
-            widget.runtime?.currentSession.userId) {
+            widget.runtime?.currentSession.userId ||
+        oldWidget.runtime?.currentSession.babyId !=
+            widget.runtime?.currentSession.babyId) {
       _load();
     }
   }
@@ -164,37 +172,144 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
     _nextBoardDay?.cancel();
     _nextBoardDay = null;
     final runtime = widget.runtime;
-    final future = runtime == null || widget.role != FamilyRole.mother
-        ? null
-        : MotherProfileApiRepository(
-                transport: runtime.jsonTransport,
-                ownerUserId: runtime.currentSession.userId,
-                timezoneProvider: runtime.timezoneProvider,
-              )
-              .get()
-              .then<MotherProfile?>((profile) => profile)
-              .catchError((_) => null);
-    _profile = future;
+    final future = runtime == null ? null : _readBoard(runtime, widget.role);
+    _board = future;
     if (notify && mounted) setState(() {});
     if (future != null) {
       unawaited(
-        future.then((profile) {
-          if (mounted && identical(_profile, future) && profile != null) {
-            _scheduleNextBoardDay(profile);
+        future.then((data) {
+          if (mounted && identical(_board, future) && data != null) {
+            if (dateInTimezone(runtime!.now(), data.timezone) != data.date) {
+              // A read begun before midnight can finish after the day changes.
+              _load(notify: true);
+            } else {
+              _scheduleNextBoardDay(data.timezone);
+            }
           }
         }),
       );
     }
   }
 
-  void _scheduleNextBoardDay(MotherProfile profile) {
+  Future<DailyAdviceCatalog> _loadCatalog() => _catalog ??= rootBundle
+      .load('assets/content/baby_daily_advice_0_364.json')
+      .then(
+        (bytes) => DailyAdviceCatalog.fromJson(
+          Map<String, Object?>.from(
+            jsonDecode(utf8.decode(bytes.buffer.asUint8List())) as Map,
+          ),
+        ),
+      );
+
+  Future<List<BabyRecord>> _recentBabyRecords(
+    MomCozyApiRuntime runtime,
+    String babyId,
+    LocalDate today,
+    String timezone,
+    BabyRecordKind kind,
+  ) async {
+    final repository = BabyRecordsApiRepository(
+      transport: runtime.jsonTransport,
+    );
+    final startDate = today.addDays(-1);
+    final first = await repository.list(
+      babyId: babyId,
+      startDate: startDate,
+      endDate: today.addDays(1),
+      timezone: timezone,
+      kind: kind,
+      limit: 100,
+    );
+    // An incomplete page is not enough to make a personalized claim.
+    if (first.total != first.items.length) return [];
+    return first.items;
+  }
+
+  Future<_DailyBoardData?> _readBoard(
+    MomCozyApiRuntime runtime,
+    FamilyRole? role,
+  ) async {
+    try {
+      final catalog = await _loadCatalog();
+      final timezone = await runtime.timezoneProvider();
+      final today = dateInTimezone(runtime.now(), timezone);
+      final babies = await BabyProfilesApiRepository(
+        transport: runtime.jsonTransport,
+      ).list();
+      final selectedId = runtime.currentSession.babyId;
+      final selectedBaby = selectedId.isNotEmpty
+          ? babies.where((baby) => baby.id == selectedId).firstOrNull
+          : babies.length == 1
+          ? babies.single
+          : null;
+      List<BabyRecord> records = const [];
+      if (selectedBaby?.birthDate != null &&
+          selectedBaby!.birthDate!.compareTo(today) <= 0 &&
+          today.daysSince(selectedBaby.birthDate!) < 365) {
+        try {
+          final topic = catalog
+              .entryFor(today.daysSince(selectedBaby.birthDate!))
+              ?.topic;
+          final kind = switch (topic) {
+            DailyAdviceTopic.feeding => BabyRecordKind.feeding,
+            DailyAdviceTopic.diaper => BabyRecordKind.diaper,
+            DailyAdviceTopic.sleep => BabyRecordKind.sleep,
+            _ => null,
+          };
+          if (kind != null) {
+            records = await _recentBabyRecords(
+              runtime,
+              selectedBaby.id,
+              today,
+              timezone,
+              kind,
+            ).timeout(const Duration(seconds: 2));
+          }
+        } catch (_) {
+          // A missing, partial or failed read leaves the exact daily copy.
+        }
+      }
+      var banner = dailyBannerFor(
+        babies,
+        selectedBabyId: selectedId,
+        today: today,
+        catalog: catalog,
+        recentRecords: records,
+        recentWindowStart: zonedDayWindow(today.addDays(-1), timezone).start,
+        now: runtime.now(),
+      );
+      // Chat-first accounts can have a confirmed delivery date but no baby
+      // profile yet. Never associate maternal-only records with an infant.
+      if (banner == null &&
+          babies.isEmpty &&
+          selectedId.isEmpty &&
+          role == FamilyRole.mother) {
+        final profile = await MotherProfileApiRepository(
+          transport: runtime.jsonTransport,
+          ownerUserId: runtime.currentSession.userId,
+          timezoneProvider: runtime.timezoneProvider,
+        ).get();
+        banner = dailyBannerFromDeliveryDate(
+          profile.deliveryDate,
+          today,
+          catalog: catalog,
+        );
+      }
+      return banner == null ? null : _DailyBoardData(banner, timezone, today);
+    } catch (_) {
+      // No verified date, catalog, or timezone: do not invent a baby fact.
+      return null;
+    }
+  }
+
+  void _scheduleNextBoardDay(String timezone) {
     if (!_appVisible || widget.runtime == null) return;
     try {
       final instant = widget.runtime!.now();
-      final date = dateInTimezone(instant, profile.timezone);
+      final date = dateInTimezone(instant, timezone);
       final untilTomorrow = zonedDayWindow(
         date,
-        profile.timezone,
+        timezone,
       ).end.difference(instant);
       _nextBoardDay = Timer(
         untilTomorrow + const Duration(milliseconds: 100),
@@ -209,7 +324,6 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
 
   @override
   Widget build(BuildContext context) {
-    final runtime = widget.runtime;
     final voice = ChatFirstVoiceScope.maybeOf(context);
     return Semantics(
       label: 'Momcozy AI 工作区',
@@ -334,36 +448,45 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
                 ),
                 Positioned(
                   top: 70,
+                  bottom: 0,
                   left: width * 0.05,
                   width: width * 0.43,
-                  child: FutureBuilder<MotherProfile?>(
-                    future: _profile,
+                  child: FutureBuilder<_DailyBoardData?>(
+                    future: _board,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done ||
-                          runtime == null) {
+                          snapshot.data == null) {
                         return const SizedBox.shrink();
                       }
-                      int? days;
-                      final profile = snapshot.data;
-                      if (profile != null) {
-                        try {
-                          days = profile.postpartumDay(
-                            dateInTimezone(runtime.now(), profile.timezone),
-                          );
-                        } catch (_) {
-                          // Failed timezone resolution leaves the board blank.
-                        }
-                      }
-                      if (days == null) return const SizedBox.shrink();
-                      return Text(
-                        '宝宝出生 $days 天',
-                        style: TextStyle(
-                          color: Color(0xFF776A66),
-                          fontSize: width < 360 ? 10 : 10.5,
-                          fontWeight: FontWeight.w500,
-                          height: 1.3,
+                      final banner = snapshot.data!.banner;
+                      return SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '宝宝出生 ${banner.ageDays} 天',
+                              style: TextStyle(
+                                color: Color(0xFF776A66),
+                                fontSize: width < 360 ? 10 : 10.5,
+                                fontWeight: FontWeight.w500,
+                                height: 1.3,
+                              ),
+                              maxLines: 2,
+                            ),
+                            const SizedBox(height: 4),
+                            if (banner.advice != null)
+                              Text(
+                                banner.advice!,
+                                key: const ValueKey('chat-first-daily-advice'),
+                                style: TextStyle(
+                                  color: Color(0xFF665D58),
+                                  fontSize: width < 360 ? 9.5 : 10,
+                                  height: 1.15,
+                                ),
+                              ),
+                          ],
                         ),
-                        maxLines: 2,
                       );
                     },
                   ),
@@ -470,4 +593,11 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
       ),
     );
   }
+}
+
+final class _DailyBoardData {
+  const _DailyBoardData(this.banner, this.timezone, this.date);
+  final ChatFirstDailyBanner banner;
+  final String timezone;
+  final LocalDate date;
 }
