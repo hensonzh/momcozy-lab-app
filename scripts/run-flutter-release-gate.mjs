@@ -143,25 +143,9 @@ if (!hasReleaseSigning) {
 const steps = [
   ["flutter", ["pub", "get"], flutterAppDir],
   // The access token is deliberately issued immediately before this gate.
-  // Keep the live smoke before the long static/test/build sequence.
+  // Shared static analysis and regression tests must already have passed on
+  // this exact main SHA; keep the live join and release-specific build here.
   ["flutter", ["test", "--no-pub", "tool/staging_environment_smoke_test.dart"], flutterAppDir],
-  ["node", ["scripts/check-flutter-android-packaging.mjs"], projectRoot],
-  ["node", ["scripts/check-flutter-security-privacy.mjs"], projectRoot],
-  [
-    "dart",
-    [
-      "format",
-      "--output=none",
-      "--set-exit-if-changed",
-      "lib",
-      "test",
-      "integration_test",
-      "tool",
-    ],
-    flutterAppDir,
-  ],
-  ["flutter", ["analyze", "--no-pub"], flutterAppDir],
-  ["flutter", ["test", "--no-pub", "--exclude-tags=golden"], flutterAppDir],
   [
     "flutter",
     ["test", "--no-pub", "--dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=true", "test/features/auth/release_lane_auth_mode_test.dart"],

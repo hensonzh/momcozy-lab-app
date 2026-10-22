@@ -29,6 +29,7 @@ on:
         type: string
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -67,6 +68,23 @@ jobs:
               exit 1
             }
           done
+
+      - name: Require successful shared CI on the exact remote main commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          [[ "$(gh api "repos/${GITHUB_REPOSITORY}/branches/main" --jq '.commit.sha')" == "${GITHUB_SHA}" ]] || {
+            echo 'Singapore release must use the current remote main commit' >&2
+            exit 1
+          }
+          run_id="$(gh api -X GET "repos/${GITHUB_REPOSITORY}/actions/workflows/app-ci.yml/runs" \
+            -f head_sha="${GITHUB_SHA}" -f branch=main -f event=push -f status=success \
+            --jq "[.workflow_runs[] | select(.head_sha == \"${GITHUB_SHA}\" and .head_branch == \"main\" and .event == \"push\" and .conclusion == \"success\") | .id] | first // empty")"
+          [[ "$run_id" =~ ^[0-9]+$ ]] || {
+            echo 'No successful shared App CI for this main commit' >&2
+            exit 1
+          }
 
   release:
     needs: authorize

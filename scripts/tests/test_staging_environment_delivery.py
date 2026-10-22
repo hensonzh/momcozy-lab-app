@@ -348,7 +348,7 @@ class StagingDeliveryContractTest(unittest.TestCase):
             'MOMCOZY_GOLDEN_PRECISION_TOLERANCE: "0.011"',
             workflow,
         )
-        self.assertIn(
+        self.assertNotIn(
             '["flutter", ["test", "--no-pub", "--exclude-tags=golden"]',
             release_gate,
         )
@@ -403,6 +403,9 @@ class StagingDeliveryContractTest(unittest.TestCase):
             "Validate the manual release operator",
             "SINGAPORE_APPROVERS",
             "needs: authorize",
+            "Require successful shared CI on the exact remote main commit",
+            "actions/workflows/app-ci.yml/runs",
+            "No successful shared App CI for this main commit",
             "ref: ${{ github.sha }}",
             "mkfifo -m 0600",
             "cat >/dev/null",

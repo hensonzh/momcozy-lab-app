@@ -27,6 +27,9 @@ artifact preparation is `app-north-america-store-build.yml`, gated on an exact
 remote `main` commit and successful matching CI. Store upload, compliance,
 review and distribution remain separate explicit operations. Product Backend
 must be deployed and healthy before Agent, and both before App distribution.
+Singapore App delivery also checks successful shared CI on the exact current
+remote `main` SHA; its release gate runs live Product–Agent smoke and the
+invite-mode signed build rather than rerunning the shared static/widget suite.
 
 Run `node scripts/validate-workspace-environments.mjs` and
 `node scripts/build-mobile-app.mjs --platform android --environment staging
