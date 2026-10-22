@@ -893,6 +893,7 @@ Widget _buildDefaultAgentHubPage(
     pickImage: runtime.agentHubImagePicker,
     pickDocument: runtime.agentHubDocumentPicker,
     mediaRepository: runtime.mediaRepository,
+    cryAnalysisRepository: runtime.cryAnalysisRepository,
     loadImageThumbnail: runtime.mediaContentRepository.loadImageThumbnail,
     loadImageContent: runtime.mediaContentRepository.loadImage,
     onApplicationEvent: runtime.handleAgentApplicationEvent,

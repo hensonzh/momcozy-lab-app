@@ -2,6 +2,8 @@ import 'package:momcozy_flutter_app/shared/widgets/mom_settings_widgets.dart';
 import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
 import 'dart:async';
 
+import 'package:uuid/uuid.dart';
+
 import 'dart:convert';
 import 'dart:math' as math;
 
@@ -29,6 +31,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_aud
 import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_task.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_poop_task.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/chat_first_cry_audio.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/cry_analysis_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
@@ -129,6 +132,7 @@ class AgentHubPage extends StatefulWidget {
     this.chatFirstExperience = false,
     this.onChatFirstRecord,
     this.createCryAudio,
+    this.cryAnalysisRepository,
     this.stateCacheKey,
     this.isVisible = true,
     this.now,
@@ -170,6 +174,7 @@ class AgentHubPage extends StatefulWidget {
   final Future<void> Function(BuildContext, ChatFirstRecordKind)?
   onChatFirstRecord;
   final ChatFirstCryAudioFactory? createCryAudio;
+  final CryAnalysisRepository? cryAnalysisRepository;
   final bool isVisible;
   final DateTime Function()? now;
   final AgentStreamRunState state;
@@ -232,6 +237,15 @@ class _AgentHubPageState extends State<AgentHubPage>
   final GlobalKey _activeCryCardKey = GlobalKey();
   ChatFirstCryTaskController? _cryCapture;
   String? _activeCryTaskId;
+  bool _crySubmitting = false;
+  String? _cryFeedback;
+  int _crySubmissionGeneration = 0;
+  Timer? _cryPollTimer;
+  bool _cryRefreshInFlight = false;
+  bool _cryRefreshRequested = false;
+  final Map<String, int> _cryMissingKeyRetries = {};
+  bool _cryAdviceInFlight = false;
+  Future<void> _persistentWriteTail = Future<void>.value();
   bool _historyRecoveryPending = false;
   Object? _historyRecoveryError;
   bool _initialRecoveryScheduled = false;
@@ -461,6 +475,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.stateCacheKey != widget.stateCacheKey) {
       _cancelCryCaptureOnLeave();
+      _cryMissingKeyRetries.clear();
       _cryTasks.clear();
       _activeCryTaskId = null;
       _cancelPoopOnLeave();
@@ -619,6 +634,7 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   void _leaveConversation() {
     _voice?.stop();
+    _cryPollTimer?.cancel();
     _cancelCryCaptureOnLeave();
     _cancelPoopOnLeave();
     if (!_interactionRestoreResolved) return;
@@ -937,10 +953,317 @@ class _AgentHubPageState extends State<AgentHubPage>
     }
     if (_cryCapture != null && _activeCryTaskId != taskId) return;
     _activeCryTaskId = taskId;
+    final taskIndex = _cryTasks.indexWhere((task) => task.id == taskId);
+    if (taskIndex >= 0 && _cryTasks[taskIndex].requestKey != null) {
+      _cryTasks[taskIndex] = _cryTasks[taskIndex].withSubmissionKey(null);
+      _persistInteractionState();
+    }
     final controller = _cryCapture ??= ChatFirstCryTaskController(
       widget.createCryAudio ?? LocalChatFirstCryAudioSession.new,
     )..addListener(_onCryCaptureChanged);
     unawaited(controller.start());
+  }
+
+  Future<void> _submitCryTask(String taskId) async {
+    final repository = widget.cryAnalysisRepository;
+    final capture = _cryCapture;
+    if (_crySubmitting ||
+        repository == null ||
+        capture == null ||
+        capture.phase != ChatFirstCryCapturePhase.preview ||
+        !_isPageVisible ||
+        _isVisibleReplyRunning ||
+        _conversationSwitchPending ||
+        _activeCryTaskId != taskId) {
+      return;
+    }
+    final generation = ++_crySubmissionGeneration;
+    setState(() {
+      _crySubmitting = true;
+      _cryFeedback = null;
+    });
+    try {
+      final bytes = await capture.readRecording();
+      if (!mounted || generation != _crySubmissionGeneration) return;
+      await _ensureCryTaskThread(taskId, widget.stateCacheKey);
+      if (!mounted || generation != _crySubmissionGeneration) return;
+      final taskIndex = _cryTasks.indexWhere((task) => task.id == taskId);
+      if (taskIndex < 0) return;
+      final key = _cryTasks[taskIndex].requestKey ?? 'cry:${const Uuid().v4()}';
+      if (_cryTasks[taskIndex].requestKey == null) {
+        setState(
+          () => _cryTasks[taskIndex] = _cryTasks[taskIndex].withSubmissionKey(
+            key,
+          ),
+        );
+        _persistInteractionState();
+        // The recovery handle must reach secure storage before audio leaves
+        // the device; a lost response can then be queried without the WAV.
+        final store = widget.interactionStateStore;
+        if (store != null) {
+          _persistentWriteTimer?.cancel();
+          _persistentWriteTimer = null;
+          _pendingPersistentSnapshot = null;
+          await _writePersistentSnapshot(store, _buildInteractionSnapshot());
+        }
+      }
+      if (!mounted || generation != _crySubmissionGeneration) return;
+      final result = await repository.analyze(bytes, key: key);
+      if (!mounted ||
+          generation != _crySubmissionGeneration ||
+          _activeCryTaskId != taskId) {
+        return;
+      }
+      final index = _cryTasks.indexWhere(
+        (task) =>
+            task.id == taskId && task.status == ChatFirstCryTaskStatus.pending,
+      );
+      if (index < 0) {
+        return;
+      }
+      setState(() {
+        _cryTasks[index] = _cryTasks[index].withResult(
+          id: result.id,
+          resultStatus: result.status,
+          resultAnswer: result.answer,
+          resultAt: result.createdAt,
+        );
+      });
+      _persistInteractionState();
+      _releaseCryCapture();
+      if (result.status == 'pending') {
+        _scheduleCryPoll();
+      } else if (result.status != 'failed' &&
+          _isPageVisible &&
+          !_isVisibleReplyRunning &&
+          !_conversationSwitchPending) {
+        unawaited(_sendCryAdvice(taskId));
+      }
+    } catch (_) {
+      if (!mounted || generation != _crySubmissionGeneration) {
+        return;
+      }
+      setState(() => _cryFeedback = chatFirstCrySubmitUnavailable);
+    } finally {
+      if (mounted && generation == _crySubmissionGeneration) {
+        setState(() => _crySubmitting = false);
+      }
+    }
+  }
+
+  Future<void> _refreshPersistedCryResults() async {
+    final repository = widget.cryAnalysisRepository;
+    if (repository == null || !_isPageVisible) return;
+    if (_cryRefreshInFlight) {
+      _cryRefreshRequested = true;
+      return;
+    }
+    _cryRefreshInFlight = true;
+    final cacheKey = widget.stateCacheKey;
+    final pending = _cryTasks
+        .where(
+          (task) =>
+              (task.analysisId != null || task.requestKey != null) &&
+              (task.status == ChatFirstCryTaskStatus.verifying ||
+                  task.status == ChatFirstCryTaskStatus.unavailable),
+        )
+        .toList();
+    try {
+      for (final task in pending) {
+        try {
+          final result = task.analysisId != null
+              ? await repository.read(task.analysisId!)
+              : await repository.readByKey(task.requestKey!);
+          if (task.requestKey != null) {
+            _cryMissingKeyRetries.remove(task.requestKey);
+          }
+          if (!mounted ||
+              !_isPageVisible ||
+              widget.stateCacheKey != cacheKey ||
+              (task.analysisId != null && result.id != task.analysisId)) {
+            return;
+          }
+          final index = _cryTasks.indexWhere(
+            (item) =>
+                item.id == task.id &&
+                item.status != ChatFirstCryTaskStatus.cancelled &&
+                item.requestKey == task.requestKey &&
+                item.analysisId == task.analysisId,
+          );
+          if (index < 0) continue;
+          setState(
+            () => _cryTasks[index] = _cryTasks[index].withResult(
+              id: result.id,
+              resultStatus: result.status,
+              resultAnswer: result.answer,
+              resultAt: result.createdAt,
+            ),
+          );
+          _persistInteractionState();
+          if (result.status == 'pending') {
+            _scheduleCryPoll();
+          } else if ((result.status == 'done' ||
+                  result.status == 'incomplete') &&
+              task.autoAdvicePending &&
+              _cryCapture == null) {
+            unawaited(_sendCryAdvice(task.id));
+          }
+        } catch (error) {
+          if (!mounted || !_isPageVisible || widget.stateCacheKey != cacheKey) {
+            return;
+          }
+          // The upload can still be committing when a cold-start recovery
+          // first queries its saved key. Retry a few times, not indefinitely.
+          if (error is ApiHttpException &&
+              error.statusCode == 404 &&
+              task.analysisId == null &&
+              task.requestKey != null) {
+            final count = (_cryMissingKeyRetries[task.requestKey!] ?? 0) + 1;
+            if (count < 6) {
+              _cryMissingKeyRetries[task.requestKey!] = count;
+              _scheduleCryPoll();
+              continue;
+            }
+            _cryMissingKeyRetries.remove(task.requestKey);
+          }
+          final index = _cryTasks.indexWhere(
+            (item) =>
+                item.id == task.id &&
+                item.status != ChatFirstCryTaskStatus.cancelled &&
+                item.requestKey == task.requestKey &&
+                item.analysisId == task.analysisId,
+          );
+          if (index >= 0) {
+            setState(
+              () => _cryTasks[index] = _cryTasks[index].resultUnavailable(),
+            );
+          }
+        }
+      }
+    } finally {
+      _cryRefreshInFlight = false;
+      if (_cryRefreshRequested) {
+        _cryRefreshRequested = false;
+        unawaited(_refreshPersistedCryResults());
+      }
+    }
+  }
+
+  void _scheduleCryPoll() {
+    if (!_isPageVisible) return;
+    _cryPollTimer?.cancel();
+    _cryPollTimer = Timer(
+      const Duration(seconds: 2),
+      () => unawaited(_refreshPersistedCryResults()),
+    );
+  }
+
+  Future<String> _ensureCryTaskThread(String taskId, Object? cacheKey) async {
+    final task = _cryTasks.where((item) => item.id == taskId).firstOrNull;
+    if (task == null) throw StateError('Cry task no longer exists.');
+    var threadId = task.threadId ?? _state.threadId;
+    if (threadId == null) {
+      final repository = widget.conversationRepository;
+      if (repository is! AgentConversationThreadCreator) {
+        throw StateError('Conversation creation is unavailable.');
+      }
+      threadId = await (repository as AgentConversationThreadCreator)
+          .createConversation();
+    }
+    if (!mounted ||
+        !_isPageVisible ||
+        widget.stateCacheKey != cacheKey ||
+        (_state.threadId != null && _state.threadId != threadId)) {
+      throw StateError('Cry conversation has changed.');
+    }
+    final index = _cryTasks.indexWhere(
+      (item) =>
+          item.id == taskId && item.status != ChatFirstCryTaskStatus.cancelled,
+    );
+    if (index < 0) throw StateError('Cry task was cancelled.');
+    if (_cryTasks[index].threadId != threadId || _state.threadId != threadId) {
+      setState(() {
+        _cryTasks[index] = _cryTasks[index].withThread(threadId);
+        _setRunState(_state.copyWith(threadId: threadId));
+      });
+      _persistInteractionState();
+    }
+    return threadId;
+  }
+
+  Future<void> _sendCryAdvice(String taskId) async {
+    var task = _cryTasks.where((item) => item.id == taskId).firstOrNull;
+    if (task == null ||
+        task.analysisId == null ||
+        (task.status != ChatFirstCryTaskStatus.completed &&
+            task.status != ChatFirstCryTaskStatus.incomplete) ||
+        task.adviceAccepted ||
+        _cryCapture != null ||
+        _cryAdviceInFlight ||
+        _state.isActive ||
+        widget.runner == null ||
+        !_isPageVisible ||
+        _isVisibleReplyRunning ||
+        _conversationSwitchPending) {
+      return;
+    }
+    _cryAdviceInFlight = true;
+    final cacheKey = widget.stateCacheKey;
+    try {
+      final threadId = await _ensureCryTaskThread(taskId, cacheKey);
+      task = _cryTasks.firstWhere((item) => item.id == taskId);
+      if (threadId != _state.threadId ||
+          !_isPageVisible ||
+          _conversationSwitchPending) {
+        return;
+      }
+      final request = _requestWithThreadId(
+        _requestWithIdempotencyKey(
+          _requestWithMetadata(
+            widget.requestBuilder(chatFirstCryAdviceRequest),
+            {'cry_analysis_id': task.analysisId},
+          ),
+          'cry-advice:${task.analysisId}:${task.adviceAttempt}',
+        ),
+        threadId,
+      );
+      final taskIndex = _cryTasks.indexWhere((item) => item.id == taskId);
+      if (taskIndex >= 0 && _cryTasks[taskIndex].autoAdvicePending) {
+        setState(
+          () => _cryTasks[taskIndex] = _cryTasks[taskIndex].adviceRequested(),
+        );
+        _persistInteractionState();
+      }
+      final accepted = await _startRun(request, awaitServerRunSignal: true);
+      if (!mounted || !accepted) return;
+      final runId = _state.runId;
+      final settlement = _runSettlementCompleter;
+      if (settlement != null) await settlement.future;
+      if (!mounted ||
+          widget.stateCacheKey != cacheKey ||
+          _state.runId != runId ||
+          _state.threadId != threadId) {
+        return;
+      }
+      final index = _cryTasks.indexWhere((task) => task.id == taskId);
+      if (index >= 0) {
+        if (_state.phase == AgentStreamRunPhase.finished &&
+            _state.hasCompletedAssistantMessage) {
+          setState(() => _cryTasks[index] = _cryTasks[index].acceptedAdvice());
+          _persistInteractionState();
+        } else if (_state.phase == AgentStreamRunPhase.error ||
+            _state.phase == AgentStreamRunPhase.cancelled ||
+            (_state.phase == AgentStreamRunPhase.finished &&
+                !_state.hasCompletedAssistantMessage)) {
+          setState(() => _cryTasks[index] = _cryTasks[index].failedAdvice());
+          _persistInteractionState();
+        }
+      }
+    } catch (_) {
+      // Keep the independently verified card and offer advice retry only.
+    } finally {
+      _cryAdviceInFlight = false;
+    }
   }
 
   void _onCryCaptureChanged() {
@@ -956,16 +1279,28 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   void _cancelCryCaptureOnLeave() {
+    ++_crySubmissionGeneration;
+    _crySubmitting = false;
+    _cryPollTimer?.cancel();
     final capture = _cryCapture;
     if (capture == null) return;
     if (capture.voicePreviewBlocked) {
-      final index = _cryTasks.indexWhere((task) => task.id == _activeCryTaskId);
-      if (index >= 0) _cryTasks[index] = _cryTasks[index].cancelled();
+      final index = _cryTasks.indexWhere(
+        (task) =>
+            task.id == _activeCryTaskId &&
+            task.status == ChatFirstCryTaskStatus.pending,
+      );
+      if (index >= 0) {
+        _cryTasks[index] = _cryTasks[index].requestKey == null
+            ? _cryTasks[index].cancelled()
+            : _cryTasks[index].awaitingResult();
+      }
     }
     _releaseCryCapture();
   }
 
   void _abandonCryTask(String taskId) {
+    ++_crySubmissionGeneration;
     final index = _cryTasks.indexWhere((task) => task.id == taskId);
     if (index < 0) return;
     setState(() => _cryTasks[index] = _cryTasks[index].cancelled());
@@ -977,6 +1312,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_isPageVisible || !_interactionRestoreResolved) return;
       unawaited(_recoverConversation());
+      unawaited(_refreshPersistedCryResults());
     });
   }
 
@@ -1257,7 +1593,10 @@ class _AgentHubPageState extends State<AgentHubPage>
     _scheduleInitialAutoSendIfNeeded();
     _scheduleInitialAutoRunIfNeeded();
     _scheduleExternalConversationRefreshIfNeeded();
-    if (shouldRestore) _persistInteractionState();
+    if (shouldRestore) {
+      _persistInteractionState();
+      unawaited(_refreshPersistedCryResults());
+    }
     unawaited(_retryAttachmentCleanup());
     _scheduleInitialInteractionPostFrame();
   }
@@ -1423,10 +1762,21 @@ class _AgentHubPageState extends State<AgentHubPage>
     _persistentWriteTimer = null;
     _pendingPersistentSnapshot = null;
     if (store == null || snapshot == null) return;
-    final operation = snapshot.hasContent
-        ? store.write(snapshot)
-        : store.clear();
+    final operation = _writePersistentSnapshot(store, snapshot);
     unawaited(_ignorePersistentWriteError(operation));
+  }
+
+  Future<void> _writePersistentSnapshot(
+    AgentHubInteractionStateStore store,
+    AgentHubInteractionSnapshot snapshot,
+  ) {
+    final operation = _persistentWriteTail.then(
+      (_) => snapshot.hasContent ? store.write(snapshot) : store.clear(),
+    );
+    // An earlier failed write must not prevent a newer recovery handle from
+    // being persisted. The caller of a critical write still sees its error.
+    _persistentWriteTail = operation.catchError((Object _) {});
+    return operation;
   }
 
   Future<void> _ignorePersistentWriteError(Future<void> operation) async {
@@ -2547,6 +2897,9 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   void _handleRunStateUpdate(AgentStreamRunState nextState) {
     if (!mounted || !_state.isActive) return;
+    if (nextState.threadId == null && _activeRequest?.threadId != null) {
+      nextState = nextState.copyWith(threadId: _activeRequest!.threadId);
+    }
     final submittedText = _submittedComposerText;
     if ((nextState.phase == AgentStreamRunPhase.error ||
             nextState.phase == AgentStreamRunPhase.disconnected) &&
@@ -2656,7 +3009,12 @@ class _AgentHubPageState extends State<AgentHubPage>
         : null;
     _localTurnRevision += 1;
     setState(() {
-      _setRunState(initialState ?? const AgentStreamRunState().start());
+      _setRunState(
+        initialState ??
+            const AgentStreamRunState().start().copyWith(
+              threadId: requestWithThread.threadId,
+            ),
+      );
     });
     _persistInteractionState();
     if (initialState == null || (_isPageVisible && _isNearLatest())) {
@@ -3031,7 +3389,52 @@ class _AgentHubPageState extends State<AgentHubPage>
                                     cryTaskBuilder: (context, task) =>
                                         ChatFirstCryTaskCard(
                                           status: task.status,
+                                          answer: task.answer,
+                                          analyzedAt: task.analyzedAt,
+                                          isSubmitting:
+                                              _crySubmitting &&
+                                              _activeCryTaskId == task.id,
+                                          feedback: _activeCryTaskId == task.id
+                                              ? _cryFeedback
+                                              : null,
+                                          onSubmit:
+                                              widget.cryAnalysisRepository !=
+                                                      null &&
+                                                  !_isVisibleReplyRunning &&
+                                                  _isPageVisible
+                                              ? () => unawaited(
+                                                  _submitCryTask(task.id),
+                                                )
+                                              : null,
+                                          onRefreshResult:
+                                              (task.analysisId != null ||
+                                                      task.requestKey !=
+                                                          null) &&
+                                                  widget.cryAnalysisRepository !=
+                                                      null
+                                              ? () => unawaited(
+                                                  _refreshPersistedCryResults(),
+                                                )
+                                              : null,
+                                          onAskAdvice:
+                                              task.analysisId != null &&
+                                                  (task.status ==
+                                                          ChatFirstCryTaskStatus
+                                                              .completed ||
+                                                      task.status ==
+                                                          ChatFirstCryTaskStatus
+                                                              .incomplete) &&
+                                                  !task.adviceAccepted &&
+                                                  !_cryAdviceInFlight &&
+                                                  !_state.isActive &&
+                                                  !_isVisibleReplyRunning &&
+                                                  widget.runner != null
+                                              ? () => unawaited(
+                                                  _sendCryAdvice(task.id),
+                                                )
+                                              : null,
                                           canStart:
+                                              !_crySubmitting &&
                                               _isPageVisible &&
                                               !_isVisibleReplyRunning &&
                                               !_conversationSwitchPending,
@@ -3040,7 +3443,10 @@ class _AgentHubPageState extends State<AgentHubPage>
                                               ? _cryCapture
                                               : null,
                                           onStart: () =>
-                                              _startCryCapture(task.id),
+                                              task.status ==
+                                                  ChatFirstCryTaskStatus.pending
+                                              ? _startCryCapture(task.id)
+                                              : _openCryTask(),
                                           onAbandon: () =>
                                               _abandonCryTask(task.id),
                                         ),

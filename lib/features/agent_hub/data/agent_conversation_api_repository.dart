@@ -8,7 +8,8 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_poop_ta
 
 const agentConversationsEndpoint = '/v1/agent/threads';
 
-class AgentConversationApiRepository implements AgentConversationRepository {
+class AgentConversationApiRepository
+    implements AgentConversationRepository, AgentConversationThreadCreator {
   const AgentConversationApiRepository({
     required this.transport,
     this.identifyWelcomeBoundary = false,
@@ -16,6 +17,19 @@ class AgentConversationApiRepository implements AgentConversationRepository {
 
   final ApiJsonTransport transport;
   final bool identifyWelcomeBoundary;
+
+  @override
+  Future<String> createConversation() async {
+    final response = await transport.postJson(
+      agentConversationsEndpoint,
+      body: {'title': '宝宝哭声'},
+    );
+    final id = response['id'];
+    if (id is! String || id.trim().isEmpty) {
+      throw const FormatException('Invalid conversation thread.');
+    }
+    return id;
+  }
 
   @override
   Future<AgentConversationHistory?> loadLatestConversation() async {

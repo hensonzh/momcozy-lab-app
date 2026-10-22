@@ -195,6 +195,16 @@ class LocalChatFirstCryAudioSession implements ChatFirstCryAudioSession {
   Future<void> seek(Duration position) => _player.seek(position);
 
   @override
+  Future<List<int>> readRecording() => _serialize(() async {
+    final directory = _captureDirectory;
+    if (_disposed || _recording || directory == null) {
+      throw StateError('No recording is ready.');
+    }
+    final file = File('${directory.path}/capture.wav');
+    return file.readAsBytes();
+  });
+
+  @override
   Future<void> clear() {
     ++_captureRequest;
     return _serialize(_clearResources);

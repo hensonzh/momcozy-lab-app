@@ -11,6 +11,8 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation
 import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_task.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_audio.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/cry_analysis_repository.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 
 void main() {
   testWidgets(
@@ -121,6 +123,278 @@ void main() {
         }
       });
       expect(audio.disposals, greaterThan(0));
+    },
+  );
+
+  testWidgets(
+    'verified service result becomes a card and only its ID reaches Agent',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final audio = _FakeCryAudio();
+      final agent = _CaptureClient();
+      final product = _CryServiceTransport();
+      await tester.pumpWidget(
+        _page(
+          audio: audio,
+          client: agent,
+          cry: CryAnalysisRepository(multipart: product, json: product),
+          repository: _CryRepository(),
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pump();
+      await tester.tap(find.text('上传并分析'));
+      await tester.pumpAndSettle();
+      expect(product.recordings, [
+        <int>[1, 2, 3],
+      ]);
+      expect(find.text('可能和饥饿有关'), findsOneWidget);
+      expect(agent.requests, hasLength(1));
+      final payload = buildProductionAgentRunPayload(agent.requests.single);
+      expect(payload['attachments'], [
+        {'type': 'cry_analysis', 'analysis_id': product.analysisId},
+      ]);
+      expect(payload.toString(), isNot(contains('input_audio')));
+      expect(payload.toString(), isNot(contains('[1, 2, 3]')));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'restored result waits for server revalidation before showing a category',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final product = _CryServiceTransport();
+      final store = _CryStore();
+      store.value = AgentHubInteractionSnapshot(
+        runState: const AgentStreamRunState(threadId: 'thread-cry'),
+        cryTasks: [
+          ChatFirstCryTask.fromMap({
+            'id': 'local:cry:persisted',
+            'createdAt': '2026-10-22T00:00:00Z',
+            'threadId': 'thread-cry',
+            'status': 'completed',
+            'answer': 'untrusted',
+            'analysisId': product.analysisId,
+          })!,
+        ],
+      );
+      final agent = _CaptureClient();
+      await tester.pumpWidget(
+        _page(
+          audio: _FakeCryAudio(),
+          client: agent,
+          store: store,
+          cry: CryAnalysisRepository(multipart: product, json: product),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('可能和饥饿有关'), findsOneWidget);
+      expect(find.textContaining('untrusted'), findsNothing);
+      expect(product.reads, 1);
+      expect(agent.requests, isEmpty);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'upload completed after leaving is recovered using the saved key',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final product = _CryServiceTransport()
+        ..uploadGate = Completer<void>()
+        ..missingReads = 1;
+      final store = _CryStore();
+      final audio = _FakeCryAudio();
+      final agent = _CaptureClient();
+      final key = GlobalKey();
+      Widget page(bool visible) => _page(
+        audio: audio,
+        client: agent,
+        key: key,
+        visible: visible,
+        store: store,
+        repository: _CryRepository(),
+        cry: CryAnalysisRepository(multipart: product, json: product),
+      );
+      await tester.pumpWidget(page(true));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pump();
+      await tester.tap(find.text('上传并分析'));
+      await tester.pump();
+      expect(store.value?.cryTasks.single.requestKey, startsWith('cry:'));
+      await tester.pumpWidget(page(false));
+      await tester.pump();
+      product.uploadGate!.complete();
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(page(true));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+      expect(product.lastReadPath, contains('/by-key/'));
+      expect(product.reads, greaterThanOrEqualTo(2));
+      expect(find.text('可能和饥饿有关'), findsOneWidget);
+      expect(agent.requests, hasLength(1));
+      expect(
+        buildProductionAgentRunPayload(agent.requests.single)['attachments'],
+        [
+          {'type': 'cry_analysis', 'analysis_id': product.analysisId},
+        ],
+      );
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  test(
+    'advice state survives result verification and terminal failure advances key',
+    () {
+      final task = ChatFirstCryTask(
+        id: 'local:cry:state',
+        createdAt: DateTime.utc(2026, 10, 22),
+        analysisId: 'analysis',
+        status: ChatFirstCryTaskStatus.completed,
+        adviceAccepted: true,
+      );
+      final restored = ChatFirstCryTask.fromMap(task.toMap())!;
+      expect(restored.status, ChatFirstCryTaskStatus.verifying);
+      expect(
+        restored
+            .withResult(
+              id: 'analysis',
+              resultStatus: 'done',
+              resultAnswer: 'sleep',
+              resultAt: DateTime.utc(2026, 10, 22),
+            )
+            .adviceAccepted,
+        isTrue,
+      );
+      expect(task.failedAdvice().adviceAttempt, 1);
+    },
+  );
+
+  testWidgets(
+    'accepted but failed advice run keeps card retryable with a new key',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final product = _CryServiceTransport();
+      final agent = _CaptureClient()..controlled = true;
+      await tester.pumpWidget(
+        _page(
+          audio: _FakeCryAudio(),
+          client: agent,
+          repository: _CryRepository(),
+          cry: CryAnalysisRepository(multipart: product, json: product),
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pump();
+      await tester.tap(find.text('上传并分析'));
+      await tester.pump();
+      await tester.pump();
+      expect(agent.requests, hasLength(1));
+      agent.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'cry-queued',
+          'type': 'run.queued',
+          'sequence': 1,
+          'thread_id': 'thread-cry',
+          'run_id': 'run-cry-1',
+        }),
+      );
+      await tester.pump();
+      agent.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'cry-failed',
+          'type': 'run.failed',
+          'sequence': 2,
+          'thread_id': 'thread-cry',
+          'run_id': 'run-cry-1',
+          'payload': {'code': 'runtime_error'},
+        }),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-ask-advice')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-ask-advice')));
+      await tester.pump();
+      expect(agent.requests, hasLength(2));
+      expect(agent.requests[0].idempotencyKey, endsWith(':0'));
+      expect(agent.requests[1].idempotencyKey, endsWith(':1'));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'pending classification polls and then sends only its result ID',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final product = _CryServiceTransport()..uploadStatus = 'pending';
+      final agent = _CaptureClient();
+      await tester.pumpWidget(
+        _page(
+          audio: _FakeCryAudio(),
+          client: agent,
+          repository: _CryRepository(),
+          cry: CryAnalysisRepository(multipart: product, json: product),
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pump();
+      await tester.tap(find.text('上传并分析'));
+      await tester.pump();
+      await tester.pump();
+      expect(agent.requests, isEmpty);
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pump();
+      expect(product.reads, greaterThan(0));
+      expect(find.text('可能和饥饿有关'), findsOneWidget);
+      expect(agent.requests, hasLength(1));
+      expect(
+        buildProductionAgentRunPayload(agent.requests.single)['attachments'],
+        [
+          {'type': 'cry_analysis', 'analysis_id': product.analysisId},
+        ],
+      );
+      await tester.pumpWidget(const SizedBox());
     },
   );
 
@@ -396,6 +670,7 @@ Widget _page({
   bool visible = true,
   AgentHubInteractionStateStore? store,
   AgentConversationRepository? repository,
+  CryAnalysisRepository? cry,
   AgentStreamRunState state = const AgentStreamRunState(),
   Object? stateCacheKey,
 }) => MaterialApp(
@@ -407,6 +682,7 @@ Widget _page({
       state: state,
       stateCacheKey: stateCacheKey,
       createCryAudio: () => audio,
+      cryAnalysisRepository: cry,
       runner: AgentStreamRunner(client),
       interactionStateStore: store,
       conversationRepository: repository,
@@ -416,14 +692,26 @@ Widget _page({
 
 class _CaptureClient implements AgentStreamClient {
   final requests = <AgentStreamRequest>[];
+  bool controlled = false;
+  final streams = <StreamController<AgentStreamEvent>>[];
   @override
   Stream<AgentStreamEvent> stream(AgentStreamRequest request) {
     requests.add(request);
+    if (controlled) {
+      final controller = StreamController<AgentStreamEvent>.broadcast();
+      streams.add(controller);
+      return controller.stream;
+    }
     return const Stream<AgentStreamEvent>.empty();
   }
+
+  void emit(int index, AgentStreamEvent event) => streams[index].add(event);
 }
 
 class _FakeCryAudio implements ChatFirstCryAudioSession {
+  @override
+  Future<List<int>> readRecording() async => <int>[1, 2, 3];
+
   final _positions = StreamController<Duration>.broadcast();
   final _playing = StreamController<bool>.broadcast();
   Object? startError;
@@ -502,7 +790,10 @@ class _CryStore implements AgentHubInteractionStateStore {
   }
 }
 
-class _CryRepository implements AgentConversationRepository {
+class _CryRepository
+    implements AgentConversationRepository, AgentConversationThreadCreator {
+  @override
+  Future<String> createConversation() async => 'thread-cry';
   final messages = <AgentConversationMessage>[];
   AgentStreamRunState state = const AgentStreamRunState(threadId: 'thread-cry');
   @override
@@ -525,4 +816,65 @@ class _CryRepository implements AgentConversationRepository {
     messages: [...messages],
     currentState: state,
   );
+}
+
+class _CryServiceTransport implements ApiMultipartTransport, ApiJsonTransport {
+  final analysisId = 'a0a10a10-aaaa-4aaa-aaaa-aaaaaaaaaaaa';
+  final recordings = <List<int>>[];
+  int reads = 0;
+  Completer<void>? uploadGate;
+  String? lastReadPath;
+  String uploadStatus = 'done';
+  int missingReads = 0;
+
+  @override
+  Future<Map<String, Object?>> uploadMultipart(
+    String path, {
+    Map<String, Object?> query = const {},
+    Map<String, Object?> fields = const {},
+    Map<String, String> headers = const {},
+    required ApiUploadFile file,
+  }) async {
+    expect(path, '/v1/cry-analyses');
+    expect(file.mimeType, 'audio/wav');
+    expect(headers['Idempotency-Key'], isNotEmpty);
+    recordings.add(file.bytes);
+    await uploadGate?.future;
+    return {
+      'id': analysisId,
+      'status': uploadStatus,
+      'answer': uploadStatus == 'done' ? 'hungry' : null,
+      'created_at': '2026-10-22T00:00:00Z',
+    };
+  }
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) async {
+    reads++;
+    lastReadPath = path;
+    if (missingReads > 0) {
+      missingReads--;
+      throw ApiHttpException(
+        statusCode: 404,
+        statusText: 'Not Found',
+        body: null,
+      );
+    }
+    return {
+      'id': analysisId,
+      'status': 'done',
+      'answer': 'hungry',
+      'created_at': '2026-10-22T00:00:00Z',
+    };
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async => throw UnimplementedError();
 }

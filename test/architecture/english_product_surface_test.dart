@@ -5,6 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 // These are exact legacy-wire matchers.
 // Keep each exception exact so adding another Chinese UI string fails this gate.
 const _legacyHanLiterals = <String, List<String>>{
+  // The committed chat-first thread title is user-visible in conversation history.
+  'lib/features/agent_hub/data/agent_conversation_api_repository.dart': [
+    '宝宝哭声',
+  ],
   'lib/core/agent_stream/agent_stream_event.dart': ['快捷回复', '推荐回复'],
   'lib/features/agent_hub/domain/agent_conversation.dart': [
     '[系统流程触发]',

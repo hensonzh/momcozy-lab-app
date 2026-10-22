@@ -140,7 +140,8 @@
           "purpose": {
             "enum": [
               "model_image",
-              "model_file"
+              "model_file",
+              "model_audio"
             ],
             "title": "Purpose",
             "type": "string"
@@ -804,6 +805,20 @@
         "title": "BatchResult",
         "type": "object"
       },
+      "Body_create_cry_analysis_v1_cry_analyses_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_create_cry_analysis_v1_cry_analyses_post",
+        "type": "object"
+      },
       "Body_transcribe_speech_chunk_v1_speech_transcribe_chunk_post": {
         "properties": {
           "file": {
@@ -1096,6 +1111,140 @@
           "issues"
         ],
         "title": "Concern",
+        "type": "object"
+      },
+      "CryAnalysisInternalRead": {
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "anyOf": [
+              {
+                "enum": [
+                  "sleep",
+                  "pain",
+                  "burp",
+                  "uncomfortable",
+                  "hungry",
+                  "no_cry"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "done",
+              "incomplete"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "thread_id": {
+            "format": "uuid",
+            "title": "Thread Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "answer",
+          "created_at",
+          "thread_id"
+        ],
+        "title": "CryAnalysisInternalRead",
+        "type": "object"
+      },
+      "CryAnalysisRead": {
+        "properties": {
+          "answer": {
+            "anyOf": [
+              {
+                "enum": [
+                  "sleep",
+                  "pain",
+                  "burp",
+                  "uncomfortable",
+                  "hungry",
+                  "no_cry"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "done",
+              "incomplete",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "answer",
+          "created_at"
+        ],
+        "title": "CryAnalysisRead",
+        "type": "object"
+      },
+      "CryAnalysisResolveRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "actor_user_id": {
+            "format": "uuid",
+            "title": "Actor User Id",
+            "type": "string"
+          },
+          "analysis_id": {
+            "format": "uuid",
+            "title": "Analysis Id",
+            "type": "string"
+          },
+          "thread_id": {
+            "format": "uuid",
+            "title": "Thread Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "analysis_id",
+          "actor_user_id",
+          "thread_id"
+        ],
+        "title": "CryAnalysisResolveRequest",
         "type": "object"
       },
       "DailyStatusObservation": {
@@ -9346,6 +9495,183 @@
         "x-momcozy-stability": "stable"
       }
     },
+    "/v1/cry-analyses": {
+      "post": {
+        "operationId": "create_cry_analysis_v1_cry_analyses_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_cry_analysis_v1_cry_analyses_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CryAnalysisRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Cry Analysis",
+        "tags": [
+          "cry-analyses"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "cry-analysis",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/cry-analyses/by-key/{key}": {
+      "get": {
+        "operationId": "get_cry_analysis_by_key_v1_cry_analyses_by_key__key__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CryAnalysisRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Cry Analysis By Key",
+        "tags": [
+          "cry-analyses"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "cry-analysis",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/cry-analyses/{analysis_id}": {
+      "get": {
+        "operationId": "get_cry_analysis_v1_cry_analyses__analysis_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "analysis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Analysis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CryAnalysisRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Cry Analysis",
+        "tags": [
+          "cry-analyses"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "cry-analysis",
+        "x-momcozy-stability": "stable"
+      }
+    },
     "/v1/devices/pump-energy-target": {
       "get": {
         "operationId": "get_pump_energy_target_v1_devices_pump_energy_target_get",
@@ -10471,6 +10797,71 @@
         "x-momcozy-stability": "stable"
       }
     },
+    "/v1/internal/agent/cry-analyses/resolve": {
+      "post": {
+        "operationId": "get_cry_analysis_for_agent_v1_internal_agent_cry_analyses_resolve_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Service-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Service-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CryAnalysisResolveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CryAnalysisInternalRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Cry Analysis For Agent",
+        "tags": [
+          "internal-agent"
+        ],
+        "x-momcozy-api-surface": "internal_service_api",
+        "x-momcozy-client": [
+          "agent-runtime"
+        ],
+        "x-momcozy-owner": "cry-analysis",
+        "x-momcozy-stability": "stable"
+      }
+    },
     "/v1/internal/agent/files/resolve": {
       "post": {
         "operationId": "resolve_agent_file_v1_internal_agent_files_resolve_post",
@@ -10567,7 +10958,8 @@
             "schema": {
               "enum": [
                 "model_image",
-                "model_file"
+                "model_file",
+                "model_audio"
               ],
               "title": "Purpose",
               "type": "string"
@@ -11610,6 +12002,12 @@
                   "type": "string"
                 }
               },
+              "audio/wav": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              },
               "image/gif": {
                 "schema": {
                   "format": "binary",
@@ -11635,7 +12033,7 @@
                 }
               }
             },
-            "description": "Authorized model asset bytes. Content-Type matches the validated image or PDF."
+            "description": "Authorized model asset bytes. Content-Type matches the validated image, PDF, or WAV."
           },
           "404": {
             "description": "Capability is unknown, expired, revoked, or no longer matches authoritative file state."
@@ -13468,6 +13866,42 @@
         "x-momcozy-stability": "stable"
       }
     },
+    "/v1/realtime-voice-capability": {
+      "get": {
+        "operationId": "realtime_voice_capability_v1_realtime_voice_capability_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "title": "Response Realtime Voice Capability V1 Realtime Voice Capability Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Realtime Voice Capability",
+        "tags": [
+          "voice"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "voice",
+        "x-momcozy-stability": "stable"
+      }
+    },
     "/v1/realtime-voice-stream": {
       "get": {
         "operationId": "realtime_voice_stream_v1_realtime_voice_stream_get",
@@ -14732,12 +15166,13 @@
         "tags": [
           "support"
         ],
-        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-api-surface": "deprecated_api",
         "x-momcozy-client": [
-          "flutter"
+          "legacy-flutter"
         ],
+        "x-momcozy-notes": "Retained for released clients; the chat-first App has no support-ticket API dependency.",
         "x-momcozy-owner": "support",
-        "x-momcozy-stability": "stable"
+        "x-momcozy-stability": "deprecated"
       },
       "post": {
         "operationId": "create_support_ticket_v1_support_tickets_post",
@@ -14800,12 +15235,13 @@
         "tags": [
           "support"
         ],
-        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-api-surface": "deprecated_api",
         "x-momcozy-client": [
-          "flutter"
+          "legacy-flutter"
         ],
+        "x-momcozy-notes": "Retained for released clients; the chat-first App has no support-ticket API dependency.",
         "x-momcozy-owner": "support",
-        "x-momcozy-stability": "stable"
+        "x-momcozy-stability": "deprecated"
       }
     },
     "/v1/support/tickets/{ticket_id}": {
@@ -14854,12 +15290,13 @@
         "tags": [
           "support"
         ],
-        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-api-surface": "deprecated_api",
         "x-momcozy-client": [
-          "flutter"
+          "legacy-flutter"
         ],
+        "x-momcozy-notes": "Retained for released clients; the chat-first App has no support-ticket API dependency.",
         "x-momcozy-owner": "support",
-        "x-momcozy-stability": "stable"
+        "x-momcozy-stability": "deprecated"
       }
     }
   },

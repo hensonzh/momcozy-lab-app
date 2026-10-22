@@ -7,6 +7,9 @@ import 'chat_first_demo_icon.dart';
 import '../domain/chat_first_cry_audio.dart';
 import '../domain/chat_first_cry_task.dart';
 
+const chatFirstCrySubmitUnavailable = '暂时无法分析，录音仍在本机，可重试。';
+const chatFirstCryAdviceRequest = '请结合听哭闹识别线索和我提供的情境，给出简短、温和的观察建议。不要声称听过原始录音。';
+
 enum ChatFirstCryCapturePhase { idle, preparing, recording, preview, failed }
 
 /// In-memory capture state; never serialized into conversation history.
@@ -137,6 +140,15 @@ class ChatFirstCryTaskController extends ChangeNotifier {
     }
   }
 
+  Future<List<int>> readRecording() async {
+    if (_closed ||
+        phase != ChatFirstCryCapturePhase.preview ||
+        _audio == null) {
+      throw StateError('No recording is ready.');
+    }
+    return _audio!.readRecording();
+  }
+
   Future<void> togglePlayback() async {
     if (_closed || phase != ChatFirstCryCapturePhase.preview) return;
     try {
@@ -223,11 +235,25 @@ class ChatFirstCryTaskCard extends StatelessWidget {
     required this.onAbandon,
     this.canStart = true,
     this.controller,
+    this.answer,
+    this.analyzedAt,
+    this.isSubmitting = false,
+    this.feedback,
+    this.onSubmit,
+    this.onAskAdvice,
+    this.onRefreshResult,
   });
 
   final ChatFirstCryTaskStatus status;
   final ChatFirstCryTaskController? controller;
   final bool canStart;
+  final String? answer;
+  final DateTime? analyzedAt;
+  final bool isSubmitting;
+  final String? feedback;
+  final VoidCallback? onSubmit;
+  final VoidCallback? onAskAdvice;
+  final VoidCallback? onRefreshResult;
   final VoidCallback onStart;
   final VoidCallback onAbandon;
 
@@ -245,6 +271,7 @@ class ChatFirstCryTaskCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
@@ -289,11 +316,93 @@ class ChatFirstCryTaskCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (status == ChatFirstCryTaskStatus.cancelled)
                   const Text('本次任务已取消。')
-                else if (phase == ChatFirstCryCapturePhase.idle) ...[
+                else if (status == ChatFirstCryTaskStatus.verifying ||
+                    status == ChatFirstCryTaskStatus.unavailable ||
+                    status == ChatFirstCryTaskStatus.failed) ...[
+                  Text(
+                    status == ChatFirstCryTaskStatus.verifying
+                        ? '正在核对这次的识别结果…'
+                        : status == ChatFirstCryTaskStatus.failed
+                        ? '这次分析未完成，可以重新录一段。'
+                        : '暂时无法读取这次的识别结果。',
+                  ),
+                  if (status == ChatFirstCryTaskStatus.unavailable &&
+                      onRefreshResult != null)
+                    TextButton(
+                      onPressed: onRefreshResult,
+                      child: const Text('重试读取结果'),
+                    ),
+                  if (status == ChatFirstCryTaskStatus.unavailable ||
+                      status == ChatFirstCryTaskStatus.failed)
+                    TextButton(
+                      onPressed: canStart ? onStart : null,
+                      child: const Text('重新录一段'),
+                    ),
+                ] else if (status == ChatFirstCryTaskStatus.completed ||
+                    status == ChatFirstCryTaskStatus.incomplete) ...[
+                  const Text(
+                    '这段哭声的线索',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  ),
+                  if (analyzedAt != null)
+                    Text(
+                      '分析于 ${analyzedAt!.toLocal().year}-${analyzedAt!.toLocal().month.toString().padLeft(2, '0')}-${analyzedAt!.toLocal().day.toString().padLeft(2, '0')} ${analyzedAt!.toLocal().hour.toString().padLeft(2, '0')}:${analyzedAt!.toLocal().minute.toString().padLeft(2, '0')}',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Color(0xFF74696B),
+                      ),
+                    ),
+                  const SizedBox(height: 10),
+                  Text(
+                    status == ChatFirstCryTaskStatus.incomplete
+                        ? '这次还没有得到足够的识别线索'
+                        : answer == 'no_cry'
+                        ? '这段录音未识别到有效哭声'
+                        : _answerLabel(answer),
+                    key: const ValueKey('chat-first-cry-result'),
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF71465A),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    '这是声音给出的线索，不是确定原因。请结合宝宝当时的表现观察。',
+                    style: TextStyle(fontSize: 12, color: Color(0xFF70656A)),
+                  ),
+                  if (status == ChatFirstCryTaskStatus.completed &&
+                      answer != 'no_cry') ...[
+                    const SizedBox(height: 10),
+                    const Text(
+                      '现在可以：告诉我宝宝当时的情况，一起看看下一步。',
+                      style: TextStyle(fontSize: 12, color: Color(0xFF70656A)),
+                    ),
+                  ],
+                  const SizedBox(height: 10),
+                  const Text(
+                    '识别结果不能代替对宝宝状态的观察或医疗判断。',
+                    style: TextStyle(fontSize: 11, color: Color(0xFF74696B)),
+                  ),
+                  if (status == ChatFirstCryTaskStatus.incomplete ||
+                      answer == 'no_cry')
+                    TextButton(
+                      key: const ValueKey('chat-first-cry-record-again'),
+                      onPressed: canStart ? onStart : null,
+                      child: const Text('重新录一段'),
+                    ),
+                  if (onAskAdvice != null)
+                    TextButton(
+                      key: const ValueKey('chat-first-cry-ask-advice'),
+                      onPressed: onAskAdvice,
+                      child: const Text('获取情境建议'),
+                    ),
+                ] else if (phase == ChatFirstCryCapturePhase.idle) ...[
                   const Text(
                     '录一段约 10–20 秒的哭声',
                     style: TextStyle(
@@ -457,6 +566,14 @@ class ChatFirstCryTaskCard extends StatelessWidget {
                       ),
                     ],
                   ],
+                  if (feedback != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      feedback!,
+                      key: const ValueKey('chat-first-cry-submit-error'),
+                      style: const TextStyle(color: Color(0xFFAA385A)),
+                    ),
+                  ],
                   if (capture?.error != null) ...[
                     const SizedBox(height: 8),
                     Text(
@@ -487,11 +604,11 @@ class ChatFirstCryTaskCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Semantics(
-                            label: '上传并分析暂不可用',
+                            label: '上传并分析',
                             button: true,
-                            enabled: false,
+                            enabled: onSubmit != null && !isSubmitting,
                             child: FilledButton(
-                              onPressed: null,
+                              onPressed: isSubmitting ? null : onSubmit,
                               style: FilledButton.styleFrom(
                                 disabledBackgroundColor: const Color(
                                   0xFFF2E8ED,
@@ -504,7 +621,7 @@ class ChatFirstCryTaskCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: const Text('上传并分析'),
+                              child: Text(isSubmitting ? '正在分析…' : '上传并分析'),
                             ),
                           ),
                         ),
@@ -548,6 +665,15 @@ class ChatFirstCryTaskCard extends StatelessWidget {
       ),
     );
   }
+
+  static String _answerLabel(String? answer) => switch (answer) {
+    'sleep' => '可能和想休息有关',
+    'pain' => '可能有不舒服的感觉',
+    'burp' => '可能想打嗝',
+    'uncomfortable' => '可能感到不舒适',
+    'hungry' => '可能和饥饿有关',
+    _ => '这次还没有得到足够的识别线索',
+  };
 
   static String _clock(Duration duration) =>
       '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';

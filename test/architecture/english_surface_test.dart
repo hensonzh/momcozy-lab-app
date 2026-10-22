@@ -42,6 +42,8 @@ const _approvedChatFirstChineseSources = <String>{
 void main() {
   test('App source and native prompts contain no unreviewed Chinese UI copy', () {
     final allowedLegacySource = <String, RegExp>{
+      'lib/features/agent_hub/data/agent_conversation_api_repository.dart':
+          RegExp(r"body: \{'title': '宝宝哭声'\}"),
       'lib/modules/mom/domain/me_experience.dart': RegExp(
         r"^\s*'[^']+': '[^']+',?\s*$",
       ),

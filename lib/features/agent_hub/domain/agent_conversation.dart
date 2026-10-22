@@ -97,6 +97,11 @@ abstract interface class AgentConversationRepository {
   });
 }
 
+/// A committed thread is required before a cry result can be claimed by a Run.
+abstract interface class AgentConversationThreadCreator {
+  Future<String> createConversation();
+}
+
 bool hasAgentConversationAssistantProjection(AgentStreamRunState state) {
   return state.textContent.trim().isNotEmpty ||
       state.artifactEvents.isNotEmpty ||

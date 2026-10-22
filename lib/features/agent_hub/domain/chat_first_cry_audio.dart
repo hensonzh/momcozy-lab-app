@@ -1,5 +1,5 @@
-/// Local microphone capture and playback only. This contract deliberately has
-/// no upload or Agent request operation.
+/// Local microphone capture and playback; the backend classifier receives
+/// bytes only after an explicit user submission.
 abstract interface class ChatFirstCryAudioSession {
   Stream<Duration> get positionStream;
   Stream<bool> get playingStream;
@@ -9,6 +9,7 @@ abstract interface class ChatFirstCryAudioSession {
   Future<void> play();
   Future<void> pause();
   Future<void> seek(Duration position);
+  Future<List<int>> readRecording();
   Future<void> clear();
   Future<void> dispose();
 }

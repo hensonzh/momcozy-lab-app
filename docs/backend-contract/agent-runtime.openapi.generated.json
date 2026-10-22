@@ -149,6 +149,27 @@
         "title": "AgentActionReject",
         "type": "object"
       },
+      "AgentAudioAttachmentCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "format": "uuid",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "type": {
+            "const": "audio",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "asset_id"
+        ],
+        "title": "AgentAudioAttachmentCreate",
+        "type": "object"
+      },
       "AgentClientContext": {
         "additionalProperties": false,
         "properties": {
@@ -280,6 +301,27 @@
           "events"
         ],
         "title": "AgentConversationHistoryRead",
+        "type": "object"
+      },
+      "AgentCryAnalysisAttachmentCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "analysis_id": {
+            "format": "uuid",
+            "title": "Analysis Id",
+            "type": "string"
+          },
+          "type": {
+            "const": "cry_analysis",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "analysis_id"
+        ],
+        "title": "AgentCryAnalysisAttachmentCreate",
         "type": "object"
       },
       "AgentEvalCaseCreate": {
@@ -763,6 +805,8 @@
             "items": {
               "discriminator": {
                 "mapping": {
+                  "audio": "#/components/schemas/AgentAudioAttachmentCreate",
+                  "cry_analysis": "#/components/schemas/AgentCryAnalysisAttachmentCreate",
                   "file": "#/components/schemas/AgentFileAttachmentCreate",
                   "form_submission": "#/components/schemas/AgentFormSubmissionAttachmentCreate",
                   "image": "#/components/schemas/AgentImageAttachmentCreate"
@@ -775,6 +819,12 @@
                 },
                 {
                   "$ref": "#/components/schemas/AgentFileAttachmentCreate"
+                },
+                {
+                  "$ref": "#/components/schemas/AgentAudioAttachmentCreate"
+                },
+                {
+                  "$ref": "#/components/schemas/AgentCryAnalysisAttachmentCreate"
                 },
                 {
                   "$ref": "#/components/schemas/AgentFormSubmissionAttachmentCreate"

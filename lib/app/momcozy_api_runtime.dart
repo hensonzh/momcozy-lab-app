@@ -17,6 +17,7 @@ import 'package:momcozy_flutter_app/features/agent_hub/data/platform_image_input
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_api_repository.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/cry_analysis_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/media_content_repository.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_file_cache.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
@@ -523,6 +524,9 @@ class MomCozyApiRuntime {
     return _volumeUnitPreferenceStore ??=
         FlutterSecureVolumeUnitPreferenceStore(userId: currentSession.userId);
   }
+
+  CryAnalysisRepository get cryAnalysisRepository =>
+      CryAnalysisRepository(multipart: multipartTransport, json: jsonTransport);
 
   MediaApiRepository get mediaRepository {
     final transport = jsonTransport;

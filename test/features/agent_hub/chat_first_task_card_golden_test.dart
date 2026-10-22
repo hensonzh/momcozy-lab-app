@@ -58,6 +58,39 @@ void main() {
       matchesGoldenFile('../../goldens/chat_first/task-cards-390.png'),
     );
   });
+  testWidgets('verified cry result card presents a cautious clue at 390', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: momCozyTheme(),
+        home: Scaffold(
+          backgroundColor: const Color(0xFFFFFAF7),
+          body: const Padding(
+            padding: EdgeInsets.all(16),
+            child: ChatFirstCryTaskCard(
+              status: ChatFirstCryTaskStatus.completed,
+              answer: 'sleep',
+              onStart: _noop,
+              onAbandon: _noop,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('可能和想休息有关'), findsOneWidget);
+    expect(find.textContaining('不是确定原因'), findsOneWidget);
+    await expectLater(
+      find.byKey(const ValueKey('chat-first-topic-cry')),
+      matchesGoldenFile('../../goldens/chat_first/cry-result-390.png'),
+    );
+  });
+
   testWidgets('cry preview uses the Demo player hierarchy at 390', (
     tester,
   ) async {
@@ -104,6 +137,9 @@ void main() {
 
 class _PreviewAudio implements ChatFirstCryAudioSession {
   @override
+  Future<List<int>> readRecording() async => <int>[];
+
+  @override
   Stream<Duration> get positionStream => const Stream.empty();
   @override
   Stream<bool> get playingStream => const Stream.empty();
@@ -122,3 +158,5 @@ class _PreviewAudio implements ChatFirstCryAudioSession {
   @override
   Future<void> dispose() async {}
 }
+
+void _noop() {}

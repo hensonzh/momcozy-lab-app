@@ -240,6 +240,15 @@ Map<String, Object?> buildProductionAgentRunPayload(
   );
   final formSubmission = _productionFormSubmissionAttachment(request.metadata);
   if (formSubmission != null) attachments.add(formSubmission);
+  final cryAnalysisId = request.metadata['cry_analysis_id'];
+  if (cryAnalysisId != null) {
+    if (cryAnalysisId is! String || !_looksLikeUuid(cryAnalysisId)) {
+      throw const AgentStreamPayloadException(
+        'Invalid cry analysis reference.',
+      );
+    }
+    attachments.add({'type': 'cry_analysis', 'analysis_id': cryAnalysisId});
+  }
   final normalizedIdempotencyKey = (idempotencyKey ?? request.idempotencyKey)
       ?.trim();
   final normalizedLocale = request.locale.trim();

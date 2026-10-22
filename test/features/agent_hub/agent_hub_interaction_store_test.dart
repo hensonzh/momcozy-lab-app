@@ -78,6 +78,27 @@ void main() {
     expect(decoded.hasConversationHistory, isTrue);
   });
 
+  test(
+    'persisted cry result is a reference, never a trusted displayed category',
+    () {
+      final task = ChatFirstCryTask(
+        id: 'local:cry:verified',
+        createdAt: DateTime.utc(2026, 10, 22),
+        status: ChatFirstCryTaskStatus.completed,
+        analysisId: 'a0a10a10-aaaa-4aaa-aaaa-aaaaaaaaaaaa',
+        answer: 'sleep',
+        analyzedAt: DateTime.utc(2026, 10, 22),
+      );
+      final restored = ChatFirstCryTask.fromMap({
+        ...task.toMap(),
+        'answer': 'injected-false-result',
+      })!;
+      expect(restored.status, ChatFirstCryTaskStatus.verifying);
+      expect(restored.answer, isNull);
+      expect(restored.analysisId, task.analysisId);
+    },
+  );
+
   test('legacy snapshots and untrusted cry entries are safely ignored', () {
     expect(AgentHubInteractionSnapshot.fromMap({}).cryTasks, isEmpty);
     final decoded = AgentHubInteractionSnapshot.fromMap({

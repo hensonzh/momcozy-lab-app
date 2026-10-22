@@ -33,8 +33,9 @@ Product owns each region's shared network/state. Agent is an external consumer
 with a separate database and credentials. The private envs must agree on
 public Product/Agent origins, JWKS, internal service identities and topology;
 `node scripts/validate-workspace-environments.mjs` checks the committed
-non-secret configuration only. Both Agent regional env templates require
-Zoundream endpoint/key for baby-cry analysis. Provision them privately and
+non-secret configuration only. Both Product Backend regional private envs require the Zoundream endpoint/key
+for the separate cry-analysis API. Agent receives only an owner/thread-verified
+result ID, never vendor credentials or audio. Provision the key privately and
 verify a real cry sample end to end; a healthy Agent is not proof of analysis.
 
 Before a release, inspect the region's actual host identity, TLS/ingress,

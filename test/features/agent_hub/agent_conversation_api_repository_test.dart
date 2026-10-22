@@ -6,6 +6,18 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation
 import '../../support/fixture_api_transport.dart';
 
 void main() {
+  test('creates a committed thread before claiming a cry result', () async {
+    final transport = FixtureApiJsonTransport({
+      'id': '024917bc-6593-43ac-9152-d363763f362c',
+    });
+    final id = await AgentConversationApiRepository(
+      transport: transport,
+    ).createConversation();
+    expect(id, '024917bc-6593-43ac-9152-d363763f362c');
+    expect(transport.lastPath, agentConversationsEndpoint);
+    expect(transport.lastBody, {'title': '宝宝哭声'});
+  });
+
   test(
     'restores normalized transcript without assistant completion events',
     () async {
