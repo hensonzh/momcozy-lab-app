@@ -537,7 +537,7 @@ class MomCozyApiRuntime {
   CryAnalysisRepository get cryAnalysisRepository =>
       CryAnalysisRepository(multipart: multipartTransport, json: jsonTransport);
 
-  StoolAnalysisApiRepository? get stoolAnalysisRepository {
+  StoolAnalysisApiRepository? createStoolAnalysisRepository({String? locale}) {
     final transport = jsonTransport;
     if (transport is! ApiJsonMutationTransport) return null;
     return StoolAnalysisApiRepository(
@@ -546,10 +546,13 @@ class MomCozyApiRuntime {
       streamConnector: IoAgentStreamSseGetConnector(),
       apiBaseUri: apiBaseUri,
       accessTokenProvider: () => currentSession.accessToken ?? '',
-      languageProvider: () => currentSession.locale,
+      languageProvider: () => locale ?? currentSession.locale,
       onUnauthorized: agentStreamUnauthorizedHandler,
     );
   }
+
+  StoolAnalysisApiRepository? get stoolAnalysisRepository =>
+      createStoolAnalysisRepository();
 
   StoolPhotoReviewApiRepository? get stoolPhotoReviewRepository {
     final transport = jsonTransport;

@@ -338,6 +338,8 @@ Map<String, Object?> _requestToMap(AgentStreamRequest request) => {
   if (request.files.isNotEmpty)
     'files': request.files.map(_fileToMap).toList(growable: false),
   if (request.metadata.isNotEmpty) 'metadata': request.metadata,
+  if (request.stoolFollowup != null)
+    'stoolFollowup': request.stoolFollowup!.toMap(),
   if (request.idempotencyKey != null) 'idempotencyKey': request.idempotencyKey,
 };
 
@@ -397,6 +399,7 @@ AgentStreamRequest _requestWithImages(
     images: images,
     files: request.files,
     metadata: request.metadata,
+    stoolFollowup: request.stoolFollowup,
     idempotencyKey: request.idempotencyKey,
   );
 }
@@ -434,15 +437,34 @@ AgentStreamRequest? _requestFromMap(Object? value) {
     afterSequence: _int(map['afterSequence']) == 0
         ? _int(map['after_sequence'])
         : _int(map['afterSequence']),
-    locale: momCozyEnglishLocale,
+    locale: _string(map['locale']) ?? momCozyEnglishLocale,
     images: _imagesFromList(map['images']),
     files: _filesFromList(map['files']),
     metadata: metadata is Map
         ? Map<String, Object?>.from(metadata)
         : const <String, Object?>{},
+    stoolFollowup: _stoolFollowupFromMap(
+      map['stoolFollowup'] ?? map['stool_followup'],
+    ),
     idempotencyKey:
         _string(map['idempotencyKey']) ?? _string(map['idempotency_key']),
   );
+}
+
+StoolFollowupInput? _stoolFollowupFromMap(Object? value) {
+  if (value is! Map) return null;
+  final map = Map<String, Object?>.from(value);
+  if (map['schema_version'] != 'stool.followup.ref.v1') return null;
+  final analysisId = _string(map['analysis_id']);
+  final babyId = _string(map['baby_id']);
+  if (analysisId == null || babyId == null) return null;
+  final followup = StoolFollowupInput(analysisId: analysisId, babyId: babyId);
+  try {
+    followup.toMap();
+  } catch (_) {
+    return null;
+  }
+  return followup;
 }
 
 Map<String, Object?> _imageToMap(AgentStreamImageInput image) => {

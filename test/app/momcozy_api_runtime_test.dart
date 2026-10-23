@@ -159,6 +159,33 @@ void main() {
     expect(uploaded.id, 'file-runtime');
   });
 
+  test(
+    'chat-first stool repository can explicitly request Chinese output',
+    () async {
+      final transport = FixtureApiJsonTransport({
+        'analysis_id': 'analysis-runtime',
+        'status': 'queued',
+      });
+      final runtime = MomCozyApiRuntime(
+        jsonTransport: transport,
+        userId: 'user-fixture',
+        babyId: 'baby-fixture',
+        locale: 'en-US',
+      );
+
+      await runtime
+          .createStoolAnalysisRepository(locale: 'zh-CN')!
+          .submit(
+            babyId: 'baby-fixture',
+            threadId: 'thread-fixture',
+            photoIds: const ['photo-fixture'],
+            idempotencyKey: 'stool-runtime-once',
+          );
+
+      expect(transport.lastHeaders?['Accept-Language'], 'zh');
+    },
+  );
+
   test('runtime exposes an injected BLE platform lazily', () async {
     final ble = FakeBlePlatform(
       initialPermission: BlePermissionState.granted,

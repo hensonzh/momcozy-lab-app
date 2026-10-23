@@ -56,12 +56,14 @@ String? stoolPhotoReviewReason(List<String> codes) {
   if (codes.isEmpty) return null;
   return switch (codes.first) {
     'not_stool' => '未拍到可识别的便便',
-    'color_unreadable' => '颜色不够清晰',
-    'shape_unreadable' => '形态不够清晰',
-    'bad_lighting' => '光线或色偏影响识别',
+    'color_unreadable' ||
+    'shape_unreadable' ||
+    'color_shape_unclear' => '颜色或形态不够清晰',
+    'bad_lighting' || 'lighting_abnormal' => '光线或色偏影响识别',
     'face_visible' ||
     'private_parts_visible' ||
-    'other_sensitive_content' => '照片含不必要的敏感内容',
+    'other_sensitive_content' ||
+    'sensitive_info_visible' => '照片含不必要的敏感内容',
     'policy_not_calibrated' || 'review_unavailable' => '审核暂不可用',
     'review_expired' => '审核已过期，请重新上传',
     _ => '请重新选择清晰、仅包含便便的照片',

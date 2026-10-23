@@ -893,7 +893,9 @@ Widget _buildDefaultAgentHubPage(
     pickImage: runtime.agentHubImagePicker,
     pickStoolPhoto: runtime.stoolPhotoOriginalPicker,
     stoolPhotoReviewRepository: runtime.stoolPhotoReviewRepository,
-    stoolAnalysisRepository: runtime.stoolAnalysisRepository,
+    stoolAnalysisRepository: runtime.createStoolAnalysisRepository(
+      locale: chatFirstExperience ? 'zh-CN' : runtime.currentSession.locale,
+    ),
     stoolBabyId: runtime.currentSession.babyId,
     pickDocument: runtime.agentHubDocumentPicker,
     mediaRepository: runtime.mediaRepository,
