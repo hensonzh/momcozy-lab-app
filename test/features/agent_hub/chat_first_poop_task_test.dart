@@ -511,7 +511,10 @@ void main() {
     );
     await tester.pump(const Duration(seconds: 2));
     await tester.pump();
-    expect(find.textContaining('照片审核通过'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('chat-first-poop-review-0')),
+      findsOneWidget,
+    );
     expect(find.textContaining('照片含不必要的敏感内容'), findsOneWidget);
     expect(_submit(tester).onPressed, isNull);
     await tester.ensureVisible(
@@ -569,6 +572,36 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     },
   );
+
+  testWidgets('a transient review read failure keeps polling the same upload', (
+    tester,
+  ) async {
+    _largeViewport(tester);
+    final reviews = _Reviews()..reviewFailures['photo-1'] = 1;
+    await tester.pumpWidget(_page(reviews, _Client()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
+    await tester.pump();
+
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+    expect(find.textContaining('正在审核照片'), findsOneWidget);
+
+    reviews.results['photo-1'] = const StoolPhotoReview(
+      photoId: 'photo-1',
+      status: StoolPhotoReviewStatus.passed,
+    );
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('chat-first-poop-review-0')),
+      findsOneWidget,
+    );
+    expect(reviews.reviewCalls.where((id) => id == 'photo-1').length, 2);
+    await tester.pumpWidget(const SizedBox());
+  });
 
   testWidgets('unknown or failed review never enables analysis', (
     tester,
@@ -696,6 +729,39 @@ void main() {
     expect(client.requests, isEmpty);
     await tester.pumpWidget(const SizedBox());
   });
+
+  testWidgets(
+    'completed card hides follow-up while the server gate is closed',
+    (tester) async {
+      _largeViewport(tester);
+      final analysis = _Analysis()..followupAvailable = false;
+      analysis.historyItems.add(
+        StoolAnalysisHistoryItem(
+          analysisId: 'analysis-synthetic',
+          status: StoolAnalysisStatus.completed,
+          result: _completedResult,
+          babyId: '123e4567-e89b-12d3-a456-426614174001',
+          createdAt: DateTime.utc(2026, 10, 22),
+        ),
+      );
+      analysis.release.complete();
+      await tester.pumpWidget(
+        _page(
+          _Reviews(),
+          _Client(),
+          analysis: analysis,
+          threadId: '123e4567-e89b-12d3-a456-426614174002',
+          babyId: '123e4567-e89b-12d3-a456-426614174001',
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-followup')),
+        findsNothing,
+      );
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 
   testWidgets(
     'completed card selects same-analysis image and result for Agent follow-up',
@@ -873,6 +939,7 @@ class _Analysis implements StoolAnalysisRepository {
   Completer<StoolAnalysisHistoryPage>? historyPending;
   int submissions = 0;
   bool available = true;
+  bool followupAvailable = true;
   List<String>? photoIds;
   String? threadId;
   int? lastCursor;
@@ -884,6 +951,9 @@ class _Analysis implements StoolAnalysisRepository {
 
   @override
   Future<bool> isAnalysisAvailable() async => available;
+
+  @override
+  Future<bool> isFollowupAvailable() async => followupAvailable;
 
   @override
   Future<StoolAnalysisSnapshot> submit({
@@ -1047,12 +1117,14 @@ class _Reviews implements StoolPhotoReviewRepository {
       capabilityPending?.future ?? available;
   Completer<bool>? capabilityPending;
   bool available = true;
+  bool followupAvailable = true;
 
   final uploaded = <Uint8List>[];
   final keys = <String>[];
   final deleted = <String>[];
   final results = <String, StoolPhotoReview>{};
   final pendingReviews = <String, Completer<StoolPhotoReview>>{};
+  final reviewFailures = <String, int>{};
   final reviewCalls = <String>[];
   Completer<void>? pending;
 
@@ -1076,6 +1148,11 @@ class _Reviews implements StoolPhotoReviewRepository {
   @override
   Future<StoolPhotoReview> getReview(String photoId) async {
     reviewCalls.add(photoId);
+    final failures = reviewFailures[photoId] ?? 0;
+    if (failures > 0) {
+      reviewFailures[photoId] = failures - 1;
+      throw StateError('transient review read failure');
+    }
     final blocked = pendingReviews[photoId];
     if (blocked != null) return blocked.future;
     return results[photoId] ??

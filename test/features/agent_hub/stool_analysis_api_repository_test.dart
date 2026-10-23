@@ -26,6 +26,7 @@ void main() {
         accessTokenProvider: () => 'token',
       );
       expect(await repository.isAnalysisAvailable(), isFalse);
+      expect(await repository.isFollowupAvailable(), isFalse);
       expect(json.getPath, '/v1/stool-photos/capability');
       final created = await repository.submit(
         babyId: baby,
@@ -95,6 +96,45 @@ void main() {
       expect(json.postCalls, 1);
     },
   );
+
+  test('follow-up capability is gated by the Product response', () async {
+    final json = _Json()..followupAvailable = true;
+    final repository = StoolAnalysisApiRepository(
+      jsonTransport: json,
+      streamConnector: _Sse(),
+      apiBaseUri: Uri.parse('https://product.test/'),
+      accessTokenProvider: () => 'token',
+    );
+    expect(await repository.isFollowupAvailable(), isTrue);
+    expect(json.getPath, '/v1/stool-photos/capability');
+  });
+
+  test('versioned medical result survives parse and local persistence', () {
+    final source = {
+      ..._completedResult(),
+      'rule_version': 'stool.medical.rules.2026-10-23.v1',
+    };
+    final parsed = StoolAnalysisResult.fromJson(source);
+    expect(parsed.ruleVersion, 'stool.medical.rules.2026-10-23.v1');
+    expect(
+      StoolAnalysisResult.fromMap(parsed.toMap())?.ruleVersion,
+      parsed.ruleVersion,
+    );
+    expect(
+      () => StoolAnalysisResult.fromJson({
+        ...source,
+        'rule_version': 'unknown-rule-version',
+      }),
+      throwsFormatException,
+    );
+    expect(
+      StoolAnalysisResult.fromMap({
+        ...parsed.toMap(),
+        'ruleVersion': 'unknown-rule-version',
+      }),
+      isNull,
+    );
+  });
 
   test('ordered failure progress is read from the Product cursor', () async {
     final json = _Json()..analysisId = analysis;
@@ -541,6 +581,7 @@ class _Json implements ApiJsonTransport {
   String? getPath;
   Map<String, Object?>? getQuery;
   Map<String, Object?>? historyResponse;
+  bool followupAvailable = false;
   Map<String, Object?>? photoResponse;
   String? postPath;
   String? analysisId;
@@ -570,7 +611,7 @@ class _Json implements ApiJsonTransport {
           };
     }
     return path.endsWith('/capability')
-        ? {'analysis_available': false}
+        ? {'analysis_available': false, 'followup_available': followupAvailable}
         : {'analysis_id': analysisId, 'status': 'queued'};
   }
 

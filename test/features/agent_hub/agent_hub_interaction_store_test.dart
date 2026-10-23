@@ -125,7 +125,7 @@ void main() {
     }
   });
 
-  test('restored legacy retry requests use the English app locale', () {
+  test('restored retry requests preserve their selected locale', () {
     final snapshot = AgentHubInteractionSnapshot.fromMap({
       'activeRequest': {
         'message': 'Help me',
@@ -134,9 +134,37 @@ void main() {
       },
     });
 
-    expect(snapshot.activeRequest?.locale, 'en-US');
+    expect(snapshot.activeRequest?.locale, 'zh-CN');
     expect(snapshot.activeRequest?.threadId, 'existing-thread');
     expect(snapshot.activeRequest?.message, 'Help me');
+  });
+
+  test('active stool follow-up authorization survives secure persistence', () {
+    const snapshot = AgentHubInteractionSnapshot(
+      activeRequest: AgentStreamRequest(
+        message: '继续解释',
+        threadId: '11111111-1111-4111-8111-111111111111',
+        locale: 'zh-CN',
+        idempotencyKey: 'followup-once',
+        stoolFollowup: StoolFollowupInput(
+          analysisId: '22222222-2222-4222-8222-222222222222',
+          babyId: '33333333-3333-4333-8333-333333333333',
+        ),
+      ),
+    );
+    final restored = AgentHubInteractionSnapshot.fromMap(
+      jsonDecode(jsonEncode(snapshot.toMap(includeImageData: false)))
+          as Map<String, dynamic>,
+    );
+    expect(
+      restored.activeRequest?.stoolFollowup?.analysisId,
+      '22222222-2222-4222-8222-222222222222',
+    );
+    expect(
+      restored.activeRequest?.stoolFollowup?.babyId,
+      '33333333-3333-4333-8333-333333333333',
+    );
+    expect(restored.activeRequest?.idempotencyKey, 'followup-once');
   });
 
   test('cleanup intent persists without conversation or image bytes', () {

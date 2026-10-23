@@ -244,6 +244,7 @@ class _AgentHubPageState extends State<AgentHubPage>
   bool _poopSubmitting = false;
   bool _poopReviewAvailable = false;
   bool _poopAnalysisAvailable = false;
+  bool _poopFollowupAvailable = false;
   int? _poopPollingGeneration;
   int? _poopAnalysisPollingGeneration;
   String? _poopHistoryInFlightThread;
@@ -491,6 +492,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       _poopTasks.clear();
       _poopReviewAvailable = false;
       _poopAnalysisAvailable = false;
+      _poopFollowupAvailable = false;
       if (widget.chatFirstExperience) unawaited(_loadPoopReviewCapability());
     } else if (oldWidget.stoolBabyId != widget.stoolBabyId) {
       _cancelPoopOnLeave(repository: oldWidget.stoolPhotoReviewRepository);
@@ -699,10 +701,19 @@ class _AgentHubPageState extends State<AgentHubPage>
     } catch (_) {
       // Only the server capability can enable submission.
     }
+    bool followupAvailable = false;
+    try {
+      followupAvailable =
+          await widget.stoolAnalysisRepository?.isFollowupAvailable() ?? false;
+    } catch (_) {
+      // Only the server capability can enable follow-up.
+    }
     if (mounted && generation == _poopCapabilityGeneration) {
       setState(() {
         _poopReviewAvailable = available;
         _poopAnalysisAvailable = analysisAvailable;
+        _poopFollowupAvailable = followupAvailable;
+        if (!followupAvailable) _activePoopFollowupAnalysisId = null;
       });
       _schedulePoopAnalysisPoll();
       unawaited(_recoverPoopHistory());
@@ -930,13 +941,9 @@ class _AgentHubPageState extends State<AgentHubPage>
           setState(() => _poopReviews[image] = updated);
         } catch (_) {
           if (!_isCurrentPoopPhoto(image, taskId, generation)) return;
-          setState(
-            () => _poopReviews[image] = StoolPhotoReview(
-              photoId: current.photoId,
-              status: StoolPhotoReviewStatus.failed,
-              reasonCodes: const ['review_unavailable'],
-            ),
-          );
+          // A transient status-read failure does not change the server-owned
+          // review state. Keep polling from the same photo ID until the bounded
+          // timeout above is reached.
         }
       }
     } finally {
@@ -2482,7 +2489,8 @@ class _AgentHubPageState extends State<AgentHubPage>
     );
     final followupAnalysisId = _activePoopFollowupAnalysisId;
     final followupBabyId = widget.stoolBabyId?.trim();
-    if (followupAnalysisId != null &&
+    if (_poopFollowupAvailable &&
+        followupAnalysisId != null &&
         followupAnalysisId.isNotEmpty &&
         followupBabyId != null &&
         followupBabyId.isNotEmpty) {
@@ -3570,7 +3578,10 @@ class _AgentHubPageState extends State<AgentHubPage>
                                                     ?.analysisId ==
                                                 _activePoopFollowupAnalysisId,
                                             onFollowup:
-                                                task.analysisState?.status ==
+                                                _poopFollowupAvailable &&
+                                                    task
+                                                            .analysisState
+                                                            ?.status ==
                                                         StoolAnalysisStatus
                                                             .completed &&
                                                     task

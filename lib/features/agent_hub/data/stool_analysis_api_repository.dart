@@ -44,6 +44,14 @@ class StoolAnalysisApiRepository implements StoolAnalysisRepository {
   }
 
   @override
+  Future<bool> isFollowupAvailable() async {
+    final capability = await jsonTransport.getJson(
+      '/v1/stool-photos/capability',
+    );
+    return capability['followup_available'] == true;
+  }
+
+  @override
   Future<StoolAnalysisSnapshot> submit({
     required String babyId,
     required String threadId,

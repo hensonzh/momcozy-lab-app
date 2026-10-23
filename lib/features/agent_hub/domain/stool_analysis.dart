@@ -67,6 +67,7 @@ class StoolAnalysisResult {
     required this.summary,
     required this.careAdvice,
     required this.uncertainties,
+    this.ruleVersion,
   });
 
   final String assessmentStatus;
@@ -77,10 +78,12 @@ class StoolAnalysisResult {
   final String summary;
   final String careAdvice;
   final List<String> uncertainties;
+  final String? ruleVersion;
 
   factory StoolAnalysisResult.fromJson(Map<String, Object?> json) {
     final allowed = {
       'schema_version',
+      'rule_version',
       'assessment_status',
       'color',
       'consistency',
@@ -99,9 +102,12 @@ class StoolAnalysisResult {
     final risk = json['risk_level'];
     final summary = json['summary'];
     final advice = json['care_advice'];
+    final ruleVersion = json['rule_version'];
     final observations = json['photo_observations'];
     if (json.keys.toSet().difference(allowed).isNotEmpty ||
         json['schema_version'] != 'stool.result.v1' ||
+        (ruleVersion != null &&
+            ruleVersion != 'stool.medical.rules.2026-10-23.v1') ||
         (assessment != 'assessed' && assessment != 'unable_to_assess') ||
         color is! String ||
         !_colors.contains(color) ||
@@ -141,6 +147,7 @@ class StoolAnalysisResult {
       summary: summary,
       careAdvice: advice,
       uncertainties: List.unmodifiable(uncertainties),
+      ruleVersion: ruleVersion as String?,
     );
   }
 
@@ -153,6 +160,7 @@ class StoolAnalysisResult {
     'summary': summary,
     'careAdvice': careAdvice,
     'uncertainties': uncertainties,
+    if (ruleVersion != null) 'ruleVersion': ruleVersion,
   };
 
   static StoolAnalysisResult? fromMap(Object? value) {
@@ -165,7 +173,10 @@ class StoolAnalysisResult {
     final summary = value['summary'];
     final advice = value['careAdvice'];
     final uncertainties = _stringList(value['uncertainties']);
+    final ruleVersion = value['ruleVersion'];
     if ((assessment != 'assessed' && assessment != 'unable_to_assess') ||
+        (ruleVersion != null &&
+            ruleVersion != 'stool.medical.rules.2026-10-23.v1') ||
         color is! String ||
         !_colors.contains(color) ||
         consistency is! String ||
@@ -198,6 +209,7 @@ class StoolAnalysisResult {
       summary: summary,
       careAdvice: advice,
       uncertainties: List.unmodifiable(uncertainties),
+      ruleVersion: ruleVersion is String ? ruleVersion : null,
     );
   }
 }
@@ -679,6 +691,7 @@ class StoolCardState {
 
 abstract interface class StoolAnalysisRepository {
   Future<bool> isAnalysisAvailable();
+  Future<bool> isFollowupAvailable();
   Future<StoolAnalysisSnapshot> submit({
     required String babyId,
     required String threadId,
