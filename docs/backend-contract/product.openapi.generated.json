@@ -140,7 +140,8 @@
           "purpose": {
             "enum": [
               "model_image",
-              "model_file"
+              "model_file",
+              "model_audio"
             ],
             "title": "Purpose",
             "type": "string"
@@ -5827,6 +5828,109 @@
         "title": "PumpingRecordRead",
         "type": "object"
       },
+      "PumpingRecordUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "duration_seconds": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Seconds"
+          },
+          "milk_volume_ml": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milk Volume Ml"
+          },
+          "plan_task_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Task Id"
+          },
+          "pump_end_time": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pump End Time"
+          },
+          "pump_start_time": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pump Start Time"
+          },
+          "pump_type": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pump Type"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "title": "PumpingRecordUpdate",
+        "type": "object"
+      },
       "PushInstallationDetach": {
         "additionalProperties": false,
         "properties": {
@@ -10567,7 +10671,8 @@
             "schema": {
               "enum": [
                 "model_image",
-                "model_file"
+                "model_file",
+                "model_audio"
               ],
               "title": "Purpose",
               "type": "string"
@@ -11610,6 +11715,12 @@
                   "type": "string"
                 }
               },
+              "audio/wav": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              },
               "image/gif": {
                 "schema": {
                   "format": "binary",
@@ -11635,7 +11746,7 @@
                 }
               }
             },
-            "description": "Authorized model asset bytes. Content-Type matches the validated image or PDF."
+            "description": "Authorized model asset bytes. Content-Type matches the validated image, PDF, or WAV."
           },
           "404": {
             "description": "Capability is unknown, expired, revoked, or no longer matches authoritative file state."
@@ -13468,6 +13579,42 @@
         "x-momcozy-stability": "stable"
       }
     },
+    "/v1/realtime-voice-capability": {
+      "get": {
+        "operationId": "realtime_voice_capability_v1_realtime_voice_capability_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "title": "Response Realtime Voice Capability V1 Realtime Voice Capability Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Realtime Voice Capability",
+        "tags": [
+          "voice"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "voice",
+        "x-momcozy-stability": "stable"
+      }
+    },
     "/v1/realtime-voice-stream": {
       "get": {
         "operationId": "realtime_voice_stream_v1_realtime_voice_stream_get",
@@ -14329,6 +14476,122 @@
         ],
         "x-momcozy-owner": "records",
         "x-momcozy-stability": "stable"
+      },
+      "patch": {
+        "operationId": "update_pumping_v1_records_pumping__record_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PumpingRecordUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PumpingRecordRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Pumping",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
+      }
+    },
+    "/v1/records/pumping/{record_id}/restore": {
+      "post": {
+        "operationId": "restore_pumping_v1_records_pumping__record_id__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PumpingRecordRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Restore Pumping",
+        "tags": [
+          "records"
+        ],
+        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-client": [
+          "flutter"
+        ],
+        "x-momcozy-owner": "records",
+        "x-momcozy-stability": "stable"
       }
     },
     "/v1/schedule": {
@@ -14732,12 +14995,13 @@
         "tags": [
           "support"
         ],
-        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-api-surface": "deprecated_api",
         "x-momcozy-client": [
-          "flutter"
+          "legacy-flutter"
         ],
+        "x-momcozy-notes": "Retained for released clients; the chat-first App has no support-ticket API dependency.",
         "x-momcozy-owner": "support",
-        "x-momcozy-stability": "stable"
+        "x-momcozy-stability": "deprecated"
       },
       "post": {
         "operationId": "create_support_ticket_v1_support_tickets_post",
@@ -14800,12 +15064,13 @@
         "tags": [
           "support"
         ],
-        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-api-surface": "deprecated_api",
         "x-momcozy-client": [
-          "flutter"
+          "legacy-flutter"
         ],
+        "x-momcozy-notes": "Retained for released clients; the chat-first App has no support-ticket API dependency.",
         "x-momcozy-owner": "support",
-        "x-momcozy-stability": "stable"
+        "x-momcozy-stability": "deprecated"
       }
     },
     "/v1/support/tickets/{ticket_id}": {
@@ -14854,12 +15119,13 @@
         "tags": [
           "support"
         ],
-        "x-momcozy-api-surface": "public_app_api",
+        "x-momcozy-api-surface": "deprecated_api",
         "x-momcozy-client": [
-          "flutter"
+          "legacy-flutter"
         ],
+        "x-momcozy-notes": "Retained for released clients; the chat-first App has no support-ticket API dependency.",
         "x-momcozy-owner": "support",
-        "x-momcozy-stability": "stable"
+        "x-momcozy-stability": "deprecated"
       }
     }
   },

@@ -53,9 +53,7 @@ class _ChatFirstRecordSheetState extends State<ChatFirstRecordSheet> {
   Future<bool>? _selectedBabyCheck;
   String _candidateBabyId = '';
 
-  bool get _requiresBaby =>
-      widget.kind == ChatFirstRecordKind.diaper ||
-      widget.kind == ChatFirstRecordKind.sleep;
+  bool get _requiresBaby => widget.kind != ChatFirstRecordKind.pumping;
 
   @override
   void initState() {
@@ -638,8 +636,7 @@ class _ChatFirstRecordSheetState extends State<ChatFirstRecordSheet> {
 
   Future<void> _save() async {
     if (_busy) return;
-    if (widget.kind == ChatFirstRecordKind.diaper ||
-        widget.kind == ChatFirstRecordKind.sleep) {
+    if (_requiresBaby) {
       bool verified = false;
       try {
         verified = await _selectedBabyCheck ?? false;
@@ -672,16 +669,37 @@ class _ChatFirstRecordSheetState extends State<ChatFirstRecordSheet> {
       _error = '';
     });
     try {
-      final savedId = await ChatFirstRecordRepository(
-        transport: widget.runtime.jsonTransport,
-        ownerUserId: widget.runtime.currentSession.userId,
-        babyId: widget.runtime.currentSession.babyId,
-      ).save(_draft, now: widget.runtime.now(), idempotencyKey: _pendingKey!);
+      final ownerUserId = widget.runtime.currentSession.userId;
+      final selectedBabyId = widget.runtime.currentSession.babyId;
+      final savedId =
+          await ChatFirstRecordRepository(
+            transport: widget.runtime.jsonTransport,
+            ownerUserId: ownerUserId,
+            babyId: selectedBabyId,
+          ).save(
+            _draft,
+            now: widget.runtime.now(),
+            timezone: widget.kind == ChatFirstRecordKind.growth
+                ? await widget.runtime.timezoneProvider()
+                : '',
+            idempotencyKey: _pendingKey!,
+          );
       if (!mounted) return;
+      final currentSession = widget.runtime.currentSession;
+      final scopeChanged =
+          currentSession.userId != ownerUserId ||
+          (_requiresBaby && currentSession.babyId != selectedBabyId);
+      widget.runtime.notifyRecordsChanged();
       final messenger = ScaffoldMessenger.of(context);
       Navigator.of(context).pop(savedId);
       messenger.showSnackBar(
-        SnackBar(content: Text('${widget.kind.label} · 保存成功，已同步至当前账号')),
+        SnackBar(
+          content: Text(
+            scopeChanged
+                ? '${widget.kind.label}已由服务器确认保存，但账号或宝宝已切换，请返回原记录范围核对。'
+                : '${widget.kind.label} · 保存成功，已同步至当前账号',
+          ),
+        ),
       );
     } catch (_) {
       if (mounted) setState(() => _error = '保存失败，未同步。请检查网络并重试，填写内容已保留。');

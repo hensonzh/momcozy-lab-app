@@ -6,7 +6,6 @@ import '../features/app_pages/chat_first_baby_page.dart';
 import '../features/app_pages/chat_first_baby_details_page.dart';
 import '../features/agent_hub/presentation/chat_first_actions.dart';
 import '../features/records/presentation/chat_first_record_sheet.dart';
-import '../domain/baby/baby_record.dart';
 import '../services/mother/mother_profile_api_repository.dart';
 import '../services/baby/baby_profiles_api_repository.dart';
 import '../services/baby/baby_records_api_repository.dart';
@@ -71,9 +70,9 @@ class _BabyHomeRouteState extends State<_BabyHomeRoute> {
         runtime: runtime,
         kind: ChatFirstRecordKind.sleep,
       );
-      if (saved != null && mounted) {
-        await controller.refreshRecords(kind: BabyRecordKind.sleep);
-      }
+      // The confirmed save emits the runtime-scoped record revision; the
+      // active controller refreshes through that single invalidation path.
+      if (saved == null || !mounted) return;
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -93,6 +92,7 @@ class _BabyHomeRouteState extends State<_BabyHomeRoute> {
       ),
       recordRepository: BabyRecordsApiRepository(
         transport: runtime.jsonTransport,
+        onMutation: runtime.notifyRecordsChanged,
       ),
       timezoneProvider: runtime.timezoneProvider,
       now: runtime.now,
@@ -105,6 +105,17 @@ class _BabyHomeRouteState extends State<_BabyHomeRoute> {
       ).get()).deliveryDate,
     );
     controller.addListener(() => _homeSnapshots[runtime] = controller.snapshot);
+    runtime.recordRevision.addListener(_recordsChanged);
+  }
+
+  void _recordsChanged() {
+    if (mounted) controller.refreshRecords();
+  }
+
+  @override
+  void dispose() {
+    widget.runtime.recordRevision.removeListener(_recordsChanged);
+    super.dispose();
   }
 
   @override
@@ -117,6 +128,7 @@ class _BabyHomeRouteState extends State<_BabyHomeRoute> {
           onAsk: (question) =>
               context.go('/', extra: {'agentPrefill': question}),
           rememberedBabyId: widget.runtime.currentSession.babyId,
+          mutationNotificationsRefreshPage: true,
         )
       : widget.chatFirstExperience
       ? ChatFirstBabyPage(
@@ -130,6 +142,7 @@ class _BabyHomeRouteState extends State<_BabyHomeRoute> {
           onAsk: (text) => context.go('/', extra: {'agentPrefill': text}),
           onBabySelected: widget.onBabySelected,
           rememberedBabyId: widget.runtime.currentSession.babyId,
+          mutationNotificationsRefreshPage: true,
         );
   // The active page owns and disposes its controller. Only its view snapshot
   // survives navigation; no timer/listener continues on an unmounted page.

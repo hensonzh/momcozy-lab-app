@@ -67,7 +67,11 @@ void main() {
     () async {
       final data = row('feeding');
       final transport = FixtureApiJsonTransport(data);
-      final repository = BabyRecordsApiRepository(transport: transport);
+      var mutations = 0;
+      final repository = BabyRecordsApiRepository(
+        transport: transport,
+        onMutation: () => mutations++,
+      );
       final saved = readBabyRecord(data) as BabyFeedingRecord;
       final draft = BabyFeedingRecord(
         id: '',
@@ -80,11 +84,34 @@ void main() {
       expect(transport.lastMethod, 'POST');
       expect(transport.lastHeaders!['Idempotency-Key'], 'create-once');
       expect(transport.lastPath, '/v1/babies/${saved.babyId}/records');
+      expect(mutations, 1);
       await repository.save(saved, idempotencyKey: 'unused-for-edit');
       expect(transport.lastMethod, 'PUT');
       expect(transport.lastBody!['expected_version'], saved.version);
+      expect(mutations, 2);
     },
   );
+  test('mutation notification waits for a scoped server response', () async {
+    final data = row('feeding')..['baby_id'] = 'other-baby';
+    var mutations = 0;
+    final repository = BabyRecordsApiRepository(
+      transport: FixtureApiJsonTransport(data),
+      onMutation: () => mutations++,
+    );
+    final draft = BabyFeedingRecord(
+      id: '',
+      babyId: 'expected-baby',
+      occurredAt: DateTime.utc(2026, 9, 1, 8),
+      method: BabyFeedingMethod.formula,
+      volumeMl: 60,
+    );
+    await expectLater(
+      repository.save(draft, idempotencyKey: 'scoped-write'),
+      throwsA(isA<ProductFailure>()),
+    );
+    expect(mutations, 0);
+  });
+
   test(
     'foreign baby in a response is rejected before reaching page state',
     () async {

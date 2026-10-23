@@ -30,11 +30,13 @@ class BabyHomePage extends StatefulWidget {
     required this.onAsk,
     this.onBabySelected,
     this.rememberedBabyId,
+    this.mutationNotificationsRefreshPage = false,
   });
   final BabyHomeController controller;
   final ValueChanged<String> onAsk;
   final Future<void> Function(String babyId)? onBabySelected;
   final String? rememberedBabyId;
+  final bool mutationNotificationsRefreshPage;
   @override
   State<BabyHomePage> createState() => _BabyHomePageState();
 }
@@ -279,7 +281,9 @@ class _BabyHomePageState extends State<BabyHomePage>
       growthMetric: metric ?? _metric,
     );
     if (saved != null && mounted && identical(c, widget.controller)) {
-      await c.refreshRecords(kind: kind);
+      if (!widget.mutationNotificationsRefreshPage) {
+        await c.refreshRecords(kind: kind);
+      }
     }
   }
 

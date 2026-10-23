@@ -27,6 +27,7 @@ Future<List<BabyRecord>?> showBabyRecordEditor(
     now: now,
     kind: kind,
     initial: initial,
+    activeSleep: activeSleep,
     growthMetric: growthMetric,
   );
   controller.dailyTab = diaperKind == DiaperKind.wet
@@ -70,22 +71,24 @@ class BabyRecordEditor extends StatelessWidget {
       animation: controller,
       builder: (context, _) {
         final c = controller;
-        final title = c.kind == BabyRecordKind.feeding
-            ? chatFirstExperience
-                  ? '记录喂养'
-                  : 'Log feeding'
-            : c.kind == BabyRecordKind.growth
-            ? chatFirstExperience
-                  ? '记录生长'
-                  : 'Growth & development'
-            : switch (c.dailyTab) {
-                BabyDailyTab.mental =>
-                  chatFirstExperience ? '记录喂养后状态' : 'Log mood after feeding',
-                BabyDailyTab.wet =>
-                  chatFirstExperience ? '记录湿尿布' : 'Log wet diapers',
-                BabyDailyTab.stool =>
-                  chatFirstExperience ? '记录脏尿布' : 'Log dirty diapers',
-              };
+        final title = switch (c.kind) {
+          BabyRecordKind.feeding =>
+            chatFirstExperience ? '记录喂养' : 'Log feeding',
+          BabyRecordKind.sleep => chatFirstExperience ? '记录睡眠' : 'Log sleep',
+          BabyRecordKind.diaper => chatFirstExperience ? '记录尿布' : 'Log diaper',
+          BabyRecordKind.growth =>
+            chatFirstExperience ? '记录生长' : 'Growth & development',
+          BabyRecordKind.development =>
+            chatFirstExperience ? '记录发育观察' : 'Development',
+          BabyRecordKind.dailyStatus => switch (c.dailyTab) {
+            BabyDailyTab.mental =>
+              chatFirstExperience ? '记录喂养后状态' : 'Log mood after feeding',
+            BabyDailyTab.wet =>
+              chatFirstExperience ? '记录湿尿布' : 'Log wet diapers',
+            BabyDailyTab.stool =>
+              chatFirstExperience ? '记录脏尿布' : 'Log dirty diapers',
+          },
+        };
         return BabySheetBody(
           title: title,
           closeTooltip: chatFirstExperience ? '关闭记录表单' : 'Close',

@@ -252,6 +252,15 @@ void main() {
       expect(transport.lastQuery?['start_date'], '2026-10-21');
       expect(transport.lastQuery?['end_date'], '2026-10-23');
       expect(transport.lastQuery?['kind'], 'feeding');
+      final recordReads = transport.getPaths
+          .where((value) => value == path)
+          .length;
+      runtime.notifyRecordsChanged();
+      await tester.pumpAndSettle();
+      expect(
+        transport.getPaths.where((value) => value == path).length,
+        greaterThan(recordReads),
+      );
       transport.responsesByPath[path] = {
         'items': [_feedingRecord('f1', 'b1', '2026-10-21T08:00:00Z')],
         'total': 2,

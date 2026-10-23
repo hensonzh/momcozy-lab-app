@@ -397,6 +397,13 @@ class MomCozyApiRuntime {
   final ValueNotifier<Set<String>> updatedPrimaryTabs = ValueNotifier(
     <String>{},
   );
+
+  /// In-memory invalidation for server-confirmed record mutations. The
+  /// notifier belongs to this account runtime, so changes never cross sessions.
+  final ValueNotifier<int> recordRevision = ValueNotifier(0);
+
+  void notifyRecordsChanged() => recordRevision.value++;
+
   final Set<String> _seenTabUpdateEvents = <String>{};
   String? _activePrimaryTab;
 

@@ -1,6 +1,8 @@
 @Tags(['golden'])
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -314,6 +316,7 @@ void main() {
   ) async {
     final transport = _FlakyRecordTransport();
     final runtime = _runtime(transport);
+    expect(runtime.recordRevision.value, 0);
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -345,19 +348,78 @@ void main() {
     );
     expect(find.textContaining('保存失败'), findsOneWidget);
     expect(find.text('已同步'), findsNothing);
+    expect(runtime.recordRevision.value, 0);
     final firstKey = transport.lastHeaders?['Idempotency-Key'];
     await tester.tap(find.byKey(const ValueKey('record-save')));
     await tester.pumpAndSettle();
     expect(transport.lastHeaders?['Idempotency-Key'], firstKey);
     expect(find.byKey(const ValueKey('chat-first-record-sheet')), findsNothing);
     expect(find.textContaining('已同步'), findsOneWidget);
+    expect(runtime.recordRevision.value, 1);
     await tester.pumpWidget(const SizedBox());
   });
 
   testWidgets(
+    'server-confirmed save stays successful when the selected baby changes in flight',
+    (tester) async {
+      final transport = _DelayedRecordTransport();
+      var current = const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'owner-1',
+        babyId: _babyId,
+        locale: 'zh-CN',
+        accessToken: 'access',
+      );
+      final runtime = MomCozyApiRuntime.fromSession(
+        current,
+        jsonTransport: transport,
+        sessionProvider: () => current,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => FilledButton(
+                onPressed: () => showChatFirstRecordSheet(
+                  context,
+                  runtime: runtime,
+                  kind: ChatFirstRecordKind.formula,
+                ),
+                child: const Text('打开'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('打开'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const ValueKey('record-volume')), '60');
+      await tester.tap(find.byKey(const ValueKey('record-save')));
+      await tester.pump();
+      expect(transport.saveStarted.isCompleted, isTrue);
+
+      current = current.copyWith(
+        babyId: '19034cac-b3ac-46d0-af27-5344b02531e2',
+      );
+      transport.completeSave();
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('chat-first-record-sheet')),
+        findsNothing,
+      );
+      expect(runtime.recordRevision.value, 1);
+      expect(find.textContaining('已由服务器确认保存'), findsOneWidget);
+      expect(find.textContaining('账号或宝宝已切换'), findsOneWidget);
+      expect(find.textContaining('保存失败'), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
     'baby-only record cannot claim synchronization without a real baby',
     (tester) async {
-      final runtime = _runtime(_FlakyRecordTransport());
+      final runtime = _runtime(_FlakyRecordTransport(), babyId: '');
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -386,7 +448,7 @@ void main() {
   testWidgets('missing-baby action reaches the real baby setup route', (
     tester,
   ) async {
-    final runtime = _runtime(_FlakyRecordTransport());
+    final runtime = _runtime(_FlakyRecordTransport(), babyId: '');
     final router = GoRouter(
       routes: [
         GoRoute(
@@ -420,26 +482,109 @@ void main() {
   });
 }
 
-MomCozyApiRuntime _runtime(ApiJsonTransport transport) => MomCozyApiRuntime(
+const _babyId = '5d56ff19-4f29-4414-9554-a125669a314b';
+
+MomCozyApiRuntime _runtime(
+  ApiJsonTransport transport, {
+  String babyId = _babyId,
+}) => MomCozyApiRuntime(
   jsonTransport: transport,
-  session: const MomCozySession(
+  session: MomCozySession(
     status: MomCozySessionStatus.authenticated,
     userId: 'owner-1',
-    babyId: '',
+    babyId: babyId,
     locale: 'zh-CN',
     accessToken: 'access',
   ),
   now: () => DateTime(2026, 10, 15, 10),
+  timezoneProvider: () async => 'Asia/Shanghai',
 );
 
+class _DelayedRecordTransport extends FixtureApiJsonTransport {
+  _DelayedRecordTransport() : super(const {});
+
+  final saveStarted = Completer<void>();
+  final _saveResponse = Completer<Map<String, Object?>>();
+  Map<String, Object?>? _body;
+
+  void completeSave() {
+    final observation = Map<String, Object?>.from(
+      _body?['observation'] as Map? ?? const {},
+    );
+    _saveResponse.complete({
+      'id': 'record-delayed',
+      'baby_id': _babyId,
+      'version': 1,
+      'observation': observation,
+      'deleted_at': null,
+      'created_at': '2026-10-23T02:00:00Z',
+      'updated_at': '2026-10-23T02:00:00Z',
+    });
+  }
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) async {
+    if (path == '/v1/babies') {
+      return const {
+        'items': [
+          {
+            'id': _babyId,
+            'name': '真实宝宝',
+            'birth_date': '2026-09-01',
+            'sex': 'female',
+            'feeding_mode': 'unknown',
+            'version': 1,
+            'created_at': '2026-09-01T00:00:00Z',
+            'updated_at': '2026-09-01T00:00:00Z',
+          },
+        ],
+      };
+    }
+    return super.getJson(path, query: query);
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) {
+    _body = Map<String, Object?>.from(body);
+    saveStarted.complete();
+    return _saveResponse.future;
+  }
+}
+
 class _FlakyRecordTransport extends FixtureApiJsonTransport {
-  _FlakyRecordTransport()
-    : super(const {
-        'id': 'record-1',
-        'owner_user_id': 'owner-1',
-        'status': 'active',
-      });
+  _FlakyRecordTransport() : super(const {});
   int saves = 0;
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) async {
+    if (path == '/v1/babies') {
+      return const {
+        'items': [
+          {
+            'id': _babyId,
+            'name': '真实宝宝',
+            'birth_date': '2026-09-01',
+            'sex': 'female',
+            'feeding_mode': 'unknown',
+            'version': 1,
+            'created_at': '2026-09-01T00:00:00Z',
+            'updated_at': '2026-09-01T00:00:00Z',
+          },
+        ],
+      };
+    }
+    return super.getJson(path, query: query);
+  }
 
   @override
   Future<Map<String, Object?>> postJson(
@@ -447,7 +592,7 @@ class _FlakyRecordTransport extends FixtureApiJsonTransport {
     Map<String, Object?> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    final value = await super.postJson(path, body: body, headers: headers);
+    await super.postJson(path, body: body, headers: headers);
     if (saves++ == 0) {
       throw const ApiHttpException(
         statusCode: 503,
@@ -455,6 +600,17 @@ class _FlakyRecordTransport extends FixtureApiJsonTransport {
         body: null,
       );
     }
-    return value;
+    final observation = Map<String, Object?>.from(
+      body['observation'] as Map? ?? const {},
+    );
+    return {
+      'id': 'record-1',
+      'baby_id': _babyId,
+      'version': 1,
+      'observation': observation,
+      'deleted_at': null,
+      'created_at': '2026-10-15T02:00:00Z',
+      'updated_at': '2026-10-15T02:00:00Z',
+    };
   }
 }

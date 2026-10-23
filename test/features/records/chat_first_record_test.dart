@@ -44,58 +44,157 @@ void main() {
   });
 
   test(
-    'three account-scoped record kinds use real Product Backend endpoints',
+    'feeding records use the selected baby authoritative record endpoint',
     () async {
+      const babyId = '5d56ff19-4f29-4414-9554-a125669a314b';
       for (final kind in [
+        ChatFirstRecordKind.nursing,
         ChatFirstRecordKind.formula,
-        ChatFirstRecordKind.pumping,
-        ChatFirstRecordKind.growth,
+        ChatFirstRecordKind.expressed,
       ]) {
         final draft = ChatFirstRecordDraft(kind: kind, startedAt: now)
-          ..volumeMl = 50
-          ..weightKg = 3.2;
-        final transport = FixtureApiJsonTransport(const {
-          'id': 'saved-1',
-          'owner_user_id': 'owner-1',
-          'status': 'active',
-        });
-        final repository = ChatFirstRecordRepository(
+          ..side = 'left'
+          ..durationMinutes = 20
+          ..volumeMl = 70;
+        final wire = babyRow('feeding');
+        final observation = Map<String, Object?>.from(
+          wire['observation']! as Map,
+        );
+        observation
+          ..['occurred_at'] = now.toUtc().toIso8601String()
+          ..['note'] = ''
+          ..['method'] = switch (kind) {
+            ChatFirstRecordKind.nursing => 'breastfeeding',
+            ChatFirstRecordKind.formula => 'formula',
+            _ => 'expressed_milk',
+          }
+          ..['side'] = kind == ChatFirstRecordKind.nursing ? 'left' : null
+          ..['volume_ml'] = kind == ChatFirstRecordKind.nursing ? null : 70.0
+          ..['duration_minutes'] = kind == ChatFirstRecordKind.nursing
+              ? 20
+              : null;
+        wire['observation'] = observation;
+        final transport = FixtureApiJsonTransport(wire);
+        await ChatFirstRecordRepository(
           transport: transport,
           ownerUserId: 'owner-1',
+          babyId: babyId,
+        ).save(
+          draft,
+          now: now,
+          timezone: 'Asia/Shanghai',
+          idempotencyKey: 'feeding-$kind',
         );
-        await repository.save(draft, now: now, idempotencyKey: 'safe-key-1');
-        expect(transport.lastPath, switch (kind) {
-          ChatFirstRecordKind.formula => '/v1/records/feeding',
-          ChatFirstRecordKind.pumping => '/v1/records/pumping',
-          _ => '/v1/records/growth',
-        });
-        expect(transport.lastHeaders?['Idempotency-Key'], 'safe-key-1');
-        expect(transport.lastBody!.containsKey('infant_id'), isFalse);
+        expect(transport.lastPath, '/v1/babies/$babyId/records');
+        expect(transport.lastHeaders?['Idempotency-Key'], 'feeding-$kind');
+        final saved = transport.lastBody!['observation'] as Map;
+        expect(saved['kind'], 'feeding');
+        expect(saved['method'], observation['method']);
       }
     },
   );
 
-  test(
-    'expressed milk is a measured feeding, not a guessed nursing volume',
-    () async {
-      final draft = ChatFirstRecordDraft(
-        kind: ChatFirstRecordKind.expressed,
-        startedAt: now,
-      )..volumeMl = 70;
-      final transport = FixtureApiJsonTransport(const {
-        'id': 'saved-1',
-        'owner_user_id': 'owner-1',
-        'status': 'active',
-      });
+  test('feeding response must confirm the requested method', () async {
+    const babyId = '5d56ff19-4f29-4414-9554-a125669a314b';
+    final draft = ChatFirstRecordDraft(
+      kind: ChatFirstRecordKind.formula,
+      startedAt: now,
+    )..volumeMl = 70;
+    final wire = babyRow('feeding');
+    await expectLater(
+      ChatFirstRecordRepository(
+        transport: FixtureApiJsonTransport(wire),
+        ownerUserId: 'owner-1',
+        babyId: babyId,
+      ).save(
+        draft,
+        now: now,
+        timezone: 'Asia/Shanghai',
+        idempotencyKey: 'wrong-method',
+      ),
+      throwsFormatException,
+    );
+  });
+
+  test('growth writes weight and length atomically to baby records', () async {
+    const babyId = '5d56ff19-4f29-4414-9554-a125669a314b';
+    Map<String, Object?> growthRow(String id, String metric, double value) => {
+      'id': id,
+      'baby_id': babyId,
+      'version': 1,
+      'observation': {
+        'kind': 'growth',
+        'recorded_on': '2026-10-15',
+        'timezone': 'Asia/Shanghai',
+        'metric': metric,
+        'value': value,
+        'unit': metric == 'weight' ? 'kg' : 'cm',
+      },
+      'deleted_at': null,
+      'created_at': '2026-10-15T01:30:00Z',
+      'updated_at': '2026-10-15T01:30:00Z',
+    };
+    final transport = FixtureApiJsonTransport({
+      'items': [
+        growthRow('weight-1', 'weight', 3.2),
+        growthRow('length-1', 'length', 52),
+      ],
+    });
+    final draft =
+        ChatFirstRecordDraft(kind: ChatFirstRecordKind.growth, startedAt: now)
+          ..weightKg = 3.2
+          ..heightCm = 52;
+    expect(
       await ChatFirstRecordRepository(
         transport: transport,
         ownerUserId: 'owner-1',
-      ).save(draft, now: now, idempotencyKey: 'expressed-once');
-      expect(transport.lastPath, '/v1/records/feeding');
-      expect(transport.lastBody, containsPair('feed_type', 'expressed_milk'));
-      expect(transport.lastBody, containsPair('volume_ml', 70));
-    },
-  );
+        babyId: babyId,
+      ).save(
+        draft,
+        now: now,
+        timezone: 'Asia/Shanghai',
+        idempotencyKey: 'growth-once',
+      ),
+      'weight-1',
+    );
+    expect(transport.lastPath, '/v1/babies/$babyId/records/batch');
+    expect(transport.lastHeaders?['Idempotency-Key'], 'growth-once');
+    final observations = transport.lastBody!['observations'] as List;
+    expect(observations, hasLength(2));
+    expect(
+      observations.every(
+        (value) => !(value as Map).containsKey('measurement_source'),
+      ),
+      isTrue,
+    );
+    expect(observations.map((value) => (value as Map)['metric']).toSet(), {
+      'weight',
+      'length',
+    });
+  });
+
+  test('pumping remains an owner-scoped maternal record', () async {
+    final transport = FixtureApiJsonTransport(const {
+      'id': 'saved-1',
+      'owner_user_id': 'owner-1',
+      'status': 'active',
+    });
+    final draft = ChatFirstRecordDraft(
+      kind: ChatFirstRecordKind.pumping,
+      startedAt: now,
+    )..volumeMl = 50;
+    await ChatFirstRecordRepository(
+      transport: transport,
+      ownerUserId: 'owner-1',
+    ).save(
+      draft,
+      now: now,
+      timezone: 'Asia/Shanghai',
+      idempotencyKey: 'pump-once',
+    );
+    expect(transport.lastPath, '/v1/records/pumping');
+    expect(transport.lastHeaders?['Idempotency-Key'], 'pump-once');
+  });
 
   test(
     'diaper and sleep require matching saved baby record categories',
@@ -127,7 +226,12 @@ void main() {
           babyId: babyId,
         );
         expect(
-          await repository.save(draft, now: now, idempotencyKey: 'baby-once'),
+          await repository.save(
+            draft,
+            now: now,
+            timezone: 'Asia/Shanghai',
+            idempotencyKey: 'baby-once',
+          ),
           wire['id'],
         );
         expect(transport.lastPath, '/v1/babies/$babyId/records');
@@ -143,39 +247,50 @@ void main() {
           transport: wrongKind,
           ownerUserId: 'owner-1',
           babyId: babyId,
-        ).save(diaper, now: now, idempotencyKey: 'wrong-kind'),
+        ).save(
+          diaper,
+          now: now,
+          timezone: 'Asia/Shanghai',
+          idempotencyKey: 'wrong-kind',
+        ),
         throwsFormatException,
       );
     },
   );
 
-  test(
-    'baby diaper and sleep only sync with an actual selected baby',
-    () async {
-      for (final kind in [
-        ChatFirstRecordKind.diaper,
-        ChatFirstRecordKind.sleep,
-      ]) {
-        final draft =
-            ChatFirstRecordDraft(
-                kind: kind,
-                startedAt: now.subtract(const Duration(hours: 1)),
-              )
-              ..diaperKind = 'wet'
-              ..endedAt = now.subtract(const Duration(minutes: 25));
-        final transport = FixtureApiJsonTransport(const {});
-        final repository = ChatFirstRecordRepository(
-          transport: transport,
-          ownerUserId: 'owner-1',
-        );
-        await expectLater(
-          repository.save(draft, now: now, idempotencyKey: 'safe-key-2'),
-          throwsStateError,
-        );
-        expect(transport.mutationPaths, isEmpty);
-      }
-    },
-  );
+  test('all baby record kinds require an actual selected baby', () async {
+    for (final kind in [
+      ChatFirstRecordKind.nursing,
+      ChatFirstRecordKind.formula,
+      ChatFirstRecordKind.expressed,
+      ChatFirstRecordKind.diaper,
+      ChatFirstRecordKind.sleep,
+      ChatFirstRecordKind.growth,
+    ]) {
+      final draft =
+          ChatFirstRecordDraft(
+              kind: kind,
+              startedAt: now.subtract(const Duration(hours: 1)),
+            )
+            ..diaperKind = 'wet'
+            ..endedAt = now.subtract(const Duration(minutes: 25));
+      final transport = FixtureApiJsonTransport(const {});
+      final repository = ChatFirstRecordRepository(
+        transport: transport,
+        ownerUserId: 'owner-1',
+      );
+      await expectLater(
+        repository.save(
+          draft,
+          now: now,
+          timezone: 'Asia/Shanghai',
+          idempotencyKey: 'safe-key-2',
+        ),
+        throwsStateError,
+      );
+      expect(transport.mutationPaths, isEmpty);
+    }
+  });
 
   test(
     'rejects a response from another owner instead of saying synced',
@@ -189,11 +304,16 @@ void main() {
         ownerUserId: 'owner-1',
       );
       final draft = ChatFirstRecordDraft(
-        kind: ChatFirstRecordKind.formula,
+        kind: ChatFirstRecordKind.pumping,
         startedAt: now,
       )..volumeMl = 50;
       await expectLater(
-        repository.save(draft, now: now, idempotencyKey: 'safe-key'),
+        repository.save(
+          draft,
+          now: now,
+          timezone: 'Asia/Shanghai',
+          idempotencyKey: 'safe-key',
+        ),
         throwsFormatException,
       );
     },
