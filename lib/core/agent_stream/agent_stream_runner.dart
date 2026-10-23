@@ -319,6 +319,7 @@ AgentStreamRequest _withStableIdempotencyKey(AgentStreamRequest request) {
     images: request.images,
     files: request.files,
     metadata: request.metadata,
+    stoolFollowup: request.stoolFollowup,
     idempotencyKey: 'agent-run-${DateTime.now().microsecondsSinceEpoch}',
   );
 }

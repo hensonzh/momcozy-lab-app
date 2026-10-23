@@ -15,6 +15,7 @@ class AgentStreamRequest {
     this.images = const <AgentStreamImageInput>[],
     this.files = const <AgentStreamFileInput>[],
     this.metadata = const <String, Object?>{},
+    this.stoolFollowup,
     this.idempotencyKey,
   });
 
@@ -29,6 +30,7 @@ class AgentStreamRequest {
   final List<AgentStreamImageInput> images;
   final List<AgentStreamFileInput> files;
   final Map<String, Object?> metadata;
+  final StoolFollowupInput? stoolFollowup;
   final String? idempotencyKey;
 
   Map<String, Object?> toMap() => {
@@ -43,6 +45,7 @@ class AgentStreamRequest {
     if (files.isNotEmpty)
       'files': files.map((file) => file.toMap()).toList(growable: false),
     if (metadata.isNotEmpty) 'metadata': metadata,
+    if (stoolFollowup != null) 'stoolFollowup': stoolFollowup!.toMap(),
     if (idempotencyKey != null) 'idempotencyKey': idempotencyKey,
   };
 
@@ -64,6 +67,7 @@ class AgentStreamRequest {
       images: images,
       files: files,
       metadata: metadata,
+      stoolFollowup: stoolFollowup,
       idempotencyKey: idempotencyKey,
     );
   }
@@ -81,8 +85,29 @@ class AgentStreamRequest {
       images: images,
       files: files,
       metadata: metadata,
+      stoolFollowup: stoolFollowup,
       idempotencyKey: idempotencyKey,
     );
+  }
+}
+
+class StoolFollowupInput {
+  const StoolFollowupInput({required this.analysisId, required this.babyId});
+
+  final String analysisId;
+  final String babyId;
+
+  Map<String, Object?> toMap() {
+    if (!_looksLikeUuid(analysisId) || !_looksLikeUuid(babyId)) {
+      throw const AgentStreamPayloadException(
+        'Invalid stool follow-up reference.',
+      );
+    }
+    return {
+      'schema_version': 'stool.followup.ref.v1',
+      'analysis_id': analysisId,
+      'baby_id': babyId,
+    };
   }
 }
 
@@ -263,6 +288,8 @@ Map<String, Object?> buildProductionAgentRunPayload(
     'message': text,
     if (attachments.isNotEmpty) 'attachments': attachments,
     if (clientContext.isNotEmpty) 'client_context': clientContext,
+    if (request.stoolFollowup != null)
+      'stool_followup': request.stoolFollowup!.toMap(),
     'runtime_pattern': 'proprietary_runtime',
     if (normalizedIdempotencyKey != null && normalizedIdempotencyKey.isNotEmpty)
       'idempotency_key': normalizedIdempotencyKey,

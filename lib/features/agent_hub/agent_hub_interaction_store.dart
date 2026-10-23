@@ -397,6 +397,7 @@ AgentStreamRequest _requestWithImages(
     images: images,
     files: request.files,
     metadata: request.metadata,
+    stoolFollowup: request.stoolFollowup,
     idempotencyKey: request.idempotencyKey,
   );
 }

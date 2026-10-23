@@ -117,7 +117,7 @@ void main() {
       expect(specialty.submissions, 1);
       expect(specialty.photoIds, ['photo-1']);
       expect(specialty.threadId, '123e4567-e89b-12d3-a456-426614174002');
-      expect(find.textContaining('正在等待已验证的分析结果'), findsOneWidget);
+      expect(find.textContaining('正在等待分析'), findsOneWidget);
       expect(client.requests, isEmpty);
       expect(reviews.deleted, isEmpty);
       await tester.pump(const Duration(seconds: 2));
@@ -195,7 +195,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(specialty.historyCalls, greaterThan(0));
-      expect(find.textContaining('正在等待已验证的分析结果'), findsOneWidget);
+      expect(find.textContaining('正在等待分析'), findsOneWidget);
       await tester.pump(const Duration(seconds: 2));
       await tester.pumpAndSettle();
       expect(find.text('专项分析未完成，请稍后重试。'), findsOneWidget);
@@ -698,6 +698,64 @@ void main() {
   });
 
   testWidgets(
+    'completed card selects same-analysis image and result for Agent follow-up',
+    (tester) async {
+      _largeViewport(tester);
+      final analysis = _Analysis()..streamCompleted = true;
+      analysis.historyItems.add(
+        StoolAnalysisHistoryItem(
+          analysisId: 'analysis-synthetic',
+          status: StoolAnalysisStatus.completed,
+          result: _completedResult,
+          babyId: '123e4567-e89b-12d3-a456-426614174001',
+          createdAt: DateTime.utc(2026, 10, 22),
+        ),
+      );
+      analysis.release.complete();
+      final client = _Client();
+      await tester.pumpWidget(
+        _page(
+          _Reviews(),
+          client,
+          analysis: analysis,
+          threadId: '123e4567-e89b-12d3-a456-426614174002',
+          babyId: '123e4567-e89b-12d3-a456-426614174001',
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+      final followup = find.byKey(const ValueKey('chat-first-poop-followup'));
+      expect(followup, findsOneWidget);
+      await tester.ensureVisible(followup);
+      await tester.tap(followup);
+      await tester.pump();
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('agent-composer-input')),
+            )
+            .controller
+            ?.text,
+        contains('这次看便便分析结果'),
+      );
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+      expect(client.requests, hasLength(1));
+      expect(
+        client.requests.single.stoolFollowup?.analysisId,
+        'analysis-synthetic',
+      );
+      expect(
+        client.requests.single.stoolFollowup?.babyId,
+        '123e4567-e89b-12d3-a456-426614174001',
+      );
+      expect(client.requests.single.images, isEmpty);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
     'legacy server history remains readable without displaying prompt',
     (tester) async {
       _smallViewport(tester);
@@ -795,10 +853,22 @@ Widget _page(
   ),
 );
 
+const _completedResult = StoolAnalysisResult(
+  assessmentStatus: 'assessed',
+  color: 'yellow',
+  consistency: 'mushy',
+  findings: ['none'],
+  riskLevel: 'routine',
+  summary: '从照片看为常见黄色糊状外观。',
+  careAdvice: '继续观察宝宝整体状态和后续排便变化。',
+  uncertainties: [],
+);
+
 class _Analysis implements StoolAnalysisRepository {
   final release = Completer<void>();
   final terminalRelease = Completer<void>();
   bool streamProgress = false;
+  bool streamCompleted = false;
   Completer<StoolAnalysisSnapshot>? admissionPending;
   Completer<StoolAnalysisHistoryPage>? historyPending;
   int submissions = 0;
@@ -883,6 +953,69 @@ class _Analysis implements StoolAnalysisRepository {
   ) async* {
     lastCursor = afterSequence;
     await release.future;
+    if (streamCompleted) {
+      final events = <StoolAnalysisEvent>[
+        const StoolAnalysisEvent(
+          analysisId: 'analysis-synthetic',
+          sequence: 2,
+          type: StoolAnalysisEventType.started,
+        ),
+        const StoolAnalysisEvent(
+          analysisId: 'analysis-synthetic',
+          sequence: 3,
+          type: StoolAnalysisEventType.fieldReady,
+          field: 'color',
+          value: 'yellow',
+        ),
+        const StoolAnalysisEvent(
+          analysisId: 'analysis-synthetic',
+          sequence: 4,
+          type: StoolAnalysisEventType.fieldReady,
+          field: 'consistency',
+          value: 'mushy',
+        ),
+        const StoolAnalysisEvent(
+          analysisId: 'analysis-synthetic',
+          sequence: 5,
+          type: StoolAnalysisEventType.fieldReady,
+          field: 'findings',
+          value: ['none'],
+        ),
+        const StoolAnalysisEvent(
+          analysisId: 'analysis-synthetic',
+          sequence: 6,
+          type: StoolAnalysisEventType.fieldReady,
+          field: 'risk_level',
+          value: 'routine',
+        ),
+        const StoolAnalysisEvent(
+          analysisId: 'analysis-synthetic',
+          sequence: 7,
+          type: StoolAnalysisEventType.fieldReady,
+          field: 'summary',
+          value: '从照片看为常见黄色糊状外观。',
+        ),
+        const StoolAnalysisEvent(
+          analysisId: 'analysis-synthetic',
+          sequence: 8,
+          type: StoolAnalysisEventType.fieldReady,
+          field: 'care_advice',
+          value: '继续观察宝宝整体状态和后续排便变化。',
+        ),
+        const StoolAnalysisEvent(
+          analysisId: 'analysis-synthetic',
+          sequence: 9,
+          type: StoolAnalysisEventType.completed,
+          result: _completedResult,
+        ),
+      ];
+      for (final event in events.where(
+        (event) => event.sequence > afterSequence,
+      )) {
+        yield event;
+      }
+      return;
+    }
     if (streamProgress) {
       if (afterSequence == 1) {
         yield const StoolAnalysisEvent(

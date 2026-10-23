@@ -72,6 +72,27 @@ void main() {
       expect(payload.containsKey('workflow_reply'), isFalse);
     });
 
+    test('adds only a bounded stool follow-up reference to the run', () {
+      final payload = buildProductionAgentRunPayload(
+        const AgentStreamRequest(
+          message: '请解释这次结果。',
+          threadId: '7f4df45b-c88f-4a1a-9810-d4f8e66ab4f5',
+          stoolFollowup: StoolFollowupInput(
+            analysisId: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+            babyId: '7b8aa8c8-2c49-48c4-9cad-80f438a6c979',
+          ),
+        ),
+      );
+
+      expect(payload['stool_followup'], {
+        'schema_version': 'stool.followup.ref.v1',
+        'analysis_id': '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
+        'baby_id': '7b8aa8c8-2c49-48c4-9cad-80f438a6c979',
+      });
+      expect(payload.toString().contains('data:image'), isFalse);
+      expect(payload.toString().contains('result'), isFalse);
+    });
+
     test('adds image attachments to the production run create contract', () {
       final payload = buildProductionAgentRunPayload(
         const AgentStreamRequest(

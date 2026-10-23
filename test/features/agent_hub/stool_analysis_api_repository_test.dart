@@ -96,14 +96,96 @@ void main() {
     },
   );
 
+  test('ordered failure progress is read from the Product cursor', () async {
+    final json = _Json()..analysisId = analysis;
+    final sse = _Sse()
+      ..frames = [
+        _frame(analysis, 2, 'stool.analysis.started'),
+        _frame(analysis, 3, 'stool.analysis.failed'),
+      ];
+    final repository = StoolAnalysisApiRepository(
+      jsonTransport: json,
+      streamConnector: sse,
+      apiBaseUri: Uri.parse('https://product.test/'),
+      accessTokenProvider: () => 'token',
+    );
+    final events = await repository.eventsAfter(analysis, 1).toList();
+    expect(events.map((event) => event.type), [
+      StoolAnalysisEventType.started,
+      StoolAnalysisEventType.failed,
+    ]);
+    expect(sse.uri.queryParameters['after_sequence'], '1');
+  });
+
   test(
-    'ordered progress is read from the Product cursor without medical fields',
+    'validated field and completion events are parsed from Product replay',
     () async {
       final json = _Json()..analysisId = analysis;
       final sse = _Sse()
         ..frames = [
           _frame(analysis, 2, 'stool.analysis.started'),
-          _frame(analysis, 3, 'stool.analysis.failed'),
+          _frame(
+            analysis,
+            3,
+            'stool.field.ready',
+            extra: {
+              'payload': {'field': 'color', 'value': 'yellow'},
+            },
+          ),
+          _frame(
+            analysis,
+            4,
+            'stool.field.ready',
+            extra: {
+              'payload': {'field': 'consistency', 'value': 'mushy'},
+            },
+          ),
+          _frame(
+            analysis,
+            5,
+            'stool.field.ready',
+            extra: {
+              'payload': {
+                'field': 'findings',
+                'value': ['none'],
+              },
+            },
+          ),
+          _frame(
+            analysis,
+            6,
+            'stool.field.ready',
+            extra: {
+              'payload': {'field': 'risk_level', 'value': 'routine'},
+            },
+          ),
+          _frame(
+            analysis,
+            7,
+            'stool.field.ready',
+            extra: {
+              'payload': {'field': 'summary', 'value': 'Common appearance.'},
+            },
+          ),
+          _frame(
+            analysis,
+            8,
+            'stool.field.ready',
+            extra: {
+              'payload': {
+                'field': 'care_advice',
+                'value': 'Continue observation.',
+              },
+            },
+          ),
+          _frame(
+            analysis,
+            9,
+            'stool.analysis.completed',
+            extra: {
+              'payload': {'result': _completedResult()},
+            },
+          ),
         ];
       final repository = StoolAnalysisApiRepository(
         jsonTransport: json,
@@ -112,11 +194,17 @@ void main() {
         accessTokenProvider: () => 'token',
       );
       final events = await repository.eventsAfter(analysis, 1).toList();
-      expect(events.map((event) => event.type), [
-        StoolAnalysisEventType.started,
-        StoolAnalysisEventType.failed,
-      ]);
-      expect(sse.uri.queryParameters['after_sequence'], '1');
+      var state = StoolCardState(
+        analysisId: analysis,
+        sequence: 1,
+        visible: true,
+      );
+      for (final event in events) {
+        state = state.apply(event);
+      }
+      expect(state.status, StoolAnalysisStatus.completed);
+      expect(state.result?.riskLevel, 'routine');
+      expect(state.summary, 'Common appearance.');
     },
   );
 
@@ -405,6 +493,28 @@ void main() {
     },
   );
 }
+
+Map<String, Object?> _completedResult() => {
+  'schema_version': 'stool.result.v1',
+  'assessment_status': 'assessed',
+  'color': 'yellow',
+  'consistency': 'mushy',
+  'findings': ['none'],
+  'risk_level': 'routine',
+  'summary': 'Common appearance.',
+  'care_advice': 'Continue observation.',
+  'uncertainties': [],
+  'photo_observations': [
+    {
+      'position': 0,
+      'image_quality': 'adequate',
+      'color': 'yellow',
+      'consistency': 'mushy',
+      'findings': ['none'],
+      'note': 'Clear.',
+    },
+  ],
+};
 
 Map<String, Object?> _event(
   String analysis,
