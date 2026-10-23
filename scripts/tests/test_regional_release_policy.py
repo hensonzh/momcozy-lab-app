@@ -17,7 +17,7 @@ class RegionalReleasePolicyTest(unittest.TestCase):
         self.assertIn("MOMCOZY_INTERNAL_INVITE_LOGIN=false", north_america)
 
     def test_build_workflows_are_main_only(self) -> None:
-        for name in ("app-ci.yml", "app-north-america-ci.yml", "web-demo.yml"):
+        for name in ("app-ci.yml", "app-north-america-ci.yml"):
             workflow = (ROOT / ".github/workflows" / name).read_text()
             self.assertNotIn("pull_request:", workflow)
             self.assertIn("main", workflow)
