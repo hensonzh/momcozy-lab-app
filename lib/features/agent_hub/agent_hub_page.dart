@@ -1385,7 +1385,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     }
   }
 
-  void _openCryTask() {
+  void _openCryTask({bool startCapture = false}) {
     final existing = _visibleCryTasks
         .where((task) => task.status == ChatFirstCryTaskStatus.pending)
         .lastOrNull;
@@ -1409,6 +1409,9 @@ class _AgentHubPageState extends State<AgentHubPage>
       setState(() {
         _activeCryTaskId = existing.id;
       });
+    }
+    if (startCapture && existing == null && _activeCryTaskId != null) {
+      _startCryCapture(_activeCryTaskId!);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final target = _activeCryCardKey.currentContext;
@@ -4089,7 +4092,18 @@ class _AgentHubPageState extends State<AgentHubPage>
                                               !_crySubmitting &&
                                               _isPageVisible &&
                                               !_isVisibleReplyRunning &&
-                                              !_conversationSwitchPending,
+                                              !_conversationSwitchPending &&
+                                              (task.status ==
+                                                      ChatFirstCryTaskStatus
+                                                          .pending ||
+                                                  !_visibleCryTasks.any(
+                                                    (other) =>
+                                                        other.status ==
+                                                        ChatFirstCryTaskStatus
+                                                            .pending,
+                                                  )) &&
+                                              (_cryCapture == null ||
+                                                  _activeCryTaskId == task.id),
                                           controller:
                                               _activeCryTaskId == task.id
                                               ? _cryCapture
@@ -4098,7 +4112,9 @@ class _AgentHubPageState extends State<AgentHubPage>
                                               task.status ==
                                                   ChatFirstCryTaskStatus.pending
                                               ? _startCryCapture(task.id)
-                                              : _openCryTask(),
+                                              : _openCryTask(
+                                                  startCapture: true,
+                                                ),
                                           onAbandon: () =>
                                               _abandonCryTask(task.id),
                                         ),

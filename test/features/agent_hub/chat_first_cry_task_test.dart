@@ -157,6 +157,7 @@ void main() {
         <int>[1, 2, 3],
       ]);
       expect(find.text('可能和饥饿有关'), findsOneWidget);
+      expect(find.textContaining('cry_translated'), findsNothing);
       expect(agent.requests, hasLength(1));
       final payload = buildProductionAgentRunPayload(agent.requests.single);
       expect(payload['attachments'], [
@@ -164,6 +165,146 @@ void main() {
       ]);
       expect(payload.toString(), isNot(contains('input_audio')));
       expect(payload.toString(), isNot(contains('[1, 2, 3]')));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'failed result rerecord starts a fresh capture without reuploading',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final audio = _FakeCryAudio();
+      final product = _CryServiceTransport()..uploadStatus = 'failed';
+      final agent = _CaptureClient();
+      await tester.pumpWidget(
+        _page(
+          audio: audio,
+          client: agent,
+          cry: CryAnalysisRepository(multipart: product, json: product),
+          repository: _CryRepository(),
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pump();
+      await tester.tap(find.text('上传并分析'));
+      await tester.pumpAndSettle();
+      expect(find.text('这次分析未完成，可以重新录一段。'), findsOneWidget);
+      expect(audio.starts, 1);
+      await tester.tap(find.text('重新录一段'));
+      await tester.pump();
+      expect(audio.starts, 2);
+      expect(find.textContaining('正在录宝宝哭声'), findsOneWidget);
+      expect(product.recordings, hasLength(1));
+      expect(agent.requests, isEmpty);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'rerecord from an old result preserves another pending upload key and preview',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final audio = _FakeCryAudio();
+      final product = _CryServiceTransport()..uploadStatus = 'failed';
+      final store = _CryStore();
+      await tester.pumpWidget(
+        _page(
+          audio: audio,
+          client: _CaptureClient(),
+          store: store,
+          cry: CryAnalysisRepository(multipart: product, json: product),
+          repository: _CryRepository(),
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pump();
+      await tester.tap(find.text('上传并分析'));
+      await tester.pumpAndSettle();
+      product.uploadFailures = 1;
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pump();
+      await tester.tap(find.text('上传并分析'));
+      await tester.pumpAndSettle();
+      final key = store.value!.cryTasks.last.requestKey;
+      expect(key, startsWith('cry:'));
+      final starts = audio.starts;
+      await tester.tap(find.text('重新录一段'));
+      await tester.pump();
+      expect(store.value!.cryTasks.last.requestKey, key);
+      expect(audio.starts, starts);
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-player')),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'service unavailable keeps local recording and retries with the same key',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final audio = _FakeCryAudio();
+      final product = _CryServiceTransport()..uploadFailures = 1;
+      final store = _CryStore();
+      final agent = _CaptureClient();
+      await tester.pumpWidget(
+        _page(
+          audio: audio,
+          client: agent,
+          store: store,
+          cry: CryAnalysisRepository(multipart: product, json: product),
+          repository: _CryRepository(),
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pump();
+      await tester.tap(find.text('上传并分析'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-submit-error')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-player')),
+        findsOneWidget,
+      );
+      expect(audio.disposals, 0);
+      expect(store.value?.cryTasks.single.requestKey, startsWith('cry:'));
+      await tester.tap(find.text('上传并分析'));
+      await tester.pumpAndSettle();
+      expect(product.uploadKeys, hasLength(2));
+      expect(product.uploadKeys[0], product.uploadKeys[1]);
+      expect(find.text('可能和饥饿有关'), findsOneWidget);
+      expect(agent.requests, hasLength(1));
       await tester.pumpWidget(const SizedBox());
     },
   );
@@ -948,6 +1089,8 @@ class _CryRepository
 class _CryServiceTransport implements ApiMultipartTransport, ApiJsonTransport {
   final analysisId = 'a0a10a10-aaaa-4aaa-aaaa-aaaaaaaaaaaa';
   final recordings = <List<int>>[];
+  final uploadKeys = <String>[];
+  int uploadFailures = 0;
   int reads = 0;
   Completer<void>? uploadGate;
   Completer<void>? listGate;
@@ -968,6 +1111,15 @@ class _CryServiceTransport implements ApiMultipartTransport, ApiJsonTransport {
     expect(path, '/v1/cry-analyses');
     expect(file.mimeType, 'audio/wav');
     expect(headers['Idempotency-Key'], isNotEmpty);
+    uploadKeys.add(headers['Idempotency-Key']!);
+    if (uploadFailures > 0) {
+      uploadFailures--;
+      throw ApiHttpException(
+        statusCode: 503,
+        statusText: 'Unavailable',
+        body: null,
+      );
+    }
     expect(fields['thread_id'], 'thread-cry');
     recordings.add(file.bytes);
     await uploadGate?.future;
@@ -975,6 +1127,7 @@ class _CryServiceTransport implements ApiMultipartTransport, ApiJsonTransport {
       'id': analysisId,
       'status': uploadStatus,
       'answer': uploadStatus == 'done' ? 'hungry' : null,
+      'reason_code': uploadStatus == 'done' ? 'cry_translated' : null,
       'created_at': '2026-10-22T00:00:00Z',
     };
   }
