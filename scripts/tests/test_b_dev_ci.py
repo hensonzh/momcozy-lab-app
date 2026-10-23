@@ -51,6 +51,11 @@ class BDevCIContractTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, text)
 
+    def test_quality_uses_deterministic_timezone_for_non_golden_inventory(self) -> None:
+        text = WORKFLOW.read_text()
+        quality = text.split("  quality:\n", 1)[1].split("  android-compile:\n", 1)[0]
+        self.assertIn("    env:\n      TZ: Asia/Shanghai", quality)
+
     def test_ios_compile_uses_xcode_26_without_changing_golden_runner(self) -> None:
         text = WORKFLOW.read_text()
         self.assertIn("  ios-compile:\n    runs-on: macos-26", text)
