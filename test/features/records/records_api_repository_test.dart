@@ -284,6 +284,47 @@ void main() {
       expect(pumping.endedAt, DateTime.parse('2026-07-11T09:20:00Z'));
     });
 
+    test('updates, deletes and restores pumping records', () async {
+      const id = '0ea4b76d-2bc4-4ab8-91b7-3b24df53c519';
+      final transport = FixtureApiJsonTransportByPath(
+        const {},
+        writeResponsesByPath: {
+          '/v1/records/pumping/$id': {
+            'id': id,
+            'pump_start_time': '2026-07-11T09:00:00Z',
+            'pump_type': 'manual',
+            'source': 'manual',
+            'milk_volume_ml': 135,
+          },
+          '/v1/records/pumping/$id/restore': {
+            'id': id,
+            'pump_start_time': '2026-07-11T09:00:00Z',
+            'pump_type': 'manual',
+            'source': 'manual',
+            'milk_volume_ml': 135,
+          },
+        },
+      );
+      final repository = RecordsApiRepository(transport: transport);
+
+      final updated = await repository.updatePumpMilkRecord(
+        recordId: id,
+        milkVolumeMl: 135,
+      );
+      expect(updated.measuredVolumeMl, 135);
+      expect(transport.lastMethod, 'PATCH');
+      expect(transport.lastBody, {'milk_volume_ml': 135.0});
+
+      await repository.deletePumpMilkRecord(id);
+      expect(transport.lastMethod, 'DELETE');
+      expect(transport.lastPath, '/v1/records/pumping/$id');
+
+      final restored = await repository.restorePumpMilkRecord(id);
+      expect(restored.id, id);
+      expect(transport.lastMethod, 'POST');
+      expect(transport.lastPath, '/v1/records/pumping/$id/restore');
+    });
+
     test(
       'encodes start-only direct breastfeeding without unsupported details',
       () async {

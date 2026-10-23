@@ -44,6 +44,18 @@ abstract interface class PumpMilkRecordsRepository {
     String? planTaskId,
     String? idempotencyKey,
   });
+
+  Future<PumpMilkRecord> updatePumpMilkRecord({
+    required String recordId,
+    DateTime? occurredAt,
+    DateTime? endedAt,
+    double? milkVolumeMl,
+    int? durationSeconds,
+  });
+
+  Future<void> deletePumpMilkRecord(String recordId);
+
+  Future<PumpMilkRecord> restorePumpMilkRecord(String recordId);
 }
 
 abstract interface class WaterRecordsRepository {

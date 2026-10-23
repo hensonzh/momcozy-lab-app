@@ -7,8 +7,9 @@ import '../shared/product_failure_mapper.dart';
 import 'baby_record_codec.dart';
 
 class BabyRecordsApiRepository implements BabyRecordRepository {
-  const BabyRecordsApiRepository({required this.transport});
+  const BabyRecordsApiRepository({required this.transport, this.onMutation});
   final ApiJsonTransport transport;
+  final void Function()? onMutation;
   ApiJsonMutationTransport get mutations =>
       transport as ApiJsonMutationTransport;
   String _path(String babyId) =>
@@ -64,6 +65,7 @@ class BabyRecordsApiRepository implements BabyRecordRepository {
         values.map((value) => value.id).toSet().length != values.length) {
       throw const FormatException('Incomplete baby record batch.');
     }
+    onMutation?.call();
     return values;
   });
 
@@ -124,7 +126,13 @@ class BabyRecordsApiRepository implements BabyRecordRepository {
             '${_path(record.babyId)}/${Uri.encodeComponent(record.id)}',
             body: {'expected_version': record.version, 'observation': data},
           );
-    return _read(json, record.babyId, id: record.id.isEmpty ? null : record.id);
+    final saved = _read(
+      json,
+      record.babyId,
+      id: record.id.isEmpty ? null : record.id,
+    );
+    onMutation?.call();
+    return saved;
   });
 
   @override
@@ -144,7 +152,9 @@ class BabyRecordsApiRepository implements BabyRecordRepository {
     if (version < expectedVersion) {
       throw const FormatException('Invalid deletion version.');
     }
-    return RecordDeletion(id: id, version: version);
+    final deletion = RecordDeletion(id: id, version: version);
+    onMutation?.call();
+    return deletion;
   });
 
   @override
@@ -152,14 +162,16 @@ class BabyRecordsApiRepository implements BabyRecordRepository {
     String id, {
     required String babyId,
     required int expectedVersion,
-  }) => withProductFailure(
-    () async => _read(
+  }) => withProductFailure(() async {
+    final restored = _read(
       await transport.postJson(
         '${_path(babyId)}/${Uri.encodeComponent(id)}/restore',
         body: {'expected_version': expectedVersion},
       ),
       babyId,
       id: id,
-    ),
-  );
+    );
+    onMutation?.call();
+    return restored;
+  });
 }

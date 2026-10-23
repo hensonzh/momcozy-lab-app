@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/features/onboarding/domain/chat_first_onboarding.dart';
+import 'package:momcozy_flutter_app/features/records/data/records_api_repository.dart';
 import 'package:momcozy_flutter_app/features/records/domain/records.dart';
 import 'package:momcozy_flutter_app/modules/mom/domain/me_experience.dart';
 
@@ -33,12 +36,17 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    widget.runtime.recordRevision.addListener(_recordsChanged);
     _load();
   }
 
   @override
   void didUpdateWidget(covariant ChatFirstMotherPage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.runtime != widget.runtime) {
+      oldWidget.runtime.recordRevision.removeListener(_recordsChanged);
+      widget.runtime.recordRevision.addListener(_recordsChanged);
+    }
     if (oldWidget.runtime != widget.runtime ||
         oldWidget.role != widget.role ||
         oldWidget.runtime.currentSession.userId !=
@@ -54,8 +62,13 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
 
   @override
   void dispose() {
+    widget.runtime.recordRevision.removeListener(_recordsChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _recordsChanged() {
+    if (mounted) setState(_load);
   }
 
   void _load() {
@@ -885,6 +898,128 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
     },
   );
 
+  Future<void> _editPumping(PumpMilkRecord record) async {
+    var draft = record.measuredVolumeMl?.toString() ?? '';
+    try {
+      final volume = await showDialog<double>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('编辑吸奶记录'),
+          content: TextFormField(
+            key: const ValueKey('pumping-edit-volume'),
+            initialValue: draft,
+            autofocus: true,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            onChanged: (value) => draft = value,
+            decoration: const InputDecoration(
+              labelText: '奶量',
+              suffixText: 'ml',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('pumping-edit-save'),
+              onPressed: () {
+                final value = double.tryParse(draft.trim());
+                if (value != null && value > 0 && value <= 3000) {
+                  Navigator.pop(context, value);
+                }
+              },
+              child: const Text('保存'),
+            ),
+          ],
+        ),
+      );
+      if (volume == null || !mounted) return;
+      await RecordsApiRepository(
+        transport: widget.runtime.jsonTransport,
+      ).updatePumpMilkRecord(recordId: record.id, milkVolumeMl: volume);
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      widget.runtime.notifyRecordsChanged();
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('吸奶记录已更新')));
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('更新失败，记录未发生变化。')));
+      }
+    }
+  }
+
+  Future<void> _deletePumping(PumpMilkRecord record) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('删除这条吸奶记录？'),
+        content: const Text('删除后可在提示出现时立即恢复。'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            key: const ValueKey('pumping-delete-confirm'),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('删除'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    try {
+      final repository = RecordsApiRepository(
+        transport: widget.runtime.jsonTransport,
+      );
+      await repository.deletePumpMilkRecord(record.id);
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      widget.runtime.notifyRecordsChanged();
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: const Text('吸奶记录已删除'),
+            action: SnackBarAction(
+              label: '恢复',
+              onPressed: () => unawaited(_restorePumping(record.id)),
+            ),
+          ),
+        );
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('删除失败，记录未发生变化。')));
+      }
+    }
+  }
+
+  Future<void> _restorePumping(String recordId) async {
+    try {
+      await RecordsApiRepository(
+        transport: widget.runtime.jsonTransport,
+      ).restorePumpMilkRecord(recordId);
+      if (!mounted) return;
+      widget.runtime.notifyRecordsChanged();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('吸奶记录已恢复')));
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('恢复失败，请刷新后重试。')));
+      }
+    }
+  }
+
   void _showPumpingDetails(ChatFirstPumpingToday today) {
     showModalBottomSheet<void>(
       context: context,
@@ -921,6 +1056,7 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
                 ),
               for (final record in today.records)
                 ListTile(
+                  key: ValueKey('pumping-record-${record.id}'),
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     record.measuredVolumeMl == null
@@ -928,6 +1064,20 @@ class _ChatFirstMotherPageState extends State<ChatFirstMotherPage>
                         : '${_number(record.measuredVolumeMl!)} ml',
                   ),
                   subtitle: Text(_time(record)),
+                  trailing: PopupMenuButton<String>(
+                    key: ValueKey('pumping-record-menu-${record.id}'),
+                    onSelected: (action) {
+                      if (action == 'edit') {
+                        unawaited(_editPumping(record));
+                      } else if (action == 'delete') {
+                        unawaited(_deletePumping(record));
+                      }
+                    },
+                    itemBuilder: (_) => const [
+                      PopupMenuItem(value: 'edit', child: Text('编辑')),
+                      PopupMenuItem(value: 'delete', child: Text('删除')),
+                    ],
+                  ),
                 ),
             ],
           ),

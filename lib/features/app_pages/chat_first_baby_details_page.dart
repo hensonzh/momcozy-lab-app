@@ -22,6 +22,7 @@ class ChatFirstBabyDetailsPage extends StatefulWidget {
     this.onRecordSleep,
     this.onAsk,
     this.rememberedBabyId,
+    this.mutationNotificationsRefreshPage = false,
   });
 
   final BabyHomeController controller;
@@ -29,6 +30,7 @@ class ChatFirstBabyDetailsPage extends StatefulWidget {
   final Future<void> Function(String babyId)? onRecordSleep;
   final ValueChanged<String>? onAsk;
   final String? rememberedBabyId;
+  final bool mutationNotificationsRefreshPage;
 
   @override
   State<ChatFirstBabyDetailsPage> createState() =>
@@ -171,8 +173,297 @@ class _ChatFirstBabyDetailsPageState extends State<ChatFirstBabyDetailsPage>
       chatFirstExperience: true,
     );
     if (saved != null && mounted && identical(c, widget.controller)) {
-      await c.refreshRecords(kind: kind);
+      if (!widget.mutationNotificationsRefreshPage) {
+        await c.refreshRecords(kind: kind);
+      }
     }
+  }
+
+  Future<void> _refreshAfterMutation(BabyRecordKind kind) async {
+    if (!widget.mutationNotificationsRefreshPage && mounted) {
+      await widget.controller.refreshRecords(kind: kind);
+    }
+  }
+
+  Future<void> _editRecord(BabyRecord record) async {
+    final c = widget.controller;
+    final baby = c.baby;
+    final zone = c.timezone;
+    if (baby == null || zone == null || record.babyId != baby.id) return;
+    final saved = await showBabyRecordEditor(
+      context,
+      repository: c.recordRepository,
+      baby: baby,
+      timezone: zone,
+      now: c.now,
+      kind: record.recordKind,
+      initial: record,
+      growthMetric: record is BabyGrowthRecord
+          ? record.metric
+          : GrowthMetric.weight,
+      chatFirstExperience: true,
+    );
+    if (saved != null && mounted && identical(c, widget.controller)) {
+      await _refreshAfterMutation(record.recordKind);
+    }
+  }
+
+  Future<void> _deleteRecord(BabyRecord record) async {
+    final c = widget.controller;
+    final baby = c.baby;
+    if (baby == null || record.babyId != baby.id) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('删除这条记录？'),
+        content: const Text('记录会从当前页面移除，你可以在提示出现时立即恢复。'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            key: const ValueKey('baby-record-delete-confirm'),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('删除'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    try {
+      final deletion = await c.recordRepository.delete(
+        record.id,
+        babyId: baby.id,
+        expectedVersion: record.version,
+      );
+      if (!mounted || !identical(c, widget.controller)) return;
+      final retainedRecord = _recordWithVersion(record, deletion.version);
+      await _refreshAfterMutation(record.recordKind);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('记录已删除'),
+          action: SnackBarAction(
+            label: '恢复',
+            onPressed: () => unawaited(
+              _restoreRecord(retainedRecord, expectedVersion: deletion.version),
+            ),
+          ),
+        ),
+      );
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('删除失败，记录未发生变化。')));
+      }
+    }
+  }
+
+  BabyRecord _recordWithVersion(BabyRecord record, int version) =>
+      switch (record) {
+        BabyFeedingRecord() => BabyFeedingRecord(
+          id: record.id,
+          babyId: record.babyId,
+          version: version,
+          occurredAt: record.occurredAt,
+          method: record.method,
+          side: record.side,
+          volumeMl: record.volumeMl,
+          durationMinutes: record.durationMinutes,
+          note: record.note,
+        ),
+        BabySleepRecord() => BabySleepRecord(
+          id: record.id,
+          babyId: record.babyId,
+          version: version,
+          occurredAt: record.occurredAt,
+          endedAt: record.endedAt,
+          note: record.note,
+        ),
+        BabyDiaperRecord() => BabyDiaperRecord(
+          id: record.id,
+          babyId: record.babyId,
+          version: version,
+          occurredAt: record.occurredAt,
+          kind: record.kind,
+          color: record.color,
+          consistency: record.consistency,
+          signs: record.signs,
+          note: record.note,
+        ),
+        BabyGrowthRecord() => BabyGrowthRecord(
+          id: record.id,
+          babyId: record.babyId,
+          version: version,
+          recordedOn: record.recordedOn,
+          timezone: record.timezone,
+          metric: record.metric,
+          value: record.value,
+          savedAt: record.savedAt,
+          measurementSource: record.measurementSource,
+        ),
+        BabyDevelopmentRecord() => BabyDevelopmentRecord(
+          id: record.id,
+          babyId: record.babyId,
+          version: version,
+          recordedOn: record.recordedOn,
+          timezone: record.timezone,
+          itemId: record.itemId,
+          status: record.status,
+        ),
+        BabyDailyStatusRecord() => BabyDailyStatusRecord(
+          id: record.id,
+          babyId: record.babyId,
+          version: version,
+          recordedOn: record.recordedOn,
+          timezone: record.timezone,
+          savedAt: record.savedAt,
+          mentalState: record.mentalState,
+          wetCount: record.wetCount,
+          stoolCount: record.stoolCount,
+          color: record.color,
+          consistency: record.consistency,
+        ),
+      };
+
+  Future<void> _restoreRecord(
+    BabyRecord record, {
+    required int expectedVersion,
+  }) async {
+    final c = widget.controller;
+    final baby = c.baby;
+    if (baby == null || record.babyId != baby.id) return;
+    try {
+      await c.recordRepository.restore(
+        record.id,
+        babyId: baby.id,
+        expectedVersion: expectedVersion,
+      );
+      if (!mounted || !identical(c, widget.controller)) return;
+      await _refreshAfterMutation(record.recordKind);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('记录已恢复')));
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('恢复失败，请刷新后重试。')));
+      }
+    }
+  }
+
+  List<BabyRecord> _managedRecords(BabyHomeController c) {
+    final babyId = c.baby?.id;
+    if (babyId == null) return const [];
+    final byId = <String, BabyRecord>{};
+    for (final record in [
+      ...?c.recentRecords.value,
+      ...?c.latestGrowth.value,
+      ...?c.growthCurve.value,
+    ]) {
+      if (record.babyId == babyId) byId[record.id] = record;
+    }
+    final values = byId.values.toList();
+    values.sort((a, b) => _recordSortTime(b).compareTo(_recordSortTime(a)));
+    return values;
+  }
+
+  DateTime _recordSortTime(BabyRecord record) => switch (record) {
+    TimedBabyRecord(:final occurredAt) => occurredAt,
+    BabyDailyStatusRecord(:final savedAt) => savedAt,
+    DatedBabyRecord(:final recordedOn) => DateTime.utc(
+      recordedOn.year,
+      recordedOn.month,
+      recordedOn.day,
+    ),
+  };
+
+  String _recordTitle(BabyRecord record) => switch (record) {
+    BabyFeedingRecord() => '喂养记录',
+    BabySleepRecord() => '睡眠记录',
+    BabyDiaperRecord() => '尿布记录',
+    BabyGrowthRecord(:final metric) => '${growthMetricLabelZh(metric)}记录',
+    BabyDailyStatusRecord() => '每日状态',
+    BabyDevelopmentRecord() => '发育观察',
+  };
+
+  String _recordFactsZh(BabyRecord record) => switch (record) {
+    BabyFeedingRecord(
+      :final method,
+      :final side,
+      :final volumeMl,
+      :final durationMinutes,
+    ) =>
+      [
+        switch (method) {
+          BabyFeedingMethod.breastfeeding => '亲喂',
+          BabyFeedingMethod.expressedMilk => '瓶喂母乳',
+          BabyFeedingMethod.formula => '配方奶',
+        },
+        if (side != null)
+          switch (side) {
+            FeedingSide.left => '左侧',
+            FeedingSide.right => '右侧',
+            FeedingSide.both => '双侧',
+          },
+        if (volumeMl != null) '${babyNumber(volumeMl)} ml',
+        if (durationMinutes != null) '$durationMinutes 分钟',
+      ].join(' · '),
+    BabySleepRecord(:final occurredAt, :final endedAt) =>
+      endedAt == null
+          ? '正在睡眠'
+          : '${endedAt.difference(occurredAt).inMinutes} 分钟',
+    BabyDiaperRecord(:final kind) => switch (kind) {
+      DiaperKind.wet => '湿尿布',
+      DiaperKind.dirty => '脏尿布',
+      DiaperKind.both => '湿尿布和脏尿布',
+    },
+    BabyGrowthRecord(:final value, :final unit, :final recordedOn) =>
+      '${babyNumber(value)} $unit · $recordedOn',
+    BabyDailyStatusRecord(:final recordedOn) => '$recordedOn',
+    BabyDevelopmentRecord(:final recordedOn) => '$recordedOn',
+  };
+
+  Widget _recordManagement(BabyHomeController c) {
+    final records = _managedRecords(c);
+    if (records.isEmpty) {
+      return _notice('还没有可管理的记录', '保存记录后，可在这里编辑或删除。');
+    }
+    return _surface(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          for (var index = 0; index < records.length; index++) ...[
+            if (index > 0) const Divider(height: 1),
+            ListTile(
+              key: ValueKey('baby-record-${records[index].id}'),
+              title: Text(_recordTitle(records[index])),
+              subtitle: Text(_recordFactsZh(records[index])),
+              trailing: PopupMenuButton<String>(
+                key: ValueKey('baby-record-menu-${records[index].id}'),
+                tooltip: '管理记录',
+                onSelected: (action) {
+                  if (action == 'edit') {
+                    unawaited(_editRecord(records[index]));
+                  } else if (action == 'delete') {
+                    unawaited(_deleteRecord(records[index]));
+                  }
+                },
+                itemBuilder: (_) => const [
+                  PopupMenuItem(value: 'edit', child: Text('编辑')),
+                  PopupMenuItem(value: 'delete', child: Text('删除')),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   @override
@@ -288,6 +579,10 @@ class _ChatFirstBabyDetailsPageState extends State<ChatFirstBabyDetailsPage>
                     onRetry: c.refreshRecords,
                     chatFirstExperience: true,
                   ),
+                  const SizedBox(height: 24),
+                  _sectionTitle('记录管理'),
+                  const SizedBox(height: 11),
+                  _recordManagement(c),
                 ],
               ],
             ],

@@ -34,24 +34,25 @@ void main() {
     FixtureApiJsonTransportByPath transport, {
     FamilyRole role = FamilyRole.mother,
     String ownerUserId = 'owner-1',
+    MomCozyApiRuntime? runtime,
   }) {
+    final pageRuntime =
+        runtime ??
+        MomCozyApiRuntime(
+          jsonTransport: transport,
+          session: MomCozySession(
+            status: MomCozySessionStatus.authenticated,
+            userId: ownerUserId,
+            babyId: '',
+            locale: 'zh-CN',
+            accessToken: 'test-access',
+          ),
+          now: () => today,
+          timezoneProvider: () async => 'Asia/Shanghai',
+        );
     return MaterialApp(
       home: Scaffold(
-        body: ChatFirstMotherPage(
-          runtime: MomCozyApiRuntime(
-            jsonTransport: transport,
-            session: MomCozySession(
-              status: MomCozySessionStatus.authenticated,
-              userId: ownerUserId,
-              babyId: '',
-              locale: 'zh-CN',
-              accessToken: 'test-access',
-            ),
-            now: () => today,
-            timezoneProvider: () async => 'Asia/Shanghai',
-          ),
-          role: role,
-        ),
+        body: ChatFirstMotherPage(runtime: pageRuntime, role: role),
       ),
     );
   }
@@ -731,6 +732,120 @@ void main() {
     },
   );
 
+  testWidgets('pumping records can be edited, deleted and restored', (
+    tester,
+  ) async {
+    final transport = _PumpingManagementTransport(
+      profile: profile,
+      occurredAt: today.toUtc(),
+      volumeMl: 45,
+    );
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: transport,
+      session: const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'owner-1',
+        babyId: '',
+        locale: 'zh-CN',
+        accessToken: 'test-access',
+      ),
+      now: () => today,
+      timezoneProvider: () async => 'Asia/Shanghai',
+    );
+    await tester.pumpWidget(host(transport, runtime: runtime));
+    await tester.pumpAndSettle();
+    expect(find.text('45 ml · 1 次'), findsOneWidget);
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('mother-pumping-details')),
+    );
+    await tester.tap(find.byKey(const ValueKey('mother-pumping-details')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('pumping-record-menu-pump-1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('编辑').last);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('pumping-edit-volume')),
+      '55',
+    );
+    await tester.tap(find.byKey(const ValueKey('pumping-edit-save')));
+    await tester.pumpAndSettle();
+    expect(runtime.recordRevision.value, 1);
+    expect(transport.volumeMl, 55);
+    expect(find.text('55 ml · 1 次'), findsOneWidget);
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('mother-pumping-details')),
+    );
+    await tester.tap(find.byKey(const ValueKey('mother-pumping-details')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('pumping-record-menu-pump-1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('删除').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('pumping-delete-confirm')));
+    await tester.pumpAndSettle();
+    expect(runtime.recordRevision.value, 2);
+    expect(transport.deleted, isTrue);
+    expect(find.text('今天还没有吸奶记录'), findsOneWidget);
+    expect(find.text('吸奶记录已删除'), findsOneWidget);
+
+    await tester.tap(find.text('恢复'));
+    await tester.pumpAndSettle();
+    expect(runtime.recordRevision.value, 3);
+    expect(transport.deleted, isFalse);
+    expect(find.text('55 ml · 1 次'), findsOneWidget);
+    expect(find.text('吸奶记录已恢复'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('failed pumping edit does not refresh or claim a change', (
+    tester,
+  ) async {
+    final transport = _PumpingManagementTransport(
+      profile: profile,
+      occurredAt: today.toUtc(),
+      volumeMl: 45,
+    )..failNextUpdate = true;
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: transport,
+      session: const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'owner-1',
+        babyId: '',
+        locale: 'zh-CN',
+        accessToken: 'test-access',
+      ),
+      now: () => today,
+      timezoneProvider: () async => 'Asia/Shanghai',
+    );
+    await tester.pumpWidget(host(transport, runtime: runtime));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('mother-pumping-details')),
+    );
+    await tester.tap(find.byKey(const ValueKey('mother-pumping-details')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('pumping-record-menu-pump-1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('编辑').last);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('pumping-edit-volume')),
+      '55',
+    );
+    await tester.tap(find.byKey(const ValueKey('pumping-edit-save')));
+    await tester.pumpAndSettle();
+
+    expect(runtime.recordRevision.value, 0);
+    expect(transport.volumeMl, 45);
+    expect(find.text('更新失败，记录未发生变化。'), findsOneWidget);
+    expect(find.text('45 ml'), findsOneWidget);
+    expect(find.text('吸奶记录已更新'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets(
     'pumping read failure never turns saved maternal facts into demo data',
     (tester) async {
@@ -844,7 +959,19 @@ void main() {
       '/v1/records/pumping': {'items': <Object>[]},
     };
     final transport = FixtureApiJsonTransportByPath(responses);
-    await tester.pumpWidget(host(transport));
+    final runtime = MomCozyApiRuntime(
+      jsonTransport: transport,
+      session: const MomCozySession(
+        status: MomCozySessionStatus.authenticated,
+        userId: 'owner-1',
+        babyId: '',
+        locale: 'zh-CN',
+        accessToken: 'test-access',
+      ),
+      now: () => today,
+      timezoneProvider: () async => 'Asia/Shanghai',
+    );
+    await tester.pumpWidget(host(transport, runtime: runtime));
     await tester.pumpAndSettle();
     expect(find.text('今天还没有吸奶记录'), findsOneWidget);
     responses['/v1/records/pumping'] = {
@@ -856,11 +983,7 @@ void main() {
         },
       ],
     };
-    await tester.ensureVisible(
-      find.byKey(const ValueKey('mother-pumping-refresh')),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('mother-pumping-refresh')));
+    runtime.notifyRecordsChanged();
     await tester.pumpAndSettle();
     expect(find.text('45 ml · 1 次'), findsWidgets);
     await tester.pumpWidget(const SizedBox());
@@ -876,6 +999,81 @@ void main() {
     expect(transport.getPaths, isEmpty);
     await tester.pumpWidget(const SizedBox());
   });
+}
+
+class _PumpingManagementTransport extends FixtureApiJsonTransportByPath {
+  _PumpingManagementTransport({
+    required Map<String, Object?> profile,
+    required this.occurredAt,
+    required this.volumeMl,
+  }) : super({'/v1/profile/me-experience': profile});
+
+  final DateTime occurredAt;
+  double volumeMl;
+  bool deleted = false;
+  bool failNextUpdate = false;
+
+  Map<String, Object?> get _record => {
+    'id': 'pump-1',
+    'pump_start_time': occurredAt.toIso8601String(),
+    'milk_volume_ml': volumeMl,
+    'pump_type': 'manual',
+    'source': 'manual',
+    'status': deleted ? 'deleted' : 'active',
+  };
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) async {
+    if (path == '/v1/records/pumping') {
+      getPaths.add(path);
+      return {
+        'items': deleted ? <Object>[] : <Object>[_record],
+      };
+    }
+    return super.getJson(path, query: query);
+  }
+
+  @override
+  Future<Map<String, Object?>> patchJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    mutationPaths.add(path);
+    if (failNextUpdate) {
+      failNextUpdate = false;
+      throw StateError('update failed');
+    }
+    volumeMl = (body['milk_volume_ml'] as num).toDouble();
+    return _record;
+  }
+
+  @override
+  Future<Map<String, Object?>> deleteJson(
+    String path, {
+    Map<String, String> headers = const {},
+  }) async {
+    mutationPaths.add(path);
+    deleted = true;
+    return const {};
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async {
+    if (path == '/v1/records/pumping/pump-1/restore') {
+      mutationPaths.add(path);
+      deleted = false;
+      return _record;
+    }
+    return super.postJson(path, body: body, headers: headers);
+  }
 }
 
 class _FailingPumpingTransport extends FixtureApiJsonTransportByPath {

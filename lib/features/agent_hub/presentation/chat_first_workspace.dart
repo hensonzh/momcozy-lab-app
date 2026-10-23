@@ -70,6 +70,7 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    widget.runtime?.recordRevision.addListener(_recordsChanged);
     _load();
   }
 
@@ -150,6 +151,7 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
     _frameTimer?.cancel();
     _nextBoardDay?.cancel();
     _clock.stop();
+    widget.runtime?.recordRevision.removeListener(_recordsChanged);
     _sceneImage?.dispose();
     _localAvatar.dispose();
     super.dispose();
@@ -158,6 +160,10 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
   @override
   void didUpdateWidget(covariant ChatFirstWorkspace oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.runtime != widget.runtime) {
+      oldWidget.runtime?.recordRevision.removeListener(_recordsChanged);
+      widget.runtime?.recordRevision.addListener(_recordsChanged);
+    }
     if (oldWidget.runtime != widget.runtime ||
         oldWidget.role != widget.role ||
         oldWidget.runtime?.currentSession.userId !=
@@ -167,6 +173,8 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
       _load();
     }
   }
+
+  void _recordsChanged() => _load(notify: true);
 
   void _load({bool notify = false}) {
     _nextBoardDay?.cancel();

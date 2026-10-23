@@ -78,7 +78,10 @@ class _MeHomeRouteState extends State<MeHomeRoute> {
       }
       final result = await showMeSharedRecordSheet(
         context,
-        repository: BabyRecordsApiRepository(transport: runtime.jsonTransport),
+        repository: BabyRecordsApiRepository(
+          transport: runtime.jsonTransport,
+          onMutation: runtime.notifyRecordsChanged,
+        ),
         baby: baby,
         timezone: timezone,
         now: runtime.now,

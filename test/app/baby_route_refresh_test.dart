@@ -10,12 +10,14 @@ class HomeTransport extends FixtureApiJsonTransport {
   final String name;
   Completer<void>? gate;
   int profiles = 0;
+  int recordReads = 0;
   @override
   Future<Map<String, Object?>> getJson(
     String path, {
     Map<String, Object?> query = const {},
   }) async {
     if (path == '/v1/babies') profiles++;
+    if (path.startsWith('/v1/babies/baby/records')) recordReads++;
     await gate?.future;
     if (path == '/v1/profile/me') return {'preferred_name': 'Mia'};
     if (path == '/v1/profile/lactation') {
@@ -88,6 +90,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Luna'), findsOneWidget);
       expect(first.profiles, 1);
+      final initialRecordReads = first.recordReads;
+      runtime.notifyRecordsChanged();
+      await tester.pumpAndSettle();
+      expect(first.profiles, 1);
+      expect(first.recordReads, greaterThan(initialRecordReads));
       update(() {});
       await tester.pumpAndSettle();
       expect(first.profiles, 1);

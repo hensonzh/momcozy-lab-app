@@ -355,6 +355,118 @@ void main() {
     },
   );
 
+  testWidgets('saved baby records can be edited, deleted and restored', (
+    tester,
+  ) async {
+    final records = BabyTestRecords()
+      ..values = [
+        BabyFeedingRecord(
+          id: 'managed-feed',
+          babyId: 'baby',
+          version: 3,
+          occurredAt: babyTestNow.subtract(const Duration(hours: 1)),
+          method: BabyFeedingMethod.formula,
+          volumeMl: 60,
+        ),
+      ];
+    await tester.pumpWidget(host(controller(BabyTestProfiles(), records)));
+    await tester.pumpAndSettle();
+
+    final menu = find.byKey(const ValueKey('baby-record-menu-managed-feed'));
+    await tester.scrollUntilVisible(menu, 180);
+    await tester.tap(menu);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('编辑').last);
+    await tester.pumpAndSettle();
+    expect(find.byType(BabyRecordEditor), findsOneWidget);
+    expect(find.text('记录喂养'), findsOneWidget);
+    await tester.enterText(find.byKey(const ValueKey('feeding-volume')), '75');
+    await tester.tap(find.byKey(const ValueKey('baby-save')));
+    await tester.pumpAndSettle();
+    final edited = records.values.whereType<BabyFeedingRecord>().single;
+    expect(edited.id, 'managed-feed');
+    expect(edited.version, 4);
+    expect(edited.volumeMl, 75);
+
+    await tester.scrollUntilVisible(menu, 180);
+    await tester.tap(menu);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('删除').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('baby-record-delete-confirm')));
+    await tester.pumpAndSettle();
+    expect(records.deleteVersions, [4]);
+    expect(
+      records.values.where((record) => record.id == 'managed-feed'),
+      isEmpty,
+    );
+    expect(find.text('记录已删除'), findsOneWidget);
+
+    await tester.tap(find.text('恢复'));
+    await tester.pumpAndSettle();
+    expect(records.restoreVersions, [5]);
+    final restored = records.values.whereType<BabyFeedingRecord>().singleWhere(
+      (record) => record.id == 'managed-feed',
+    );
+    expect(restored.version, 6);
+    expect(restored.volumeMl, 75);
+    expect(find.text('记录已恢复'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('record management opens the correct growth and sleep editors', (
+    tester,
+  ) async {
+    final records = BabyTestRecords()
+      ..values = [
+        BabyGrowthRecord(
+          id: 'managed-growth',
+          babyId: 'baby',
+          recordedOn: LocalDate(2026, 9, 7),
+          timezone: 'UTC',
+          metric: GrowthMetric.weight,
+          value: 3.8,
+        ),
+        BabySleepRecord(
+          id: 'managed-sleep',
+          babyId: 'baby',
+          occurredAt: babyTestNow.subtract(const Duration(hours: 3)),
+          endedAt: babyTestNow.subtract(const Duration(hours: 2)),
+        ),
+      ];
+    await tester.pumpWidget(host(controller(BabyTestProfiles(), records)));
+    await tester.pumpAndSettle();
+
+    final growthMenu = find.byKey(
+      const ValueKey('baby-record-menu-managed-growth'),
+    );
+    await tester.scrollUntilVisible(growthMenu, 180);
+    await tester.ensureVisible(growthMenu);
+    await tester.pumpAndSettle();
+    await tester.tap(growthMenu);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('编辑').last);
+    await tester.pumpAndSettle();
+    expect(find.text('记录生长'), findsOneWidget);
+    expect(find.byKey(const ValueKey('growth-weight')), findsOneWidget);
+    await tester.tap(find.byTooltip('关闭记录表单'));
+    await tester.pumpAndSettle();
+
+    final sleepMenu = find.byKey(
+      const ValueKey('baby-record-menu-managed-sleep'),
+    );
+    await tester.scrollUntilVisible(sleepMenu, 180);
+    await tester.ensureVisible(sleepMenu);
+    await tester.pumpAndSettle();
+    await tester.tap(sleepMenu);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('编辑').last);
+    await tester.pumpAndSettle();
+    expect(find.text('记录睡眠'), findsOneWidget);
+    expect(find.byType(BabyRecordEditor), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets('record read failure is not reported as zero and can retry', (
     tester,
   ) async {
@@ -396,7 +508,9 @@ void main() {
       find.byKey(const ValueKey('baby-details-sleep')),
       150,
     );
-    await tester.drag(find.byType(ListView).first, const Offset(0, -180));
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('baby-details-sleep')),
+    );
     await tester.pumpAndSettle();
     expect(find.text('今天睡眠 1 次'), findsOneWidget);
     final semantics = tester.ensureSemantics();

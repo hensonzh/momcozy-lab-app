@@ -193,6 +193,68 @@ class RecordsApiRepository
   }
 
   @override
+  Future<PumpMilkRecord> updatePumpMilkRecord({
+    required String recordId,
+    DateTime? occurredAt,
+    DateTime? endedAt,
+    double? milkVolumeMl,
+    int? durationSeconds,
+  }) async {
+    final id = recordId.trim();
+    if (id.isEmpty) throw const FormatException('Pumping record ID required.');
+    if (transport is! ApiJsonMutationTransport) {
+      throw UnsupportedError('Pumping updates require JSON mutation support.');
+    }
+    final mutations = transport as ApiJsonMutationTransport;
+    final body = <String, Object?>{
+      if (occurredAt != null)
+        'pump_start_time': occurredAt.toUtc().toIso8601String(),
+      if (endedAt != null) 'pump_end_time': endedAt.toUtc().toIso8601String(),
+      'milk_volume_ml': ?milkVolumeMl,
+      'duration_seconds': ?durationSeconds,
+    };
+    if (body.isEmpty) throw const FormatException('No pumping changes.');
+    final saved = _pumpMilkRecord(
+      await mutations.patchJson(
+        '$pumpMilkRecordsEndpoint/${Uri.encodeComponent(id)}',
+        body: body,
+      ),
+    );
+    if (saved.id != id) {
+      throw const FormatException('Pumping record scope mismatch.');
+    }
+    return saved;
+  }
+
+  @override
+  Future<void> deletePumpMilkRecord(String recordId) async {
+    final id = recordId.trim();
+    if (id.isEmpty) throw const FormatException('Pumping record ID required.');
+    if (transport is! ApiJsonMutationTransport) {
+      throw UnsupportedError('Pumping deletes require JSON mutation support.');
+    }
+    final mutations = transport as ApiJsonMutationTransport;
+    await mutations.deleteJson(
+      '$pumpMilkRecordsEndpoint/${Uri.encodeComponent(id)}',
+    );
+  }
+
+  @override
+  Future<PumpMilkRecord> restorePumpMilkRecord(String recordId) async {
+    final id = recordId.trim();
+    if (id.isEmpty) throw const FormatException('Pumping record ID required.');
+    final restored = _pumpMilkRecord(
+      await transport.postJson(
+        '$pumpMilkRecordsEndpoint/${Uri.encodeComponent(id)}/restore',
+      ),
+    );
+    if (restored.id != id) {
+      throw const FormatException('Pumping record scope mismatch.');
+    }
+    return restored;
+  }
+
+  @override
   Future<List<WaterIntakeRecord>> fetchWaterRecords({
     required DateTime date,
   }) async {
@@ -542,8 +604,7 @@ class RecordsApiRepository
     MeasurementPosition? measurementPosition,
     MeasurementContext? measurementContext,
   }) async {
-    final mutations = transport;
-    if (mutations is! ApiJsonMutationTransport) {
+    if (transport is! ApiJsonMutationTransport) {
       throw UnsupportedError('Growth updates require JSON mutation support.');
     }
     final body = <String, Object?>{
@@ -553,7 +614,8 @@ class RecordsApiRepository
       'measurement_position': measurementPosition?.apiValue,
       'measurement_context': measurementContext?.apiValue,
     }..removeWhere((_, value) => value == null);
-    final response = await (mutations as ApiJsonMutationTransport).patchJson(
+    final mutations = transport as ApiJsonMutationTransport;
+    final response = await mutations.patchJson(
       '$growthRecordsEndpoint/${Uri.encodeComponent(recordId.trim())}',
       body: body,
     );
