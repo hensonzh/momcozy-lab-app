@@ -1343,8 +1343,7 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   void _schedulePoopAnalysisPoll() {
-    if (!_poopAnalysisAvailable ||
-        widget.stoolAnalysisRepository == null ||
+    if (widget.stoolAnalysisRepository == null ||
         !_isPageVisible ||
         (_poopAnalysisTimer?.isActive ?? false) ||
         !_visiblePoopTasks.any(

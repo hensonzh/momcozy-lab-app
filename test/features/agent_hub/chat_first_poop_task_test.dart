@@ -176,6 +176,7 @@ void main() {
       _largeViewport(tester);
       final specialty = _Analysis()
         ..available = false
+        ..streamCompleted = true
         ..historyItems = [
           StoolAnalysisHistoryItem(
             analysisId: 'analysis-synthetic',
@@ -196,7 +197,13 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
       expect(specialty.historyCalls, greaterThan(0));
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-followup')),
+        findsOneWidget,
+      );
       final load = find.byKey(const ValueKey('chat-first-poop-load-photos'));
       expect(load, findsOneWidget);
       await tester.ensureVisible(load);
