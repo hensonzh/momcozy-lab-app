@@ -171,6 +171,51 @@ void main() {
   );
 
   testWidgets(
+    'saved history and photos remain readable when new analysis is unavailable',
+    (tester) async {
+      _largeViewport(tester);
+      final specialty = _Analysis()
+        ..available = false
+        ..historyItems = [
+          StoolAnalysisHistoryItem(
+            analysisId: 'analysis-synthetic',
+            status: StoolAnalysisStatus.completed,
+            result: _completedResult,
+            babyId: '123e4567-e89b-12d3-a456-426614174001',
+            createdAt: DateTime.utc(2026, 10, 22),
+          ),
+        ];
+      specialty.release.complete();
+      await tester.pumpWidget(
+        _page(
+          _Reviews(),
+          _Client(),
+          analysis: specialty,
+          threadId: '123e4567-e89b-12d3-a456-426614174002',
+          babyId: '123e4567-e89b-12d3-a456-426614174001',
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(specialty.historyCalls, greaterThan(0));
+      final load = find.byKey(const ValueKey('chat-first-poop-load-photos'));
+      expect(load, findsOneWidget);
+      await tester.ensureVisible(load);
+      await tester.tap(load);
+      await tester.pumpAndSettle();
+      expect(specialty.photoLoads, 1);
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-sent-0')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-delete-analysis')),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
     'new page recovers accepted card from owner-scoped thread history and replay',
     (tester) async {
       _largeViewport(tester);
@@ -315,7 +360,16 @@ void main() {
             ),
           ],
         );
-      final specialty = _Analysis()..available = false;
+      final specialty = _Analysis()
+        ..available = false
+        ..historyItems = [
+          StoolAnalysisHistoryItem(
+            analysisId: 'analysis-synthetic',
+            status: StoolAnalysisStatus.queued,
+            babyId: '123e4567-e89b-12d3-a456-426614174001',
+            createdAt: DateTime.utc(2026, 10, 22),
+          ),
+        ];
       await tester.pumpWidget(
         _page(
           _Reviews(),
@@ -327,7 +381,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(specialty.historyCalls, 0);
+      expect(specialty.historyCalls, greaterThan(0));
       await tester.tap(
         find.byKey(const ValueKey('chat-first-poop-delete-analysis')),
       );

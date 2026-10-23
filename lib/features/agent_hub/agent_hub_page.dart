@@ -992,8 +992,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     final repository = widget.stoolAnalysisRepository;
     final threadId = _state.threadId;
     final babyId = widget.stoolBabyId;
-    if (!_poopAnalysisAvailable ||
-        repository == null ||
+    if (repository == null ||
         !_isPageVisible ||
         !_interactionRestoreResolved ||
         threadId == null ||
@@ -1182,8 +1181,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     final repository = widget.stoolAnalysisRepository;
     final task = _poopTasks.where((item) => item.id == taskId).firstOrNull;
     final analysisId = task?.analysisState?.analysisId;
-    if (!_poopAnalysisAvailable ||
-        repository == null ||
+    if (repository == null ||
         !_isPageVisible ||
         analysisId == null ||
         _poopPhotosLoading.contains(analysisId) ||
@@ -4073,8 +4071,7 @@ class _AgentHubPageState extends State<AgentHubPage>
                                                     .analysisState
                                                     ?.analysisId],
                                             onLoadPhotos:
-                                                task.analysisState != null &&
-                                                    _poopAnalysisAvailable
+                                                task.analysisState != null
                                                 ? () => unawaited(
                                                     _loadPoopAnalysisPhotos(
                                                       task.id,
