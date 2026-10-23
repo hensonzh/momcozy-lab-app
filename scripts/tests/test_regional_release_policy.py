@@ -5,15 +5,16 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class RegionalReleasePolicyTest(unittest.TestCase):
-    def test_pull_requests_validate_both_login_modes_without_building(self) -> None:
-        workflow = (ROOT / ".github/workflows/app-pr-verify.yml").read_text()
-        self.assertIn("pull_request:\n    branches: [main]", workflow)
-        self.assertIn("permissions:\n  contents: read", workflow)
-        for check in ("flutter analyze", "flutter test --no-pub --exclude-tags=golden",
-                      "MOMCOZY_INTERNAL_INVITE_LOGIN=true", "MOMCOZY_INTERNAL_INVITE_LOGIN=false"):
-            self.assertIn(check, workflow)
-        for forbidden in ("flutter build", "packages: write", "contents: write", "secrets.", "workflow_dispatch:"):
-            self.assertNotIn(forbidden, workflow)
+    def test_main_push_ci_replaces_pr_quality(self) -> None:
+        self.assertFalse((ROOT / ".github/workflows/app-pr-verify.yml").exists())
+        workflow = (ROOT / ".github/workflows/app-ci.yml").read_text()
+        self.assertIn("push:", workflow)
+        self.assertIn("main", workflow)
+        self.assertNotIn("pull_request:", workflow)
+        self.assertIn("flutter analyze", workflow)
+        self.assertIn("MOMCOZY_INTERNAL_INVITE_LOGIN=true", workflow)
+        north_america = (ROOT / ".github/workflows/app-north-america-ci.yml").read_text()
+        self.assertIn("MOMCOZY_INTERNAL_INVITE_LOGIN=false", north_america)
 
     def test_build_workflows_are_main_only(self) -> None:
         for name in ("app-ci.yml", "app-north-america-ci.yml", "web-demo.yml"):

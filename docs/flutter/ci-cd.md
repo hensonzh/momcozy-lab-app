@@ -18,7 +18,7 @@ explicit regional release target. Existing
 Android/iOS package identities are retained. `release` means the compiler
 build mode, not a production deployment environment.
 
-`app-pr-verify.yml` checks proposed changes without building an App package.
+Direct pushes to `main` trigger quality checks; no PR-only `pr-quality` gate runs.
 On `main`, `app-ci.yml` owns shared quality, Golden and Singapore compilation;
 `app-north-america-ci.yml` checks regional login/configuration and compiles
 North America Android/iOS without rerunning the shared suite. The Singapore
