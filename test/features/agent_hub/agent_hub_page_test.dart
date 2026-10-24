@@ -18,6 +18,7 @@ import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_task.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
@@ -157,6 +158,81 @@ void main() {
         'First question',
         'First answer',
         'Second question',
+      ]);
+    },
+  );
+
+  testWidgets(
+    'an unowned cached cry card never attaches to a recovered thread',
+    (tester) async {
+      final store = _MemoryAgentHubInteractionStateStore(
+        AgentHubInteractionSnapshot(
+          runState: const AgentStreamRunState(threadId: 'new-thread'),
+          cryTasks: [
+            ChatFirstCryTask(
+              id: 'local:cry:old-unbound',
+              createdAt: DateTime.utc(2026, 10, 1),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(chatFirstExperience: true, interactionStateStore: store),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(AgentHubHistorySliver), findsNothing);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(store.snapshot?.cryTasks, isEmpty);
+    },
+  );
+
+  testWidgets(
+    'cry card stays behind its assistant when the device clock differs',
+    (tester) async {
+      final store = _MemoryAgentHubInteractionStateStore(
+        AgentHubInteractionSnapshot(
+          runState: const AgentStreamRunState(threadId: 'thread-cry'),
+          historyMessages: [
+            AgentHubHistorySnapshot(
+              id: 'reply-1',
+              sequence: 2,
+              createdAt: DateTime.utc(2026, 10, 1, 10),
+              role: 'assistant',
+              content: 'First answer',
+            ),
+            AgentHubHistorySnapshot(
+              id: 'user-2',
+              sequence: 3,
+              createdAt: DateTime.utc(2026, 10, 1, 10, 2),
+              role: 'user',
+              content: 'Second question',
+            ),
+          ],
+          cryTasks: [
+            ChatFirstCryTask(
+              id: 'local:cry:clock-skew',
+              threadId: 'thread-cry',
+              precedingAssistantMessageId: 'reply-1',
+              createdAt: DateTime.utc(2026, 10, 2),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(chatFirstExperience: true, interactionStateStore: store),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final messages = tester
+          .widget<AgentHubHistorySliver>(find.byType(AgentHubHistorySliver))
+          .messages;
+      expect(messages.map((message) => message.id), [
+        'reply-1',
+        'local:cry:clock-skew',
+        'user-2',
       ]);
     },
   );
@@ -719,6 +795,66 @@ void main() {
     expect(_composerHasFocus(tester), isFalse);
     await tester.pumpWidget(const SizedBox());
   });
+
+  testWidgets(
+    'sending waits for keyboard exit before auto-scrolling the transcript',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetViewInsets);
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+      final history = List.generate(
+        30,
+        (index) => AgentHubHistoryMessage(
+          id: 'history-$index',
+          role: index.isEven
+              ? AgentHubHistoryRole.user
+              : AgentHubHistoryRole.assistant,
+          content:
+              'Previous conversation turn $index has enough text to scroll.',
+        ),
+      );
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            runner: AgentStreamRunner(client),
+            historyMessages: history,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      await tester.pump();
+      final input = find.byKey(const ValueKey('agent-composer-input'));
+      await tester.tap(input);
+      await tester.enterText(input, 'New question');
+      await tester.pump();
+      final scroll = tester
+          .widget<CustomScrollView>(
+            find.byKey(const ValueKey('agent-chat-scroll-view')),
+          )
+          .controller!;
+      scroll.jumpTo(
+        (scroll.position.maxScrollExtent - 150).clamp(0, double.infinity),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pump();
+      expect(client.requests, hasLength(1));
+      expect(scroll.position.extentAfter, greaterThan(20));
+      tester.view.viewInsets = const FakeViewPadding(bottom: 150);
+      await tester.pump();
+      expect(scroll.position.extentAfter, greaterThan(20));
+      tester.view.viewInsets = FakeViewPadding.zero;
+      await tester.pump();
+      await tester.pump();
+      expect(scroll.position.extentAfter, lessThan(2));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 
   testWidgets(
     'Agent Hub keeps the keyboard closed and restores the draft on send error',

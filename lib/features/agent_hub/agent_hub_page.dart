@@ -327,9 +327,8 @@ class _AgentHubPageState extends State<AgentHubPage>
     (task) => task.threadId == null || task.threadId == _state.threadId,
   );
 
-  Iterable<ChatFirstCryTask> get _visibleCryTasks => _cryTasks.where(
-    (task) => task.threadId == null || task.threadId == _state.threadId,
-  );
+  Iterable<ChatFirstCryTask> get _visibleCryTasks =>
+      _cryTasks.where((task) => task.threadId == _state.threadId);
 
   void _bindUnassignedCryTasks(String? threadId) {
     if (threadId == null) return;
@@ -404,27 +403,29 @@ class _AgentHubPageState extends State<AgentHubPage>
         .map((message) => message.runId)
         .whereType<String>()
         .toSet();
-    return _mergeHistoryMessages([
-      ...remote,
-      ?projection,
-      for (final task in _visiblePoopTasks)
-        if (task.runId == null || !remotePoopRunIds.contains(task.runId))
+    return _placeCryCardsAfterTheirAssistant(
+      _mergeHistoryMessages([
+        ...remote,
+        ?projection,
+        for (final task in _visiblePoopTasks)
+          if (task.runId == null || !remotePoopRunIds.contains(task.runId))
+            AgentHubHistoryMessage(
+              id: task.id,
+              createdAt: task.createdAt,
+              role: AgentHubHistoryRole.user,
+              content: '',
+              localPoopTask: task,
+            ),
+        for (final task in _visibleCryTasks)
           AgentHubHistoryMessage(
             id: task.id,
             createdAt: task.createdAt,
             role: AgentHubHistoryRole.user,
             content: '',
-            localPoopTask: task,
+            localCryTask: task,
           ),
-      for (final task in _visibleCryTasks)
-        AgentHubHistoryMessage(
-          id: task.id,
-          createdAt: task.createdAt,
-          role: AgentHubHistoryRole.user,
-          content: '',
-          localCryTask: task,
-        ),
-    ]);
+      ]),
+    );
   }
 
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
@@ -452,6 +453,7 @@ class _AgentHubPageState extends State<AgentHubPage>
   Timer? _activeRunPersistentWriteTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
   bool _scrollToLatestFrameScheduled = false;
+  bool _scrollAfterKeyboardCloses = false;
   bool _scheduledScrollToLatestSmooth = false;
   int _scheduledScrollToLatestIntentVersion = 0;
 
@@ -475,6 +477,7 @@ class _AgentHubPageState extends State<AgentHubPage>
 
     _publishRunState(_state);
     _composerController.addListener(_handleComposerChanged);
+    _composerFocusNode.addListener(_handleComposerFocusChanged);
     _chatScrollController.addListener(_handleChatScroll);
 
     _initializeInteractionState();
@@ -583,6 +586,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       ..removeListener(_handleChatScroll)
       ..dispose();
     _composerController.dispose();
+    _composerFocusNode.removeListener(_handleComposerFocusChanged);
     _composerFocusNode.dispose();
     _runStateNotifier.dispose();
     _visibleReplyRunningNotifier.dispose();
@@ -2070,7 +2074,7 @@ class _AgentHubPageState extends State<AgentHubPage>
         ?.id;
     _cryTasks.addAll(
       interactionState.cryTasks.where(
-        (task) => task.threadId == null || task.threadId == _state.threadId,
+        (task) => task.threadId != null && task.threadId == _state.threadId,
       ),
     );
     _bindUnassignedCryTasks(_state.threadId);
@@ -2285,7 +2289,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       ..clear()
       ..addAll(
         snapshot.cryTasks.where(
-          (task) => task.threadId == null || task.threadId == _state.threadId,
+          (task) => task.threadId != null && task.threadId == _state.threadId,
         ),
       );
     _bindUnassignedCryTasks(_state.threadId);
@@ -2770,7 +2774,19 @@ class _AgentHubPageState extends State<AgentHubPage>
     return position.maxScrollExtent - position.pixels <= threshold;
   }
 
+  void _handleComposerFocusChanged() {
+    if (_composerFocusNode.hasFocus) _scrollAfterKeyboardCloses = false;
+  }
+
+  bool get _keyboardIsClosing =>
+      !_composerFocusNode.hasFocus && View.of(context).viewInsets.bottom > 0;
+
   void _scheduleScrollToLatest({bool smooth = false}) {
+    if (_keyboardIsClosing) {
+      _scrollAfterKeyboardCloses = true;
+      ++_scrollIntentVersion; // Supersede any scroll queued before unfocus.
+      return;
+    }
     final intentVersion = ++_scrollIntentVersion;
     _scheduledScrollToLatestIntentVersion = intentVersion;
     _scheduledScrollToLatestSmooth = _scheduledScrollToLatestSmooth || smooth;
@@ -2784,6 +2800,10 @@ class _AgentHubPageState extends State<AgentHubPage>
       _scheduledScrollToLatestIntentVersion = 0;
       if (!mounted) return;
       if (intentVersion != _scrollIntentVersion) return;
+      if (_keyboardIsClosing) {
+        _scrollAfterKeyboardCloses = true;
+        return;
+      }
       unawaited(
         _scrollToLatest(smooth: shouldSmooth).then((_) {
           if (!shouldSmooth) {
@@ -2799,6 +2819,10 @@ class _AgentHubPageState extends State<AgentHubPage>
       if (!mounted ||
           intentVersion != _scrollIntentVersion ||
           !_chatScrollController.hasClients) {
+        return;
+      }
+      if (_keyboardIsClosing) {
+        _scrollAfterKeyboardCloses = true;
         return;
       }
       final position = _chatScrollController.position;
@@ -3826,6 +3850,13 @@ class _AgentHubPageState extends State<AgentHubPage>
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, pageConstraints) {
+      if (_scrollAfterKeyboardCloses &&
+          View.of(context).viewInsets.bottom == 0) {
+        _scrollAfterKeyboardCloses = false;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _scheduleScrollToLatest();
+        });
+      }
       final page = ColoredBox(
         key: const ValueKey('agent-hub-page'),
         color: widget.chatFirstExperience
@@ -7197,6 +7228,37 @@ String _messageIdentity(AgentHubHistoryMessage message) =>
     (message.runState?.runId != null
         ? 'run:${message.runState!.runId}:assistant'
         : 'legacy:${identityHashCode(message)}');
+
+// Server messages have server timestamps; a local card may have a skewed
+// device timestamp. Its explicit assistant reference is authoritative.
+List<AgentHubHistoryMessage> _placeCryCardsAfterTheirAssistant(
+  List<AgentHubHistoryMessage> messages,
+) {
+  final assistantIds = {
+    for (final message in messages)
+      if (message.role == AgentHubHistoryRole.assistant && message.id != null)
+        message.id!,
+  };
+  final cardsByAnchor = <String, List<AgentHubHistoryMessage>>{};
+  for (final message in messages) {
+    final anchorId = message.localCryTask?.precedingAssistantMessageId;
+    if (anchorId != null && assistantIds.contains(anchorId)) {
+      cardsByAnchor.putIfAbsent(anchorId, () => []).add(message);
+    }
+  }
+  if (cardsByAnchor.isEmpty) return messages;
+  return [
+    for (final message in messages) ...[
+      if (message.localCryTask?.precedingAssistantMessageId == null ||
+          !cardsByAnchor.containsKey(
+            message.localCryTask?.precedingAssistantMessageId,
+          ))
+        message,
+      if (message.role == AgentHubHistoryRole.assistant && message.id != null)
+        ...?cardsByAnchor[message.id],
+    ],
+  ];
+}
 
 List<AgentHubHistoryMessage> _mergeHistoryMessages(
   Iterable<AgentHubHistoryMessage> messages,
