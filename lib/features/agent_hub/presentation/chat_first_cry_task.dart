@@ -235,24 +235,18 @@ class ChatFirstCryTaskCard extends StatelessWidget {
     required this.onAbandon,
     this.canStart = true,
     this.controller,
-    this.answer,
-    this.analyzedAt,
     this.isSubmitting = false,
     this.feedback,
     this.onSubmit,
-    this.onAskAdvice,
     this.onRefreshResult,
   });
 
   final ChatFirstCryTaskStatus status;
   final ChatFirstCryTaskController? controller;
   final bool canStart;
-  final String? answer;
-  final DateTime? analyzedAt;
   final bool isSubmitting;
   final String? feedback;
   final VoidCallback? onSubmit;
-  final VoidCallback? onAskAdvice;
   final VoidCallback? onRefreshResult;
   final VoidCallback onStart;
   final VoidCallback onAbandon;
@@ -342,65 +336,6 @@ class ChatFirstCryTaskCard extends StatelessWidget {
                     TextButton(
                       onPressed: canStart ? onStart : null,
                       child: const Text('重新录一段'),
-                    ),
-                ] else if (status == ChatFirstCryTaskStatus.completed ||
-                    status == ChatFirstCryTaskStatus.incomplete) ...[
-                  const Text(
-                    '这段哭声的线索',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                  ),
-                  if (analyzedAt != null)
-                    Text(
-                      '分析于 ${analyzedAt!.toLocal().year}-${analyzedAt!.toLocal().month.toString().padLeft(2, '0')}-${analyzedAt!.toLocal().day.toString().padLeft(2, '0')} ${analyzedAt!.toLocal().hour.toString().padLeft(2, '0')}:${analyzedAt!.toLocal().minute.toString().padLeft(2, '0')}',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Color(0xFF74696B),
-                      ),
-                    ),
-                  const SizedBox(height: 10),
-                  Text(
-                    status == ChatFirstCryTaskStatus.incomplete
-                        ? '这次还没有得到足够的识别线索'
-                        : answer == 'no_cry'
-                        ? '这段录音未识别到有效哭声'
-                        : _answerLabel(answer),
-                    key: const ValueKey('chat-first-cry-result'),
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF71465A),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    '这是声音给出的线索，不是确定原因。请结合宝宝当时的表现观察。',
-                    style: TextStyle(fontSize: 12, color: Color(0xFF70656A)),
-                  ),
-                  if (status == ChatFirstCryTaskStatus.completed &&
-                      answer != 'no_cry') ...[
-                    const SizedBox(height: 10),
-                    const Text(
-                      '现在可以：告诉我宝宝当时的情况，一起看看下一步。',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF70656A)),
-                    ),
-                  ],
-                  const SizedBox(height: 10),
-                  const Text(
-                    '识别结果不能代替对宝宝状态的观察或医疗判断。',
-                    style: TextStyle(fontSize: 11, color: Color(0xFF74696B)),
-                  ),
-                  if (status == ChatFirstCryTaskStatus.incomplete ||
-                      answer == 'no_cry')
-                    TextButton(
-                      key: const ValueKey('chat-first-cry-record-again'),
-                      onPressed: canStart ? onStart : null,
-                      child: const Text('重新录一段'),
-                    ),
-                  if (onAskAdvice != null)
-                    TextButton(
-                      key: const ValueKey('chat-first-cry-ask-advice'),
-                      onPressed: onAskAdvice,
-                      child: const Text('获取情境建议'),
                     ),
                 ] else if (phase == ChatFirstCryCapturePhase.idle) ...[
                   const Text(
@@ -666,15 +601,65 @@ class ChatFirstCryTaskCard extends StatelessWidget {
     );
   }
 
-  static String _answerLabel(String? answer) => switch (answer) {
-    'sleep' => '可能和想休息有关',
-    'pain' => '可能有不舒服的感觉',
-    'burp' => '可能想打嗝',
-    'uncomfortable' => '可能感到不舒适',
-    'hungry' => '可能和饥饿有关',
-    _ => '这次还没有得到足够的识别线索',
-  };
-
   static String _clock(Duration duration) =>
       '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
 }
+
+/// A verified service result; explanations and safety context belong to the
+/// following Agent reply rather than duplicating them inside this card.
+class ChatFirstCryResultCard extends StatelessWidget {
+  const ChatFirstCryResultCard({
+    super.key,
+    required this.answer,
+    required this.incomplete,
+  });
+
+  final String? answer;
+  final bool incomplete;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    key: const ValueKey('chat-first-cry-result-card'),
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+    decoration: BoxDecoration(
+      color: const Color(0xFFFFFDFC),
+      border: Border.all(color: const Color(0xFFEDE6E3)),
+      borderRadius: BorderRadius.circular(18),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '哭声背后的原因',
+          style: TextStyle(
+            fontSize: 13,
+            color: Color(0xFF786E6B),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          incomplete ? '暂未识别出明确原因' : _causeLabel(answer),
+          key: const ValueKey('chat-first-cry-result'),
+          style: const TextStyle(
+            fontSize: 18,
+            color: Color(0xFF382F33),
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+String _causeLabel(String? answer) => switch (answer) {
+  'sleep' => '可能和想休息有关',
+  'pain' => '可能有不舒服的感觉',
+  'burp' => '可能想打嗝',
+  'uncomfortable' => '可能感到不舒适',
+  'hungry' => '可能和饥饿有关',
+  'no_cry' => '这段录音未识别到有效哭声',
+  _ => '暂未识别出明确原因',
+};

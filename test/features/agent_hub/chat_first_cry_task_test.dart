@@ -127,6 +127,190 @@ void main() {
   );
 
   testWidgets(
+    'opening and changing a cry card keeps its bottom actions in view',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final repository = _CryRepository()
+        ..state = const AgentStreamRunState(threadId: 'thread-cry')
+        ..messages.addAll(
+          List.generate(
+            20,
+            (index) => AgentConversationMessage(
+              id: 'history-$index',
+              role: index.isEven
+                  ? AgentConversationMessageRole.user
+                  : AgentConversationMessageRole.assistant,
+              content:
+                  'Earlier conversation turn $index with enough content to scroll.',
+            ),
+          ),
+        );
+      await tester.pumpWidget(
+        _page(
+          audio: _FakeCryAudio(),
+          client: _CaptureClient(),
+          repository: repository,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pumpAndSettle();
+      final viewport = tester.getRect(
+        find.byKey(const ValueKey('agent-chat-scroll-view')),
+      );
+      Rect card() =>
+          tester.getRect(find.byKey(const ValueKey('chat-first-topic-cry')));
+      expect(card().bottom, lessThanOrEqualTo(viewport.bottom + 1));
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pumpAndSettle();
+      expect(card().bottom, lessThanOrEqualTo(viewport.bottom + 1));
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pumpAndSettle();
+      expect(card().bottom, lessThanOrEqualTo(viewport.bottom + 1));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'submit closes capture card, waits in the conversation, then shows a cause-only result',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final product = _CryServiceTransport()..uploadGate = Completer<void>();
+      final agent = _CaptureClient();
+      await tester.pumpWidget(
+        _page(
+          audio: _FakeCryAudio(),
+          client: agent,
+          cry: CryAnalysisRepository(multipart: product, json: product),
+          repository: _CryRepository(),
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+      await tester.pump();
+      await tester.tap(find.text('上传并分析'));
+      await tester.pump();
+      await tester.pump();
+      expect(find.byKey(const ValueKey('chat-first-topic-cry')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-result-card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-waiting')),
+        findsOneWidget,
+      );
+      product.uploadGate!.complete();
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-waiting')),
+        findsNothing,
+      );
+      expect(find.byKey(const ValueKey('chat-first-topic-cry')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-result-card')),
+        findsOneWidget,
+      );
+      expect(find.text('哭声背后的原因'), findsOneWidget);
+      expect(find.text('可能和饥饿有关'), findsOneWidget);
+      expect(find.text('这段哭声的线索'), findsNothing);
+      expect(find.textContaining('分析于'), findsNothing);
+      expect(find.textContaining('不能代替'), findsNothing);
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-retry-advice')),
+        findsNothing,
+      );
+      expect(agent.requests, hasLength(1));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets('verified cause card precedes a separate Agent text reply', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final agent = _CaptureClient()..controlled = true;
+    final product = _CryServiceTransport();
+    await tester.pumpWidget(
+      _page(
+        audio: _FakeCryAudio(),
+        client: agent,
+        cry: CryAnalysisRepository(multipart: product, json: product),
+        repository: _CryRepository(),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+    await tester.pump();
+    await tester.tap(find.text('上传并分析'));
+    await tester.pump();
+    await tester.pump();
+    expect(agent.requests, hasLength(1));
+    agent.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'cry-started',
+        'type': 'run.started',
+        'sequence': 1,
+        'thread_id': 'thread-cry',
+        'run_id': 'run-cry',
+      }),
+    );
+    agent.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'cry-message',
+        'type': 'message.completed',
+        'sequence': 2,
+        'thread_id': 'thread-cry',
+        'run_id': 'run-cry',
+        'message_id': 'reply-cry',
+        'payload': {'role': 'assistant', 'text': '先抱抱宝宝，再结合饥饿信号看看。'},
+      }),
+    );
+    agent.emit(
+      0,
+      AgentStreamEvent(const {
+        'event_id': 'cry-done',
+        'type': 'run.completed',
+        'sequence': 3,
+        'thread_id': 'thread-cry',
+        'run_id': 'run-cry',
+      }),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('chat-first-cry-result-card')),
+      findsOneWidget,
+    );
+    expect(find.text('先抱抱宝宝，再结合饥饿信号看看。'), findsOneWidget);
+    expect(
+      tester
+          .getTopLeft(find.byKey(const ValueKey('chat-first-cry-result-card')))
+          .dy,
+      lessThan(tester.getTopLeft(find.text('先抱抱宝宝，再结合饥饿信号看看。')).dy),
+    );
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets(
     'verified service result becomes a card and only its ID reaches Agent',
     (tester) async {
       tester.view.physicalSize = const Size(390, 844);
@@ -476,7 +660,10 @@ void main() {
     product.uploadGate!.complete();
     await tester.pumpAndSettle();
     expect(find.text('可能和饥饿有关'), findsOneWidget);
-    expect(find.byKey(const ValueKey('chat-first-topic-cry')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('chat-first-cry-result-card')),
+      findsOneWidget,
+    );
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -605,10 +792,12 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(
-        find.byKey(const ValueKey('chat-first-cry-ask-advice')),
+        find.byKey(const ValueKey('chat-first-cry-retry-advice')),
         findsOneWidget,
       );
-      await tester.tap(find.byKey(const ValueKey('chat-first-cry-ask-advice')));
+      await tester.tap(
+        find.byKey(const ValueKey('chat-first-cry-retry-advice')),
+      );
       await tester.pump();
       expect(agent.requests, hasLength(2));
       expect(agent.requests[0].idempotencyKey, endsWith(':0'));

@@ -797,6 +797,46 @@ void main() {
   });
 
   testWidgets(
+    'opening the keyboard places the newest reply above the composer',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetViewInsets);
+      final history = List.generate(
+        30,
+        (index) => AgentHubHistoryMessage(
+          id: 'turn-$index',
+          role: index.isEven
+              ? AgentHubHistoryRole.user
+              : AgentHubHistoryRole.assistant,
+          content: 'A conversation turn that occupies a row $index',
+        ),
+      );
+      await tester.pumpWidget(_host(AgentHubPage(historyMessages: history)));
+      await tester.pumpAndSettle();
+      final scroll = tester
+          .widget<CustomScrollView>(
+            find.byKey(const ValueKey('agent-chat-scroll-view')),
+          )
+          .controller!;
+      scroll.jumpTo(
+        (scroll.position.maxScrollExtent - 220).clamp(0, double.infinity),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('agent-composer-input')));
+      tester.view.viewInsets = const FakeViewPadding(bottom: 320);
+      await tester.pump();
+      expect(scroll.position.extentAfter, greaterThan(10));
+      await tester.pump(const Duration(milliseconds: 220));
+      await tester.pump();
+      expect(scroll.position.extentAfter, lessThan(2));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
     'sending waits for keyboard exit before auto-scrolling the transcript',
     (tester) async {
       tester.view.physicalSize = const Size(390, 844);
@@ -850,6 +890,7 @@ void main() {
       expect(scroll.position.extentAfter, greaterThan(20));
       tester.view.viewInsets = FakeViewPadding.zero;
       await tester.pump();
+      await tester.pump(const Duration(milliseconds: 160));
       await tester.pump();
       expect(scroll.position.extentAfter, lessThan(2));
       await tester.pumpWidget(const SizedBox());

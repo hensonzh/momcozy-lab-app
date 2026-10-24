@@ -259,6 +259,9 @@ class _AgentHubPageState extends State<AgentHubPage>
   int _poopGeneration = 0;
   final List<ChatFirstCryTask> _cryTasks = [];
   final GlobalKey _activeCryCardKey = GlobalKey();
+  final GlobalKey _activePoopCardKey = GlobalKey();
+  bool _activeCardScrollScheduled = false;
+  String? _activeCardScrollTaskId;
   ChatFirstCryTaskController? _cryCapture;
   String? _activeCryTaskId;
   bool _crySubmitting = false;
@@ -329,6 +332,15 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   Iterable<ChatFirstCryTask> get _visibleCryTasks =>
       _cryTasks.where((task) => task.threadId == _state.threadId);
+
+  bool _cryTaskAwaitingResult(ChatFirstCryTask task) =>
+      task.status == ChatFirstCryTaskStatus.verifying ||
+      (task.status == ChatFirstCryTaskStatus.pending &&
+          task.id == _activeCryTaskId &&
+          _crySubmitting) ||
+      (task.status == ChatFirstCryTaskStatus.pending &&
+          task.requestKey != null &&
+          _cryCapture == null);
 
   void _bindUnassignedCryTasks(String? threadId) {
     if (threadId == null) return;
@@ -417,13 +429,14 @@ class _AgentHubPageState extends State<AgentHubPage>
               localPoopTask: task,
             ),
         for (final task in _visibleCryTasks)
-          AgentHubHistoryMessage(
-            id: task.id,
-            createdAt: task.createdAt,
-            role: AgentHubHistoryRole.user,
-            content: '',
-            localCryTask: task,
-          ),
+          if (!_cryTaskAwaitingResult(task))
+            AgentHubHistoryMessage(
+              id: task.id,
+              createdAt: task.createdAt,
+              role: AgentHubHistoryRole.user,
+              content: '',
+              localCryTask: task,
+            ),
       ]),
     );
   }
@@ -453,7 +466,9 @@ class _AgentHubPageState extends State<AgentHubPage>
   Timer? _activeRunPersistentWriteTimer;
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
   bool _scrollToLatestFrameScheduled = false;
-  bool _scrollAfterKeyboardCloses = false;
+  bool _keyboardTransitioning = false;
+  bool _scrollAfterKeyboardSettles = false;
+  Timer? _keyboardSettleTimer;
   bool _scheduledScrollToLatestSmooth = false;
   int _scheduledScrollToLatestIntentVersion = 0;
 
@@ -586,6 +601,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       ..removeListener(_handleChatScroll)
       ..dispose();
     _composerController.dispose();
+    _keyboardSettleTimer?.cancel();
     _composerFocusNode.removeListener(_handleComposerFocusChanged);
     _composerFocusNode.dispose();
     _runStateNotifier.dispose();
@@ -703,7 +719,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       }
     });
     _persistInteractionState();
-    _scheduleScrollToLatest();
+    _showActiveCardBottom(_activePoopTaskId!);
   }
 
   Future<void> _loadPoopReviewCapability() async {
@@ -1404,6 +1420,39 @@ class _AgentHubPageState extends State<AgentHubPage>
     }
   }
 
+  void _showActiveCardBottom(String taskId) {
+    _activeCardScrollTaskId = taskId;
+    if (_activeCardScrollScheduled) return;
+    _activeCardScrollScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _activeCardScrollScheduled = false;
+      final latestTaskId = _activeCardScrollTaskId;
+      _activeCardScrollTaskId = null;
+      if (!mounted || !_isPageVisible || latestTaskId == null) return;
+      final key = latestTaskId == _activeCryTaskId
+          ? _activeCryCardKey
+          : latestTaskId == _activePoopTaskId
+          ? _activePoopCardKey
+          : null;
+      if (key == null) return;
+      final target = key.currentContext;
+      if (target == null) {
+        // A newly appended card may not be built by the lazy sliver yet.
+        _scheduleScrollToLatest();
+        return;
+      }
+      unawaited(
+        Scrollable.ensureVisible(
+          target,
+          alignment: 1,
+          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+        ),
+      );
+    });
+  }
+
   void _openCryTask({bool startCapture = false}) {
     final existing = _visibleCryTasks
         .where((task) => task.status == ChatFirstCryTaskStatus.pending)
@@ -1432,20 +1481,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (startCapture && existing == null && _activeCryTaskId != null) {
       _startCryCapture(_activeCryTaskId!);
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final target = _activeCryCardKey.currentContext;
-      if (mounted && target != null) {
-        unawaited(
-          Scrollable.ensureVisible(
-            target,
-            duration: const Duration(milliseconds: 180),
-            alignment: .15,
-          ),
-        );
-      } else if (mounted) {
-        _scheduleScrollToLatest();
-      }
-    });
+    _showActiveCardBottom(_activeCryTaskId!);
   }
 
   void _startCryCapture(String taskId) {
@@ -1560,6 +1596,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     } finally {
       if (mounted && generation == _crySubmissionGeneration) {
         setState(() => _crySubmitting = false);
+        if (_cryFeedback != null) _showActiveCardBottom(taskId);
         _scheduleCryHistorySync();
       }
     }
@@ -1858,7 +1895,11 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   void _onCryCaptureChanged() {
-    if (mounted) setState(() {});
+    if (mounted) {
+      setState(() {});
+      final id = _activeCryTaskId;
+      if (id != null) _showActiveCardBottom(id);
+    }
   }
 
   void _releaseCryCapture() {
@@ -2775,15 +2816,47 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   void _handleComposerFocusChanged() {
-    if (_composerFocusNode.hasFocus) _scrollAfterKeyboardCloses = false;
+    if (View.of(context).viewInsets.bottom == 0) {
+      _keyboardTransitioning = false;
+      _scrollAfterKeyboardSettles = false;
+      return;
+    }
+    _keyboardTransitioning = true;
+    _scrollAfterKeyboardSettles = true;
+    ++_scrollIntentVersion;
+    _settleKeyboardAfterMetrics();
   }
 
-  bool get _keyboardIsClosing =>
-      !_composerFocusNode.hasFocus && View.of(context).viewInsets.bottom > 0;
+  @override
+  void didChangeMetrics() {
+    if (!mounted || (!_composerFocusNode.hasFocus && !_keyboardTransitioning)) {
+      return;
+    }
+    _keyboardTransitioning = true;
+    _scrollAfterKeyboardSettles = true;
+    ++_scrollIntentVersion;
+    _settleKeyboardAfterMetrics();
+  }
+
+  void _settleKeyboardAfterMetrics() {
+    _keyboardSettleTimer?.cancel();
+    _keyboardSettleTimer = Timer(const Duration(milliseconds: 140), () {
+      if (!mounted ||
+          (!_composerFocusNode.hasFocus &&
+              View.of(context).viewInsets.bottom > 0)) {
+        return; // Still closing: wait for the final metrics update.
+      }
+      _keyboardTransitioning = false;
+      if (_scrollAfterKeyboardSettles) {
+        _scrollAfterKeyboardSettles = false;
+        _scheduleScrollToLatest();
+      }
+    });
+  }
 
   void _scheduleScrollToLatest({bool smooth = false}) {
-    if (_keyboardIsClosing) {
-      _scrollAfterKeyboardCloses = true;
+    if (_keyboardTransitioning) {
+      _scrollAfterKeyboardSettles = true;
       ++_scrollIntentVersion; // Supersede any scroll queued before unfocus.
       return;
     }
@@ -2800,8 +2873,8 @@ class _AgentHubPageState extends State<AgentHubPage>
       _scheduledScrollToLatestIntentVersion = 0;
       if (!mounted) return;
       if (intentVersion != _scrollIntentVersion) return;
-      if (_keyboardIsClosing) {
-        _scrollAfterKeyboardCloses = true;
+      if (_keyboardTransitioning) {
+        _scrollAfterKeyboardSettles = true;
         return;
       }
       unawaited(
@@ -2821,8 +2894,8 @@ class _AgentHubPageState extends State<AgentHubPage>
           !_chatScrollController.hasClients) {
         return;
       }
-      if (_keyboardIsClosing) {
-        _scrollAfterKeyboardCloses = true;
+      if (_keyboardTransitioning) {
+        _scrollAfterKeyboardSettles = true;
         return;
       }
       final position = _chatScrollController.position;
@@ -3850,13 +3923,6 @@ class _AgentHubPageState extends State<AgentHubPage>
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, pageConstraints) {
-      if (_scrollAfterKeyboardCloses &&
-          View.of(context).viewInsets.bottom == 0) {
-        _scrollAfterKeyboardCloses = false;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) _scheduleScrollToLatest();
-        });
-      }
       final page = ColoredBox(
         key: const ValueKey('agent-hub-page'),
         color: widget.chatFirstExperience
@@ -3959,6 +4025,9 @@ class _AgentHubPageState extends State<AgentHubPage>
                                         widget.chatFirstExperience,
                                     activeCryTaskId: _activeCryTaskId,
                                     activeCryCardKey: _activeCryCardKey,
+                                    activePoopTaskId: _activePoopTaskId,
+                                    activePoopCardKey: _activePoopCardKey,
+                                    onActiveCardLayout: _showActiveCardBottom,
                                     poopTaskBuilder: (context, task) =>
                                         ValueListenableBuilder<
                                           AgentStreamRunState
@@ -4102,82 +4171,102 @@ class _AgentHubPageState extends State<AgentHubPage>
                                           ),
                                         ),
                                     cryTaskBuilder: (context, task) =>
-                                        ChatFirstCryTaskCard(
-                                          status: task.status,
-                                          answer: task.answer,
-                                          analyzedAt: task.analyzedAt,
-                                          isSubmitting:
-                                              _crySubmitting &&
-                                              _activeCryTaskId == task.id,
-                                          feedback: _activeCryTaskId == task.id
-                                              ? _cryFeedback
-                                              : null,
-                                          onSubmit:
-                                              widget.cryAnalysisRepository !=
-                                                      null &&
-                                                  !_isVisibleReplyRunning &&
-                                                  _isPageVisible
-                                              ? () => unawaited(
-                                                  _submitCryTask(task.id),
-                                                )
-                                              : null,
-                                          onRefreshResult:
-                                              (task.analysisId != null ||
-                                                      task.requestKey !=
-                                                          null) &&
-                                                  widget.cryAnalysisRepository !=
-                                                      null
-                                              ? () => unawaited(
-                                                  _refreshPersistedCryResults(),
-                                                )
-                                              : null,
-                                          onAskAdvice:
-                                              task.analysisId != null &&
-                                                  (task.status ==
-                                                          ChatFirstCryTaskStatus
-                                                              .completed ||
-                                                      task.status ==
-                                                          ChatFirstCryTaskStatus
-                                                              .incomplete) &&
+                                        task.status ==
+                                                ChatFirstCryTaskStatus
+                                                    .completed ||
+                                            task.status ==
+                                                ChatFirstCryTaskStatus
+                                                    .incomplete
+                                        ? Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              ChatFirstCryResultCard(
+                                                answer: task.answer,
+                                                incomplete:
+                                                    task.status ==
+                                                    ChatFirstCryTaskStatus
+                                                        .incomplete,
+                                              ),
+                                              if (task.analysisId != null &&
                                                   !task.adviceAccepted &&
+                                                  !task.autoAdvicePending &&
+                                                  task.adviceAttempt > 0 &&
                                                   !_cryAdviceInFlight &&
                                                   !_state.isActive &&
-                                                  !_isVisibleReplyRunning &&
-                                                  widget.runner != null
-                                              ? () => unawaited(
-                                                  _sendCryAdvice(task.id),
-                                                )
-                                              : null,
-                                          canStart:
-                                              !_crySubmitting &&
-                                              _isPageVisible &&
-                                              !_isVisibleReplyRunning &&
-                                              !_conversationSwitchPending &&
-                                              (task.status ==
-                                                      ChatFirstCryTaskStatus
-                                                          .pending ||
-                                                  !_visibleCryTasks.any(
-                                                    (other) =>
-                                                        other.status ==
-                                                        ChatFirstCryTaskStatus
-                                                            .pending,
-                                                  )) &&
-                                              (_cryCapture == null ||
-                                                  _activeCryTaskId == task.id),
-                                          controller:
-                                              _activeCryTaskId == task.id
-                                              ? _cryCapture
-                                              : null,
-                                          onStart: () =>
-                                              task.status ==
-                                                  ChatFirstCryTaskStatus.pending
-                                              ? _startCryCapture(task.id)
-                                              : _openCryTask(
-                                                  startCapture: true,
+                                                  widget.runner != null)
+                                                TextButton(
+                                                  key: const ValueKey(
+                                                    'chat-first-cry-retry-advice',
+                                                  ),
+                                                  onPressed: () => unawaited(
+                                                    _sendCryAdvice(task.id),
+                                                  ),
+                                                  child: const Text('重试获取回复'),
                                                 ),
-                                          onAbandon: () =>
-                                              _abandonCryTask(task.id),
-                                        ),
+                                            ],
+                                          )
+                                        : ChatFirstCryTaskCard(
+                                            status: task.status,
+                                            isSubmitting:
+                                                _crySubmitting &&
+                                                _activeCryTaskId == task.id,
+                                            feedback:
+                                                _activeCryTaskId == task.id
+                                                ? _cryFeedback
+                                                : null,
+                                            onSubmit:
+                                                widget.cryAnalysisRepository !=
+                                                        null &&
+                                                    !_isVisibleReplyRunning &&
+                                                    _isPageVisible
+                                                ? () => unawaited(
+                                                    _submitCryTask(task.id),
+                                                  )
+                                                : null,
+                                            onRefreshResult:
+                                                (task.analysisId != null ||
+                                                        task.requestKey !=
+                                                            null) &&
+                                                    widget.cryAnalysisRepository !=
+                                                        null
+                                                ? () => unawaited(
+                                                    _refreshPersistedCryResults(),
+                                                  )
+                                                : null,
+                                            canStart:
+                                                !_crySubmitting &&
+                                                _isPageVisible &&
+                                                !_isVisibleReplyRunning &&
+                                                !_conversationSwitchPending &&
+                                                (task.status ==
+                                                        ChatFirstCryTaskStatus
+                                                            .pending ||
+                                                    !_visibleCryTasks.any(
+                                                      (other) =>
+                                                          other.status ==
+                                                          ChatFirstCryTaskStatus
+                                                              .pending,
+                                                    )) &&
+                                                (_cryCapture == null ||
+                                                    _activeCryTaskId ==
+                                                        task.id),
+                                            controller:
+                                                _activeCryTaskId == task.id
+                                                ? _cryCapture
+                                                : null,
+                                            onStart: () =>
+                                                task.status ==
+                                                    ChatFirstCryTaskStatus
+                                                        .pending
+                                                ? _startCryCapture(task.id)
+                                                : _openCryTask(
+                                                    startCapture: true,
+                                                  ),
+                                            onAbandon: () =>
+                                                _abandonCryTask(task.id),
+                                          ),
                                     viewportAnchorMessageId:
                                         _olderHistoryViewportAnchorMessageId,
                                     viewportAnchorKey:
@@ -4190,6 +4279,20 @@ class _AgentHubPageState extends State<AgentHubPage>
                               if (visibleMessages.isNotEmpty)
                                 const SliverToBoxAdapter(
                                   child: SizedBox(height: 18),
+                                ),
+                              if (_visibleCryTasks.any(_cryTaskAwaitingResult))
+                                const SliverToBoxAdapter(
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(20, 6, 20, 18),
+                                    child: Text(
+                                      '正在分析哭声，稍后会在这里回复你…',
+                                      key: ValueKey('chat-first-cry-waiting'),
+                                      style: TextStyle(
+                                        color: Color(0xFF75696D),
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               if (!_hideCurrentWelcome &&
                                   !_currentAssistantProjectedWithCryTask &&
@@ -5130,6 +5233,9 @@ class AgentHubHistorySliver extends StatelessWidget {
     this.viewportAnchorKey,
     this.activeCryTaskId,
     this.activeCryCardKey,
+    this.activePoopTaskId,
+    this.activePoopCardKey,
+    this.onActiveCardLayout,
     this.cryTaskBuilder,
     this.poopTaskBuilder,
     this.loadImageThumbnail,
@@ -5142,6 +5248,9 @@ class AgentHubHistorySliver extends StatelessWidget {
   final GlobalKey? viewportAnchorKey;
   final String? activeCryTaskId;
   final GlobalKey? activeCryCardKey;
+  final String? activePoopTaskId;
+  final GlobalKey? activePoopCardKey;
+  final ValueChanged<String>? onActiveCardLayout;
   final Widget Function(BuildContext, ChatFirstCryTask)? cryTaskBuilder;
   final Widget Function(BuildContext, ChatFirstPoopTask)? poopTaskBuilder;
   final AgentImageContentLoader? loadImageThumbnail;
@@ -5158,6 +5267,9 @@ class AgentHubHistorySliver extends StatelessWidget {
         else if (activeCryCardKey != null &&
             _messageIdentity(message) == activeCryTaskId)
           activeCryCardKey!
+        else if (activePoopCardKey != null &&
+            _messageIdentity(message) == activePoopTaskId)
+          activePoopCardKey!
         else
           ValueKey<String>(
             'agent-history-message:${_messageIdentity(message)}',
@@ -5169,17 +5281,31 @@ class AgentHubHistorySliver extends StatelessWidget {
         (context, index) {
           if (index.isOdd) return const SizedBox(height: 18);
           final messageIndex = index ~/ 2;
+          final bubble = _AgentHistoryBubble(
+            key: ValueKey('agent-history-$messageIndex'),
+            message: messages[messageIndex],
+            chatFirstExperience: chatFirstExperience,
+            cryTaskBuilder: cryTaskBuilder,
+            poopTaskBuilder: poopTaskBuilder,
+            loadImageThumbnail: loadImageThumbnail,
+            loadImageContent: loadImageContent,
+          );
+          final active =
+              messageKeys[messageIndex] == activeCryCardKey ||
+              messageKeys[messageIndex] == activePoopCardKey;
           return KeyedSubtree(
             key: messageKeys[messageIndex],
-            child: _AgentHistoryBubble(
-              key: ValueKey('agent-history-$messageIndex'),
-              message: messages[messageIndex],
-              chatFirstExperience: chatFirstExperience,
-              cryTaskBuilder: cryTaskBuilder,
-              poopTaskBuilder: poopTaskBuilder,
-              loadImageThumbnail: loadImageThumbnail,
-              loadImageContent: loadImageContent,
-            ),
+            child: active && onActiveCardLayout != null
+                ? NotificationListener<SizeChangedLayoutNotification>(
+                    onNotification: (_) {
+                      onActiveCardLayout!(
+                        _messageIdentity(messages[messageIndex]),
+                      );
+                      return false;
+                    },
+                    child: SizeChangedLayoutNotifier(child: bubble),
+                  )
+                : bubble,
           );
         },
         childCount: itemCount,

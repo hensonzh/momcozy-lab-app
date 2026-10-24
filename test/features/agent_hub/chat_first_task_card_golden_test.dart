@@ -59,7 +59,7 @@ void main() {
       matchesGoldenFile('../../goldens/chat_first/task-cards-390.png'),
     );
   });
-  testWidgets('verified cry result card presents a cautious clue at 390', (
+  testWidgets('verified cry result card shows the cause only at 390', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(390, 844);
@@ -73,21 +73,16 @@ void main() {
           backgroundColor: const Color(0xFFFFFAF7),
           body: const Padding(
             padding: EdgeInsets.all(16),
-            child: ChatFirstCryTaskCard(
-              status: ChatFirstCryTaskStatus.completed,
-              answer: 'sleep',
-              onStart: _noop,
-              onAbandon: _noop,
-            ),
+            child: ChatFirstCryResultCard(answer: 'sleep', incomplete: false),
           ),
         ),
       ),
     );
     await tester.pumpAndSettle();
     expect(find.text('可能和想休息有关'), findsOneWidget);
-    expect(find.textContaining('不是确定原因'), findsOneWidget);
+    expect(find.text('哭声背后的原因'), findsOneWidget);
     await expectLater(
-      find.byKey(const ValueKey('chat-first-topic-cry')),
+      find.byKey(const ValueKey('chat-first-cry-result-card')),
       matchesGoldenFile('../../goldens/chat_first/cry-result-390.png'),
     );
   });
@@ -159,5 +154,3 @@ class _PreviewAudio implements ChatFirstCryAudioSession {
   @override
   Future<void> dispose() async {}
 }
-
-void _noop() {}
