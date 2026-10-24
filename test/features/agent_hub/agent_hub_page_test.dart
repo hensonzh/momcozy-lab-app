@@ -75,6 +75,92 @@ void main() {
     },
   );
 
+  testWidgets(
+    'recovery keeps a cached projected reply after its server user turn',
+    (tester) async {
+      final now = DateTime.utc(2026, 10, 1);
+      final store = _MemoryAgentHubInteractionStateStore(
+        const AgentHubInteractionSnapshot(
+          runState: AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            threadId: 'thread-order',
+            runId: 'run-2',
+            messageId: 'reply-2',
+            textContent: 'Second answer',
+            completedAssistantMessageReceived: true,
+          ),
+          historyMessages: [
+            AgentHubHistorySnapshot(
+              id: 'run:run-1:assistant',
+              role: 'assistant',
+              content: 'First answer',
+              runState: AgentStreamRunState(
+                phase: AgentStreamRunPhase.finished,
+                threadId: 'thread-order',
+                runId: 'run-1',
+                textContent: 'First answer',
+              ),
+            ),
+          ],
+        ),
+      );
+      final repository = _SequencedConversationRepository([
+        AgentConversationHistory(
+          thread: AgentConversationSummary(
+            id: 'thread-order',
+            title: 'Chat',
+            status: 'active',
+            createdAt: now,
+            updatedAt: now,
+          ),
+          messages: [
+            AgentConversationMessage(
+              id: 'user-1',
+              runId: 'run-1',
+              sequence: 1,
+              createdAt: now,
+              role: AgentConversationMessageRole.user,
+              content: 'First question',
+            ),
+            AgentConversationMessage(
+              id: 'user-2',
+              runId: 'run-2',
+              sequence: 2,
+              createdAt: now.add(const Duration(minutes: 1)),
+              role: AgentConversationMessageRole.user,
+              content: 'Second question',
+            ),
+          ],
+          currentState: const AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            threadId: 'thread-order',
+            runId: 'run-2',
+            messageId: 'reply-2',
+            textContent: 'Second answer',
+            completedAssistantMessageReceived: true,
+          ),
+        ),
+      ]);
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            interactionStateStore: store,
+            conversationRepository: repository,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final messages = tester
+          .widget<AgentHubHistorySliver>(find.byType(AgentHubHistorySliver))
+          .messages;
+      expect(messages.map((message) => message.content), [
+        'First question',
+        'First answer',
+        'Second question',
+      ]);
+    },
+  );
+
   testWidgets('Momcozy AI keeps the idle conversation free of service menus', (
     tester,
   ) async {
@@ -215,40 +301,34 @@ void main() {
     },
   );
 
-  testWidgets('Agent Hub shows loop light rail while preparing a reply', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.streaming,
-            events: [
-              AgentStreamEvent({
-                'type': 'run.progress',
-                'payload': {'label': 'Let me think…'},
-              }),
-            ],
+  testWidgets(
+    'Agent Hub keeps the page background still while preparing a reply',
+    (tester) async {
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.streaming,
+              events: [
+                AgentStreamEvent({
+                  'type': 'run.progress',
+                  'payload': {'label': 'Let me think…'},
+                }),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(
-      find.byKey(const ValueKey('agent-response-light-rail')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-response-light-rail-loop')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-response-light-rail-replying')),
-      findsNothing,
-    );
-  });
+      expect(
+        find.byKey(const ValueKey('agent-response-light-rail')),
+        findsNothing,
+      );
+      expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
+    },
+  );
 
-  testWidgets('Agent Hub switches light rail to replying once text streams', (
+  testWidgets('Agent Hub keeps the page background still while text streams', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -265,16 +345,9 @@ void main() {
 
     expect(
       find.byKey(const ValueKey('agent-response-light-rail')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-response-light-rail-replying')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-response-light-rail-loop')),
       findsNothing,
     );
+    expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
   });
 
   testWidgets('Agent Hub keeps the idle greeting near the transcript top', (
@@ -622,19 +695,11 @@ void main() {
     );
   });
 
-  testWidgets('Agent Hub dismisses the keyboard after the run is accepted', (
+  testWidgets('Agent Hub dismisses the keyboard immediately on send', (
     tester,
   ) async {
-    final client = _FixtureAgentStreamClient([
-      AgentStreamEvent(const {
-        'event_id': 'evt-keyboard-started',
-        'thread_id': 'thread-keyboard',
-        'run_id': 'run-keyboard',
-        'message_id': 'message-keyboard',
-        'sequence': 1,
-        'type': 'run.started',
-      }),
-    ]);
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
 
     await tester.pumpWidget(
       _host(AgentHubPage(runner: AgentStreamRunner(client))),
@@ -648,36 +713,39 @@ void main() {
     expect(_composerHasFocus(tester), isTrue);
 
     await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     expect(client.requests, hasLength(1));
     expect(_composerHasFocus(tester), isFalse);
+    await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('Agent Hub keeps the keyboard open when send is not accepted', (
-    tester,
-  ) async {
-    final client = _FailingAgentStreamClient(
-      StateError('SocketException: connection refused'),
-    );
+  testWidgets(
+    'Agent Hub keeps the keyboard closed and restores the draft on send error',
+    (tester) async {
+      final client = _FailingAgentStreamClient(
+        StateError('SocketException: connection refused'),
+      );
 
-    await tester.pumpWidget(
-      _host(AgentHubPage(runner: AgentStreamRunner(client))),
-    );
+      await tester.pumpWidget(
+        _host(AgentHubPage(runner: AgentStreamRunner(client))),
+      );
 
-    final input = find.byKey(const ValueKey('agent-composer-input'));
-    await tester.tap(input);
-    await tester.enterText(input, '网络失败时继续编辑');
-    await tester.pump();
+      final input = find.byKey(const ValueKey('agent-composer-input'));
+      await tester.tap(input);
+      await tester.enterText(input, '网络失败时继续编辑');
+      await tester.pump();
 
-    expect(_composerHasFocus(tester), isTrue);
+      expect(_composerHasFocus(tester), isTrue);
 
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+      await tester.pumpAndSettle();
 
-    expect(client.requests, hasLength(1));
-    expect(_composerHasFocus(tester), isTrue);
-  });
+      expect(client.requests, hasLength(1));
+      expect(_composerHasFocus(tester), isFalse);
+      expect(tester.widget<TextField>(input).controller!.text, '网络失败时继续编辑');
+    },
+  );
 
   testWidgets('Agent quick replies match the product chrome', (tester) async {
     final selected = <String>[];

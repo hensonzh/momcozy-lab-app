@@ -18,6 +18,66 @@ void main() {
     expect(transport.lastBody, {'title': '宝宝哭声'});
   });
 
+  test('projected replies retain their user-turn history anchor', () async {
+    final history = await AgentConversationApiRepository(
+      transport: FixtureApiJsonTransport({
+        'thread': {
+          'id': 'thread-projection',
+          'title': 'Chat',
+          'status': 'active',
+          'created_at': '2026-10-01T08:00:00Z',
+          'updated_at': '2026-10-01T08:02:00Z',
+        },
+        'items': [
+          {
+            'id': 'user-1',
+            'run_id': 'run-1',
+            'role': 'user',
+            'sequence': 1,
+            'created_at': '2026-10-01T08:00:00Z',
+            'content': {'text': 'First question'},
+          },
+          {
+            'id': 'user-2',
+            'run_id': 'run-2',
+            'role': 'user',
+            'sequence': 2,
+            'created_at': '2026-10-01T08:01:00Z',
+            'content': {'text': 'Second question'},
+          },
+          {
+            'id': 'assistant-2',
+            'run_id': 'run-2',
+            'role': 'assistant',
+            'sequence': 3,
+            'created_at': '2026-10-01T08:02:00Z',
+            'content': {'text': 'Second answer'},
+          },
+        ],
+        'events': [
+          {
+            'event_id': 'evt-old-answer',
+            'type': 'message.completed',
+            'run_id': 'run-1',
+            'message_id': 'assistant-1',
+            'sequence': 1,
+            'payload': {'role': 'assistant', 'text': 'First answer'},
+          },
+        ],
+        'next_before_sequence': null,
+      }),
+    ).loadConversation('thread-projection');
+    expect(history.messages.map((message) => message.content), [
+      'First question',
+      'First answer',
+      'Second question',
+    ]);
+    final projected = history.messages[1];
+    expect(projected.runId, 'run-1');
+    expect(projected.sequence, 1);
+    expect(projected.createdAt, DateTime.utc(2026, 10, 1, 8));
+  });
+
   test(
     'restores normalized transcript without assistant completion events',
     () async {

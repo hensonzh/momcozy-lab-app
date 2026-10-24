@@ -250,6 +250,9 @@ AgentConversationHistory _buildConversationHistory({
           AgentConversationMessage(
             role: AgentConversationMessageRole.assistant,
             id: projectedState.messageId ?? 'run:$messageRunId:assistant',
+            runId: messageRunId,
+            sequence: message.sequence,
+            createdAt: message.createdAt,
             content: projectedState.textContent,
             runState: projectedState,
             isChatFirstWelcome: welcomeRunIds.contains(messageRunId),

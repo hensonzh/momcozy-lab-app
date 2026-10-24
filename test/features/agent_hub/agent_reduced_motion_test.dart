@@ -50,7 +50,7 @@ void main() {
   });
   for (final status in [false, true]) {
     testWidgets(
-      'reduced motion stops and resumes ${status ? 'status sweeps' : 'reply rail'}',
+      'reduced motion stops and resumes ${status ? 'status sweeps' : 'reply indicators'}',
       (tester) async {
         final reduced = ValueNotifier(false);
         final active = ValueNotifier(true);
@@ -109,7 +109,7 @@ void main() {
     );
 
     testWidgets(
-      'iOS reduce motion toggle stops and resumes ${status ? 'status sweeps' : 'reply rail'}',
+      'iOS reduce motion toggle stops and resumes ${status ? 'status sweeps' : 'reply indicators'}',
       (tester) async {
         tester.platformDispatcher.accessibilityFeaturesTestValue =
             const FakeAccessibilityFeatures();
@@ -188,8 +188,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(
-      find.byKey(const ValueKey('agent-response-light-rail-loop')),
-      findsOneWidget,
+      find.byKey(const ValueKey('agent-response-light-rail')),
+      findsNothing,
     );
     expect(tester.binding.transientCallbackCount, 0);
     await expectLater(

@@ -441,11 +441,6 @@ class _AgentHubPageState extends State<AgentHubPage>
     false,
   );
 
-  final ValueNotifier<_AgentResponseLightRailMode>
-  _responseLightRailModeNotifier = ValueNotifier<_AgentResponseLightRailMode>(
-    _AgentResponseLightRailMode.idle,
-  );
-
   bool _interactionRestoreResolved = false;
   bool _showLatestButton = false;
   bool _attachmentUploadPending = false;
@@ -465,7 +460,6 @@ class _AgentHubPageState extends State<AgentHubPage>
   bool _consumedInitialAutoSend = false;
   String? _consumedInitialAutoRunKey;
   bool _initialAutoRunInFlight = false;
-  bool _dismissComposerKeyboardOnRunAccepted = false;
   String _greeting = agentHubDefaultGreeting;
   int _greetingRefreshGeneration = 0;
   int _externalConversationRefreshGeneration = 0;
@@ -593,7 +587,6 @@ class _AgentHubPageState extends State<AgentHubPage>
     _runStateNotifier.dispose();
     _visibleReplyRunningNotifier.dispose();
     _composerLockedNotifier.dispose();
-    _responseLightRailModeNotifier.dispose();
 
     super.dispose();
   }
@@ -648,11 +641,6 @@ class _AgentHubPageState extends State<AgentHubPage>
       _isVisibleReplyRunningForState(state),
     );
     _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
-
-    _setNotifierValue(
-      _responseLightRailModeNotifier,
-      _agentResponseLightRailModeForState(state),
-    );
   }
 
   void _setNotifierValue<T>(ValueNotifier<T> notifier, T value) {
@@ -2599,8 +2587,36 @@ class _AgentHubPageState extends State<AgentHubPage>
           _messageIdentity(message) != history.currentState.messageId &&
           (message.id == 'local:welcome' || !message.id!.startsWith('local:')),
     );
+    final usersByRun = {
+      for (final message in remote)
+        if (message.role == AgentHubHistoryRole.user && message.runId != null)
+          message.runId!: message,
+    };
+    final anchored = retained.map((message) {
+      final user = usersByRun[message.runId ?? message.runState?.runId];
+      if (message.role != AgentHubHistoryRole.assistant ||
+          user == null ||
+          message.sequence != null ||
+          message.createdAt != null) {
+        return message;
+      }
+      return AgentHubHistoryMessage(
+        id: message.id,
+        runId: message.runId ?? message.runState?.runId,
+        sequence: user.sequence,
+        createdAt: user.createdAt,
+        role: message.role,
+        content: message.content,
+        runState: message.runState,
+        images: message.images,
+        files: message.files,
+        isChatFirstWelcome: message.isChatFirstWelcome,
+        isChatFirstPoopTrigger: message.isChatFirstPoopTrigger,
+        chatFirstWelcomeKey: message.chatFirstWelcomeKey,
+      );
+    });
     return _historyMessagesWithoutInternalTriggers(
-      _mergeHistoryMessages([...retained, ...remote]),
+      _mergeHistoryMessages([...anchored, ...remote]),
     );
   }
 
@@ -2905,6 +2921,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       return;
     }
 
+    _composerFocusNode.unfocus();
     await _waitForCompletedReplyRunSettlement();
     await _waitForPendingServerCancel();
     if (!mounted || _isComposerLocked) return;
@@ -2981,7 +2998,6 @@ class _AgentHubPageState extends State<AgentHubPage>
     });
     _persistInteractionState();
     _scheduleScrollToLatest();
-    _dismissComposerKeyboardOnRunAccepted = true;
     await _startRun(request, submittedComposerText: message);
   }
 
@@ -3538,7 +3554,6 @@ class _AgentHubPageState extends State<AgentHubPage>
       _sendBestEffortServerCancel(nextState, _activeRequest);
     }
     _forwardNewApplicationEvents(_state, nextState);
-    _updateComposerFocusForRun(nextState);
     final shouldFollowLatest = _isPageVisible && _isNearLatest();
     _identifyAcceptedUserMessage(nextState);
     final activeRequest = _activeRequest;
@@ -3555,21 +3570,6 @@ class _AgentHubPageState extends State<AgentHubPage>
       final id = _state.messageId ?? _state.runId;
       if (id != null) unawaited(_voice?.speakCompleted(id, _state.textContent));
     }
-  }
-
-  void _updateComposerFocusForRun(AgentStreamRunState nextState) {
-    if (!_dismissComposerKeyboardOnRunAccepted) return;
-    if (nextState.phase == AgentStreamRunPhase.error ||
-        nextState.phase == AgentStreamRunPhase.disconnected ||
-        nextState.phase == AgentStreamRunPhase.cancelled) {
-      _dismissComposerKeyboardOnRunAccepted = false;
-      return;
-    }
-
-    if (!_hasServerRunSignal(nextState)) return;
-
-    _dismissComposerKeyboardOnRunAccepted = false;
-    if (_composerFocusNode.hasFocus) _composerFocusNode.unfocus();
   }
 
   void _applyRunStateUpdate(
@@ -3660,7 +3660,6 @@ class _AgentHubPageState extends State<AgentHubPage>
             _completeRunAcceptance(acceptance, false);
             _completeRunSettlement(settlement);
             if (!mounted || !_state.isActive) return;
-            _dismissComposerKeyboardOnRunAccepted = false;
             final shouldFollowLatest = _isNearLatest();
             _setRunState(_state.markDisconnected(error));
             _persistInteractionState();
@@ -3703,8 +3702,6 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (!_state.isActive) return;
     final activeState = _state;
     final activeRequest = _activeRequest;
-
-    _dismissComposerKeyboardOnRunAccepted = false;
 
     _setRunState(activeState.requestCancel());
     _persistInteractionState();
@@ -3838,17 +3835,6 @@ class _AgentHubPageState extends State<AgentHubPage>
           children: [
             if (!widget.chatFirstExperience)
               const Positioned.fill(child: _AgentPageBackground()),
-            ValueListenableBuilder<_AgentResponseLightRailMode>(
-              valueListenable: _responseLightRailModeNotifier,
-              builder: (context, mode, child) {
-                if (mode == _AgentResponseLightRailMode.idle) {
-                  return const SizedBox.shrink();
-                }
-                return Positioned.fill(
-                  child: _AgentResponseLightRail(mode: mode),
-                );
-              },
-            ),
             Column(
               children: [
                 if (_externalConversationRefreshPending)
@@ -4575,28 +4561,6 @@ class _AgentOlderConversationHistoryControl extends StatelessWidget {
   }
 }
 
-enum _AgentResponseLightRailMode { idle, loop, replying }
-
-_AgentResponseLightRailMode _agentResponseLightRailModeForState(
-  AgentStreamRunState state,
-) {
-  if (!state.isAwaitingVisibleReply) return _AgentResponseLightRailMode.idle;
-  final hasReplyText =
-      state.textContent.trim().isNotEmpty ||
-      state.provisionalTextContent.trim().isNotEmpty;
-  if (!hasReplyText) return _AgentResponseLightRailMode.loop;
-  if (_hasRunningToolWork(state)) {
-    return _AgentResponseLightRailMode.loop;
-  }
-  return _AgentResponseLightRailMode.replying;
-}
-
-bool _hasRunningToolWork(AgentStreamRunState state) {
-  return state.toolEvents.values.any(
-    (event) => event.type == 'tool.started' || event.type == 'tool.progress',
-  );
-}
-
 void _syncAgentDecoration(
   BuildContext context,
   AnimationController controller,
@@ -4607,188 +4571,6 @@ void _syncAgentDecoration(
     controller.value = 0;
   } else if (!controller.isAnimating) {
     controller.repeat();
-  }
-}
-
-class _AgentResponseLightRail extends StatefulWidget {
-  const _AgentResponseLightRail({required this.mode});
-
-  final _AgentResponseLightRailMode mode;
-
-  @override
-  State<_AgentResponseLightRail> createState() =>
-      _AgentResponseLightRailState();
-}
-
-class _AgentResponseLightRailState extends State<_AgentResponseLightRail>
-    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _controller = AnimationController(
-      vsync: this,
-      duration: _durationForMode(widget.mode),
-    );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _syncAgentDecoration(context, _controller);
-  }
-
-  @override
-  void didChangeAccessibilityFeatures() {
-    if (mounted) _syncAgentDecoration(context, _controller);
-  }
-
-  @override
-  void didUpdateWidget(covariant _AgentResponseLightRail oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.mode == oldWidget.mode) return;
-    _controller.duration = _durationForMode(widget.mode);
-    _controller.stop();
-    _syncAgentDecoration(context, _controller);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      key: const ValueKey('agent-response-light-rail'),
-      child: RepaintBoundary(
-        child: CustomPaint(
-          key: ValueKey('agent-response-light-rail-${widget.mode.name}'),
-          painter: _AgentResponseLightRailPainter(
-            mode: widget.mode,
-            animation: _controller,
-          ),
-          child: const SizedBox.expand(),
-        ),
-      ),
-    );
-  }
-
-  Duration _durationForMode(_AgentResponseLightRailMode mode) {
-    return switch (mode) {
-      _AgentResponseLightRailMode.loop => const Duration(milliseconds: 1050),
-      _AgentResponseLightRailMode.replying => const Duration(
-        milliseconds: 3200,
-      ),
-      _AgentResponseLightRailMode.idle => const Duration(milliseconds: 1600),
-    };
-  }
-}
-
-class _AgentResponseLightRailPainter extends CustomPainter {
-  const _AgentResponseLightRailPainter({
-    required this.mode,
-    required Animation<double> animation,
-  }) : _animation = animation,
-       super(repaint: animation);
-
-  final _AgentResponseLightRailMode mode;
-  final Animation<double> _animation;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (size.isEmpty) return;
-    final railWidth = math.min(size.width, MomCozyLayout.maxAppWidth);
-    final railRect = Rect.fromLTWH(
-      (size.width - railWidth) / 2,
-      0,
-      railWidth,
-      size.height,
-    );
-    final progress = _animation.value;
-    final modeStrength = mode == _AgentResponseLightRailMode.loop ? 1.0 : 0.62;
-
-    _paintPageGlow(canvas, railRect, progress, modeStrength);
-    _paintRailBorder(canvas, railRect, progress, modeStrength);
-  }
-
-  void _paintPageGlow(
-    Canvas canvas,
-    Rect rect,
-    double progress,
-    double modeStrength,
-  ) {
-    final breath = (math.sin(progress * math.pi * 2) + 1) / 2;
-    final opacity = (0.15 + breath * 0.12) * modeStrength;
-    final paint = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(0, -0.82),
-        radius: 1.15,
-        colors: [
-          MomCozyColors.violetSoft.withValues(alpha: opacity * 1.10),
-          MomCozyColors.violet.withValues(alpha: opacity * 0.44),
-          Colors.transparent,
-        ],
-        stops: const [0, 0.34, 1],
-      ).createShader(rect);
-    canvas.drawRect(rect, paint);
-
-    final lowerPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Colors.transparent,
-          MomCozyColors.violetSoft.withValues(alpha: opacity * 0.42),
-        ],
-      ).createShader(rect);
-    canvas.drawRect(rect, lowerPaint);
-  }
-
-  void _paintRailBorder(
-    Canvas canvas,
-    Rect rect,
-    double progress,
-    double modeStrength,
-  ) {
-    final borderWidth = mode == _AgentResponseLightRailMode.loop ? 2.5 : 2.0;
-    final outer = Path()..addRect(rect);
-    final inner = Path()..addRect(rect.deflate(borderWidth));
-    final border = Path.combine(PathOperation.difference, outer, inner);
-    final shader = SweepGradient(
-      transform: GradientRotation(progress * math.pi * 2),
-      colors: [
-        Colors.transparent,
-        MomCozyColors.violetSoft.withValues(alpha: 0.34 * modeStrength),
-        MomCozyColors.violet.withValues(alpha: 0.82 * modeStrength),
-        Colors.white.withValues(alpha: 0.92 * modeStrength),
-        MomCozyColors.warm.withValues(alpha: 0.54 * modeStrength),
-        Colors.transparent,
-        MomCozyColors.care.withValues(alpha: 0.42 * modeStrength),
-        Colors.white.withValues(alpha: 0.60 * modeStrength),
-        Colors.transparent,
-      ],
-      stops: const [0, 0.08, 0.13, 0.17, 0.23, 0.40, 0.55, 0.62, 1],
-    ).createShader(rect);
-    canvas.drawPath(border, Paint()..shader = shader);
-
-    final sideGlowPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = mode == _AgentResponseLightRailMode.loop ? 9 : 7
-      ..color = MomCozyColors.violet.withValues(
-        alpha: (mode == _AgentResponseLightRailMode.loop ? 0.14 : 0.08),
-      )
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-    canvas.drawRect(rect.deflate(4), sideGlowPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _AgentResponseLightRailPainter oldDelegate) {
-    return oldDelegate.mode != mode || oldDelegate._animation != _animation;
   }
 }
 
@@ -7379,13 +7161,12 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   }
 }
 
-bool _hasServerRunSignal(AgentStreamRunState state) {
-  return state.runId?.trim().isNotEmpty == true ||
-      state.lastSequence != null ||
-      state.events.isNotEmpty ||
-      state.textContent.isNotEmpty ||
-      state.provisionalTextContent.isNotEmpty;
-}
+bool _hasServerRunSignal(AgentStreamRunState state) =>
+    state.runId?.trim().isNotEmpty == true ||
+    state.lastSequence != null ||
+    state.events.isNotEmpty ||
+    state.textContent.isNotEmpty ||
+    state.provisionalTextContent.isNotEmpty;
 
 String? _safeAgentErrorText(String? errorMessage, {String? fallback}) {
   final normalized = errorMessage?.trim();
@@ -7432,7 +7213,11 @@ List<AgentHubHistoryMessage> _mergeHistoryMessages(
     if (a.id == 'local:welcome') return -1;
     if (b.id == 'local:welcome') return 1;
     if (a.sequence != null && b.sequence != null) {
-      return a.sequence!.compareTo(b.sequence!);
+      final result = a.sequence!.compareTo(b.sequence!);
+      if (result != 0) return result;
+      if (a.role != b.role) {
+        return a.role == AgentHubHistoryRole.user ? -1 : 1;
+      }
     }
     if (a.createdAt != null && b.createdAt != null) {
       final result = a.createdAt!.compareTo(b.createdAt!);
