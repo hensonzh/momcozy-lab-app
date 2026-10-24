@@ -8,6 +8,8 @@ import '../domain/chat_first_cry_audio.dart';
 import '../domain/chat_first_cry_task.dart';
 
 const chatFirstCrySubmitUnavailable = '暂时无法分析，录音仍在本机，可重试。';
+const chatFirstCryWaitingCopy = '正在分析哭声，稍后会在这里回复你…';
+const chatFirstCryRetryAdviceCopy = '重试获取回复';
 const chatFirstCryAdviceRequest = '请结合听哭闹识别线索和我提供的情境，给出简短、温和的观察建议。不要声称听过原始录音。';
 
 enum ChatFirstCryCapturePhase { idle, preparing, recording, preview, failed }

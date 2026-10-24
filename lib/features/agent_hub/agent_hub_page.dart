@@ -4203,7 +4203,9 @@ class _AgentHubPageState extends State<AgentHubPage>
                                                   onPressed: () => unawaited(
                                                     _sendCryAdvice(task.id),
                                                   ),
-                                                  child: const Text('重试获取回复'),
+                                                  child: const Text(
+                                                    chatFirstCryRetryAdviceCopy,
+                                                  ),
                                                 ),
                                             ],
                                           )
@@ -4285,7 +4287,7 @@ class _AgentHubPageState extends State<AgentHubPage>
                                   child: Padding(
                                     padding: EdgeInsets.fromLTRB(20, 6, 20, 18),
                                     child: Text(
-                                      '正在分析哭声，稍后会在这里回复你…',
+                                      chatFirstCryWaitingCopy,
                                       key: ValueKey('chat-first-cry-waiting'),
                                       style: TextStyle(
                                         color: Color(0xFF75696D),
