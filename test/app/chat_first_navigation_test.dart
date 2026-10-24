@@ -177,6 +177,51 @@ void main() {
     mother.dispose();
   });
 
+  testWidgets('keyboard hides only the scene and restores it on close', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetViewInsets);
+    final harness = await _Harness.create(
+      role: 'father',
+      agentHubBuilder: (_, _, _) =>
+          const AgentHubPage(chatFirstExperience: true),
+    );
+    await tester.pumpWidget(harness.app);
+    await tester.pumpAndSettle();
+    final workspace = find.byKey(const ValueKey('chat-first-workspace'));
+    final expandedHeight = tester.getSize(workspace).height;
+    expect(expandedHeight, greaterThan(150));
+    expect(
+      find.byKey(const ValueKey('chat-first-figure-scene')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-composer-input')));
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+    await tester.pump();
+    expect(tester.getSize(workspace).height, 58);
+    expect(find.byKey(const ValueKey('chat-first-figure-scene')), findsNothing);
+    expect(find.byKey(const ValueKey('chat-first-board-crop')), findsNothing);
+    expect(find.text('Momcozy AI'), findsOneWidget);
+    expect(find.byKey(const ValueKey('chat-first-menu')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('chat-first-voice-toggle')),
+      findsOneWidget,
+    );
+    tester.view.viewInsets = FakeViewPadding.zero;
+    await tester.pump();
+    expect(tester.getSize(workspace).height, expandedHeight);
+    expect(
+      find.byKey(const ValueKey('chat-first-figure-scene')),
+      findsOneWidget,
+    );
+    await tester.pumpWidget(const SizedBox());
+    harness.dispose();
+  });
+
   testWidgets('compact board and navigation remain usable at 320 and 2x text', (
     tester,
   ) async {

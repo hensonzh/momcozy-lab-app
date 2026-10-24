@@ -4322,13 +4322,9 @@ class _AgentHubPageState extends State<AgentHubPage>
                                         20,
                                         18,
                                       ),
-                                      child: Text(
-                                        chatFirstCryWaitingCopy,
+                                      child: AgentRunStatusLine(
                                         key: ValueKey('chat-first-cry-waiting'),
-                                        style: TextStyle(
-                                          color: Color(0xFF75696D),
-                                          fontSize: 13,
-                                        ),
+                                        title: chatFirstCryWaitingCopy,
                                       ),
                                     ),
                                   ),
@@ -6202,7 +6198,7 @@ class AgentRunStatusLine extends StatefulWidget {
 
 class _AgentRunStatusLineState extends State<AgentRunStatusLine>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  static const _sweepDuration = Duration(milliseconds: 640);
+  static const _sweepDuration = Duration(milliseconds: 1400);
 
   late final AnimationController _sweepController;
 
@@ -6316,7 +6312,7 @@ class AgentThinkingNote extends StatefulWidget {
 
 class _AgentThinkingNoteState extends State<AgentThinkingNote>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  static const _sweepDuration = Duration(milliseconds: 640);
+  static const _sweepDuration = Duration(milliseconds: 1400);
 
   late final AnimationController _sweepController;
 

@@ -4188,6 +4188,29 @@ milk_total: 120ml
     },
   );
 
+  testWidgets('pre-reply status sweeps only text and honors reduced motion', (
+    tester,
+  ) async {
+    Widget status({required bool reduced}) => MaterialApp(
+      home: MediaQuery(
+        data: MediaQueryData(disableAnimations: reduced),
+        child: const Scaffold(body: AgentRunStatusLine(title: '正在思考…')),
+      ),
+    );
+    await tester.pumpWidget(status(reduced: false));
+    expect(find.text('正在思考…'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('agent-run-status-title-sweep')),
+      findsOneWidget,
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(tester.binding.hasScheduledFrame, isTrue);
+    await tester.pumpWidget(status(reduced: true));
+    await tester.pumpAndSettle();
+    expect(find.text('正在思考…'), findsOneWidget);
+    expect(tester.binding.hasScheduledFrame, isFalse);
+  });
+
   testWidgets('Agent loop status copy is vertically and horizontally aligned', (
     tester,
   ) async {

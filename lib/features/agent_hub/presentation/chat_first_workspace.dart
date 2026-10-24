@@ -65,6 +65,7 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
   int? _seenHomeActivation;
   bool _imageRequested = false;
   bool _appVisible = true;
+  bool _keyboardOpen = false;
 
   @override
   void initState() {
@@ -78,6 +79,7 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _avatar = ChatFirstAvatarScope.maybeOf(context) ?? _localAvatar;
+    _keyboardOpen = View.of(context).viewInsets.bottom > 0;
     _updateMotion();
     final tab = PrimaryTabActivity.maybeOf(context);
     if (tab?.selectedIndex == 2) {
@@ -104,6 +106,15 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
   }
 
   @override
+  void didChangeMetrics() {
+    if (!mounted) return;
+    final keyboardOpen = View.of(context).viewInsets.bottom > 0;
+    if (keyboardOpen == _keyboardOpen) return;
+    setState(() => _keyboardOpen = keyboardOpen);
+    _updateMotion();
+  }
+
+  @override
   void didChangeAccessibilityFeatures() {
     if (_avatar == null || !mounted) return;
     setState(_updateMotion);
@@ -112,7 +123,7 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
   bool get _reduceMotion => MomCozyMotion.isReduced(context);
 
   void _updateMotion() {
-    final animate = mounted && _appVisible && !_reduceMotion;
+    final animate = mounted && _appVisible && !_reduceMotion && !_keyboardOpen;
     if (!animate) {
       _frameTimer?.cancel();
       _frameTimer = null;
@@ -340,7 +351,9 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
       child: LayoutBuilder(
         builder: (context, constraints) {
           final width = constraints.maxWidth;
-          final height = MediaQuery.sizeOf(context).height < 680
+          final height = _keyboardOpen
+              ? 58.0
+              : MediaQuery.sizeOf(context).height < 680
               ? 170.0
               : (width * 0.49).clamp(174.0, 184.0);
           final figureWidth = width * 0.8;
@@ -366,139 +379,144 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
                     ),
                   ),
                 ),
-                Positioned.fill(
-                  top: 48,
-                  child: ClipRect(
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          key: const ValueKey('chat-first-figure-scene'),
-                          top: 0,
-                          left: width * 0.23,
-                          width: figureWidth,
-                          height: figureWidth / _roomAspectRatio,
-                          child:
-                              !_reduceMotion &&
-                                  _sceneImage != null &&
-                                  _avatar != null
-                              ? RepaintBoundary(
-                                  child: CustomPaint(
-                                    key: const ValueKey(
-                                      'chat-first-avatar-paint',
+                if (!_keyboardOpen)
+                  Positioned.fill(
+                    top: 48,
+                    child: ClipRect(
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            key: const ValueKey('chat-first-figure-scene'),
+                            top: 0,
+                            left: width * 0.23,
+                            width: figureWidth,
+                            height: figureWidth / _roomAspectRatio,
+                            child:
+                                !_reduceMotion &&
+                                    _sceneImage != null &&
+                                    _avatar != null
+                                ? RepaintBoundary(
+                                    child: CustomPaint(
+                                      key: const ValueKey(
+                                        'chat-first-avatar-paint',
+                                      ),
+                                      painter: ChatFirstAvatarPainter(
+                                        image: _sceneImage!,
+                                        controller: _avatar!,
+                                        elapsedMilliseconds:
+                                            _clock.elapsedMilliseconds,
+                                        now: DateTime.now(),
+                                      ),
                                     ),
-                                    painter: ChatFirstAvatarPainter(
-                                      image: _sceneImage!,
-                                      controller: _avatar!,
-                                      elapsedMilliseconds:
-                                          _clock.elapsedMilliseconds,
-                                      now: DateTime.now(),
-                                    ),
+                                  )
+                                : Image.asset(
+                                    'assets/images/chat_first/momcozy-ai-room.png',
+                                    fit: BoxFit.fill,
+                                    excludeFromSemantics: true,
                                   ),
-                                )
-                              : Image.asset(
-                                  'assets/images/chat_first/momcozy-ai-room.png',
-                                  fit: BoxFit.fill,
-                                  excludeFromSemantics: true,
-                                ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          bottom: 0,
-                          width: boardWidth,
-                          child: ShaderMask(
-                            key: const ValueKey('chat-first-board-crop'),
-                            blendMode: BlendMode.dstIn,
-                            shaderCallback: (bounds) => const LinearGradient(
-                              colors: [
-                                Colors.white,
-                                Colors.white,
-                                Colors.transparent,
-                              ],
-                              stops: [0, 0.84, 1],
-                            ).createShader(bounds),
-                            child: ClipRect(
-                              child: OverflowBox(
-                                alignment: Alignment.topLeft,
-                                minWidth: boardSceneWidth,
-                                maxWidth: boardSceneWidth,
-                                minHeight: boardSceneWidth / _roomAspectRatio,
-                                maxHeight: boardSceneWidth / _roomAspectRatio,
-                                child: Image.asset(
-                                  'assets/images/chat_first/momcozy-ai-room.png',
-                                  width: boardSceneWidth,
-                                  height: boardSceneWidth / _roomAspectRatio,
-                                  fit: BoxFit.fill,
-                                  excludeFromSemantics: true,
+                          ),
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            bottom: 0,
+                            width: boardWidth,
+                            child: ShaderMask(
+                              key: const ValueKey('chat-first-board-crop'),
+                              blendMode: BlendMode.dstIn,
+                              shaderCallback: (bounds) => const LinearGradient(
+                                colors: [
+                                  Colors.white,
+                                  Colors.white,
+                                  Colors.transparent,
+                                ],
+                                stops: [0, 0.84, 1],
+                              ).createShader(bounds),
+                              child: ClipRect(
+                                child: OverflowBox(
+                                  alignment: Alignment.topLeft,
+                                  minWidth: boardSceneWidth,
+                                  maxWidth: boardSceneWidth,
+                                  minHeight: boardSceneWidth / _roomAspectRatio,
+                                  maxHeight: boardSceneWidth / _roomAspectRatio,
+                                  child: Image.asset(
+                                    'assets/images/chat_first/momcozy-ai-room.png',
+                                    width: boardSceneWidth,
+                                    height: boardSceneWidth / _roomAspectRatio,
+                                    fit: BoxFit.fill,
+                                    excludeFromSemantics: true,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 79,
-                  left: width * .68,
-                  width: width * .23,
-                  height: 64,
-                  child: Semantics(
-                    label: '和 Momcozy AI 打招呼',
-                    button: true,
-                    child: GestureDetector(
-                      key: const ValueKey('chat-first-avatar-greet'),
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () => _avatar?.signal('greet'),
+                if (!_keyboardOpen)
+                  Positioned(
+                    top: 79,
+                    left: width * .68,
+                    width: width * .23,
+                    height: 64,
+                    child: Semantics(
+                      label: '和 Momcozy AI 打招呼',
+                      button: true,
+                      child: GestureDetector(
+                        key: const ValueKey('chat-first-avatar-greet'),
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () => _avatar?.signal('greet'),
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 70,
-                  bottom: 0,
-                  left: width * 0.05,
-                  width: width * 0.43,
-                  child: FutureBuilder<_DailyBoardData?>(
-                    future: _board,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState != ConnectionState.done ||
-                          snapshot.data == null) {
-                        return const SizedBox.shrink();
-                      }
-                      final banner = snapshot.data!.banner;
-                      return SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '宝宝出生 ${banner.ageDays} 天',
-                              style: TextStyle(
-                                color: Color(0xFF776A66),
-                                fontSize: width < 360 ? 10 : 10.5,
-                                fontWeight: FontWeight.w500,
-                                height: 1.3,
-                              ),
-                              maxLines: 2,
-                            ),
-                            const SizedBox(height: 4),
-                            if (banner.advice != null)
+                if (!_keyboardOpen)
+                  Positioned(
+                    top: 70,
+                    bottom: 0,
+                    left: width * 0.05,
+                    width: width * 0.43,
+                    child: FutureBuilder<_DailyBoardData?>(
+                      future: _board,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState != ConnectionState.done ||
+                            snapshot.data == null) {
+                          return const SizedBox.shrink();
+                        }
+                        final banner = snapshot.data!.banner;
+                        return SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
                               Text(
-                                banner.advice!,
-                                key: const ValueKey('chat-first-daily-advice'),
+                                '宝宝出生 ${banner.ageDays} 天',
                                 style: TextStyle(
-                                  color: Color(0xFF665D58),
-                                  fontSize: width < 360 ? 9.5 : 10,
-                                  height: 1.15,
+                                  color: Color(0xFF776A66),
+                                  fontSize: width < 360 ? 10 : 10.5,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.3,
                                 ),
+                                maxLines: 2,
                               ),
-                          ],
-                        ),
-                      );
-                    },
+                              const SizedBox(height: 4),
+                              if (banner.advice != null)
+                                Text(
+                                  banner.advice!,
+                                  key: const ValueKey(
+                                    'chat-first-daily-advice',
+                                  ),
+                                  style: TextStyle(
+                                    color: Color(0xFF665D58),
+                                    fontSize: width < 360 ? 9.5 : 10,
+                                    height: 1.15,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
                 Positioned(
                   top: 0,
                   left: 12,
@@ -577,23 +595,24 @@ class _ChatFirstWorkspaceState extends State<ChatFirstWorkspace>
                     ),
                   ),
                 ),
-                const Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: 17,
-                  child: IgnorePointer(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [Colors.white, Color(0x00FFFFFF)],
+                if (!_keyboardOpen)
+                  const Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: 17,
+                    child: IgnorePointer(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [Colors.white, Color(0x00FFFFFF)],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           );

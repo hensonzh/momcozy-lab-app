@@ -219,6 +219,15 @@ void main() {
         find.byKey(const ValueKey('chat-first-cry-waiting')),
         findsOneWidget,
       );
+      expect(find.text('正在分析中'), findsOneWidget);
+      expect(find.textContaining('正在分析哭声'), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('chat-first-cry-waiting')),
+          matching: find.byKey(const ValueKey('agent-run-status-title-sweep')),
+        ),
+        findsOneWidget,
+      );
       product.uploadGate!.complete();
       await tester.pumpAndSettle();
       expect(
@@ -586,11 +595,11 @@ void main() {
       await tester.pumpWidget(page(false));
       await tester.pump();
       product.uploadGate!.complete();
-      await tester.pumpAndSettle();
+      await tester.pump();
       await tester.pumpWidget(page(true));
       await tester.pump();
       await tester.pump(const Duration(seconds: 2));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(product.lastReadPath, contains('/by-key/'));
       expect(product.reads, greaterThanOrEqualTo(2));
       expect(find.text('可能和饥饿有关'), findsOneWidget);
