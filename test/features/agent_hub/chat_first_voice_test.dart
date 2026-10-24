@@ -122,6 +122,11 @@ void main() {
       player: player,
       httpClientFactory: () => clients.removeAt(0),
     );
+    expect(
+      voice.enabled,
+      isTrue,
+      reason: 'Voice playback starts enabled by default',
+    );
     await voice.checkAvailability();
     expect(voice.available, isTrue);
     await voice.speakCompleted('reply-1', '你好');

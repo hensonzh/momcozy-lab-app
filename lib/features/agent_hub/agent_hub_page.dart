@@ -466,6 +466,7 @@ class _AgentHubPageState extends State<AgentHubPage>
   AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
   bool _scrollToLatestFrameScheduled = false;
   bool _keyboardTransitioning = false;
+  bool _keyboardOpen = false;
   bool _scrollAfterKeyboardSettles = false;
   Timer? _keyboardSettleTimer;
   bool _scheduledScrollToLatestSmooth = false;
@@ -501,6 +502,7 @@ class _AgentHubPageState extends State<AgentHubPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _keyboardOpen = View.of(context).viewInsets.bottom > 0;
     _voice = widget.chatFirstExperience
         ? ChatFirstVoiceScope.maybeOf(context)
         : null;
@@ -2832,6 +2834,13 @@ class _AgentHubPageState extends State<AgentHubPage>
   @override
   void didChangeMetrics() {
     if (!mounted) return;
+    final keyboardOpen = View.of(context).viewInsets.bottom > 0;
+    if (keyboardOpen != _keyboardOpen) {
+      setState(() {
+        _keyboardOpen = keyboardOpen;
+        if (keyboardOpen) _chatFirstRecordPickerOpen = false;
+      });
+    }
     if (_composerFocusNode.hasFocus) {
       // Follow each IME inset change in the same layout frame, not 140ms
       // after the animation has already finished.
@@ -4487,7 +4496,11 @@ class _AgentHubPageState extends State<AgentHubPage>
                                     : 'Could not sync history. Tap to try again.',
                               ),
                             ),
-                          if (widget.chatFirstExperience)
+                          if (widget.chatFirstExperience &&
+                              !_keyboardOpen &&
+                              !_attachmentUploadPending &&
+                              _attachedImages.isEmpty &&
+                              _attachedFiles.isEmpty)
                             _chatFirstRecordPickerOpen
                                 ? ChatFirstRecordPicker(
                                     onClose: () => setState(
@@ -4550,7 +4563,10 @@ class _AgentHubPageState extends State<AgentHubPage>
                                     },
                             ),
                           if (!_chatFirstRecordPickerOpen ||
-                              !widget.chatFirstExperience)
+                              !widget.chatFirstExperience ||
+                              _keyboardOpen ||
+                              _attachedImages.isNotEmpty ||
+                              _attachedFiles.isNotEmpty)
                             AgentComposerBar(
                               chatFirstExperience: widget.chatFirstExperience,
                               controller: _composerController,
@@ -6198,7 +6214,7 @@ class AgentRunStatusLine extends StatefulWidget {
 
 class _AgentRunStatusLineState extends State<AgentRunStatusLine>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  static const _sweepDuration = Duration(milliseconds: 1400);
+  static const _sweepDuration = Duration(milliseconds: 1100);
 
   late final AnimationController _sweepController;
 
@@ -6250,9 +6266,9 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
           sweepKey: const ValueKey('agent-run-status-title-sweep'),
           animation: _sweepController,
           colors: const [
-            Color(0xff527768),
-            MomHomeTokens.teal,
-            Color(0xff527768),
+            Color(0xFF75696D),
+            Color(0xFFAD2F68),
+            Color(0xFF75696D),
           ],
           style: MomHomeTokens.text(13, weight: FontWeight.w500, height: 1.45),
         ),
@@ -6287,8 +6303,8 @@ class _AgentSweepText extends StatelessWidget {
           blendMode: BlendMode.srcIn,
           shaderCallback: (bounds) {
             return LinearGradient(
-              begin: Alignment(-1.2 + value * 2.4, 0),
-              end: Alignment(-0.2 + value * 2.4, 0),
+              begin: Alignment(-2 + value * 4, 0),
+              end: Alignment(-1 + value * 4, 0),
               colors: colors,
               stops: const [0, 0.5, 1],
             ).createShader(bounds);
@@ -6312,7 +6328,7 @@ class AgentThinkingNote extends StatefulWidget {
 
 class _AgentThinkingNoteState extends State<AgentThinkingNote>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  static const _sweepDuration = Duration(milliseconds: 1400);
+  static const _sweepDuration = Duration(milliseconds: 1100);
 
   late final AnimationController _sweepController;
 
@@ -6357,9 +6373,9 @@ class _AgentThinkingNoteState extends State<AgentThinkingNote>
           sweepKey: const ValueKey('agent-thinking-note'),
           animation: _sweepController,
           colors: const [
-            MomCozyColors.mutedForeground,
-            MomCozyColors.foreground,
-            MomCozyColors.mutedForeground,
+            Color(0xFF75696D),
+            Color(0xFFAD2F68),
+            Color(0xFF75696D),
           ],
           style: textTheme.labelSmall?.copyWith(
             height: 1.45,

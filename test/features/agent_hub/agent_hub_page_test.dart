@@ -867,6 +867,117 @@ void main() {
   );
 
   testWidgets(
+    'chat-first quick actions follow keyboard and draft attachments',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetViewInsets);
+      final actions = find.byKey(const ValueKey('chat-first-action-cry'));
+      await tester.pumpWidget(
+        _host(const AgentHubPage(chatFirstExperience: true)),
+      );
+      await tester.pumpAndSettle();
+      expect(actions, findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('agent-composer-input')));
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      await tester.pump();
+      expect(actions, findsNothing);
+      expect(
+        find.byKey(const ValueKey('agent-composer-input')),
+        findsOneWidget,
+      );
+      tester.view.viewInsets = FakeViewPadding.zero;
+      await tester.pump();
+      expect(actions, findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+      for (final attachment in [
+        const AgentHubInteractionSnapshot(
+          attachedImages: [
+            AgentStreamImageInput(
+              dataUrl: '',
+              fileId: 'owned-photo',
+              name: 'photo.png',
+            ),
+          ],
+        ),
+        const AgentHubInteractionSnapshot(
+          attachedFiles: [
+            AgentStreamFileInput(fileId: 'owned-file', name: 'notes.pdf'),
+          ],
+        ),
+      ]) {
+        final store = _MemoryAgentHubInteractionStateStore(attachment);
+        await tester.pumpWidget(
+          _host(
+            AgentHubPage(
+              chatFirstExperience: true,
+              interactionStateStore: store,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(actions, findsNothing);
+        final remove = attachment.attachedImages.isNotEmpty
+            ? find.byKey(const ValueKey('agent-remove-image-button'))
+            : find.byKey(const ValueKey('agent-remove-file-button'));
+        await tester.tap(remove);
+        await tester.pump();
+        expect(actions, findsOneWidget);
+        await tester.pumpWidget(const SizedBox());
+      }
+    },
+  );
+
+  testWidgets('chat-first actions stay hidden while an image upload is pending', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final gate = Completer<void>();
+    final media = _FakeAgentImageMediaRepository(uploadGate: gate);
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          chatFirstExperience: true,
+          mediaRepository: media,
+          pickImage: (_) async => const AgentStreamImageInput(
+            dataUrl:
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+            name: 'draft.png',
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final actions = find.byKey(const ValueKey('chat-first-action-cry'));
+    expect(actions, findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-attachment-photo-button')),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(media.uploadedFiles, hasLength(1));
+    expect(actions, findsNothing);
+    gate.complete();
+    await tester.pumpAndSettle();
+    expect(actions, findsNothing);
+    expect(
+      find.byKey(const ValueKey('agent-pending-attachments')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
+    await tester.pump();
+    expect(actions, findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets(
     'sending waits for keyboard exit before auto-scrolling the transcript',
     (tester) async {
       tester.view.physicalSize = const Size(390, 844);
@@ -5242,10 +5353,15 @@ class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
 }
 
 class _FakeAgentImageMediaRepository implements MediaRepository {
-  _FakeAgentImageMediaRepository({this.deleteFailure, this.deleteGate});
+  _FakeAgentImageMediaRepository({
+    this.deleteFailure,
+    this.deleteGate,
+    this.uploadGate,
+  });
 
   Object? deleteFailure;
   Completer<void>? deleteGate;
+  Completer<void>? uploadGate;
   final uploadedFiles = <ApiUploadFile>[];
   final deletedFileIds = <String>[];
   final deleteKeys = <String?>[];
@@ -5256,6 +5372,7 @@ class _FakeAgentImageMediaRepository implements MediaRepository {
     String? idempotencyKey,
   }) async {
     uploadedFiles.add(file);
+    await uploadGate?.future;
     return const UploadedMediaFile(
       id: '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
       name: 'pump-display.png',
