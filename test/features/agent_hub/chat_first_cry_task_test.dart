@@ -175,7 +175,7 @@ void main() {
   );
 
   testWidgets(
-    'submit closes capture card, waits in the conversation, then shows a cause-only result',
+    'submit locks the capture card, waits, then shows a separate cause-only result',
     (tester) async {
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1;
@@ -201,7 +201,16 @@ void main() {
       await tester.tap(find.text('上传并分析'));
       await tester.pump();
       await tester.pump();
-      expect(find.byKey(const ValueKey('chat-first-topic-cry')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('chat-first-topic-cry')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-abandon')),
+        findsNothing,
+      );
+      expect(find.text('上传并分析'), findsNothing);
+      expect(find.byKey(const ValueKey('chat-first-cry-player')), findsNothing);
       expect(
         find.byKey(const ValueKey('chat-first-cry-result-card')),
         findsNothing,
@@ -216,7 +225,14 @@ void main() {
         find.byKey(const ValueKey('chat-first-cry-waiting')),
         findsNothing,
       );
-      expect(find.byKey(const ValueKey('chat-first-topic-cry')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('chat-first-topic-cry')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('chat-first-cry-abandon')),
+        findsNothing,
+      );
       expect(
         find.byKey(const ValueKey('chat-first-cry-result-card')),
         findsOneWidget,

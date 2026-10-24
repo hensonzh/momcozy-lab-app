@@ -429,14 +429,13 @@ class _AgentHubPageState extends State<AgentHubPage>
               localPoopTask: task,
             ),
         for (final task in _visibleCryTasks)
-          if (!_cryTaskAwaitingResult(task))
-            AgentHubHistoryMessage(
-              id: task.id,
-              createdAt: task.createdAt,
-              role: AgentHubHistoryRole.user,
-              content: '',
-              localCryTask: task,
-            ),
+          AgentHubHistoryMessage(
+            id: task.id,
+            createdAt: task.createdAt,
+            role: AgentHubHistoryRole.user,
+            content: '',
+            localCryTask: task,
+          ),
       ]),
     );
   }
@@ -2816,26 +2815,30 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   void _handleComposerFocusChanged() {
-    if (View.of(context).viewInsets.bottom == 0) {
+    if (_composerFocusNode.hasFocus) {
+      _keyboardSettleTimer?.cancel();
       _keyboardTransitioning = false;
       _scrollAfterKeyboardSettles = false;
-      return;
+      if (View.of(context).viewInsets.bottom > 0) {
+        _scheduleScrollToLatest();
+      }
+    } else if (View.of(context).viewInsets.bottom > 0) {
+      // Sending while the IME closes still waits until its exit completes.
+      _keyboardTransitioning = true;
+      _settleKeyboardAfterMetrics();
     }
-    _keyboardTransitioning = true;
-    _scrollAfterKeyboardSettles = true;
-    ++_scrollIntentVersion;
-    _settleKeyboardAfterMetrics();
   }
 
   @override
   void didChangeMetrics() {
-    if (!mounted || (!_composerFocusNode.hasFocus && !_keyboardTransitioning)) {
-      return;
+    if (!mounted) return;
+    if (_composerFocusNode.hasFocus) {
+      // Follow each IME inset change in the same layout frame, not 140ms
+      // after the animation has already finished.
+      _scheduleScrollToLatest();
+    } else if (_keyboardTransitioning) {
+      _settleKeyboardAfterMetrics();
     }
-    _keyboardTransitioning = true;
-    _scrollAfterKeyboardSettles = true;
-    ++_scrollIntentVersion;
-    _settleKeyboardAfterMetrics();
   }
 
   void _settleKeyboardAfterMetrics() {
@@ -3990,392 +3993,427 @@ class _AgentHubPageState extends State<AgentHubPage>
 
                       return Stack(
                         children: [
-                          CustomScrollView(
-                            key: const ValueKey('agent-chat-scroll-view'),
-                            controller: _chatScrollController,
-                            slivers: [
-                              if (_conversationHistoryBeforeSequence != null ||
-                                  _olderConversationHistoryLoading ||
-                                  _olderConversationHistoryError != null)
-                                SliverToBoxAdapter(
-                                  child: _AgentOlderConversationHistoryControl(
-                                    loading: _olderConversationHistoryLoading,
-                                    failed:
-                                        _olderConversationHistoryError != null,
-                                    onLoad: _loadOlderConversationHistory,
-                                    chatFirstExperience:
-                                        widget.chatFirstExperience,
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: _composerFocusNode.unfocus,
+                            child: CustomScrollView(
+                              key: const ValueKey('agent-chat-scroll-view'),
+                              controller: _chatScrollController,
+                              slivers: [
+                                if (_conversationHistoryBeforeSequence !=
+                                        null ||
+                                    _olderConversationHistoryLoading ||
+                                    _olderConversationHistoryError != null)
+                                  SliverToBoxAdapter(
+                                    child:
+                                        _AgentOlderConversationHistoryControl(
+                                          loading:
+                                              _olderConversationHistoryLoading,
+                                          failed:
+                                              _olderConversationHistoryError !=
+                                              null,
+                                          onLoad: _loadOlderConversationHistory,
+                                          chatFirstExperience:
+                                              widget.chatFirstExperience,
+                                        ),
                                   ),
-                                ),
-                              if (showChatFirstDate)
-                                const SliverToBoxAdapter(
-                                  child: _ChatFirstDateLabel(),
-                                ),
-                              if (visibleMessages.isNotEmpty)
-                                SliverPadding(
-                                  padding: EdgeInsets.fromLTRB(
-                                    16,
-                                    showChatFirstDate ? 0 : 24,
-                                    16,
-                                    0,
+                                if (showChatFirstDate)
+                                  const SliverToBoxAdapter(
+                                    child: _ChatFirstDateLabel(),
                                   ),
-                                  sliver: AgentHubHistorySliver(
-                                    messages: visibleMessages,
-                                    chatFirstExperience:
-                                        widget.chatFirstExperience,
-                                    activeCryTaskId: _activeCryTaskId,
-                                    activeCryCardKey: _activeCryCardKey,
-                                    activePoopTaskId: _activePoopTaskId,
-                                    activePoopCardKey: _activePoopCardKey,
-                                    onActiveCardLayout: _showActiveCardBottom,
-                                    poopTaskBuilder: (context, task) =>
-                                        ValueListenableBuilder<
-                                          AgentStreamRunState
-                                        >(
-                                          valueListenable: _runStateNotifier,
-                                          builder: (context, runState, _) => ChatFirstPoopTaskCard(
-                                            status: task.status,
-                                            photos: task.id == _activePoopTaskId
-                                                ? _poopPhotos
-                                                : const [],
-                                            sentPhotos:
-                                                _sentPoopPhotos[task
-                                                        .analysisState
-                                                        ?.analysisId ??
-                                                    task.runId] ??
-                                                const [],
-                                            responding:
-                                                task.runId != null &&
-                                                task.runId == runState.runId &&
-                                                runState.isActive &&
-                                                !runState
-                                                    .hasCompletedAssistantMessage &&
-                                                runState.textContent
-                                                    .trim()
-                                                    .isEmpty &&
-                                                runState.provisionalTextContent
-                                                    .trim()
-                                                    .isEmpty,
-                                            feedback:
-                                                task.id == _activePoopTaskId
-                                                ? _poopFeedback
-                                                : null,
-                                            canInteract:
-                                                _isPageVisible &&
-                                                !_isVisibleReplyRunning &&
-                                                !_conversationSwitchPending &&
-                                                widget.pickStoolPhoto != null &&
-                                                widget.stoolPhotoReviewRepository !=
-                                                    null &&
-                                                _poopReviewAvailable,
-                                            availabilityMessage:
-                                                _poopReviewAvailable
-                                                ? null
-                                                : '审核服务尚未开放，请稍后再试。',
-                                            analysisAvailable:
-                                                _poopAnalysisAvailable,
-                                            canSubmit:
-                                                _poopAnalysisAvailable &&
-                                                widget
-                                                        .stoolBabyId
-                                                        ?.isNotEmpty ==
-                                                    true &&
-                                                _state.threadId?.isNotEmpty ==
-                                                    true &&
-                                                task.id == _activePoopTaskId &&
-                                                _poopPhotos.isNotEmpty &&
-                                                _poopReviews.length ==
-                                                    _poopPhotos.length &&
-                                                _poopPhotos.every(
-                                                  (photo) =>
-                                                      _poopReviews[photo]
-                                                          ?.isApproved ??
-                                                      false,
-                                                ),
-                                            sending:
-                                                task.id == _activePoopTaskId &&
-                                                _poopSubmitting,
-                                            reviewStates:
-                                                task.id == _activePoopTaskId
-                                                ? [
-                                                    for (final image
-                                                        in _poopPhotos)
-                                                      _poopReviews[image],
-                                                  ]
-                                                : const [],
-                                            onPick: (source) => unawaited(
-                                              _pickPoopPhoto(task.id, source),
-                                            ),
-                                            onRemove: (index) =>
-                                                _removePoopPhoto(
-                                                  task.id,
-                                                  index,
-                                                ),
-                                            analysisState: task.analysisState,
-                                            deleting: _poopDeleting.contains(
-                                              task.analysisState?.analysisId,
-                                            ),
-                                            followupActive:
-                                                task
-                                                    .analysisState
-                                                    ?.analysisId ==
-                                                _activePoopFollowupAnalysisId,
-                                            onFollowup:
-                                                _poopFollowupAvailable &&
-                                                    task
-                                                            .analysisState
-                                                            ?.status ==
-                                                        StoolAnalysisStatus
-                                                            .completed &&
-                                                    task
-                                                            .analysisState
-                                                            ?.result !=
-                                                        null
-                                                ? () => _activatePoopFollowup(
-                                                    task,
-                                                  )
-                                                : null,
-                                            onDeleteAnalysis:
-                                                task.analysisState != null &&
-                                                    widget.stoolAnalysisRepository !=
-                                                        null
-                                                ? () => unawaited(
-                                                    _confirmDeletePoopAnalysis(
-                                                      task.id,
-                                                    ),
-                                                  )
-                                                : null,
-                                            photosLoading: _poopPhotosLoading
-                                                .contains(
+                                if (visibleMessages.isNotEmpty)
+                                  SliverPadding(
+                                    padding: EdgeInsets.fromLTRB(
+                                      16,
+                                      showChatFirstDate ? 0 : 24,
+                                      16,
+                                      0,
+                                    ),
+                                    sliver: AgentHubHistorySliver(
+                                      messages: visibleMessages,
+                                      chatFirstExperience:
+                                          widget.chatFirstExperience,
+                                      activeCryTaskId: _activeCryTaskId,
+                                      activeCryCardKey: _activeCryCardKey,
+                                      activePoopTaskId: _activePoopTaskId,
+                                      activePoopCardKey: _activePoopCardKey,
+                                      onActiveCardLayout: _showActiveCardBottom,
+                                      poopTaskBuilder: (context, task) =>
+                                          ValueListenableBuilder<
+                                            AgentStreamRunState
+                                          >(
+                                            valueListenable: _runStateNotifier,
+                                            builder: (context, runState, _) => ChatFirstPoopTaskCard(
+                                              status: task.status,
+                                              photos:
+                                                  task.id == _activePoopTaskId
+                                                  ? _poopPhotos
+                                                  : const [],
+                                              sentPhotos:
+                                                  _sentPoopPhotos[task
+                                                          .analysisState
+                                                          ?.analysisId ??
+                                                      task.runId] ??
+                                                  const [],
+                                              responding:
+                                                  task.runId != null &&
+                                                  task.runId ==
+                                                      runState.runId &&
+                                                  runState.isActive &&
+                                                  !runState
+                                                      .hasCompletedAssistantMessage &&
+                                                  runState.textContent
+                                                      .trim()
+                                                      .isEmpty &&
+                                                  runState
+                                                      .provisionalTextContent
+                                                      .trim()
+                                                      .isEmpty,
+                                              feedback:
+                                                  task.id == _activePoopTaskId
+                                                  ? _poopFeedback
+                                                  : null,
+                                              canInteract:
+                                                  _isPageVisible &&
+                                                  !_isVisibleReplyRunning &&
+                                                  !_conversationSwitchPending &&
+                                                  widget.pickStoolPhoto !=
+                                                      null &&
+                                                  widget.stoolPhotoReviewRepository !=
+                                                      null &&
+                                                  _poopReviewAvailable,
+                                              availabilityMessage:
+                                                  _poopReviewAvailable
+                                                  ? null
+                                                  : '审核服务尚未开放，请稍后再试。',
+                                              analysisAvailable:
+                                                  _poopAnalysisAvailable,
+                                              canSubmit:
+                                                  _poopAnalysisAvailable &&
+                                                  widget
+                                                          .stoolBabyId
+                                                          ?.isNotEmpty ==
+                                                      true &&
+                                                  _state.threadId?.isNotEmpty ==
+                                                      true &&
+                                                  task.id ==
+                                                      _activePoopTaskId &&
+                                                  _poopPhotos.isNotEmpty &&
+                                                  _poopReviews.length ==
+                                                      _poopPhotos.length &&
+                                                  _poopPhotos.every(
+                                                    (photo) =>
+                                                        _poopReviews[photo]
+                                                            ?.isApproved ??
+                                                        false,
+                                                  ),
+                                              sending:
+                                                  task.id ==
+                                                      _activePoopTaskId &&
+                                                  _poopSubmitting,
+                                              reviewStates:
+                                                  task.id == _activePoopTaskId
+                                                  ? [
+                                                      for (final image
+                                                          in _poopPhotos)
+                                                        _poopReviews[image],
+                                                    ]
+                                                  : const [],
+                                              onPick: (source) => unawaited(
+                                                _pickPoopPhoto(task.id, source),
+                                              ),
+                                              onRemove: (index) =>
+                                                  _removePoopPhoto(
+                                                    task.id,
+                                                    index,
+                                                  ),
+                                              analysisState: task.analysisState,
+                                              deleting: _poopDeleting.contains(
+                                                task.analysisState?.analysisId,
+                                              ),
+                                              followupActive:
                                                   task
                                                       .analysisState
-                                                      ?.analysisId,
-                                                ),
-                                            photoFeedback:
-                                                _poopPhotoFeedback[task
-                                                    .analysisState
-                                                    ?.analysisId],
-                                            onLoadPhotos:
-                                                task.analysisState != null
-                                                ? () => unawaited(
-                                                    _loadPoopAnalysisPhotos(
-                                                      task.id,
-                                                    ),
-                                                  )
-                                                : null,
-                                            onSubmit: () => unawaited(
-                                              _submitPoopAnalysis(task.id),
-                                            ),
-                                            onAbandon: () =>
-                                                _abandonPoopTask(task.id),
-                                          ),
-                                        ),
-                                    cryTaskBuilder: (context, task) =>
-                                        task.status ==
-                                                ChatFirstCryTaskStatus
-                                                    .completed ||
-                                            task.status ==
-                                                ChatFirstCryTaskStatus
-                                                    .incomplete
-                                        ? Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              ChatFirstCryResultCard(
-                                                answer: task.answer,
-                                                incomplete:
-                                                    task.status ==
-                                                    ChatFirstCryTaskStatus
-                                                        .incomplete,
+                                                      ?.analysisId ==
+                                                  _activePoopFollowupAnalysisId,
+                                              onFollowup:
+                                                  _poopFollowupAvailable &&
+                                                      task
+                                                              .analysisState
+                                                              ?.status ==
+                                                          StoolAnalysisStatus
+                                                              .completed &&
+                                                      task
+                                                              .analysisState
+                                                              ?.result !=
+                                                          null
+                                                  ? () => _activatePoopFollowup(
+                                                      task,
+                                                    )
+                                                  : null,
+                                              onDeleteAnalysis:
+                                                  task.analysisState != null &&
+                                                      widget.stoolAnalysisRepository !=
+                                                          null
+                                                  ? () => unawaited(
+                                                      _confirmDeletePoopAnalysis(
+                                                        task.id,
+                                                      ),
+                                                    )
+                                                  : null,
+                                              photosLoading: _poopPhotosLoading
+                                                  .contains(
+                                                    task
+                                                        .analysisState
+                                                        ?.analysisId,
+                                                  ),
+                                              photoFeedback:
+                                                  _poopPhotoFeedback[task
+                                                      .analysisState
+                                                      ?.analysisId],
+                                              onLoadPhotos:
+                                                  task.analysisState != null
+                                                  ? () => unawaited(
+                                                      _loadPoopAnalysisPhotos(
+                                                        task.id,
+                                                      ),
+                                                    )
+                                                  : null,
+                                              onSubmit: () => unawaited(
+                                                _submitPoopAnalysis(task.id),
                                               ),
-                                              if (task.analysisId != null &&
-                                                  !task.adviceAccepted &&
-                                                  !task.autoAdvicePending &&
-                                                  task.adviceAttempt > 0 &&
-                                                  !_cryAdviceInFlight &&
-                                                  !_state.isActive &&
-                                                  widget.runner != null)
-                                                TextButton(
-                                                  key: const ValueKey(
-                                                    'chat-first-cry-retry-advice',
-                                                  ),
-                                                  onPressed: () => unawaited(
-                                                    _sendCryAdvice(task.id),
-                                                  ),
-                                                  child: const Text(
-                                                    chatFirstCryRetryAdviceCopy,
-                                                  ),
-                                                ),
-                                            ],
-                                          )
-                                        : ChatFirstCryTaskCard(
-                                            status: task.status,
-                                            isSubmitting:
-                                                _crySubmitting &&
-                                                _activeCryTaskId == task.id,
-                                            feedback:
-                                                _activeCryTaskId == task.id
-                                                ? _cryFeedback
-                                                : null,
-                                            onSubmit:
-                                                widget.cryAnalysisRepository !=
-                                                        null &&
-                                                    !_isVisibleReplyRunning &&
-                                                    _isPageVisible
-                                                ? () => unawaited(
-                                                    _submitCryTask(task.id),
-                                                  )
-                                                : null,
-                                            onRefreshResult:
-                                                (task.analysisId != null ||
-                                                        task.requestKey !=
-                                                            null) &&
-                                                    widget.cryAnalysisRepository !=
-                                                        null
-                                                ? () => unawaited(
-                                                    _refreshPersistedCryResults(),
-                                                  )
-                                                : null,
-                                            canStart:
-                                                !_crySubmitting &&
-                                                _isPageVisible &&
-                                                !_isVisibleReplyRunning &&
-                                                !_conversationSwitchPending &&
-                                                (task.status ==
-                                                        ChatFirstCryTaskStatus
-                                                            .pending ||
-                                                    !_visibleCryTasks.any(
-                                                      (other) =>
-                                                          other.status ==
-                                                          ChatFirstCryTaskStatus
-                                                              .pending,
-                                                    )) &&
-                                                (_cryCapture == null ||
-                                                    _activeCryTaskId ==
-                                                        task.id),
-                                            controller:
-                                                _activeCryTaskId == task.id
-                                                ? _cryCapture
-                                                : null,
-                                            onStart: () =>
-                                                task.status ==
-                                                    ChatFirstCryTaskStatus
-                                                        .pending
-                                                ? _startCryCapture(task.id)
-                                                : _openCryTask(
-                                                    startCapture: true,
-                                                  ),
-                                            onAbandon: () =>
-                                                _abandonCryTask(task.id),
+                                              onAbandon: () =>
+                                                  _abandonPoopTask(task.id),
+                                            ),
                                           ),
-                                    viewportAnchorMessageId:
-                                        _olderHistoryViewportAnchorMessageId,
-                                    viewportAnchorKey:
-                                        _olderHistoryViewportAnchorKey,
-                                    loadImageThumbnail:
-                                        widget.loadImageThumbnail,
-                                    loadImageContent: widget.loadImageContent,
+                                      cryTaskBuilder: (context, task) =>
+                                          task.status ==
+                                                  ChatFirstCryTaskStatus
+                                                      .completed ||
+                                              task.status ==
+                                                  ChatFirstCryTaskStatus
+                                                      .incomplete
+                                          ? Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                ChatFirstCryTaskCard(
+                                                  status: ChatFirstCryTaskStatus
+                                                      .verifying,
+                                                  submitted: true,
+                                                  onStart: () {},
+                                                  onAbandon: () {},
+                                                ),
+                                                const SizedBox(height: 10),
+                                                ChatFirstCryResultCard(
+                                                  answer: task.answer,
+                                                  incomplete:
+                                                      task.status ==
+                                                      ChatFirstCryTaskStatus
+                                                          .incomplete,
+                                                ),
+                                                if (task.analysisId != null &&
+                                                    !task.adviceAccepted &&
+                                                    !task.autoAdvicePending &&
+                                                    task.adviceAttempt > 0 &&
+                                                    !_cryAdviceInFlight &&
+                                                    !_state.isActive &&
+                                                    widget.runner != null)
+                                                  TextButton(
+                                                    key: const ValueKey(
+                                                      'chat-first-cry-retry-advice',
+                                                    ),
+                                                    onPressed: () => unawaited(
+                                                      _sendCryAdvice(task.id),
+                                                    ),
+                                                    child: const Text(
+                                                      chatFirstCryRetryAdviceCopy,
+                                                    ),
+                                                  ),
+                                              ],
+                                            )
+                                          : ChatFirstCryTaskCard(
+                                              status: task.status,
+                                              submitted:
+                                                  (_crySubmitting &&
+                                                      _activeCryTaskId ==
+                                                          task.id) ||
+                                                  _cryTaskAwaitingResult(task),
+                                              isSubmitting:
+                                                  _crySubmitting &&
+                                                  _activeCryTaskId == task.id,
+                                              feedback:
+                                                  _activeCryTaskId == task.id
+                                                  ? _cryFeedback
+                                                  : null,
+                                              onSubmit:
+                                                  widget.cryAnalysisRepository !=
+                                                          null &&
+                                                      !_isVisibleReplyRunning &&
+                                                      _isPageVisible
+                                                  ? () => unawaited(
+                                                      _submitCryTask(task.id),
+                                                    )
+                                                  : null,
+                                              onRefreshResult:
+                                                  (task.analysisId != null ||
+                                                          task.requestKey !=
+                                                              null) &&
+                                                      widget.cryAnalysisRepository !=
+                                                          null
+                                                  ? () => unawaited(
+                                                      _refreshPersistedCryResults(),
+                                                    )
+                                                  : null,
+                                              canStart:
+                                                  !_crySubmitting &&
+                                                  _isPageVisible &&
+                                                  !_isVisibleReplyRunning &&
+                                                  !_conversationSwitchPending &&
+                                                  (task.status ==
+                                                          ChatFirstCryTaskStatus
+                                                              .pending ||
+                                                      !_visibleCryTasks.any(
+                                                        (other) =>
+                                                            other.status ==
+                                                            ChatFirstCryTaskStatus
+                                                                .pending,
+                                                      )) &&
+                                                  (_cryCapture == null ||
+                                                      _activeCryTaskId ==
+                                                          task.id),
+                                              controller:
+                                                  _activeCryTaskId == task.id
+                                                  ? _cryCapture
+                                                  : null,
+                                              onStart: () =>
+                                                  task.status ==
+                                                      ChatFirstCryTaskStatus
+                                                          .pending
+                                                  ? _startCryCapture(task.id)
+                                                  : _openCryTask(
+                                                      startCapture: true,
+                                                    ),
+                                              onAbandon: () =>
+                                                  _abandonCryTask(task.id),
+                                            ),
+                                      viewportAnchorMessageId:
+                                          _olderHistoryViewportAnchorMessageId,
+                                      viewportAnchorKey:
+                                          _olderHistoryViewportAnchorKey,
+                                      loadImageThumbnail:
+                                          widget.loadImageThumbnail,
+                                      loadImageContent: widget.loadImageContent,
+                                    ),
                                   ),
-                                ),
-                              if (visibleMessages.isNotEmpty)
-                                const SliverToBoxAdapter(
-                                  child: SizedBox(height: 18),
-                                ),
-                              if (_visibleCryTasks.any(_cryTaskAwaitingResult))
-                                const SliverToBoxAdapter(
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 6, 20, 18),
-                                    child: Text(
-                                      chatFirstCryWaitingCopy,
-                                      key: ValueKey('chat-first-cry-waiting'),
-                                      style: TextStyle(
-                                        color: Color(0xFF75696D),
-                                        fontSize: 13,
+                                if (visibleMessages.isNotEmpty)
+                                  const SliverToBoxAdapter(
+                                    child: SizedBox(height: 18),
+                                  ),
+                                if (_visibleCryTasks.any(
+                                  _cryTaskAwaitingResult,
+                                ))
+                                  const SliverToBoxAdapter(
+                                    child: Padding(
+                                      padding: EdgeInsets.fromLTRB(
+                                        20,
+                                        6,
+                                        20,
+                                        18,
+                                      ),
+                                      child: Text(
+                                        chatFirstCryWaitingCopy,
+                                        key: ValueKey('chat-first-cry-waiting'),
+                                        style: TextStyle(
+                                          color: Color(0xFF75696D),
+                                          fontSize: 13,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              if (!_hideCurrentWelcome &&
-                                  !_currentAssistantProjectedWithCryTask &&
-                                  !(_state.phase == AgentStreamRunPhase.idle &&
-                                      visibleMessages.isNotEmpty) &&
-                                  _interactionRestoreResolved &&
-                                  !(_historyRecoveryPending &&
-                                      !_hasLocalInteraction()) &&
-                                  !(_historyRecoveryError != null &&
-                                      !_hasLocalInteraction()) &&
-                                  !(widget.chatFirstExperience &&
-                                      _state.phase ==
-                                          AgentStreamRunPhase.idle &&
-                                      visibleMessages.isEmpty))
-                                SliverPadding(
-                                  padding: EdgeInsets.fromLTRB(
-                                    16,
-                                    visibleMessages.isEmpty &&
-                                            !showChatFirstDate
-                                        ? 24
-                                        : 0,
-                                    16,
-                                    28,
-                                  ),
-                                  sliver: SliverToBoxAdapter(
-                                    child: ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        minHeight: visibleMessages.isEmpty
-                                            ? transcriptMinHeight
-                                            : 0,
-                                      ),
-                                      child: _AgentRunTranscriptListenable(
-                                        chatFirstExperience:
-                                            widget.chatFirstExperience,
-                                        greeting: widget.chatFirstExperience
-                                            ? ''
-                                            : _greeting,
-                                        stateListenable: _runStateNotifier,
-                                        onTextRevealed: () {
-                                          if (_isPageVisible &&
-                                              _isNearLatest()) {
-                                            _scheduleScrollToLatest();
-                                          }
-                                        },
-                                        canRetryForState: _canRetryForState,
-                                        onRetry: _retryRun,
-                                        // Generated quick replies are temporarily hidden
-                                        // while the follow-up interaction is redesigned.
-                                        onQuickReplySelected: null,
+                                if (!_hideCurrentWelcome &&
+                                    !_currentAssistantProjectedWithCryTask &&
+                                    !(_state.phase ==
+                                            AgentStreamRunPhase.idle &&
+                                        visibleMessages.isNotEmpty) &&
+                                    _interactionRestoreResolved &&
+                                    !(_historyRecoveryPending &&
+                                        !_hasLocalInteraction()) &&
+                                    !(_historyRecoveryError != null &&
+                                        !_hasLocalInteraction()) &&
+                                    !(widget.chatFirstExperience &&
+                                        _state.phase ==
+                                            AgentStreamRunPhase.idle &&
+                                        visibleMessages.isEmpty))
+                                  SliverPadding(
+                                    padding: EdgeInsets.fromLTRB(
+                                      16,
+                                      visibleMessages.isEmpty &&
+                                              !showChatFirstDate
+                                          ? 24
+                                          : 0,
+                                      16,
+                                      28,
+                                    ),
+                                    sliver: SliverToBoxAdapter(
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          minHeight: visibleMessages.isEmpty
+                                              ? transcriptMinHeight
+                                              : 0,
+                                        ),
+                                        child: _AgentRunTranscriptListenable(
+                                          chatFirstExperience:
+                                              widget.chatFirstExperience,
+                                          greeting: widget.chatFirstExperience
+                                              ? ''
+                                              : _greeting,
+                                          stateListenable: _runStateNotifier,
+                                          onTextRevealed: () {
+                                            if (_isPageVisible &&
+                                                _isNearLatest()) {
+                                              _scheduleScrollToLatest();
+                                            }
+                                          },
+                                          canRetryForState: _canRetryForState,
+                                          onRetry: _retryRun,
+                                          // Generated quick replies are temporarily hidden
+                                          // while the follow-up interaction is redesigned.
+                                          onQuickReplySelected: null,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
-                              else if (visibleMessages.isEmpty &&
-                                  (!_interactionRestoreResolved ||
-                                      _historyRecoveryPending ||
-                                      _historyRecoveryError != null))
-                                SliverToBoxAdapter(
-                                  child: SizedBox(
-                                    height: transcriptMinHeight,
-                                    child: _historyRecoveryError != null
-                                        ? Center(
-                                            child: TextButton(
-                                              onPressed: _recoverConversation,
+                                  )
+                                else if (visibleMessages.isEmpty &&
+                                    (!_interactionRestoreResolved ||
+                                        _historyRecoveryPending ||
+                                        _historyRecoveryError != null))
+                                  SliverToBoxAdapter(
+                                    child: SizedBox(
+                                      height: transcriptMinHeight,
+                                      child: _historyRecoveryError != null
+                                          ? Center(
+                                              child: TextButton(
+                                                onPressed: _recoverConversation,
+                                                child: Text(
+                                                  widget.chatFirstExperience
+                                                      ? chatFirstHistoryLoadFailed
+                                                      : 'Could not load earlier messages. Tap to try again.',
+                                                ),
+                                              ),
+                                            )
+                                          : Center(
                                               child: Text(
                                                 widget.chatFirstExperience
-                                                    ? chatFirstHistoryLoadFailed
-                                                    : 'Could not load earlier messages. Tap to try again.',
+                                                    ? chatFirstRestoringHistory
+                                                    : 'Restoring conversation…',
                                               ),
                                             ),
-                                          )
-                                        : Center(
-                                            child: Text(
-                                              widget.chatFirstExperience
-                                                  ? chatFirstRestoringHistory
-                                                  : 'Restoring conversation…',
-                                            ),
-                                          ),
+                                    ),
                                   ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
                           if (_showLatestButton)
                             Positioned(
@@ -7003,6 +7041,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                 final composerInput = TextField(
                   key: const ValueKey('agent-composer-input'),
                   onTap: _attachmentMenuController.close,
+                  onTapOutside: (_) => widget.focusNode?.unfocus(),
                   controller: controller,
                   focusNode: widget.focusNode,
                   minLines: 1,

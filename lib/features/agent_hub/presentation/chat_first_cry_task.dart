@@ -238,6 +238,7 @@ class ChatFirstCryTaskCard extends StatelessWidget {
     this.canStart = true,
     this.controller,
     this.isSubmitting = false,
+    this.submitted = false,
     this.feedback,
     this.onSubmit,
     this.onRefreshResult,
@@ -247,6 +248,7 @@ class ChatFirstCryTaskCard extends StatelessWidget {
   final ChatFirstCryTaskController? controller;
   final bool canStart;
   final bool isSubmitting;
+  final bool submitted;
   final String? feedback;
   final VoidCallback? onSubmit;
   final VoidCallback? onRefreshResult;
@@ -317,6 +319,12 @@ class ChatFirstCryTaskCard extends StatelessWidget {
               children: [
                 if (status == ChatFirstCryTaskStatus.cancelled)
                   const Text('本次任务已取消。')
+                else if (submitted)
+                  const Text(
+                    '录音已提交',
+                    key: ValueKey('chat-first-cry-submitted'),
+                    style: TextStyle(color: Color(0xFF6D6264), fontSize: 13),
+                  )
                 else if (status == ChatFirstCryTaskStatus.verifying ||
                     status == ChatFirstCryTaskStatus.unavailable ||
                     status == ChatFirstCryTaskStatus.failed) ...[

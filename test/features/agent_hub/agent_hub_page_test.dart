@@ -828,10 +828,40 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('agent-composer-input')));
       tester.view.viewInsets = const FakeViewPadding(bottom: 320);
       await tester.pump();
-      expect(scroll.position.extentAfter, greaterThan(10));
-      await tester.pump(const Duration(milliseconds: 220));
+      expect(scroll.position.extentAfter, lessThan(2));
+      tester.view.viewInsets = const FakeViewPadding(bottom: 360);
       await tester.pump();
       expect(scroll.position.extentAfter, lessThan(2));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'blank transcript tap dismisses keyboard while a feature action still works',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        _host(const AgentHubPage(chatFirstExperience: true)),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('agent-composer-input')));
+      await tester.pump();
+      expect(_composerHasFocus(tester), isTrue);
+      final viewport = tester.getRect(
+        find.byKey(const ValueKey('agent-chat-scroll-view')),
+      );
+      await tester.tapAt(Offset(viewport.center.dx, viewport.top + 8));
+      await tester.pump();
+      expect(_composerHasFocus(tester), isFalse);
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+      await tester.pump();
+      expect(
+        find.byKey(const ValueKey('chat-first-topic-cry')),
+        findsOneWidget,
+      );
       await tester.pumpWidget(const SizedBox());
     },
   );
