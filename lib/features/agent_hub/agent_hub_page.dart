@@ -9,6 +9,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -400,7 +401,7 @@ class _AgentHubPageState extends State<AgentHubPage>
         (_visibleCryTasks.isEmpty &&
             _visiblePoopTasks.isEmpty &&
             !remote.any((message) => message.isChatFirstPoopTrigger))) {
-      return remote;
+      return _mergeHistoryMessages(remote);
     }
     final assistant = _currentAssistantHistoryMessage();
     final projectedAssistant = _currentAssistantProjectedWithCryTask
@@ -491,6 +492,7 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   bool _interactionRestoreResolved = false;
   bool _showLatestButton = false;
+  bool _cardFocusedAtCenter = false;
   bool _attachmentUploadPending = false;
   final Set<String> _pendingAttachmentCleanupIds = <String>{};
   Timer? _attachmentCleanupRetryTimer;
@@ -756,7 +758,9 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (assistant != null &&
         orderedMessages.every(
           (message) => _messageIdentity(message) != assistant.id,
-        )) {
+        ) &&
+        // A completed Run can remain in state after a newer turn arrives.
+        (last?.runId == null || last!.runId == _state.runId)) {
       return assistant.id;
     }
     return last == null ? null : _messageIdentity(last);
@@ -1496,6 +1500,7 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   void _centerActiveCard(String taskId) {
     ++_scrollIntentVersion;
+    _cardFocusedAtCenter = true;
     _activeCardScrollTaskId = taskId;
     if (_activeCardScrollScheduled) return;
     _activeCardScrollScheduled = true;
@@ -1513,7 +1518,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       final target = key.currentContext;
       if (target == null) {
         // A newly appended card may not be built by the lazy sliver yet.
-        _scheduleScrollToLatest();
+        _scheduleScrollToLatest(preserveCardFocus: true);
         return;
       }
       unawaited(
@@ -1522,7 +1527,7 @@ class _AgentHubPageState extends State<AgentHubPage>
           alignment: 0.5,
           alignmentPolicy: ScrollPositionAlignmentPolicy.explicit,
           duration: Duration.zero,
-        ),
+        ).then((_) => _updateLatestButtonVisibility()),
       );
     });
   }
@@ -2762,7 +2767,8 @@ class _AgentHubPageState extends State<AgentHubPage>
     final position = _chatScrollController.position;
     final shouldShow =
         position.maxScrollExtent > 160 &&
-        position.pixels < position.maxScrollExtent - 40;
+        position.pixels < position.maxScrollExtent - 40 &&
+        !_cardFocusedAtCenter;
     if (shouldShow == _showLatestButton) return;
     setState(() {
       _showLatestButton = shouldShow;
@@ -2957,7 +2963,11 @@ class _AgentHubPageState extends State<AgentHubPage>
     });
   }
 
-  void _scheduleScrollToLatest({bool smooth = false}) {
+  void _scheduleScrollToLatest({
+    bool smooth = false,
+    bool preserveCardFocus = false,
+  }) {
+    if (!preserveCardFocus) _cardFocusedAtCenter = false;
     if (_keyboardTransitioning) {
       _scrollAfterKeyboardSettles = true;
       ++_scrollIntentVersion; // Supersede any scroll queued before unfocus.
@@ -3034,6 +3044,7 @@ class _AgentHubPageState extends State<AgentHubPage>
 
   Future<void> _scrollToLatestFromUser() async {
     _scrollIntentVersion += 1;
+    _cardFocusedAtCenter = false;
     await _scrollToLatest(smooth: TickerMode.valuesOf(context).enabled);
     if (!mounted) return;
     _scheduleScrollToLatestCorrection(_scrollIntentVersion);
@@ -3286,6 +3297,7 @@ class _AgentHubPageState extends State<AgentHubPage>
           ? 'local:welcome'
           : state.messageId ?? 'run:${state.runId}:assistant',
       role: AgentHubHistoryRole.assistant,
+      runId: state.runId,
       content: text,
       runState: state.phase == AgentStreamRunPhase.idle ? null : state,
       isChatFirstWelcome: _currentRunIsChatFirstWelcome,
@@ -4093,6 +4105,26 @@ class _AgentHubPageState extends State<AgentHubPage>
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       final visibleMessages = _visibleHistoryMessages;
+                      final latestTurn = visibleMessages.where(
+                        (message) =>
+                            message.localCryTask == null &&
+                            message.localPoopTask == null,
+                      ).lastOrNull;
+                      final completedReplyAlreadyShown =
+                          _state.phase == AgentStreamRunPhase.finished &&
+                          _completedMessageId != null &&
+                          visibleMessages.any(
+                            (message) =>
+                                _messageIdentity(message) == _completedMessageId,
+                          );
+                      final completedReplyIsOld =
+                          _state.phase == AgentStreamRunPhase.finished &&
+                          _state.runId != null &&
+                          visibleMessages.any(
+                            (message) => message.runId == _state.runId,
+                          ) &&
+                          latestTurn?.runId != null &&
+                          latestTurn!.runId != _state.runId;
                       final showChatFirstDate =
                           widget.chatFirstExperience &&
                           _interactionRestoreResolved &&
@@ -4107,7 +4139,16 @@ class _AgentHubPageState extends State<AgentHubPage>
 
                       return Stack(
                         children: [
-                          GestureDetector(
+                          NotificationListener<UserScrollNotification>(
+                            onNotification: (notification) {
+                              if (notification.direction != ScrollDirection.idle &&
+                                  _cardFocusedAtCenter) {
+                                _cardFocusedAtCenter = false;
+                                _updateLatestButtonVisibility();
+                              }
+                              return false;
+                            },
+                            child: GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: _composerFocusNode.unfocus,
                             child: CustomScrollView(
@@ -4151,7 +4192,11 @@ class _AgentHubPageState extends State<AgentHubPage>
                                       activeCryCardKey: _activeCryCardKey,
                                       activePoopTaskId: _activePoopTaskId,
                                       activePoopCardKey: _activePoopCardKey,
-                                      onActiveCardLayout: _centerActiveCard,
+                                      onActiveCardLayout: (taskId) {
+                                        if (_cardFocusedAtCenter) {
+                                          _centerActiveCard(taskId);
+                                        }
+                                      },
                                       poopTaskBuilder: (context, task) =>
                                           ValueListenableBuilder<
                                             AgentStreamRunState
@@ -4447,6 +4492,8 @@ class _AgentHubPageState extends State<AgentHubPage>
                                   ),
                                 if (!_hideCurrentWelcome &&
                                     !_currentAssistantProjectedWithCryTask &&
+                                    !completedReplyAlreadyShown &&
+                                    !completedReplyIsOld &&
                                     !(_state.phase ==
                                             AgentStreamRunPhase.idle &&
                                         visibleMessages.isNotEmpty) &&
@@ -4547,29 +4594,23 @@ class _AgentHubPageState extends State<AgentHubPage>
                               ],
                             ),
                           ),
+                          ),
                           if (_showLatestButton)
                             Positioned(
                               right: 12,
                               bottom: 12,
-                              child: FilledButton.tonalIcon(
-                                key: const ValueKey(
-                                  'agent-scroll-latest-button',
-                                ),
+                              child: IconButton.filledTonal(
+                                key: const ValueKey('agent-scroll-latest-button'),
+                                tooltip: 'Jump to latest message',
                                 onPressed: _scrollToLatestFromUser,
-                                icon: const Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                ),
-                                label: const Text('Jump to latest message'),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: MomHomeTokens.rose,
-                                  foregroundColor: Colors.white,
+                                icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                                iconSize: 18,
+                                style: IconButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: MomHomeTokens.rose,
                                   minimumSize: const Size(44, 44),
-                                  textStyle: MomHomeTokens.text(
-                                    13,
-                                    weight: FontWeight.w700,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                                  shape: const CircleBorder(
+                                    side: BorderSide(color: Color(0xFFEADDE2)),
                                   ),
                                 ),
                               ),
@@ -6421,27 +6462,61 @@ class _AgentSweepText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final characters = text.characters.toList();
     return AnimatedBuilder(
       animation: animation,
-      builder: (context, child) {
-        // A slow periodic drift has no abrupt reset and keeps every glyph
-        // legible, unlike a narrow highlight sweeping character by character.
+      builder: (context, _) {
         final drift = math.sin(animation.value * 2 * math.pi) * 0.3;
         return ShaderMask(
           key: sweepKey,
           blendMode: BlendMode.srcIn,
-          shaderCallback: (bounds) {
-            return LinearGradient(
-              begin: Alignment(-1.2 + drift, 0),
-              end: Alignment(1.2 + drift, 0),
-              colors: colors,
-              stops: const [0, 0.5, 1],
-            ).createShader(bounds);
-          },
-          child: child,
+          shaderCallback: (bounds) => LinearGradient(
+            begin: Alignment(-1.2 + drift, 0),
+            end: Alignment(1.2 + drift, 0),
+            colors: colors,
+            stops: const [0, 0.5, 1],
+          ).createShader(bounds),
+          child:
+              !animation.isAnimating ||
+                  characters.length > 24 ||
+                  MediaQuery.textScalerOf(context).scale(13) > 18
+              ? Text(text, style: style)
+              : Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    // Preserve a single searchable full string and a fixed layout
+                    // while the drawn glyphs change size in place.
+                    Opacity(opacity: 0, child: Text(text, style: style)),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (var index = 0; index < characters.length; index++)
+                          Transform.scale(
+                            alignment: Alignment.bottomCenter,
+                            scale: animation.isAnimating
+                                ? 1 +
+                                      0.18 *
+                                          math.pow(
+                                            math.max(
+                                              0,
+                                              math.sin(
+                                                2 *
+                                                    math.pi *
+                                                    (animation.value -
+                                                        index * 0.12),
+                                              ),
+                                            ),
+                                            2,
+                                          )
+                                : 1,
+                            child: Text(characters[index], style: style),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
         );
       },
-      child: Text(text, style: style),
     );
   }
 }
@@ -7581,6 +7656,12 @@ List<AgentHubHistoryMessage> _mergeHistoryMessages(
   rows.sort((a, b) {
     if (a.id == 'local:welcome') return -1;
     if (b.id == 'local:welcome') return 1;
+    // Local optimistic turns have no server cursor. Keep their insertion
+    // position until run.queued supplies an authoritative sequence.
+    if (a.id?.startsWith('local:') == true ||
+        b.id?.startsWith('local:') == true) {
+      return order[_messageIdentity(a)]!.compareTo(order[_messageIdentity(b)]!);
+    }
     if (a.sequence != null && b.sequence != null) {
       final result = a.sequence!.compareTo(b.sequence!);
       if (result != 0) return result;

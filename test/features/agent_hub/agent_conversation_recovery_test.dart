@@ -932,7 +932,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(_scroll(tester).offset, closeTo(offset, 1));
-      expect(find.text('Jump to latest message'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('agent-scroll-latest-button')),
+        findsOneWidget,
+      );
       expect(find.text('有新回复 · 回到最新'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-first-unread-marker')),
@@ -977,7 +980,10 @@ void main() {
       expect(messages.first.id, 'message-1');
       expect(messages.map((message) => message.id).toSet().length, 41);
       expect(_scroll(tester).offset, closeTo(offset, 1));
-      expect(find.text('Jump to latest message'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('agent-scroll-latest-button')),
+        findsOneWidget,
+      );
       expect(find.text('有新回复 · 回到最新'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-first-unread-marker')),

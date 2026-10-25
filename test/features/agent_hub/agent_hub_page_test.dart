@@ -163,6 +163,90 @@ void main() {
     },
   );
 
+  testWidgets('history stays in server order without a task card', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          historyMessages: [
+            AgentHubHistoryMessage(
+              id: 'reply-2',
+              runId: 'run-2',
+              sequence: 4,
+              role: AgentHubHistoryRole.assistant,
+              content: '第二轮回复',
+              createdAt: DateTime.utc(2026, 10, 25, 10),
+            ),
+            AgentHubHistoryMessage(
+              id: 'user-1',
+              runId: 'run-1',
+              sequence: 1,
+              role: AgentHubHistoryRole.user,
+              content: '第一轮提问',
+              createdAt: DateTime.utc(2026, 10, 25, 9),
+            ),
+            AgentHubHistoryMessage(
+              id: 'user-2',
+              runId: 'run-2',
+              sequence: 3,
+              role: AgentHubHistoryRole.user,
+              content: '第二轮提问',
+              createdAt: DateTime.utc(2026, 10, 25, 10),
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<AgentHubHistorySliver>(find.byType(AgentHubHistorySliver))
+          .messages
+          .map((message) => message.id),
+      ['user-1', 'user-2', 'reply-2'],
+    );
+  });
+
+  testWidgets('optimistic message follows remote history with a future clock', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          now: () => DateTime.utc(2026, 10, 1),
+          runner: AgentStreamRunner(client),
+          historyMessages: [
+            AgentHubHistoryMessage(
+              id: 'reply-old',
+              runId: 'run-old',
+              sequence: 2,
+              role: AgentHubHistoryRole.assistant,
+              content: '以前的回复',
+              createdAt: DateTime.utc(2026, 10, 25),
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '刚发出的消息',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    final messages = tester
+        .widget<AgentHubHistorySliver>(find.byType(AgentHubHistorySliver))
+        .messages;
+    expect(
+      messages.skip(messages.length - 2).map((message) => message.content),
+      ['以前的回复', '刚发出的消息'],
+    );
+  });
+
   testWidgets(
     'an unowned cached cry card never attaches to a recovered thread',
     (tester) async {
@@ -4436,6 +4520,36 @@ milk_total: 120ml
     await tester.pumpAndSettle();
     expect(find.text('正在思考…'), findsOneWidget);
     expect(tester.binding.hasScheduledFrame, isFalse);
+  });
+
+  testWidgets('short status glyph wave travels without shifting layout', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(const AgentRunStatusLine(title: '正在思考…'), tickersEnabled: true),
+    );
+    final status = find.byKey(const ValueKey('agent-run-status-line'));
+    final bounds = tester.getRect(status);
+    List<double> scales() => tester
+        .widgetList<Transform>(
+          find.descendant(of: status, matching: find.byType(Transform)),
+        )
+        .map((widget) => widget.transform.storage[0])
+        .toList();
+    await tester.pump(); // Starts the repeating ticker.
+    await tester.pump(const Duration(milliseconds: 400));
+    final first = scales();
+    await tester.pump(const Duration(milliseconds: 320));
+    final later = scales();
+    // A new ticker starts on its first frame; sample after it has advanced.
+    expect(
+      first,
+      isNotEmpty,
+      reason: 'short active status should render glyphs',
+    );
+    expect(first.any((value) => value > 1.05), isTrue);
+    expect(later, isNot(equals(first)));
+    expect(tester.getRect(status), bounds);
   });
 
   testWidgets('Agent loop status copy is vertically and horizontally aligned', (

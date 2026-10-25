@@ -732,6 +732,101 @@ void main() {
     },
   );
 
+  testWidgets('new poop card follows a newer run, not stale completed state', (
+    tester,
+  ) async {
+    _largeViewport(tester);
+    final store = _Store()
+      ..value = AgentHubInteractionSnapshot(
+        runState: const AgentStreamRunState(
+          phase: AgentStreamRunPhase.finished,
+          threadId: 'thread-poop',
+          runId: 'run-old',
+          messageId: 'reply-old',
+          textContent: '旧轮回复',
+          completedAssistantMessageReceived: true,
+        ),
+        historyMessages: [
+          AgentHubHistorySnapshot(
+            id: 'reply-old',
+            runId: 'run-old',
+            sequence: 2,
+            role: 'assistant',
+            content: '旧轮回复',
+          ),
+          AgentHubHistorySnapshot(
+            id: 'user-new',
+            runId: 'run-new',
+            sequence: 3,
+            role: 'user',
+            content: '新一轮消息',
+          ),
+        ],
+      );
+    await tester.pumpWidget(_page(_Reviews(), _Client(), store: store));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+    await tester.pumpAndSettle();
+    expect(store.value?.poopTasks.single.placedAfterMessageId, 'user-new');
+    expect(find.text('旧轮回复'), findsOneWidget);
+    final messages = tester
+        .widget<AgentHubHistorySliver>(find.byType(AgentHubHistorySliver))
+        .messages;
+    expect(messages.map((message) => message.id), [
+      'reply-old',
+      'user-new',
+      store.value!.poopTasks.single.id,
+    ]);
+  });
+
+  testWidgets(
+    'reopening a pending poop card relocates it after the newest turn',
+    (tester) async {
+      _largeViewport(tester);
+      final store = _Store()
+        ..value = AgentHubInteractionSnapshot(
+          runState: const AgentStreamRunState(threadId: 'thread-poop'),
+          poopTasks: [
+            ChatFirstPoopTask(
+              id: 'local:poop:pending',
+              threadId: 'thread-poop',
+              createdAt: DateTime.utc(2026, 10, 1),
+              placedAfterMessageId: 'reply-old',
+            ),
+          ],
+          historyMessages: [
+            AgentHubHistorySnapshot(
+              id: 'reply-old',
+              runId: 'run-old',
+              sequence: 2,
+              role: 'assistant',
+              content: '旧回复',
+            ),
+            AgentHubHistorySnapshot(
+              id: 'reply-new',
+              runId: 'run-new',
+              sequence: 4,
+              role: 'assistant',
+              content: '最新回复',
+            ),
+          ],
+        );
+      await tester.pumpWidget(_page(_Reviews(), _Client(), store: store));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+      await tester.pumpAndSettle();
+      expect(store.value?.poopTasks, hasLength(1));
+      expect(store.value?.poopTasks.single.placedAfterMessageId, 'reply-new');
+      expect(
+        tester
+            .widget<AgentHubHistorySliver>(find.byType(AgentHubHistorySliver))
+            .messages
+            .map((message) => message.id),
+        ['reply-old', 'reply-new', 'local:poop:pending'],
+      );
+    },
+  );
+
   testWidgets('poop card stays near viewport center as photo state changes', (
     tester,
   ) async {
@@ -765,9 +860,34 @@ void main() {
           .first,
     );
     expect(card().center.dy, closeTo(viewport.center.dy, 70));
+    expect(
+      find.byKey(const ValueKey('agent-scroll-latest-button')),
+      findsNothing,
+    );
     await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
     await tester.pumpAndSettle();
     expect(card().center.dy, closeTo(viewport.center.dy, 70));
+    expect(
+      find.byKey(const ValueKey('agent-scroll-latest-button')),
+      findsNothing,
+    );
+    await tester.drag(
+      find.byKey(const ValueKey('agent-chat-scroll-view')),
+      const Offset(0, 450),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('agent-scroll-latest-button')),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<IconButton>(
+            find.byKey(const ValueKey('agent-scroll-latest-button')),
+          )
+          .iconSize,
+      18,
+    );
   });
 
   testWidgets('using an older poop card moves it to the latest reply', (
