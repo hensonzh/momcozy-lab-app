@@ -43,7 +43,6 @@ void main() {
                   onPick: (_) {},
                   onSubmit: () {},
                   onRemove: (_) {},
-                  onAbandon: () {},
                 ),
               ],
             ),

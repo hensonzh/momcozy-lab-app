@@ -223,7 +223,6 @@ Widget _card(StoolCardState analysis, {VoidCallback? onFollowup}) =>
             onPick: (_) {},
             onSubmit: () {},
             onRemove: (_) {},
-            onAbandon: () {},
             onFollowup: onFollowup,
           ),
         ),

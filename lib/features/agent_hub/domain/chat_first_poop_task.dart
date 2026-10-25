@@ -12,6 +12,7 @@ class ChatFirstPoopTask {
     required this.id,
     required this.createdAt,
     this.threadId,
+    this.placedAfterMessageId,
     this.runId,
     this.analysisState,
     this.status = ChatFirstPoopTaskStatus.pending,
@@ -20,6 +21,7 @@ class ChatFirstPoopTask {
   final String id;
   final DateTime createdAt;
   final String? threadId;
+  final String? placedAfterMessageId;
   final String? runId;
   final StoolCardState? analysisState;
   final ChatFirstPoopTaskStatus status;
@@ -32,17 +34,29 @@ class ChatFirstPoopTask {
       id: id,
       createdAt: createdAt,
       threadId: threadId,
+      placedAfterMessageId: placedAfterMessageId,
       runId: runId,
       analysisState: analysisState,
       status: status,
     );
   }
 
+  ChatFirstPoopTask placedAfter(String? messageId) => ChatFirstPoopTask(
+    id: id,
+    createdAt: createdAt,
+    threadId: threadId,
+    placedAfterMessageId: messageId,
+    runId: runId,
+    analysisState: analysisState,
+    status: status,
+  );
+
   ChatFirstPoopTask withStatus(ChatFirstPoopTaskStatus status) =>
       ChatFirstPoopTask(
         id: id,
         createdAt: createdAt,
         threadId: threadId,
+        placedAfterMessageId: placedAfterMessageId,
         runId: runId,
         analysisState: analysisState,
         status: status,
@@ -52,6 +66,7 @@ class ChatFirstPoopTask {
     id: id,
     createdAt: createdAt,
     threadId: threadId,
+    placedAfterMessageId: placedAfterMessageId,
     runId: runId,
     analysisState: analysisState,
     status: ChatFirstPoopTaskStatus.completed,
@@ -70,6 +85,7 @@ class ChatFirstPoopTask {
       id: id,
       createdAt: createdAt,
       threadId: threadId,
+      placedAfterMessageId: placedAfterMessageId,
       runId: runId,
       analysisState: state,
       status: ChatFirstPoopTaskStatus.completed,
@@ -89,6 +105,8 @@ class ChatFirstPoopTask {
     'id': id,
     'createdAt': createdAt.toIso8601String(),
     if (threadId != null) 'threadId': threadId,
+    if (placedAfterMessageId != null)
+      'placedAfterMessageId': placedAfterMessageId,
     if (runId != null) 'runId': runId,
     if (analysisState != null) 'analysis': analysisState!.toMap(),
     'status': status.name,
@@ -125,6 +143,9 @@ class ChatFirstPoopTask {
       createdAt: parsed,
       threadId: value['threadId'] is String
           ? value['threadId'] as String
+          : null,
+      placedAfterMessageId: value['placedAfterMessageId'] is String
+          ? value['placedAfterMessageId'] as String
           : null,
       runId: value['runId'] is String ? value['runId'] as String : null,
       status: status,

@@ -85,15 +85,14 @@ class ChatFirstWelcomeCoordinator {
       concerns: concerns.cast<Object?>(),
     );
     final receipt = await store.read(ownerUserId);
-    // An accepted local receipt is not proof that the Agent run was durably
-    // created. Check owner-scoped history even when it matches, so a failed
-    // handoff can retry with the same idempotency key instead of going blank.
-    final inHistory = await _alreadyInHistory(request);
-    if (inHistory) {
-      if (receipt != request.idempotencyKey) {
-        await store.save(ownerUserId, request.idempotencyKey);
-      }
-      return (currentKey: request.idempotencyKey, request: null);
+    // Welcome is account-once, not once per profile/day/app installation.
+    // An existing conversation is evidence that this is not a first visit.
+    final history = await _welcomeHistory();
+    if (history.hasPriorConversation ||
+        (receipt != null && receipt != request.idempotencyKey)) {
+      final key = history.welcomeKey ?? receipt ?? request.idempotencyKey;
+      if (receipt != key) await store.save(ownerUserId, key);
+      return (currentKey: key, request: null);
     }
     return (currentKey: request.idempotencyKey, request: request);
   }
@@ -101,7 +100,10 @@ class ChatFirstWelcomeCoordinator {
   Future<void> markAccepted(String idempotencyKey) =>
       store.save(ownerUserId, idempotencyKey);
 
-  Future<bool> _alreadyInHistory(ChatFirstWelcomeRequest request) async {
+  Future<({bool hasPriorConversation, String? welcomeKey})>
+  _welcomeHistory() async {
+    var hasPriorConversation = false;
+    String? welcomeKey;
     final threads = await agent.getJson(
       '/v1/agent/threads',
       query: {'limit': 100},
@@ -130,16 +132,18 @@ class ChatFirstWelcomeCoordinator {
           throw const FormatException('Invalid conversation history.');
         }
         for (final item in messages) {
-          if (item is! Map || item['role'] != 'user') continue;
+          if (item is! Map) continue;
+          hasPriorConversation = true;
+          if (item['role'] != 'user') continue;
           final content = item['content'];
           if (content is! Map) continue;
           final source = content['client_context'];
           if (source is Map &&
               source['source'] == 'chat_first_welcome' &&
-              content['text'] is String &&
-              chatFirstWelcomeKeyForPrompt(content['text'] as String) ==
-                  request.idempotencyKey) {
-            return true;
+              content['text'] is String) {
+            welcomeKey ??= chatFirstWelcomeKeyForPrompt(
+              content['text'] as String,
+            );
           }
         }
         final next = page['next_before_sequence'];
@@ -155,6 +159,6 @@ class ChatFirstWelcomeCoordinator {
         'Thread list may be truncated; welcome was not duplicated.',
       );
     }
-    return false;
+    return (hasPriorConversation: hasPriorConversation, welcomeKey: welcomeKey);
   }
 }

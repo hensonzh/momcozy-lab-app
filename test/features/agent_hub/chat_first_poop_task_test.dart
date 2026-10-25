@@ -592,47 +592,160 @@ void main() {
   });
 
   testWidgets(
-    'an old blocked review does not prevent a new task from polling',
+    'initial card has no abandon action or service implementation copy',
     (tester) async {
       _largeViewport(tester);
-      final reviews = _Reviews();
-      final firstReview = Completer<StoolPhotoReview>();
-      reviews.pendingReviews['photo-1'] = firstReview;
-      await tester.pumpWidget(_page(reviews, _Client()));
+      await tester.pumpWidget(_page(_Reviews(), _Client()));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-      await tester.pump();
-      await tester.pump(const Duration(seconds: 2));
-      await tester.pump();
-      expect(reviews.reviewCalls, contains('photo-1'));
-
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-abandon')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
-      await tester.pump();
-      reviews.results['photo-2'] = const StoolPhotoReview(
-        photoId: 'photo-2',
-        status: StoolPhotoReviewStatus.passed,
+      expect(
+        find.byKey(const ValueKey('chat-first-poop-abandon')),
+        findsNothing,
       );
-      await tester.pump(const Duration(seconds: 2));
-      await tester.pump();
-      expect(reviews.reviewCalls, contains('photo-2'));
-      expect(find.textContaining('照片审核通过'), findsNWidgets(2));
-      firstReview.complete(
-        const StoolPhotoReview(
-          photoId: 'photo-1',
-          status: StoolPhotoReviewStatus.rejected,
-        ),
+      expect(find.textContaining('照片会上传至专用审核服务'), findsNothing);
+      expect(
+        find.byKey(const ValueKey('chat-first-topic-poop')),
+        findsOneWidget,
       );
-      await tester.pump();
-      expect(find.textContaining('照片审核通过'), findsNWidgets(2));
-      await tester.pumpWidget(const SizedBox());
     },
   );
+
+  testWidgets(
+    'new poop card follows the latest reply even with an older device clock',
+    (tester) async {
+      _largeViewport(tester);
+      final store = _Store()
+        ..value = AgentHubInteractionSnapshot(
+          runState: const AgentStreamRunState(threadId: 'thread-poop'),
+          historyMessages: [
+            AgentHubHistorySnapshot(
+              id: 'latest-reply',
+              role: 'assistant',
+              content: '先前的最后一句回复',
+              createdAt: DateTime.utc(2026, 10, 25),
+            ),
+          ],
+        );
+      await tester.pumpWidget(
+        _page(
+          _Reviews(),
+          _Client(),
+          store: store,
+          now: () => DateTime.utc(2026, 10, 1),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+      await tester.pumpAndSettle();
+      final card = find.byKey(const ValueKey('chat-first-topic-poop'));
+      expect(card, findsOneWidget);
+      expect(
+        tester.getTopLeft(card).dy,
+        greaterThan(tester.getTopLeft(find.text('先前的最后一句回复')).dy),
+      );
+      expect(
+        store.value?.poopTasks.single.placedAfterMessageId,
+        'latest-reply',
+      );
+    },
+  );
+
+  testWidgets('poop card follows a completed reply before history sync', (
+    tester,
+  ) async {
+    _largeViewport(tester);
+    final store = _Store()
+      ..value = AgentHubInteractionSnapshot(
+        runState: const AgentStreamRunState(
+          phase: AgentStreamRunPhase.finished,
+          threadId: 'thread-poop',
+          runId: 'run-before-poop',
+          messageId: 'reply-before-poop',
+          textContent: '刚完成的回复',
+          completedAssistantMessageReceived: true,
+        ),
+        historyMessages: [
+          AgentHubHistorySnapshot(
+            id: 'earlier-reply',
+            role: 'assistant',
+            content: '更早的回复',
+            createdAt: DateTime.utc(2026, 10, 25),
+          ),
+        ],
+      );
+    await tester.pumpWidget(
+      _page(
+        _Reviews(),
+        _Client(),
+        store: store,
+        now: () => DateTime.utc(2026, 10, 1),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+    await tester.pumpAndSettle();
+    final card = find.byKey(const ValueKey('chat-first-topic-poop'));
+    expect(find.text('刚完成的回复'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('更早的回复')).dy,
+      lessThan(tester.getTopLeft(find.text('刚完成的回复')).dy),
+    );
+    expect(
+      tester.getTopLeft(find.text('刚完成的回复')).dy,
+      lessThan(tester.getTopLeft(card).dy),
+    );
+  });
+
+  testWidgets('using an older poop card moves it to the latest reply', (
+    tester,
+  ) async {
+    _largeViewport(tester);
+    final store = _Store()
+      ..value = AgentHubInteractionSnapshot(
+        runState: const AgentStreamRunState(threadId: 'thread-poop'),
+        poopTasks: [
+          ChatFirstPoopTask(
+            id: 'local:poop:old',
+            threadId: 'thread-poop',
+            createdAt: DateTime.utc(2026, 10, 1),
+            placedAfterMessageId: 'old-reply',
+          ),
+        ],
+        historyMessages: [
+          AgentHubHistorySnapshot(
+            id: 'old-reply',
+            role: 'assistant',
+            content: '旧回答',
+            createdAt: DateTime.utc(2026, 10, 1),
+          ),
+          AgentHubHistorySnapshot(
+            id: 'new-reply',
+            role: 'assistant',
+            content: '新回答',
+            createdAt: DateTime.utc(2026, 10, 2),
+          ),
+        ],
+      );
+    final reviews = _Reviews();
+    await tester.pumpWidget(_page(reviews, _Client(), store: store));
+    await tester.pumpAndSettle();
+    final card = find.byKey(const ValueKey('chat-first-topic-poop'));
+    expect(
+      tester.getTopLeft(card).dy,
+      lessThan(tester.getTopLeft(find.text('新回答')).dy),
+    );
+    await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
+    await tester.pumpAndSettle();
+    expect(reviews.uploaded, hasLength(1));
+    expect(card, findsOneWidget);
+    expect(
+      tester.getTopLeft(card).dy,
+      greaterThan(tester.getTopLeft(find.text('新回答')).dy),
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(store.value?.poopTasks.single.placedAfterMessageId, 'new-reply');
+  });
 
   testWidgets('a transient review read failure keeps polling the same upload', (
     tester,
@@ -957,12 +1070,14 @@ Widget _page(
   _Analysis? analysis,
   String? threadId,
   String? babyId,
+  DateTime Function()? now,
 }) => MaterialApp(
   home: Scaffold(
     body: AgentHubPage(
       key: const ValueKey('poop-page'),
       stateCacheKey: cacheKey,
       chatFirstExperience: true,
+      now: now,
       interactionStateStore: store,
       runner: AgentStreamRunner(client),
       state: AgentStreamRunState(threadId: threadId),

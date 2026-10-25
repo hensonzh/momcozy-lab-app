@@ -420,7 +420,7 @@ void main() {
   });
 
   testWidgets(
-    'cold persisted welcome and changed profile schedule a second real run',
+    'cold persisted welcome does not restart after a profile change',
     (tester) async {
       _mobile(tester);
       const oldKey = 'chat-first-welcome:aaaaaaaaaaaaaaaaaaaaaaaa';
@@ -515,10 +515,8 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(client.requests, hasLength(1));
-      expect(client.requests.single.idempotencyKey, isNot(oldKey));
-      expect(client.requests.single.metadata['source'], 'chat_first_welcome');
-      expect(find.text('旧资料的欢迎回复', findRichText: true), findsNothing);
+      expect(client.requests, isEmpty);
+      expect(find.text('旧资料的欢迎回复', findRichText: true), findsOneWidget);
       await _dispose(tester);
     },
   );

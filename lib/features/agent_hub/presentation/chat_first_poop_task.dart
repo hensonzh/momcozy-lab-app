@@ -15,7 +15,6 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
     required this.onPick,
     required this.onSubmit,
     required this.onRemove,
-    required this.onAbandon,
     required this.canInteract,
     required this.canSubmit,
     this.analysisAvailable = false,
@@ -58,7 +57,6 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
   final ValueChanged<AgentImageInputSource> onPick;
   final ValueChanged<int> onRemove;
   final VoidCallback onSubmit;
-  final VoidCallback onAbandon;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -352,16 +350,6 @@ class ChatFirstPoopTaskCard extends StatelessWidget {
                               : '照片审核通过；专项分析服务尚未开放。'
                         : '照片全部审核通过后才能分析；当前专项分析尚未开放。',
                   ),
-                if (!sending)
-                  TextButton(
-                    key: const ValueKey('chat-first-poop-abandon'),
-                    onPressed: onAbandon,
-                    child: const Text('放弃本次任务'),
-                  ),
-                const Text(
-                  '照片会上传至专用审核服务。审核只判断是否适合分析，不提供医学结论。',
-                  style: TextStyle(color: Color(0xFF786E6B), fontSize: 12),
-                ),
               ],
             ],
           ),

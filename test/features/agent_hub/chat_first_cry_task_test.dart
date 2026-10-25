@@ -1033,6 +1033,59 @@ void main() {
     },
   );
 
+  testWidgets(
+    'using an old cry card moves it after the latest turn without duplication',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 1100);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final store = _CryStore()
+        ..value = AgentHubInteractionSnapshot(
+          runState: const AgentStreamRunState(threadId: 'thread-cry'),
+          cryTasks: [
+            ChatFirstCryTask(
+              id: 'local:cry:old',
+              createdAt: DateTime.utc(2026, 10, 1),
+              threadId: 'thread-cry',
+              placedAfterMessageId: 'old-reply',
+            ),
+          ],
+          historyMessages: [
+            AgentHubHistorySnapshot(
+              id: 'old-reply',
+              role: 'assistant',
+              content: '旧回复',
+              createdAt: DateTime.utc(2026, 10, 1),
+            ),
+            AgentHubHistorySnapshot(
+              id: 'new-reply',
+              role: 'assistant',
+              content: '最新回复',
+              createdAt: DateTime.utc(2026, 10, 2),
+            ),
+          ],
+        );
+      await tester.pumpWidget(
+        _page(audio: _FakeCryAudio(), client: _CaptureClient(), store: store),
+      );
+      await tester.pumpAndSettle();
+      final card = find.byKey(const ValueKey('chat-first-topic-cry'));
+      expect(
+        tester.getTopLeft(card).dy,
+        lessThan(tester.getTopLeft(find.text('最新回复')).dy),
+      );
+      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+      await tester.pumpAndSettle();
+      expect(card, findsOneWidget);
+      expect(
+        tester.getTopLeft(card).dy,
+        greaterThan(tester.getTopLeft(find.text('最新回复')).dy),
+      );
+      expect(store.value?.cryTasks.single.placedAfterMessageId, 'new-reply');
+    },
+  );
+
   testWidgets('changing account disposes audio and never shows old card', (
     tester,
   ) async {

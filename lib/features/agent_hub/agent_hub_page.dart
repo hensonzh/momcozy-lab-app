@@ -366,20 +366,35 @@ class _AgentHubPageState extends State<AgentHubPage>
         !_hideCurrentWelcome &&
         _state.phase == AgentStreamRunPhase.finished &&
         assistant != null &&
-        _visibleCryTasks.any(
-          (task) => task.precedingAssistantMessageId == assistant.id,
-        );
+        (_visibleCryTasks.any(
+              (task) =>
+                  (task.placedAfterMessageId ??
+                      task.precedingAssistantMessageId) ==
+                  assistant.id,
+            ) ||
+            _visiblePoopTasks.any(
+              (task) => task.placedAfterMessageId == assistant.id,
+            ));
   }
 
   List<AgentHubHistoryMessage> get _visibleHistoryMessages {
-    final remote = _visibleAgentHubHistoryMessages(
-      _historyMessages,
-      chatFirstExperience: widget.chatFirstExperience,
-      currentWelcomeKey: widget.currentWelcomeKey,
-      currentRunHasWelcomeReply:
-          _currentRunIsMatchingWelcome &&
-          _state.phase != AgentStreamRunPhase.idle,
-    );
+    final remote =
+        _visibleAgentHubHistoryMessages(
+              _historyMessages,
+              chatFirstExperience: widget.chatFirstExperience,
+              currentWelcomeKey: widget.currentWelcomeKey,
+              currentRunHasWelcomeReply:
+                  _currentRunIsMatchingWelcome &&
+                  _state.phase != AgentStreamRunPhase.idle,
+            )
+            .where(
+              (message) =>
+                  !message.isChatFirstPoopTrigger ||
+                  !_visiblePoopTasks.any(
+                    (task) => task.runId != null && task.runId == message.runId,
+                  ),
+            )
+            .toList();
     if (!widget.chatFirstExperience ||
         (_visibleCryTasks.isEmpty &&
             _visiblePoopTasks.isEmpty &&
@@ -387,27 +402,39 @@ class _AgentHubPageState extends State<AgentHubPage>
       return remote;
     }
     final assistant = _currentAssistantHistoryMessage();
-    final anchor = _currentAssistantProjectedWithCryTask
-        ? _visibleCryTasks
-              .where(
-                (task) => task.precedingAssistantMessageId == assistant!.id,
-              )
-              .firstOrNull
+    final projectedAssistant = _currentAssistantProjectedWithCryTask
+        ? assistant
         : null;
+    final projectedAt =
+        _visibleCryTasks
+            .where(
+              (task) =>
+                  (task.placedAfterMessageId ??
+                      task.precedingAssistantMessageId) ==
+                  assistant?.id,
+            )
+            .firstOrNull
+            ?.createdAt ??
+        _visiblePoopTasks
+            .where((task) => task.placedAfterMessageId == assistant?.id)
+            .firstOrNull
+            ?.createdAt;
     // Render the last completed reply before the card that followed it,
     // without adding a fake server turn to history or duplicating the Run.
     final projection =
-        anchor != null &&
-            assistant != null &&
-            remote.every((message) => _messageIdentity(message) != assistant.id)
+        projectedAssistant != null &&
+            projectedAt != null &&
+            remote.every(
+              (message) => _messageIdentity(message) != projectedAssistant.id,
+            )
         ? AgentHubHistoryMessage(
-            id: assistant.id,
-            createdAt: anchor.createdAt,
-            role: assistant.role,
-            content: assistant.content,
-            runState: assistant.runState,
-            isChatFirstWelcome: assistant.isChatFirstWelcome,
-            chatFirstWelcomeKey: assistant.chatFirstWelcomeKey,
+            id: projectedAssistant.id,
+            createdAt: projectedAt,
+            role: projectedAssistant.role,
+            content: projectedAssistant.content,
+            runState: projectedAssistant.runState,
+            isChatFirstWelcome: projectedAssistant.isChatFirstWelcome,
+            chatFirstWelcomeKey: projectedAssistant.chatFirstWelcomeKey,
           )
         : null;
     final remotePoopRunIds = remote
@@ -415,29 +442,36 @@ class _AgentHubPageState extends State<AgentHubPage>
         .map((message) => message.runId)
         .whereType<String>()
         .toSet();
-    return _placeCryCardsAfterTheirAssistant(
-      _mergeHistoryMessages([
-        ...remote,
-        ?projection,
-        for (final task in _visiblePoopTasks)
-          if (task.runId == null || !remotePoopRunIds.contains(task.runId))
-            AgentHubHistoryMessage(
-              id: task.id,
-              createdAt: task.createdAt,
-              role: AgentHubHistoryRole.user,
-              content: '',
-              localPoopTask: task,
-            ),
-        for (final task in _visibleCryTasks)
+    final ordered = _mergeHistoryMessages([
+      ...remote,
+      ?projection,
+      for (final task in _visiblePoopTasks)
+        if (task.runId == null || !remotePoopRunIds.contains(task.runId))
           AgentHubHistoryMessage(
             id: task.id,
             createdAt: task.createdAt,
             role: AgentHubHistoryRole.user,
             content: '',
-            localCryTask: task,
+            localPoopTask: task,
           ),
-      ]),
-    );
+      for (final task in _visibleCryTasks)
+        AgentHubHistoryMessage(
+          id: task.id,
+          createdAt: task.createdAt,
+          role: AgentHubHistoryRole.user,
+          content: '',
+          localCryTask: task,
+        ),
+    ]);
+    if (projection != null) {
+      // A completed reply can be visible before the server history syncs it.
+      // It is the newest turn regardless of device/server clock skew.
+      ordered.removeWhere(
+        (message) => _messageIdentity(message) == projection.id,
+      );
+      ordered.add(projection);
+    }
+    return _placeLocalCardsAfterTheirMessage(ordered);
   }
 
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
@@ -702,6 +736,47 @@ class _AgentHubPageState extends State<AgentHubPage>
     _flushPersistentInteractionState();
   }
 
+  String? get _latestConversationMessageId {
+    final messages = _visibleAgentHubHistoryMessages(
+      _historyMessages,
+      chatFirstExperience: widget.chatFirstExperience,
+      currentWelcomeKey: widget.currentWelcomeKey,
+      currentRunHasWelcomeReply:
+          _currentRunIsMatchingWelcome &&
+          _state.phase != AgentStreamRunPhase.idle,
+    );
+    final last = messages.lastOrNull;
+    final assistant = _state.phase == AgentStreamRunPhase.finished
+        ? _currentAssistantHistoryMessage()
+        : null;
+    // The completed reply can precede its server-history sync.
+    if (assistant != null &&
+        messages.every(
+          (message) => _messageIdentity(message) != assistant.id,
+        )) {
+      return assistant.id;
+    }
+    return last == null ? null : _messageIdentity(last);
+  }
+
+  void _moveCardToLatest(String taskId) {
+    final anchor = _latestConversationMessageId;
+    final poopIndex = _poopTasks.indexWhere((task) => task.id == taskId);
+    final cryIndex = _cryTasks.indexWhere((task) => task.id == taskId);
+    if (poopIndex < 0 && cryIndex < 0) return;
+    setState(() {
+      if (poopIndex >= 0) {
+        _poopTasks[poopIndex] = _poopTasks[poopIndex].placedAfter(anchor);
+        _activePoopTaskId = taskId;
+      } else {
+        _cryTasks[cryIndex] = _cryTasks[cryIndex].placedAfter(anchor);
+        _activeCryTaskId = taskId;
+      }
+    });
+    _persistInteractionState();
+    _showActiveCardBottom(taskId);
+  }
+
   void _openPoopTask() {
     final existing = _visiblePoopTasks
         .where((task) => task.status == ChatFirstPoopTaskStatus.pending)
@@ -712,10 +787,13 @@ class _AgentHubPageState extends State<AgentHubPage>
           id: 'local:poop:${_now.microsecondsSinceEpoch}:${++_localTurnRevision}',
           createdAt: _now,
           threadId: _state.threadId,
+          placedAfterMessageId: _latestConversationMessageId,
         );
         _poopTasks.add(task);
         _activePoopTaskId = task.id;
       } else {
+        _poopTasks[_poopTasks.indexWhere((task) => task.id == existing.id)] =
+            existing.placedAfter(_latestConversationMessageId);
         _activePoopTaskId = existing.id;
       }
     });
@@ -809,16 +887,6 @@ class _AgentHubPageState extends State<AgentHubPage>
     }
   }
 
-  void _abandonPoopTask(String taskId) {
-    final index = _poopTasks.indexWhere((task) => task.id == taskId);
-    if (index < 0 ||
-        _poopTasks[index].status != ChatFirstPoopTaskStatus.pending) {
-      return;
-    }
-    setState(_cancelPoopOnLeave);
-    _persistInteractionState();
-  }
-
   void _removePoopPhoto(String taskId, int index) {
     if (taskId != _activePoopTaskId ||
         index < 0 ||
@@ -859,6 +927,7 @@ class _AgentHubPageState extends State<AgentHubPage>
         taskId != _activePoopTaskId) {
       return;
     }
+    _moveCardToLatest(taskId);
     final generation = _poopGeneration;
     _poopPicking = true;
     try {
@@ -1291,6 +1360,7 @@ class _AgentHubPageState extends State<AgentHubPage>
             reviews.length) {
       return;
     }
+    _moveCardToLatest(taskId);
     final photoIds = [for (final review in reviews) review!.photoId];
     final generation = _poopGeneration;
     setState(() {
@@ -1468,6 +1538,7 @@ class _AgentHubPageState extends State<AgentHubPage>
         createdAt: createdAt,
         threadId: _state.threadId,
         precedingAssistantMessageId: assistant?.id,
+        placedAfterMessageId: _latestConversationMessageId,
       );
       setState(() {
         _cryTasks.add(task);
@@ -1476,6 +1547,8 @@ class _AgentHubPageState extends State<AgentHubPage>
       _persistInteractionState();
     } else {
       setState(() {
+        _cryTasks[_cryTasks.indexWhere((task) => task.id == existing.id)] =
+            existing.placedAfter(_latestConversationMessageId);
         _activeCryTaskId = existing.id;
       });
     }
@@ -1497,7 +1570,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       return;
     }
     if (_cryCapture != null && _activeCryTaskId != taskId) return;
-    _activeCryTaskId = taskId;
+    _moveCardToLatest(taskId);
     final taskIndex = _cryTasks.indexWhere((task) => task.id == taskId);
     if (taskIndex >= 0 && _cryTasks[taskIndex].requestKey != null) {
       _cryTasks[taskIndex] = _cryTasks[taskIndex].withSubmissionKey(null);
@@ -1522,6 +1595,7 @@ class _AgentHubPageState extends State<AgentHubPage>
         _activeCryTaskId != taskId) {
       return;
     }
+    _moveCardToLatest(taskId);
     final generation = ++_crySubmissionGeneration;
     setState(() {
       _crySubmitting = true;
@@ -4156,9 +4230,14 @@ class _AgentHubPageState extends State<AgentHubPage>
                                                               .analysisState
                                                               ?.result !=
                                                           null
-                                                  ? () => _activatePoopFollowup(
-                                                      task,
-                                                    )
+                                                  ? () {
+                                                      _moveCardToLatest(
+                                                        task.id,
+                                                      );
+                                                      _activatePoopFollowup(
+                                                        task,
+                                                      );
+                                                    }
                                                   : null,
                                               onDeleteAnalysis:
                                                   task.analysisState != null &&
@@ -4191,8 +4270,6 @@ class _AgentHubPageState extends State<AgentHubPage>
                                               onSubmit: () => unawaited(
                                                 _submitPoopAnalysis(task.id),
                                               ),
-                                              onAbandon: () =>
-                                                  _abandonPoopTask(task.id),
                                             ),
                                           ),
                                       cryTaskBuilder: (context, task) =>
@@ -6214,7 +6291,7 @@ class AgentRunStatusLine extends StatefulWidget {
 
 class _AgentRunStatusLineState extends State<AgentRunStatusLine>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  static const _sweepDuration = Duration(milliseconds: 1100);
+  static const _sweepDuration = Duration(milliseconds: 2400);
 
   late final AnimationController _sweepController;
 
@@ -6297,14 +6374,16 @@ class _AgentSweepText extends StatelessWidget {
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
-        final value = animation.value;
+        // A slow periodic drift has no abrupt reset and keeps every glyph
+        // legible, unlike a narrow highlight sweeping character by character.
+        final drift = math.sin(animation.value * 2 * math.pi) * 0.3;
         return ShaderMask(
           key: sweepKey,
           blendMode: BlendMode.srcIn,
           shaderCallback: (bounds) {
             return LinearGradient(
-              begin: Alignment(-2 + value * 4, 0),
-              end: Alignment(-1 + value * 4, 0),
+              begin: Alignment(-1.2 + drift, 0),
+              end: Alignment(1.2 + drift, 0),
               colors: colors,
               stops: const [0, 0.5, 1],
             ).createShader(bounds);
@@ -6328,7 +6407,7 @@ class AgentThinkingNote extends StatefulWidget {
 
 class _AgentThinkingNoteState extends State<AgentThinkingNote>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  static const _sweepDuration = Duration(milliseconds: 1100);
+  static const _sweepDuration = Duration(milliseconds: 2400);
 
   late final AnimationController _sweepController;
 
@@ -7408,34 +7487,33 @@ String _messageIdentity(AgentHubHistoryMessage message) =>
         ? 'run:${message.runState!.runId}:assistant'
         : 'legacy:${identityHashCode(message)}');
 
-// Server messages have server timestamps; a local card may have a skewed
-// device timestamp. Its explicit assistant reference is authoritative.
-List<AgentHubHistoryMessage> _placeCryCardsAfterTheirAssistant(
+// Position each local task exactly once after the conversation turn that was
+// latest when it was opened/used. Server timestamps and device clocks can skew.
+List<AgentHubHistoryMessage> _placeLocalCardsAfterTheirMessage(
   List<AgentHubHistoryMessage> messages,
 ) {
-  final assistantIds = {
-    for (final message in messages)
-      if (message.role == AgentHubHistoryRole.assistant && message.id != null)
-        message.id!,
-  };
+  String? anchor(AgentHubHistoryMessage message) =>
+      message.localPoopTask?.placedAfterMessageId ??
+      message.localCryTask?.placedAfterMessageId ??
+      message.localCryTask?.precedingAssistantMessageId;
+  final ids = {for (final message in messages) _messageIdentity(message)};
   final cardsByAnchor = <String, List<AgentHubHistoryMessage>>{};
+  final atEnd = <AgentHubHistoryMessage>[];
   for (final message in messages) {
-    final anchorId = message.localCryTask?.precedingAssistantMessageId;
-    if (anchorId != null && assistantIds.contains(anchorId)) {
-      cardsByAnchor.putIfAbsent(anchorId, () => []).add(message);
+    final id = anchor(message);
+    if (id == null) continue;
+    if (ids.contains(id)) {
+      cardsByAnchor.putIfAbsent(id, () => []).add(message);
+    } else {
+      atEnd.add(message);
     }
   }
-  if (cardsByAnchor.isEmpty) return messages;
   return [
     for (final message in messages) ...[
-      if (message.localCryTask?.precedingAssistantMessageId == null ||
-          !cardsByAnchor.containsKey(
-            message.localCryTask?.precedingAssistantMessageId,
-          ))
-        message,
-      if (message.role == AgentHubHistoryRole.assistant && message.id != null)
-        ...?cardsByAnchor[message.id],
+      if (anchor(message) == null) message,
+      ...?cardsByAnchor[_messageIdentity(message)],
     ],
+    ...atEnd,
   ];
 }
 

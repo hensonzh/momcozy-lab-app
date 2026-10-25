@@ -86,6 +86,50 @@ void main() {
   });
 
   testWidgets(
+    'an existing registered account does not receive a new welcome after update',
+    (tester) async {
+      final coordinator = ChatFirstWelcomeCoordinator(
+        product: FixtureApiJsonTransportByPath({
+          '/v1/profile/me-experience': {
+            'profile': {
+              'age': 30,
+              'delivery_count': 1,
+              'actual_delivery_date': '2026-10-12',
+              'gestation_weeks': 38,
+              'gestation_days': 0,
+              'baby_count': 1,
+            },
+            'concerns': <Object>[],
+          },
+        }),
+        agent: FixtureApiJsonTransportByPath(const {
+          '/v1/agent/threads': {
+            'items': [
+              {'id': 'old-thread'},
+            ],
+          },
+          '/v1/agent/threads/old-thread/history': {
+            'items': [
+              {
+                'role': 'user',
+                'content': {'text': '过去的聊天'},
+              },
+            ],
+            'next_before_sequence': null,
+          },
+        }),
+        store: MemoryChatFirstWelcomeStore(),
+        ownerUserId: 'registered-owner',
+        role: FamilyRole.mother,
+        now: () => DateTime(2026, 10, 25),
+      );
+      final result = await coordinator.prepareState();
+      expect(result.request, isNull);
+      expect((await coordinator.prepareState()).request, isNull);
+    },
+  );
+
+  testWidgets(
     'failed preparation and rejected run keep chat usable and retryable',
     (tester) async {
       final product = FixtureApiJsonTransportByPath({});
@@ -360,9 +404,8 @@ void main() {
       final next = tester
           .widget<Text>(find.byKey(const ValueKey('current-welcome-key')))
           .data!;
-      expect(next, startsWith('chat-first-welcome:'));
-      expect(next, isNot(first));
-      expect(find.text('pending'), findsOneWidget);
+      expect(next, first);
+      expect(find.text('none'), findsOneWidget);
     },
   );
 }

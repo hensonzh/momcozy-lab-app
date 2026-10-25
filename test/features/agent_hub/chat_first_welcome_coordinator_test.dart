@@ -18,7 +18,7 @@ void main() {
   };
 
   test(
-    'first welcome is requested, durable history survives reload, changes create a new key',
+    'first welcome is account-once even after a day or profile change',
     () async {
       final saved = MemoryChatFirstWelcomeStore();
       final product = FixtureApiJsonTransportByPath({
@@ -62,12 +62,11 @@ void main() {
       expect(await coordinator(DateTime(2026, 10, 15)).prepare(), isNull);
       expect(agent.getPaths, contains('/v1/agent/threads/thread-1/history'));
       final nextDay = await coordinator(DateTime(2026, 10, 16)).prepare();
-      expect(nextDay, isNotNull);
-      expect(nextDay?.idempotencyKey, isNot(first.idempotencyKey));
+      expect(nextDay, isNull);
       product.responsesByPath['/v1/profile/me-experience'] = profile(31);
       final changed = await coordinator(DateTime(2026, 10, 15)).prepare();
-      expect(changed, isNotNull);
-      expect(changed?.idempotencyKey, isNot(first.idempotencyKey));
+      expect(changed, isNull);
+      expect(await saved.read('owner-1'), first.idempotencyKey);
     },
   );
 
@@ -148,7 +147,7 @@ void main() {
   );
 
   test(
-    'old signed welcomes and shared prefix cannot suppress a new profile',
+    'old signed welcomes suppress a new welcome after profile updates',
     () async {
       final product = FixtureApiJsonTransportByPath({
         '/v1/profile/me-experience': profile(30),
@@ -205,8 +204,8 @@ void main() {
         },
       });
       final prepared = await coordinator(history, receipt).prepare();
-      expect(prepared?.idempotencyKey, newRequest.idempotencyKey);
-      expect(prepared!.idempotencyKey, isNot(old.idempotencyKey));
+      expect(prepared, isNull);
+      expect(await receipt.read('owner-1'), old.idempotencyKey);
     },
   );
 

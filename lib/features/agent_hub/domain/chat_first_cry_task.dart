@@ -16,6 +16,7 @@ class ChatFirstCryTask {
     required this.createdAt,
     this.threadId,
     this.precedingAssistantMessageId,
+    this.placedAfterMessageId,
     this.status = ChatFirstCryTaskStatus.pending,
     this.analysisId,
     this.requestKey,
@@ -30,6 +31,7 @@ class ChatFirstCryTask {
   final DateTime createdAt;
   final String? threadId;
   final String? precedingAssistantMessageId;
+  final String? placedAfterMessageId;
   final ChatFirstCryTaskStatus status;
   final String? analysisId;
   final String? requestKey;
@@ -44,6 +46,23 @@ class ChatFirstCryTask {
     createdAt: createdAt,
     threadId: nextThreadId,
     precedingAssistantMessageId: precedingAssistantMessageId,
+    placedAfterMessageId: placedAfterMessageId,
+    status: status,
+    analysisId: analysisId,
+    requestKey: requestKey,
+    answer: answer,
+    analyzedAt: analyzedAt,
+    adviceAccepted: adviceAccepted,
+    autoAdvicePending: autoAdvicePending,
+    adviceAttempt: adviceAttempt,
+  );
+
+  ChatFirstCryTask placedAfter(String? messageId) => ChatFirstCryTask(
+    id: id,
+    createdAt: createdAt,
+    threadId: threadId,
+    precedingAssistantMessageId: precedingAssistantMessageId,
+    placedAfterMessageId: messageId,
     status: status,
     analysisId: analysisId,
     requestKey: requestKey,
@@ -59,6 +78,7 @@ class ChatFirstCryTask {
     createdAt: createdAt,
     threadId: threadId,
     precedingAssistantMessageId: precedingAssistantMessageId,
+    placedAfterMessageId: placedAfterMessageId,
     status: ChatFirstCryTaskStatus.pending,
     analysisId: analysisId,
     requestKey: key,
@@ -74,6 +94,7 @@ class ChatFirstCryTask {
     createdAt: createdAt,
     threadId: threadId,
     precedingAssistantMessageId: precedingAssistantMessageId,
+    placedAfterMessageId: placedAfterMessageId,
     status: ChatFirstCryTaskStatus.verifying,
     analysisId: analysisId,
     requestKey: requestKey,
@@ -89,6 +110,7 @@ class ChatFirstCryTask {
     createdAt: createdAt,
     threadId: threadId,
     precedingAssistantMessageId: precedingAssistantMessageId,
+    placedAfterMessageId: placedAfterMessageId,
     status: ChatFirstCryTaskStatus.cancelled,
     analysisId: analysisId,
     requestKey: requestKey,
@@ -109,6 +131,7 @@ class ChatFirstCryTask {
     createdAt: createdAt,
     threadId: threadId,
     precedingAssistantMessageId: precedingAssistantMessageId,
+    placedAfterMessageId: placedAfterMessageId,
     status: resultStatus == 'done'
         ? ChatFirstCryTaskStatus.completed
         : resultStatus == 'incomplete'
@@ -130,6 +153,7 @@ class ChatFirstCryTask {
     createdAt: createdAt,
     threadId: threadId,
     precedingAssistantMessageId: precedingAssistantMessageId,
+    placedAfterMessageId: placedAfterMessageId,
     status: ChatFirstCryTaskStatus.unavailable,
     analysisId: analysisId,
     requestKey: requestKey,
@@ -143,6 +167,7 @@ class ChatFirstCryTask {
     createdAt: createdAt,
     threadId: threadId,
     precedingAssistantMessageId: precedingAssistantMessageId,
+    placedAfterMessageId: placedAfterMessageId,
     status: status,
     analysisId: analysisId,
     requestKey: requestKey,
@@ -158,6 +183,7 @@ class ChatFirstCryTask {
     createdAt: createdAt,
     threadId: threadId,
     precedingAssistantMessageId: precedingAssistantMessageId,
+    placedAfterMessageId: placedAfterMessageId,
     status: status,
     analysisId: analysisId,
     requestKey: requestKey,
@@ -173,6 +199,7 @@ class ChatFirstCryTask {
     createdAt: createdAt,
     threadId: threadId,
     precedingAssistantMessageId: precedingAssistantMessageId,
+    placedAfterMessageId: placedAfterMessageId,
     status: status,
     analysisId: analysisId,
     requestKey: requestKey,
@@ -189,6 +216,8 @@ class ChatFirstCryTask {
     if (threadId != null) 'threadId': threadId,
     if (precedingAssistantMessageId != null)
       'precedingAssistantMessageId': precedingAssistantMessageId,
+    if (placedAfterMessageId != null)
+      'placedAfterMessageId': placedAfterMessageId,
     'status': status.name,
     if (analysisId != null) 'analysisId': analysisId,
     if (requestKey != null) 'requestKey': requestKey,
@@ -213,6 +242,9 @@ class ChatFirstCryTask {
       createdAt: parsed,
       threadId: value['threadId'] is String
           ? value['threadId'] as String
+          : null,
+      placedAfterMessageId: value['placedAfterMessageId'] is String
+          ? value['placedAfterMessageId'] as String
           : null,
       precedingAssistantMessageId:
           value['precedingAssistantMessageId'] is String
