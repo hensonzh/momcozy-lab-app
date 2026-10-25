@@ -4522,6 +4522,41 @@ milk_total: 120ml
     expect(tester.binding.hasScheduledFrame, isFalse);
   });
 
+  testWidgets('agent status wave advances more than half a cycle in 900 ms', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(const AgentRunStatusLine(title: '正在思考…'), tickersEnabled: true),
+    );
+    final status = find.byKey(const ValueKey('agent-run-status-line'));
+    List<double> scales() => tester
+        .widgetList<Transform>(
+          find.descendant(of: status, matching: find.byType(Transform)),
+        )
+        .map((widget) => widget.transform.storage[0])
+        .toList();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    final bounds = tester.getRect(status);
+    final first = scales();
+    final wave = tester.widget<AnimatedBuilder>(
+      find
+          .ancestor(
+            of: find.byKey(const ValueKey('agent-run-status-title-sweep')),
+            matching: find.byType(AnimatedBuilder),
+          )
+          .first,
+    );
+    expect(
+      (wave.animation as AnimationController).duration,
+      const Duration(milliseconds: 1600),
+    );
+    await tester.pump(const Duration(milliseconds: 900));
+    final later = scales();
+    expect(first, isNot(equals(later)));
+    expect(tester.getRect(status), bounds);
+  });
+
   testWidgets('short status glyph wave travels without shifting layout', (
     tester,
   ) async {

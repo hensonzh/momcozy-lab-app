@@ -172,6 +172,14 @@ void main() {
     expect(card().center.dy, closeTo(viewport.center.dy, 65));
     await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
     await tester.pumpAndSettle();
+    final recordingTop = card().top;
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 1));
+    expect(
+      card().top,
+      closeTo(recordingTop, 1),
+      reason: 'recording timer must not re-center the card',
+    );
     expect(card().center.dy, closeTo(viewport.center.dy, 65));
     await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
     await tester.pumpAndSettle();

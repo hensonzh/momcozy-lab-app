@@ -771,12 +771,23 @@ class _AgentHubPageState extends State<AgentHubPage>
     final poopIndex = _poopTasks.indexWhere((task) => task.id == taskId);
     final cryIndex = _cryTasks.indexWhere((task) => task.id == taskId);
     if (poopIndex < 0 && cryIndex < 0) return;
+    final currentAnchor = poopIndex >= 0
+        ? _poopTasks[poopIndex].placedAfterMessageId
+        : _cryTasks[cryIndex].placedAfterMessageId;
+    final alreadyActive = poopIndex >= 0
+        ? _activePoopTaskId == taskId
+        : _activeCryTaskId == taskId;
+    if (currentAnchor == anchor && alreadyActive) return;
     setState(() {
       if (poopIndex >= 0) {
-        _poopTasks[poopIndex] = _poopTasks[poopIndex].placedAfter(anchor);
+        if (currentAnchor != anchor) {
+          _poopTasks[poopIndex] = _poopTasks[poopIndex].placedAfter(anchor);
+        }
         _activePoopTaskId = taskId;
       } else {
-        _cryTasks[cryIndex] = _cryTasks[cryIndex].placedAfter(anchor);
+        if (currentAnchor != anchor) {
+          _cryTasks[cryIndex] = _cryTasks[cryIndex].placedAfter(anchor);
+        }
         _activeCryTaskId = taskId;
       }
     });
@@ -931,17 +942,24 @@ class _AgentHubPageState extends State<AgentHubPage>
         !_isPageVisible ||
         _isVisibleReplyRunning ||
         _conversationSwitchPending ||
-        taskId != _activePoopTaskId) {
+        (taskId != _activePoopTaskId &&
+            (_poopPhotos.isNotEmpty ||
+                _poopSubmitting ||
+                !_visiblePoopTasks.any(
+                  (task) =>
+                      task.id == taskId &&
+                      task.status == ChatFirstPoopTaskStatus.pending,
+                )))) {
       return;
     }
-    _moveCardToLatest(taskId);
+    final activeBeforePick = _activePoopTaskId;
     final generation = _poopGeneration;
     _poopPicking = true;
     try {
       final image = await picker(source);
       if (!mounted ||
           generation != _poopGeneration ||
-          taskId != _activePoopTaskId) {
+          _activePoopTaskId != activeBeforePick) {
         return;
       }
       if (image == null) return;
@@ -953,7 +971,22 @@ class _AgentHubPageState extends State<AgentHubPage>
         setState(() => _poopFeedback = '请选择不超过 10 MB 的 JPG、PNG 或 HEIC 原图。');
         return;
       }
+      final anchor = _latestConversationMessageId;
+      final taskIndex = _poopTasks.indexWhere(
+        (task) =>
+            task.id == taskId &&
+            task.status == ChatFirstPoopTaskStatus.pending &&
+            (task.threadId == null || task.threadId == _state.threadId),
+      );
+      if (taskIndex < 0) return;
+      final moved =
+          taskIndex >= 0 &&
+          _poopTasks[taskIndex].placedAfterMessageId != anchor;
       setState(() {
+        if (moved) {
+          _poopTasks[taskIndex] = _poopTasks[taskIndex].placedAfter(anchor);
+        }
+        _activePoopTaskId = taskId;
         _poopPhotos.add(image);
         _poopReviews[image] = const StoolPhotoReview(
           photoId: '',
@@ -961,6 +994,8 @@ class _AgentHubPageState extends State<AgentHubPage>
         );
         _poopFeedback = null;
       });
+      _persistInteractionState();
+      if (moved) _centerActiveCard(taskId);
       unawaited(_uploadPoopForReview(repository, image, taskId, generation));
     } catch (_) {
       if (!mounted || generation != _poopGeneration) return;
@@ -1532,6 +1567,43 @@ class _AgentHubPageState extends State<AgentHubPage>
     });
   }
 
+  // Preserve the card's viewport position while its recording timer or photo
+  // review states rebuild it. Only recover if its top actually left view.
+  void _keepActiveCardVisible(String taskId) {
+    if (!_cardFocusedAtCenter || !_chatScrollController.hasClients) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          !_cardFocusedAtCenter ||
+          !_chatScrollController.hasClients) {
+        return;
+      }
+      final key = taskId == _activeCryTaskId
+          ? _activeCryCardKey
+          : taskId == _activePoopTaskId
+          ? _activePoopCardKey
+          : null;
+      final card = key?.currentContext?.findRenderObject();
+      final viewport = _chatScrollController.position.context.storageContext
+          .findRenderObject();
+      if (card is! RenderBox ||
+          !card.hasSize ||
+          viewport is! RenderBox ||
+          !viewport.hasSize) {
+        return;
+      }
+      final cardTop = card.localToGlobal(Offset.zero).dy;
+      final viewportTop = viewport.localToGlobal(Offset.zero).dy;
+      if (cardTop >= viewportTop - 8) return;
+      final position = _chatScrollController.position;
+      _chatScrollController.jumpTo(
+        (position.pixels + cardTop - viewportTop - 8).clamp(
+          0.0,
+          position.maxScrollExtent,
+        ),
+      );
+    });
+  }
+
   void _openCryTask({bool startCapture = false}) {
     final existing = _visibleCryTasks
         .where((task) => task.status == ChatFirstCryTaskStatus.pending)
@@ -1978,11 +2050,7 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   void _onCryCaptureChanged() {
-    if (mounted) {
-      setState(() {});
-      final id = _activeCryTaskId;
-      if (id != null) _centerActiveCard(id);
-    }
+    if (mounted) setState(() {});
   }
 
   void _releaseCryCapture() {
@@ -4197,11 +4265,8 @@ class _AgentHubPageState extends State<AgentHubPage>
                                         activeCryCardKey: _activeCryCardKey,
                                         activePoopTaskId: _activePoopTaskId,
                                         activePoopCardKey: _activePoopCardKey,
-                                        onActiveCardLayout: (taskId) {
-                                          if (_cardFocusedAtCenter) {
-                                            _centerActiveCard(taskId);
-                                          }
-                                        },
+                                        onActiveCardLayout:
+                                            _keepActiveCardVisible,
                                         poopTaskBuilder: (context, task) =>
                                             ValueListenableBuilder<
                                               AgentStreamRunState
@@ -5076,13 +5141,9 @@ class _ChatFirstAssistantAnswer extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => SizedBox(
     key: const ValueKey('chat-first-assistant-answer'),
     width: double.infinity,
-    padding: const EdgeInsets.only(left: 14),
-    decoration: const BoxDecoration(
-      border: Border(left: BorderSide(color: Color(0xFFD7B7C2), width: 2)),
-    ),
     child: child,
   );
 }
@@ -6412,7 +6473,7 @@ class AgentRunStatusLine extends StatefulWidget {
 
 class _AgentRunStatusLineState extends State<AgentRunStatusLine>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  static const _sweepDuration = Duration(milliseconds: 2400);
+  static const _sweepDuration = Duration(milliseconds: 1600);
 
   late final AnimationController _sweepController;
 
@@ -6562,7 +6623,7 @@ class AgentThinkingNote extends StatefulWidget {
 
 class _AgentThinkingNoteState extends State<AgentThinkingNote>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  static const _sweepDuration = Duration(milliseconds: 2400);
+  static const _sweepDuration = Duration(milliseconds: 1600);
 
   late final AnimationController _sweepController;
 

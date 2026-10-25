@@ -10,6 +10,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_poop_task.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/stool_photo_review.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/stool_analysis.dart';
@@ -864,9 +865,14 @@ void main() {
       find.byKey(const ValueKey('agent-scroll-latest-button')),
       findsNothing,
     );
+    final beforeUpload = card().top;
     await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
     await tester.pumpAndSettle();
-    expect(card().center.dy, closeTo(viewport.center.dy, 70));
+    expect(
+      card().top,
+      closeTo(beforeUpload, 1),
+      reason: 'photo upload must not re-center the existing card',
+    );
     expect(
       find.byKey(const ValueKey('agent-scroll-latest-button')),
       findsNothing,
@@ -889,6 +895,88 @@ void main() {
       18,
     );
   });
+
+  testWidgets(
+    'selecting a photo in an old card moves it once after selection',
+    (tester) async {
+      _smallViewport(tester);
+      final store = _Store()
+        ..value = AgentHubInteractionSnapshot(
+          runState: const AgentStreamRunState(threadId: 'thread-poop'),
+          poopTasks: [
+            ChatFirstPoopTask(
+              id: 'local:poop:old-upload',
+              threadId: 'thread-poop',
+              createdAt: DateTime.utc(2026, 10, 1),
+              placedAfterMessageId: 'old-reply',
+            ),
+          ],
+          historyMessages: [
+            AgentHubHistorySnapshot(
+              id: 'old-reply',
+              role: 'assistant',
+              content: '旧回答',
+              createdAt: DateTime.utc(2026, 10, 1),
+            ),
+            AgentHubHistorySnapshot(
+              id: 'new-reply',
+              role: 'assistant',
+              content: '新回答',
+              createdAt: DateTime.utc(2026, 10, 2),
+            ),
+          ],
+        );
+      final reviews = _Reviews()..pending = Completer<void>();
+      final selection = Completer<AgentStreamImageInput?>();
+      await tester.pumpWidget(
+        _page(
+          reviews,
+          _Client(),
+          store: store,
+          pickPhoto: (_) => selection.future,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
+      await tester.pump();
+      expect(store.value!.poopTasks.single.placedAfterMessageId, 'old-reply');
+      selection.complete(
+        AgentStreamImageInput(
+          dataUrl: '',
+          mimeType: 'image/png',
+          name: 'diaper.png',
+          size: _photo.length,
+          localBytes: _photo,
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(store.value!.poopTasks.single.placedAfterMessageId, 'new-reply');
+      final messages = tester
+          .widget<AgentHubHistorySliver>(find.byType(AgentHubHistorySliver))
+          .messages;
+      expect(messages.map((message) => message.id), [
+        'old-reply',
+        'new-reply',
+        'local:poop:old-upload',
+      ]);
+      expect(
+        find.byKey(const ValueKey('chat-first-topic-poop')),
+        findsOneWidget,
+      );
+      expect(find.text('已选 1/3 张'), findsOneWidget);
+      final scroll = tester
+          .widget<CustomScrollView>(
+            find.byKey(const ValueKey('agent-chat-scroll-view')),
+          )
+          .controller!;
+      final afterSelection = scroll.offset;
+      reviews.pending!.complete();
+      await tester.pump();
+      await tester.pump();
+      expect(scroll.offset, closeTo(afterSelection, 1));
+    },
+  );
 
   testWidgets('using an older poop card moves it to the latest reply', (
     tester,
@@ -1264,6 +1352,7 @@ Widget _page(
   String? threadId,
   String? babyId,
   DateTime Function()? now,
+  AgentHubImagePicker? pickPhoto,
 }) => MaterialApp(
   home: Scaffold(
     body: AgentHubPage(
@@ -1277,13 +1366,15 @@ Widget _page(
       stoolPhotoReviewRepository: reviews,
       stoolAnalysisRepository: analysis,
       stoolBabyId: babyId,
-      pickStoolPhoto: (_) async => AgentStreamImageInput(
-        dataUrl: '',
-        mimeType: 'image/png',
-        name: 'diaper.png',
-        size: _photo.length,
-        localBytes: _photo,
-      ),
+      pickStoolPhoto:
+          pickPhoto ??
+          (_) async => AgentStreamImageInput(
+            dataUrl: '',
+            mimeType: 'image/png',
+            name: 'diaper.png',
+            size: _photo.length,
+            localBytes: _photo,
+          ),
     ),
   ),
 );
