@@ -309,6 +309,7 @@ class _AgentHubPageState extends State<AgentHubPage>
   String? _olderHistoryViewportAnchorMessageId;
   AgentStreamRequest? _activeRequest;
   String? _submittedComposerText;
+  String? _pendingOptimisticUserMessageId;
   bool _currentRunIsChatFirstWelcome = false;
   String? _currentRunWelcomeKey;
 
@@ -556,6 +557,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       _cryMissingKeyRetries.clear();
       _cryTasks.clear();
       _activeCryTaskId = null;
+      _pendingOptimisticUserMessageId = null;
       _cancelPoopOnLeave(repository: oldWidget.stoolPhotoReviewRepository);
       _poopTasks.clear();
       _poopReviewAvailable = false;
@@ -745,13 +747,14 @@ class _AgentHubPageState extends State<AgentHubPage>
           _currentRunIsMatchingWelcome &&
           _state.phase != AgentStreamRunPhase.idle,
     );
-    final last = messages.lastOrNull;
+    final orderedMessages = _mergeHistoryMessages(messages);
+    final last = orderedMessages.lastOrNull;
     final assistant = _state.phase == AgentStreamRunPhase.finished
         ? _currentAssistantHistoryMessage()
         : null;
     // The completed reply can precede its server-history sync.
     if (assistant != null &&
-        messages.every(
+        orderedMessages.every(
           (message) => _messageIdentity(message) != assistant.id,
         )) {
       return assistant.id;
@@ -774,7 +777,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       }
     });
     _persistInteractionState();
-    _showActiveCardBottom(taskId);
+    _centerActiveCard(taskId);
   }
 
   void _openPoopTask() {
@@ -798,7 +801,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       }
     });
     _persistInteractionState();
-    _showActiveCardBottom(_activePoopTaskId!);
+    _centerActiveCard(_activePoopTaskId!);
   }
 
   Future<void> _loadPoopReviewCapability() async {
@@ -1491,7 +1494,8 @@ class _AgentHubPageState extends State<AgentHubPage>
     }
   }
 
-  void _showActiveCardBottom(String taskId) {
+  void _centerActiveCard(String taskId) {
+    ++_scrollIntentVersion;
     _activeCardScrollTaskId = taskId;
     if (_activeCardScrollScheduled) return;
     _activeCardScrollScheduled = true;
@@ -1515,10 +1519,9 @@ class _AgentHubPageState extends State<AgentHubPage>
       unawaited(
         Scrollable.ensureVisible(
           target,
-          alignment: 1,
-          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOutCubic,
+          alignment: 0.5,
+          alignmentPolicy: ScrollPositionAlignmentPolicy.explicit,
+          duration: Duration.zero,
         ),
       );
     });
@@ -1555,7 +1558,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (startCapture && existing == null && _activeCryTaskId != null) {
       _startCryCapture(_activeCryTaskId!);
     }
-    _showActiveCardBottom(_activeCryTaskId!);
+    _centerActiveCard(_activeCryTaskId!);
   }
 
   void _startCryCapture(String taskId) {
@@ -1671,7 +1674,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     } finally {
       if (mounted && generation == _crySubmissionGeneration) {
         setState(() => _crySubmitting = false);
-        if (_cryFeedback != null) _showActiveCardBottom(taskId);
+        if (_cryFeedback != null) _centerActiveCard(taskId);
         _scheduleCryHistorySync();
       }
     }
@@ -1973,7 +1976,7 @@ class _AgentHubPageState extends State<AgentHubPage>
     if (mounted) {
       setState(() {});
       final id = _activeCryTaskId;
-      if (id != null) _showActiveCardBottom(id);
+      if (id != null) _centerActiveCard(id);
     }
   }
 
@@ -2027,19 +2030,32 @@ class _AgentHubPageState extends State<AgentHubPage>
   }
 
   void _identifyAcceptedUserMessage(AgentStreamRunState nextState) {
+    final optimisticId = _pendingOptimisticUserMessageId;
+    if (optimisticId == null) return;
     final queued = nextState.events
-        .where((event) => event.type == 'run.queued' && event.messageId != null)
-        .firstOrNull;
+        .where(
+          (event) =>
+              event.type == 'run.queued' &&
+              event.messageId != null &&
+              event.runId != null &&
+              event.runId == nextState.runId,
+        )
+        .lastOrNull;
     if (queued == null) return;
-    final index = _historyMessages.lastIndexWhere(
+    final index = _historyMessages.indexWhere(
       (message) =>
           message.role == AgentHubHistoryRole.user &&
-          message.id?.startsWith('local:') == true,
+          message.id == optimisticId,
     );
     if (index < 0) return;
+    if (_historyMessages.any((message) => message.id == queued.messageId)) {
+      _pendingOptimisticUserMessageId = null;
+      return;
+    }
     final local = _historyMessages[index];
     _historyMessages[index] = AgentHubHistoryMessage(
       id: queued.messageId,
+      runId: queued.runId,
       sequence: local.sequence,
       createdAt: queued.createdAt ?? local.createdAt,
       role: local.role,
@@ -2047,6 +2063,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       images: local.images,
       files: local.files,
     );
+    _pendingOptimisticUserMessageId = null;
   }
 
   Future<void> _recoverConversation() async {
@@ -3157,6 +3174,9 @@ class _AgentHubPageState extends State<AgentHubPage>
       _sendBestEffortServerCancel(interruptedState, interruptedRequest);
     }
     _composerController.clear();
+    final optimisticId =
+        'local:${_now.microsecondsSinceEpoch}:${++_localTurnRevision}';
+    _pendingOptimisticUserMessageId = optimisticId;
     setState(() {
       if (archivedAssistantMessage != null &&
           _historyMessages.every(
@@ -3168,7 +3188,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       }
       _historyMessages.add(
         AgentHubHistoryMessage(
-          id: 'local:${_now.microsecondsSinceEpoch}:${++_localTurnRevision}',
+          id: optimisticId,
           createdAt: _now,
           role: AgentHubHistoryRole.user,
           content: message,
@@ -3219,6 +3239,10 @@ class _AgentHubPageState extends State<AgentHubPage>
       _sendBestEffortServerCancel(interruptedState, interruptedRequest);
     }
     if (!isWelcome) _composerController.clear();
+    final optimisticId = optimisticContent.trim().isEmpty
+        ? null
+        : 'local:${_now.microsecondsSinceEpoch}:${++_localTurnRevision}';
+    _pendingOptimisticUserMessageId = optimisticId;
     setState(() {
       if (archivedAssistantMessage != null &&
           _historyMessages.every(
@@ -3231,7 +3255,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       if (optimisticContent.trim().isNotEmpty) {
         _historyMessages.add(
           AgentHubHistoryMessage(
-            id: 'local:${_now.microsecondsSinceEpoch}:${++_localTurnRevision}',
+            id: optimisticId,
             createdAt: _now,
             role: AgentHubHistoryRole.user,
             content: optimisticContent,
@@ -3739,19 +3763,25 @@ class _AgentHubPageState extends State<AgentHubPage>
     _forwardNewApplicationEvents(_state, nextState);
     final shouldFollowLatest = _isPageVisible && _isNearLatest();
     _identifyAcceptedUserMessage(nextState);
+    if (!nextState.isActive) _pendingOptimisticUserMessageId = null;
     final activeRequest = _activeRequest;
     if (activeRequest != null) {
       _activeRequest = _requestWithThreadId(activeRequest, nextState.threadId);
     }
-    final wasCompleted = _state.hasCompletedAssistantMessage;
     _applyRunStateUpdate(nextState, shouldFollowLatest: shouldFollowLatest);
     if (widget.chatFirstExperience &&
         _isPageVisible &&
-        !wasCompleted &&
-        _state.hasCompletedAssistantMessage &&
         _state.textContent.trim().isNotEmpty) {
-      final id = _state.messageId ?? _state.runId;
-      if (id != null) unawaited(_voice?.speakCompleted(id, _state.textContent));
+      final id = _state.runId ?? _state.messageId;
+      if (id != null) {
+        unawaited(
+          _voice?.speakProgress(
+            id,
+            _state.textContent,
+            complete: _state.hasCompletedAssistantMessage || !_state.isActive,
+          ),
+        );
+      }
     }
   }
 
@@ -3791,6 +3821,7 @@ class _AgentHubPageState extends State<AgentHubPage>
       requestWithIdempotency,
     );
     _submittedComposerText = submittedComposerText;
+    if (initialState != null) _pendingOptimisticUserMessageId = null;
 
     _cancelRunSubscription();
     final acceptance = awaitServerRunSignal ? Completer<bool>() : null;
@@ -4120,7 +4151,7 @@ class _AgentHubPageState extends State<AgentHubPage>
                                       activeCryCardKey: _activeCryCardKey,
                                       activePoopTaskId: _activePoopTaskId,
                                       activePoopCardKey: _activePoopCardKey,
-                                      onActiveCardLayout: _showActiveCardBottom,
+                                      onActiveCardLayout: _centerActiveCard,
                                       poopTaskBuilder: (context, task) =>
                                           ValueListenableBuilder<
                                             AgentStreamRunState
@@ -4492,6 +4523,25 @@ class _AgentHubPageState extends State<AgentHubPage>
                                                     : 'Restoring conversation…',
                                               ),
                                             ),
+                                    ),
+                                  ),
+                                if (visibleMessages.isNotEmpty &&
+                                    !_isVisibleReplyRunning &&
+                                    !_visibleCryTasks.any(
+                                      _cryTaskAwaitingResult,
+                                    ) &&
+                                    ((visibleMessages.last.localCryTask?.id ==
+                                                _activeCryTaskId &&
+                                            _activeCryTaskId != null) ||
+                                        (visibleMessages
+                                                    .last
+                                                    .localPoopTask
+                                                    ?.id ==
+                                                _activePoopTaskId &&
+                                            _activePoopTaskId != null)))
+                                  SliverToBoxAdapter(
+                                    child: SizedBox(
+                                      height: constraints.maxHeight * 0.5,
                                     ),
                                   ),
                               ],

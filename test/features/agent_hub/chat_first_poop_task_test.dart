@@ -697,6 +697,79 @@ void main() {
     );
   });
 
+  testWidgets(
+    'quick action follows latest turn when cached history order is stale',
+    (tester) async {
+      _largeViewport(tester);
+      final store = _Store()
+        ..value = AgentHubInteractionSnapshot(
+          runState: const AgentStreamRunState(threadId: 'thread-poop'),
+          historyMessages: [
+            AgentHubHistorySnapshot(
+              id: 'newer',
+              role: 'assistant',
+              content: '最新回答',
+              createdAt: DateTime.utc(2026, 10, 25),
+            ),
+            AgentHubHistorySnapshot(
+              id: 'older',
+              role: 'assistant',
+              content: '旧回答',
+              createdAt: DateTime.utc(2026, 10, 24),
+            ),
+          ],
+        );
+      await tester.pumpWidget(_page(_Reviews(), _Client(), store: store));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+      await tester.pumpAndSettle();
+      final card = find.byKey(const ValueKey('chat-first-topic-poop'));
+      expect(store.value?.poopTasks.single.placedAfterMessageId, 'newer');
+      expect(
+        tester.getTopLeft(card).dy,
+        greaterThan(tester.getTopLeft(find.text('最新回答')).dy),
+      );
+    },
+  );
+
+  testWidgets('poop card stays near viewport center as photo state changes', (
+    tester,
+  ) async {
+    _smallViewport(tester);
+    final store = _Store()
+      ..value = AgentHubInteractionSnapshot(
+        runState: const AgentStreamRunState(threadId: 'thread-poop'),
+        historyMessages: [
+          for (var i = 0; i < 20; i++)
+            AgentHubHistorySnapshot(
+              id: 'history-$i',
+              role: 'assistant',
+              content: '之前的对话 $i。多一点内容便于滚动。',
+              createdAt: DateTime.utc(2026, 10, 20).add(Duration(minutes: i)),
+            ),
+        ],
+      );
+    await tester.pumpWidget(_page(_Reviews(), _Client(), store: store));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('chat-first-action-poop')));
+    await tester.pumpAndSettle();
+    final viewport = tester.getRect(
+      find.byKey(const ValueKey('agent-chat-scroll-view')),
+    );
+    Rect card() => tester.getRect(
+      find
+          .ancestor(
+            of: find.byKey(const ValueKey('chat-first-topic-poop')),
+            matching: find.byType(SizeChangedLayoutNotifier),
+          )
+          .first,
+    );
+    expect(card().center.dy, closeTo(viewport.center.dy, 70));
+    await tester.tap(find.byKey(const ValueKey('chat-first-poop-photo')));
+    await tester.pumpAndSettle();
+    expect(card().center.dy, closeTo(viewport.center.dy, 70));
+  });
+
   testWidgets('using an older poop card moves it to the latest reply', (
     tester,
   ) async {

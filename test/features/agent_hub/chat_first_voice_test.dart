@@ -145,6 +145,84 @@ void main() {
     voice.dispose();
   });
 
+  test(
+    'speaks the first complete phrase before the reply finishes, then queues the rest',
+    () async {
+      final urls = <Uri>[];
+      final headers = _Headers()
+        ..set('x-mai-audio-format', 'pcm16')
+        ..set('x-mai-audio-sample-rate', '24000')
+        ..set('x-mai-audio-channels', '1');
+      final first = _Request(
+        _Response(200, [
+          [1, 2],
+        ], headers),
+      );
+      final second = _Request(
+        _Response(200, [
+          [3, 4],
+        ], headers),
+      );
+      final clients = <_Client>[
+        _Client(
+          _Request(
+            _Response(200, [utf8.encode('{"available":true}')], _Headers()),
+          ),
+          urls,
+        ),
+        _Client(first, urls),
+        _Client(second, urls),
+      ];
+      final player = _Player();
+      final voice = ChatFirstVoiceController(
+        baseUri: Uri.parse('https://example.org'),
+        tokenProvider: () => 'private-token',
+        player: player,
+        httpClientFactory: () => clients.removeAt(0),
+      );
+      await voice.checkAvailability();
+      await voice.speakProgress('run-1', '先照顾宝宝。后面还在生成');
+      expect(utf8.decode(first.sent), '{"text":"先照顾宝宝。"}');
+      expect(player.writes, [1, 2]);
+      expect(player.finishes, 0);
+      await voice.speakProgress('run-1', '先照顾宝宝。后面还在生成。', complete: true);
+      expect(utf8.decode(second.sent), '{"text":"后面还在生成。"}');
+      expect(player.writes, [1, 2, 3, 4]);
+      expect(player.starts, 1);
+      expect(player.finishes, 1);
+      voice.dispose();
+    },
+  );
+
+  test('503 stops requesting the remaining queued phrases', () async {
+    final urls = <Uri>[];
+    final clients = <_Client>[
+      _Client(
+        _Request(
+          _Response(200, [utf8.encode('{"available":true}')], _Headers()),
+        ),
+        urls,
+      ),
+      _Client(_Request(_Response(503, const [], _Headers())), urls),
+    ];
+    final player = _Player();
+    final voice = ChatFirstVoiceController(
+      baseUri: Uri.parse('https://example.org'),
+      tokenProvider: () => 'private-token',
+      player: player,
+      httpClientFactory: () => clients.removeAt(0),
+    );
+    await voice.checkAvailability();
+    await voice.speakCompleted('run-1', '先照顾宝宝。然后休息。');
+    expect(voice.available, isFalse);
+    expect(urls.map((uri) => uri.path), [
+      '/v1/realtime-voice-capability',
+      '/v1/realtime-voice-stream',
+    ]);
+    expect(player.starts, 0);
+    voice.dispose();
+  });
+
   test('disabled provider never starts playback', () async {
     final urls = <Uri>[];
     final request = _Request(

@@ -126,53 +126,58 @@ void main() {
     },
   );
 
-  testWidgets(
-    'opening and changing a cry card keeps its bottom actions in view',
-    (tester) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      final repository = _CryRepository()
-        ..state = const AgentStreamRunState(threadId: 'thread-cry')
-        ..messages.addAll(
-          List.generate(
-            20,
-            (index) => AgentConversationMessage(
-              id: 'history-$index',
-              role: index.isEven
-                  ? AgentConversationMessageRole.user
-                  : AgentConversationMessageRole.assistant,
-              content:
-                  'Earlier conversation turn $index with enough content to scroll.',
-            ),
+  testWidgets('opening and changing a cry card keeps its visual center in view', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repository = _CryRepository()
+      ..state = const AgentStreamRunState(threadId: 'thread-cry')
+      ..messages.addAll(
+        List.generate(
+          20,
+          (index) => AgentConversationMessage(
+            id: 'history-$index',
+            role: index.isEven
+                ? AgentConversationMessageRole.user
+                : AgentConversationMessageRole.assistant,
+            content:
+                'Earlier conversation turn $index with enough content to scroll.',
           ),
-        );
-      await tester.pumpWidget(
-        _page(
-          audio: _FakeCryAudio(),
-          client: _CaptureClient(),
-          repository: repository,
         ),
       );
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
-      await tester.pumpAndSettle();
-      final viewport = tester.getRect(
-        find.byKey(const ValueKey('agent-chat-scroll-view')),
-      );
-      Rect card() =>
-          tester.getRect(find.byKey(const ValueKey('chat-first-topic-cry')));
-      expect(card().bottom, lessThanOrEqualTo(viewport.bottom + 1));
-      await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
-      await tester.pumpAndSettle();
-      expect(card().bottom, lessThanOrEqualTo(viewport.bottom + 1));
-      await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
-      await tester.pumpAndSettle();
-      expect(card().bottom, lessThanOrEqualTo(viewport.bottom + 1));
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
+    await tester.pumpWidget(
+      _page(
+        audio: _FakeCryAudio(),
+        client: _CaptureClient(),
+        repository: repository,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('chat-first-action-cry')));
+    await tester.pumpAndSettle();
+    final viewport = tester.getRect(
+      find.byKey(const ValueKey('agent-chat-scroll-view')),
+    );
+    Rect card() => tester.getRect(
+      find
+          .ancestor(
+            of: find.byKey(const ValueKey('chat-first-topic-cry')),
+            matching: find.byType(SizeChangedLayoutNotifier),
+          )
+          .first,
+    );
+    expect(card().center.dy, closeTo(viewport.center.dy, 65));
+    await tester.tap(find.byKey(const ValueKey('chat-first-cry-start')));
+    await tester.pumpAndSettle();
+    expect(card().center.dy, closeTo(viewport.center.dy, 65));
+    await tester.tap(find.byKey(const ValueKey('chat-first-cry-stop')));
+    await tester.pumpAndSettle();
+    expect(card().center.dy, closeTo(viewport.center.dy, 65));
+    await tester.pumpWidget(const SizedBox());
+  });
 
   testWidgets(
     'submit locks the capture card, waits, then shows a separate cause-only result',

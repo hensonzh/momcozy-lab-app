@@ -17,6 +17,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/chat_first_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/chat_first_cry_task.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
@@ -1227,6 +1228,119 @@ void main() {
     expect(recordedClientEvents, isEmpty);
   });
 
+  testWidgets('chat-first streams voice before message completion', (
+    tester,
+  ) async {
+    final voice = _RecordingVoiceController();
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    addTearDown(voice.dispose);
+    await tester.pumpWidget(
+      _host(
+        ChatFirstVoiceScope(
+          controller: voice,
+          child: AgentHubPage(
+            chatFirstExperience: true,
+            runner: AgentStreamRunner(client),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '请给建议',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'type': 'message.delta',
+        'thread_id': 'thread-voice',
+        'run_id': 'run-voice',
+        'message_id': 'reply-voice',
+        'sequence': 1,
+        'payload': {'text': '先照顾宝宝。'},
+      }),
+    );
+    await tester.pump();
+    expect(voice.calls, contains(('先照顾宝宝。', false)));
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'type': 'message.completed',
+        'thread_id': 'thread-voice',
+        'run_id': 'run-voice',
+        'message_id': 'reply-voice',
+        'sequence': 2,
+        'payload': {'role': 'assistant', 'text': '先照顾宝宝。然后休息。'},
+      }),
+    );
+    await tester.pump();
+    expect(voice.calls.last.$2, isTrue);
+  });
+
+  testWidgets('replayed queued events never rewrite an earlier local message', (
+    tester,
+  ) async {
+    final client = _ControllableAgentStreamClient();
+    addTearDown(client.dispose);
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          historyMessages: [
+            AgentHubHistoryMessage(
+              id: 'local:earlier',
+              role: AgentHubHistoryRole.user,
+              content: '历史里的消息',
+              createdAt: DateTime.utc(2026, 10, 24),
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('agent-composer-input')),
+      '新的消息',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
+    await tester.pump();
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'type': 'run.queued',
+        'thread_id': 'thread-1',
+        'run_id': 'run-1',
+        'message_id': 'new-user',
+        'sequence': 1,
+      }),
+    );
+    await tester.pump();
+    client.emit(
+      0,
+      AgentStreamEvent(const {
+        'type': 'run.started',
+        'thread_id': 'thread-1',
+        'run_id': 'run-1',
+        'sequence': 2,
+      }),
+    );
+    await tester.pump();
+    final scroll = tester
+        .widget<CustomScrollView>(
+          find.byKey(const ValueKey('agent-chat-scroll-view')),
+        )
+        .controller!;
+    scroll.jumpTo(0);
+    await tester.pump();
+    expect(find.text('历史里的消息'), findsOneWidget);
+    expect(find.text('新的消息'), findsOneWidget);
+  });
+
   testWidgets('Agent Hub reuses backend thread id across follow-up turns', (
     tester,
   ) async {
@@ -1262,6 +1376,8 @@ void main() {
     expect(client.requests.first.threadId, isNull);
     expect(client.requests.last.threadId, 'thread-fixture-001');
     expect(client.requests.last.message, 'Follow up');
+    expect(find.text('First turn'), findsOneWidget);
+    expect(find.text('Follow up'), findsOneWidget);
     expect(
       find.text('I can help you review today\'s pumping pattern.'),
       findsNWidgets(2),
@@ -5392,5 +5508,27 @@ class _FakeAgentImageMediaRepository implements MediaRepository {
     await deleteGate?.future;
     final failure = deleteFailure;
     if (failure != null) throw failure;
+  }
+}
+
+class _RecordingVoiceController extends ChatFirstVoiceController {
+  _RecordingVoiceController()
+    : super(
+        baseUri: Uri.parse('https://example.test'),
+        tokenProvider: () => null,
+      );
+
+  final calls = <(String, bool)>[];
+
+  @override
+  void stop() {}
+
+  @override
+  Future<void> speakProgress(
+    String id,
+    String text, {
+    bool complete = false,
+  }) async {
+    calls.add((text, complete));
   }
 }

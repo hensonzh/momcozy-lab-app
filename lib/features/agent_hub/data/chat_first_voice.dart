@@ -49,6 +49,13 @@ class ChatFirstVoiceController extends ChangeNotifier {
   bool playing = false;
   int _generation = 0;
   final Set<String> _spoken = {};
+  String? _speechId;
+  String _lastText = '';
+  String _pendingText = '';
+  bool _speechFinalized = false;
+  bool _playerStarted = false;
+  Future<void> _speechTail = Future<void>.value();
+  Future<void> _playerStopped = Future<void>.value();
 
   Future<void> checkAvailability() async {
     final token = tokenProvider();
@@ -90,23 +97,100 @@ class ChatFirstVoiceController extends ChangeNotifier {
     ++_generation;
     _streamClient?.close(force: true);
     _streamClient = null;
-    unawaited(_player.stop().catchError((Object _) {}));
+    _speechId = null;
+    _lastText = '';
+    _pendingText = '';
+    _speechFinalized = false;
+    _playerStarted = false;
+    _speechTail = Future<void>.value();
+    _playerStopped = _player.stop().catchError((Object _) {});
     if (!_disposed) {
       playing = false;
       notifyListeners();
     }
   }
 
-  Future<void> speakCompleted(String id, String text) async {
-    if (_disposed || !available || !enabled || !_spoken.add(id)) return;
-    stop();
-    final generation = _generation;
+  /// Queue complete phrases as the model streams, rather than waiting for its
+  /// final reply. Requests and PCM writes remain sequential and cancellable.
+  Future<void> speakProgress(
+    String id,
+    String text, {
+    bool complete = false,
+  }) async {
+    if (_disposed || !available || !enabled || _spoken.contains(id)) return;
+    if (_speechId != id) {
+      stop();
+      _speechId = id;
+    }
+    if (_speechFinalized) return;
+    if (!text.startsWith(_lastText)) {
+      // A revised stream cannot be appended to audio already spoken.
+      stop();
+      _speechId = id;
+    }
+    final delta = text.substring(_lastText.length);
+    _lastText = text;
+    _pendingText += delta;
+    while (_pendingText.isNotEmpty) {
+      final boundary = RegExp(r'[。！？.!?\n]').firstMatch(_pendingText);
+      final end = boundary == null
+          ? (_pendingText.runes.length >= 48
+                ? _pendingText.runes.take(48).join().length
+                : 0)
+          : boundary.end;
+      if (end == 0) break;
+      final phrase = _pendingText.substring(0, end).trim();
+      _pendingText = _pendingText.substring(end);
+      if (phrase.isNotEmpty) _enqueuePhrase(phrase, _generation);
+    }
+    if (complete) {
+      _speechFinalized = true;
+      _spoken.add(id);
+      final last = _pendingText.trim();
+      _pendingText = '';
+      if (last.isNotEmpty) _enqueuePhrase(last, _generation);
+      final generation = _generation;
+      _speechTail = _speechTail
+          .then((_) async {
+            if (generation != _generation || _disposed) return;
+            try {
+              if (_playerStarted) await _player.finish();
+            } finally {
+              if (generation == _generation && !_disposed) {
+                if (_playerStarted) await _player.stop();
+                _playerStarted = false;
+                if (generation == _generation && !_disposed) {
+                  playing = false;
+                  notifyListeners();
+                }
+              }
+            }
+          })
+          .catchError((Object _) {});
+    }
+    await _speechTail;
+  }
+
+  Future<void> speakCompleted(String id, String text) =>
+      speakProgress(id, text, complete: true);
+
+  void _enqueuePhrase(String phrase, int generation) {
+    _speechTail = _speechTail
+        .then((_) => _speakPhrase(phrase, generation))
+        .catchError((Object _) {});
+  }
+
+  Future<void> _speakPhrase(String text, int generation) async {
+    if (generation != _generation || _disposed || !available || !enabled) {
+      return;
+    }
+    await _playerStopped;
+    if (generation != _generation || _disposed || !available || !enabled) {
+      return;
+    }
     final token = tokenProvider();
     if (token == null || token.isEmpty) return;
-    final content = String.fromCharCodes(text.runes.take(500)).trim();
-    if (content.isEmpty) return;
     final client = _streamClient = _httpClientFactory();
-    var started = false;
     try {
       final request = await client.postUrl(
         baseUri.resolve('/v1/realtime-voice-stream'),
@@ -114,7 +198,7 @@ class ChatFirstVoiceController extends ChangeNotifier {
       request.headers
         ..set(HttpHeaders.authorizationHeader, 'Bearer $token')
         ..contentType = ContentType.json;
-      request.add(utf8.encode(jsonEncode({'text': content})));
+      request.add(utf8.encode(jsonEncode({'text': text})));
       final response = await request.close().timeout(
         const Duration(seconds: 25),
       );
@@ -144,31 +228,23 @@ class ChatFirstVoiceController extends ChangeNotifier {
         final even = bytes.length & ~1;
         pendingByte = even < bytes.length ? bytes.last : null;
         if (even == 0) continue;
-        if (!started) {
+        if (!_playerStarted) {
           await _player.start();
-          started = true;
+          _playerStarted = true;
           if (generation != _generation || _disposed) return;
           playing = true;
           notifyListeners();
         }
         await _player.write(Uint8List.sublistView(bytes, 0, even));
       }
-      if (started &&
-          pendingByte == null &&
-          generation == _generation &&
-          !_disposed) {
-        await _player.finish();
+      if (pendingByte != null) {
+        throw const FormatException('Odd PCM byte count');
       }
     } catch (_) {
-      // No fabricated fallback or replay after partially spoken audio.
+      // Never fabricate or replay audio after a partially spoken phrase.
     } finally {
       client.close(force: true);
       if (identical(_streamClient, client)) _streamClient = null;
-      if (generation == _generation && !_disposed) {
-        playing = false;
-        notifyListeners();
-        if (started) await _player.stop().catchError((Object _) {});
-      }
     }
   }
 
