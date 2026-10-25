@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:momcozy_flutter_app/core/auth/flutter_secure_momcozy_session_store.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 
 /// Do not render an unauthenticated app when secure session restoration fails.
 /// Retrying keeps the saved session intact; only a successful load mounts it.
@@ -47,6 +48,7 @@ class _MomCozyBootstrapState extends State<MomCozyBootstrap> {
     if (app != null) return app;
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: MomCozyColors.chatFirstCanvas,
         body: SafeArea(
           child: Center(
             child: Padding(

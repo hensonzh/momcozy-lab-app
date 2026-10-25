@@ -257,6 +257,10 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
           pageTransitionsTheme: momCozyPageTransitionsTheme,
         ),
         routerConfig: _router,
+        builder: (context, child) => ColoredBox(
+          color: MomCozyColors.chatFirstCanvas,
+          child: child ?? const SizedBox.shrink(),
+        ),
         debugShowCheckedModeBanner: false,
       ),
     );
@@ -697,7 +701,9 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
       appBar: widget.appBar,
       extendBody: !widget.chatFirstExperience && location == '/schedule',
       drawer: isHome ? const ChatFirstDrawer() : null,
-      backgroundColor: location == '/me'
+      backgroundColor: isHome
+          ? MomCozyColors.chatFirstCanvas
+          : location == '/me'
           ? MomHomeTokens.background
           : MomCozyColors.background,
       body: ChatFirstAvatarScope(

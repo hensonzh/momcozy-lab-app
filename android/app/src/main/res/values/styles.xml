@@ -3,6 +3,6 @@
     <!-- Keep the native starting window aligned with the Flutter surface instead
          of showing a separate launch surface. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">#fbf6f4</item>
+        <item name="android:windowBackground">#FFFAF7</item>
     </style>
 </resources>

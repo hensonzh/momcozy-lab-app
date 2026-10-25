@@ -56,6 +56,9 @@ class MomCozyTapTargets {
 }
 
 class MomCozyColors {
+  // Match the chat-first route, onboarding and native Android starting window.
+  static const chatFirstCanvas = Color(0xFFFFFAF7);
+
   // Service timeline: src/styles/me-service-progress.css.
   static const timelineBackground = Color(0xfffcfaf7);
   static const timelineSurface = Color(0xfffffefd);

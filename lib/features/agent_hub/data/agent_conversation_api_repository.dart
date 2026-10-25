@@ -190,8 +190,11 @@ AgentConversationHistory _buildConversationHistory({
     ...eventsByRun.keys,
     ...messages.map((message) => message.runId).whereType<String>(),
   }) {
-    var state = const AgentStreamRunState().start();
-    for (final event in eventsByRun[runId] ?? const <AgentStreamEvent>[]) {
+    final runEvents = eventsByRun[runId] ?? const <AgentStreamEvent>[];
+    var state = runEvents.isEmpty
+        ? const AgentStreamRunState()
+        : const AgentStreamRunState().start();
+    for (final event in runEvents) {
       state = state.applyEvent(event);
     }
     final assistant = assistantByRun[runId];

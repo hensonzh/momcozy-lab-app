@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../shared/design_system/momcozy_design_system.dart';
 import '../domain/chat_first_onboarding.dart';
 import 'onboarding_controller.dart';
 
-const _canvas = Color(0xFFFFFAF7);
 const _paper = Color(0xFFFFFDFC);
 const _ink = Color(0xFF2B2826);
 const _muted = Color(0xFF786E6B);
@@ -62,7 +62,7 @@ class _ChatFirstOnboardingPageState extends State<ChatFirstOnboardingPage> {
           gate.state != null &&
           !gate.state!.canEnterApp;
       return Scaffold(
-        backgroundColor: _canvas,
+        backgroundColor: MomCozyColors.chatFirstCanvas,
         body: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -607,7 +607,7 @@ class _ChatFirstOnboardingPageState extends State<ChatFirstOnboardingPage> {
   Widget _footer() => Container(
     padding: const EdgeInsets.fromLTRB(22, 12, 22, 16),
     decoration: const BoxDecoration(
-      color: _canvas,
+      color: MomCozyColors.chatFirstCanvas,
       border: Border(top: BorderSide(color: Color(0xFFEEE2DE))),
     ),
     child: Align(

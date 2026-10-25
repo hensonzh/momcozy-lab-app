@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/agent_conversation_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
@@ -16,6 +17,76 @@ void main() {
     expect(id, '024917bc-6593-43ac-9152-d363763f362c');
     expect(transport.lastPath, agentConversationsEndpoint);
     expect(transport.lastBody, {'title': '宝宝哭声'});
+  });
+
+  test(
+    'eventless historical user turn is not an active assistant run',
+    () async {
+      final history = await AgentConversationApiRepository(
+        transport: FixtureApiJsonTransport({
+          'thread': {
+            'id': 'thread-quiet',
+            'title': 'Chat',
+            'status': 'active',
+            'created_at': '2026-10-01T08:00:00Z',
+            'updated_at': '2026-10-01T08:00:00Z',
+          },
+          'items': [
+            {
+              'id': 'user-1',
+              'run_id': 'run-1',
+              'role': 'user',
+              'sequence': 1,
+              'created_at': '2026-10-01T08:00:00Z',
+              'content': {'text': 'A past question'},
+            },
+          ],
+          'events': <Object?>[],
+          'next_before_sequence': null,
+        }),
+      ).loadConversation('thread-quiet');
+
+      expect(history.messages.single.content, 'A past question');
+      expect(history.currentState.runId, 'run-1');
+      expect(history.currentState.phase, AgentStreamRunPhase.idle);
+    },
+  );
+
+  test('queued run without a reply still resumes as active', () async {
+    final history = await AgentConversationApiRepository(
+      transport: FixtureApiJsonTransport({
+        'thread': {
+          'id': 'thread-active',
+          'title': 'Chat',
+          'status': 'active',
+          'created_at': '2026-10-01T08:00:00Z',
+          'updated_at': '2026-10-01T08:00:00Z',
+        },
+        'items': [
+          {
+            'id': 'user-1',
+            'run_id': 'run-1',
+            'role': 'user',
+            'sequence': 1,
+            'created_at': '2026-10-01T08:00:00Z',
+            'content': {'text': 'Question in progress'},
+          },
+        ],
+        'events': [
+          {
+            'event_id': 'queued-1',
+            'run_id': 'run-1',
+            'type': 'run.queued',
+            'sequence': 1,
+            'payload': <String, Object?>{},
+          },
+        ],
+        'next_before_sequence': null,
+      }),
+    ).loadConversation('thread-active');
+
+    expect(history.currentState.phase, AgentStreamRunPhase.streaming);
+    expect(history.currentState.runId, 'run-1');
   });
 
   test('projected replies retain their user-turn history anchor', () async {

@@ -49,15 +49,7 @@ void main() {
       ),
     );
 
-    final runtime = await MomCozyApiRuntime.bootstrap(
-      store: store,
-      authRepository: MomCozyAuthApiRepository(
-        transport: FixtureApiJsonTransport({
-          'id': 'secure-user',
-          'account_status': 'active',
-        }),
-      ),
-    );
+    final runtime = await MomCozyApiRuntime.bootstrap(store: store);
     final observed = runtime.jsonTransport as ObservedApiJsonTransport;
     final transport = observed.inner as IoApiJsonTransport;
     final eventResult = await runtime.clientEventClient.post(
@@ -76,6 +68,29 @@ void main() {
     expect(eventResult.body?['event_type'], 'runtime_bootstrap_test');
     expect(runtime.observability, same(observed.observability));
   });
+
+  test(
+    'startup does not wait for an account request before first route',
+    () async {
+      final transport = _UnexpectedStartupNetwork();
+      final runtime = await MomCozyApiRuntime.bootstrap(
+        jsonTransport: transport,
+        store: MemoryMomCozySessionStore(
+          const MomCozySession(
+            status: MomCozySessionStatus.authenticated,
+            userId: 'secure-user',
+            babyId: 'secure-baby',
+            locale: 'en-US',
+            accessToken: 'secure-access',
+            refreshToken: 'secure-refresh',
+          ),
+        ),
+      ).timeout(const Duration(seconds: 1));
+
+      expect(runtime.session.isAuthenticated, isTrue);
+      expect(transport.requests, 0);
+    },
+  );
 
   test('runtime can be created directly from session', () {
     final runtime = MomCozyApiRuntime.fromSession(
@@ -483,4 +498,24 @@ class _NeverProductAssetConnector implements ProductAssetHttpConnector {
   }) {
     throw UnsupportedError('No product asset request expected.');
   }
+}
+
+class _UnexpectedStartupNetwork implements ApiJsonTransport {
+  int requests = 0;
+
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) async {
+    requests++;
+    throw StateError('Startup must not wait for $path');
+  }
+
+  @override
+  Future<Map<String, Object?>> postJson(
+    String path, {
+    Map<String, Object?> body = const {},
+    Map<String, String> headers = const {},
+  }) async => throw StateError('Unexpected startup request: $path');
 }

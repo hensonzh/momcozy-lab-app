@@ -292,7 +292,6 @@ class MomCozyApiRuntime {
   }
 
   static Future<MomCozyApiRuntime> bootstrap({
-    MomCozyAuthApiRepository? authRepository,
     MomCozySessionStore store = const FlutterSecureMomCozySessionStore(),
     MomCozySession? environmentSession,
     ApiJsonTransport? jsonTransport,
@@ -317,7 +316,7 @@ class MomCozyApiRuntime {
           ),
     );
     final session = await manager.bootstrap();
-    final runtime = MomCozyApiRuntime.fromSession(
+    return MomCozyApiRuntime.fromSession(
       session,
       jsonTransport: jsonTransport,
       agentJsonTransport: agentJsonTransport,
@@ -328,29 +327,6 @@ class MomCozyApiRuntime {
       observability: observability,
       productAssetRepository: productAssetRepository,
     );
-    try {
-      final restored = await MomCozySessionRestorer(
-        authRepository: authRepository ?? runtime.authRepository,
-        store: store,
-      ).restore(session);
-      if (!identical(restored, session)) {
-        return MomCozyApiRuntime.fromSession(
-          restored,
-          jsonTransport: jsonTransport,
-          agentJsonTransport: agentJsonTransport,
-          clientEventClient: clientEventClient,
-          multipartTransport: multipartTransport,
-          blePlatform: blePlatform,
-          pumpProtocolPlatform: pumpProtocolPlatform,
-          observability: observability,
-          productAssetRepository: productAssetRepository,
-        );
-      }
-    } catch (_) {
-      // Transient network/storage failure keeps the durable session for retry.
-      // Every API still checks server-side account and session state.
-    }
-    return runtime;
   }
 
   final ApiJsonTransport jsonTransport;

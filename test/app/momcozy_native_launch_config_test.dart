@@ -92,6 +92,7 @@ void main() {
       expect(styles, isNot(contains('LaunchTheme')), reason: path);
       expect(styles, isNot(contains('launch_background')), reason: path);
       expect(styles, isNot(contains('Theme.SplashScreen')), reason: path);
+      expect(styles, contains('#FFFAF7'), reason: path);
     }
 
     expect(
@@ -110,6 +111,12 @@ void main() {
     final android12Styles = File(
       'android/app/src/main/res/values-v31/styles.xml',
     ).readAsStringSync();
+    expect(
+      android12Styles,
+      contains(
+        '<item name="android:windowSplashScreenBackground">#FFFAF7</item>',
+      ),
+    );
     expect(android12Styles, isNot(contains('LaunchTheme')));
     expect(android12Styles, isNot(contains('Theme.SplashScreen')));
     expect(android12Styles, contains('android:windowSplashScreenBackground'));

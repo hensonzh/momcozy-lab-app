@@ -9,6 +9,7 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dar
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/agent_conversation_api_repository.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/data/chat_first_welcome_coordinator.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/chat_first_welcome_gate.dart';
@@ -66,6 +67,51 @@ void main() {
         find.byKey(const ValueKey('agent-first-unread-marker')),
         findsNothing,
       );
+      await _dispose(tester);
+    },
+  );
+
+  testWidgets(
+    'eventless saved user turn does not resurrect a thinking status',
+    (tester) async {
+      _mobile(tester);
+      final repository = AgentConversationApiRepository(
+        transport: FixtureApiJsonTransport({
+          'thread': {
+            'id': 'thread-quiet',
+            'title': 'Chat',
+            'status': 'active',
+            'created_at': '2026-10-01T08:00:00Z',
+            'updated_at': '2026-10-01T08:00:00Z',
+          },
+          'items': [
+            {
+              'id': 'user-1',
+              'run_id': 'run-1',
+              'role': 'user',
+              'sequence': 1,
+              'created_at': '2026-10-01T08:00:00Z',
+              'content': {'text': 'A past question'},
+            },
+          ],
+          'events': <Object?>[],
+          'next_before_sequence': null,
+        }),
+      );
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            chatFirstExperience: true,
+            conversationRepository: repository,
+            initialConversationId: 'thread-quiet',
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('A past question'), findsOneWidget);
+      expect(find.text('正在思考…'), findsNothing);
+      expect(find.byType(AgentRunStatusLine), findsNothing);
       await _dispose(tester);
     },
   );

@@ -3,6 +3,6 @@
     <!-- The app currently uses a light Flutter theme, so keep the native
          starting window on the same surface color even when Android is in dark mode. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">#fbf6f4</item>
+        <item name="android:windowBackground">#FFFAF7</item>
     </style>
 </resources>
